@@ -1,0 +1,169 @@
+﻿<phone:PhoneApplicationPage
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls"
+    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    x:Class="WeTongji.CourseDetail" 
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True"
+    >
+    
+	<phone:PhoneApplicationPage.FontFamily>
+		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+	</phone:PhoneApplicationPage.FontFamily>
+	<phone:PhoneApplicationPage.FontSize>
+		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
+	</phone:PhoneApplicationPage.FontSize>
+	<phone:PhoneApplicationPage.Foreground>
+		<StaticResource ResourceKey="PhoneForegroundBrush"/>
+	</phone:PhoneApplicationPage.Foreground>
+
+    <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="PivotHeaderItemStyle1" TargetType="controlsPrimitives:PivotHeaderItem">
+            <Setter Property="FontSize" Value="40"/>
+            <Setter Property="Padding" Value="21,0,-8,0"/>
+        </Style>
+
+        <Style x:Key="PivotStyle1" TargetType="controls:Pivot">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <Grid/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:Pivot">
+                        <Grid HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Background="{TemplateBinding Background}" CacheMode="BitmapCache" Grid.RowSpan="3"/>
+                            <ContentPresenter ContentTemplate="{TemplateBinding TitleTemplate}" Content="{TemplateBinding Title}" Margin="0,0,0,-7"/>
+                            <controlsPrimitives:PivotHeadersControl x:Name="HeadersListElement" Grid.Row="1" ItemContainerStyle="{StaticResource PivotHeaderItemStyle1}" Margin="0,22,0,-7"/>
+                            <ItemsPresenter x:Name="PivotItemPresenter" Margin="{TemplateBinding Padding}" Grid.Row="2"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
+
+    <Grid>
+        <!--Pivot Control-->
+        <controls:Pivot x:Name="Pivot_Core"  Style="{StaticResource PivotStyle1}">
+            <controls:Pivot.Title>
+                <!--Course Name-->
+                <TextBlock FontSize="22" Margin="24,13,0,4" HorizontalAlignment="Left"
+                           Text="软件工程"/>
+            </controls:Pivot.Title>
+            
+            <!--
+课程详情
+            -->
+            <controls:PivotItem Header="课程详情" Margin="0,30,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <StackPanel Margin="20,0">
+                        <!--Course Name-->
+                        <TextBlock TextWrapping="Wrap" FontSize="45" Margin="0,0,0,-10"
+								Text="软件工程"/>
+
+                        <!--Time-->
+                        <Grid Margin="0,34,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/time_icon.png" Stretch="None"/>
+
+                            <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+									Text="2012/12/20（周四），8:00~9:50" Margin="0,-4,0,-2"/>
+                        </Grid>
+
+                        <!--Place-->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/location_icon.png" Stretch="None"/>
+
+                            <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+									Text="专用教室" Margin="0,-3,0,-2"/>
+                        </Grid>
+
+                        <!--Teacher-->
+                        <StackPanel Margin="0,33,0,0">
+                            <TextBlock Text="老师" FontSize="20"/>
+                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="朱少民"/>
+                        </StackPanel>
+
+                        <!--Course Id-->
+                        <StackPanel Margin="0,15,0,0">
+                            <TextBlock Text="课号" FontSize="20"/>
+                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="000000"/>
+                        </StackPanel>
+
+                        <!--Course Point-->
+                        <StackPanel Margin="0,15,0,0">
+                            <TextBlock Text="学分" FontSize="20"/>
+                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="3.0"/>
+                        </StackPanel>
+
+                        <!--Course Hours-->
+                        <StackPanel Margin="0,15,0,0">
+                            <TextBlock Text="学时" FontSize="20"/>
+                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="34"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+            </controls:PivotItem>
+
+            <!--
+考试安排
+            -->
+            <controls:PivotItem Header="考试安排" Margin="0,30,0,0">
+                <StackPanel Margin="20,0">
+                    <!--Time-->
+                    <StackPanel>
+                        <TextBlock Text="时间" FontSize="22"/>
+                        <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
+                                   Text="2012/12/20（周四），8:00~9:50"/>
+                    </StackPanel>
+
+                    <!--Place-->
+                    <StackPanel Margin="0,14,0,0">
+                        <TextBlock Text="地点" FontSize="22"/>
+                        <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
+                                   Text="专教"/>
+                    </StackPanel>
+                </StackPanel>
+            </controls:PivotItem>
+
+        </controls:Pivot>
+    </Grid>
+
+</phone:PhoneApplicationPage>

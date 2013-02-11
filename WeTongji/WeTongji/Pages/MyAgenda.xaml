@@ -1,0 +1,65 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WeTongji.MyAgenda"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <Grid Margin="23,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="109"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <!--Date of the Top item-->
+        <TextBlock x:Name="TextBlock_TopItem" FontSize="22" Margin="0,10,0,34"
+                   Text="今日（周一）"/>
+        
+        <ListBox x:Name="ListBox_Core" BorderBrush="{x:Null}" BorderThickness="0" Background="{x:Null}" Grid.Row="1"
+                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                 SelectionChanged="ListBox_Core_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,40">
+                        <!--Date-->
+                        <TextBlock FontSize="18" Foreground="#FF9D9D9D" Margin="0,-5,0,0"
+                                   Text="{Binding FakeDate}"/>
+                        
+                        <!--Time-->
+                        <TextBlock FontSize="20" Margin="0,16,0,0"
+                                   Text="{Binding FakeTime}"/>
+                        
+                        <!--Title-->
+                        <TextBlock FontSize="28" Margin="0,7,0,0" TextWrapping="Wrap" Foreground="{Binding FakeTitleBrush}"
+                                   Text="{Binding FakeTitle}"/>
+                        
+                        <!--Place-->
+                        <Grid Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Image VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="14" Source="Images/Common/location_icon.png" Stretch="None"/>
+
+                            <TextBlock Grid.Column="2" FontSize="22" Foreground="#FFC5C5C5" Margin="0,0,0,-3"
+                                   Text="{Binding FakePlace}"/>
+                        </Grid>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+    </Grid>
+
+</phone:PhoneApplicationPage>

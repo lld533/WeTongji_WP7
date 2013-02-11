@@ -1,0 +1,121 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WeTongji.MapAddress"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:NokiaMap="clr-namespace:NokiaMapSDK;assembly=NokiaMapSDK"
+    xmlns:StaticMapServiceProvider="clr-namespace:JeffWilcox.Controls;assembly=JeffWilcox.Maps"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:geo="clr-namespace:System.Device.Location;assembly=System.Device"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:BingMap="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
+    xmlns:MSPCMCore="clr-namespace:Microsoft.Phone.Controls.Maps.Core;assembly=Microsoft.Phone.Controls.Maps"
+    xmlns:NokiaMapsSDK="clr-namespace:WeTongji.Extensions.NokiaMapsSDK"
+    xmlns:GoogleMapsSDK="clr-namespace:WeTongji.Extensions.GoogleMapsSDK"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    <!---->
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="WeTongji" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="查看地址DEMO" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <Grid Grid.Row="1" Margin="12,0,12,0">
+            <!--<BingMap:Map CredentialsProvider="AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P" x:Name="MyBingMap"/>-->
+            <!---->
+            
+            <controls:Pivot>
+                <controls:PivotItem Header="Static Map">
+                    <StaticMapServiceProvider:StaticMap x:Name="MyMap"  Provider="Google" ManipulationCompleted="StaticMap_ManipulationCompleted_1">
+                        <StaticMapServiceProvider:StaticMap.MapCenter >
+                            <geo:GeoCoordinate Latitude="31.278933472931385" Longitude="121.50434363633394"/>
+                        </StaticMapServiceProvider:StaticMap.MapCenter>
+                    </StaticMapServiceProvider:StaticMap>
+                </controls:PivotItem>
+                
+                            
+                <controls:PivotItem Header="Nokia Map">
+                    <BingMap:Map x:Name="MyNokiaMap"  CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
+                                CopyrightVisibility="Collapsed" LogoVisibility="Collapsed" ScaleVisibility="Visible">
+                        <BingMap:Map.Mode>
+                            <MSPCMCore:MercatorMode/>
+                        </BingMap:Map.Mode>
+                    
+                        <BingMap:MapTileLayer Margin="0,0,0,32" Height="647" Width="475">
+                            <BingMap:MapTileLayer.TileSources>
+                                <NokiaMapsSDK:NokiaMapsTile TileTypes="Street"/>                        
+                            </BingMap:MapTileLayer.TileSources>
+                        </BingMap:MapTileLayer>
+                        
+                        <BingMap:MapLayer x:Name="NokiaMap_PushPinLayer"/>
+                    </BingMap:Map>
+                </controls:PivotItem>
+       
+                <controls:PivotItem Header="Google Map">
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <StackPanel>                            
+                            <BingMap:Map x:Name="MyGoogleMap"  CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
+                                    CopyrightVisibility="Collapsed" LogoVisibility="Collapsed" ScaleVisibility="Visible">
+                                <BingMap:Map.Mode>
+                                    <MSPCMCore:MercatorMode/>
+                                </BingMap:Map.Mode>
+                    
+                                <BingMap:MapTileLayer Margin="0,0,0,32" Height="647" Width="475">
+                                    <BingMap:MapTileLayer.TileSources>
+                                        <GoogleMapsSDK:GoogleMapsRoadTileSource/>                       
+                                    </BingMap:MapTileLayer.TileSources>
+                                </BingMap:MapTileLayer>
+                        
+                                <BingMap:MapLayer x:Name="GoogleMap_PushPinLayer"/>
+                            </BingMap:Map>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="地址：" Margin="0,0,10,0"/>
+                                <TextBlock x:Name="TextBlock_Address" Grid.Column="1" TextWrapping="Wrap"/>
+                            </Grid>
+                                                
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="类型：" Margin="0,0,10,0"/>
+                                <TextBlock x:Name="TextBlock_AddressType" Grid.Column="1" TextWrapping="Wrap"/>
+                            </Grid>
+                        
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="经纬度:" Margin="0,0,10,0"/>
+                                <TextBlock x:Name="TextBlock_LatLng" Grid.Column="1" TextWrapping="Wrap"/>
+                            </Grid>
+                                            
+                        </StackPanel>    
+                    </ScrollViewer>
+                </controls:PivotItem>
+            </controls:Pivot>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

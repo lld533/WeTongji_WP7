@@ -1,0 +1,88 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WeTongji.SocietyNews"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Margin="22,17,0,-2" FontSize="21" Text="社团通告"/>
+
+        <ScrollViewer Grid.Row="1"  Margin="22,19,0,0">
+            <StackPanel Margin="0,0,39,0">
+                <!--Title-->
+                <TextBlock FontSize="28" Text="微同济iOS 2.0 正式推出"
+                   TextWrapping="Wrap"/>
+
+                <!--Time-->
+                <TextBlock Foreground="#FF858585" FontSize="16" Margin="0,10,0,0"
+                           Text="2012/12/24 18:21"/>
+                <!--Host Icon & Name-->
+                <Grid Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--@_@-->
+                    <!--<Image Stretch="UniformToFill" Width="35" Height="35"/>-->
+                    <Rectangle Width="35" Height="35" Fill="Gray"/>
+
+                    <TextBlock Foreground="#FF858585" FontSize="16" Grid.Column="2" VerticalAlignment="Center"  Margin="-1,1,0,0"
+                           Text="微同济团队官方帐号" TextTrimming="WordEllipsis"/>
+                </Grid>
+
+                <!--@_@ Illustration-->
+                <!--<Image Stretch="UniformToFill" Height="180" Margin="0,23,0,0"/>-->
+                <Rectangle Fill="#FF1BA1E2" Height="180" Margin="0,23,0,0"/>
+
+                <!--Paragraphs-->
+                <TextBlock FontSize="20" TextWrapping="Wrap" Margin="0,10,0,34">
+                    <Run Text="声明："/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="1.安卓用户们，WeTongji Android 版本也即将在圣诞前更新，同步本次2.0所有功能。"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="2.Windows Phone仍在开发阶段，能否赶上圣诞节就要靠大家的支持了。"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="3.由于更新版本正在等待苹果App Store的审核，先放出ipa文件吧！（传送门：http://vdisk.abcd.com）"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="4.安卓用户们，WeTongji Android 版本也即将在圣诞前更新，同步本次2.0所有功能。"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="5.Windows Phone仍在开发阶段，能否赶上圣诞节就要靠大家的支持了。"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="6.由于更新版本正在等待苹果App Store的审核，先放出ipa文件吧！（传送门：http://vdisk.abcd.com）"/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="喜欢"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>

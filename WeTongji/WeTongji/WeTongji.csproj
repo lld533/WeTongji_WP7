@@ -1,0 +1,394 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4B50F1F8-1D2F-4B41-A214-A62C68BA7A07}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WeTongji</RootNamespace>
+    <AssemblyName>WeTongji</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>zh-CN</SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>WeTongji.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>WeTongji.App</SilverlightAppEntry>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>5.0.31017.0</ExpressionBlendVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JeffWilcox.Maps">
+      <HintPath>..\packages\JeffWilcox.Maps.1.1\lib\sl4-windowsphone71\JeffWilcox.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="JeffWilcox.PhoneThemeManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\PhoneThemeManager.1.3.3\lib\sl4-windowsphone71\JeffWilcox.PhoneThemeManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions" />
+    <Reference Include="Microsoft.Phone" />
+    <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Controls.Maps, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\sl4-windowsphone71\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\WTSDK\Properties\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NokiaMapSDK">
+      <HintPath>..\packages\NokiaMapSDK.1.0\lib\sl4-wp71\NokiaMapSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="system.data.linq" />
+    <Reference Include="System.Device" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Interactivity, Version=3.8.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLight.4.1.23.0\lib\sl4-windowsphone71\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="mscorlib.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converter\IntToVisibilityConverter.cs" />
+    <Compile Include="Converter\TurnOverVisibilityConverter.cs" />
+    <Compile Include="DataBase\WTDataContext.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\Address.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\AddressComponent.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\AddressComponentType.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\Geometry.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryClient.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryException.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsTile.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\LatLng.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\LocationType.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryRequest.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\BoundingBox.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryResponse.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\Status.cs" />
+    <Compile Include="Extensions\WTSDKExt\Data.cs" />
+    <Compile Include="Pages\MySettings.xaml.cs">
+      <DependentUpon>MySettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MyAgenda.xaml.cs">
+      <DependentUpon>MyAgenda.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CourseDetail.xaml.cs">
+      <DependentUpon>CourseDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\EditPersonalProfile.xaml.cs">
+      <DependentUpon>EditPersonalProfile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\MyFavorite.xaml.cs">
+      <DependentUpon>MyFavorite.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\NokiaMapsSDK\Address.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\Category.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\Context.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\Location.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\NokiaMapQueryClient.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\NokiaMapsTile.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\PaginateableCollection.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\Place.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\QueryRequest.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\QueryResponse.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\RelatedPlaces.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\Search.cs" />
+    <Compile Include="Extensions\NokiaMapsSDK\URN.cs" />
+    <Compile Include="Pages\MapAddress.xaml.cs">
+      <DependentUpon>MapAddress.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\NearBy.xaml.cs">
+      <DependentUpon>NearBy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CampusInfo.xaml.cs">
+      <DependentUpon>CampusInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PersonalProfile.xaml.cs">
+      <DependentUpon>PersonalProfile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SocietyNews.xaml.cs">
+      <DependentUpon>SocietyNews.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\OfficialNote.xaml.cs">
+      <DependentUpon>OfficialNote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ForgotPassword.xaml.cs">
+      <DependentUpon>ForgotPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Agreement.xaml.cs">
+      <DependentUpon>Agreement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AppSquare.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="Pages\Activity.xaml.cs">
+      <DependentUpon>Activity.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PeopleOfWeek.xaml.cs">
+      <DependentUpon>PeopleOfWeek.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SignUp.xaml.cs">
+      <DependentUpon>SignUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TongjiMail.xaml.cs">
+      <DependentUpon>TongjiMail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PeopleOfWeekList.xaml.cs">
+      <DependentUpon>PeopleOfWeekList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TongjiNews.xaml.cs">
+      <DependentUpon>TongjiNews.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\Bing.GeoCode\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="TestSDKPage.xaml.cs">
+      <DependentUpon>TestSDKPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\Unicode2String.cs" />
+    <Compile Include="Converter\TextLengthToVisibilityConverter.cs" />
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Include="Pages\MySettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MyAgenda.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CourseDetail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\EditPersonalProfile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MyFavorite.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MapAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\NearBy.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CampusInfo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\PersonalProfile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SocietyNews.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\OfficialNote.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\ForgotPassword.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Agreement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Activity.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PeopleOfWeek.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SignUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TongjiMail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PeopleOfWeekList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TongjiNews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TestSDKPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\AppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\configuration91.svcinfo" />
+    <None Include="Service References\Bing.GeoCode\configuration.svcinfo" />
+    <None Include="Service References\Bing.GeoCode\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="ServiceReferences.ClientConfig" />
+    <None Include="Service References\Bing.GeoCode\Arrays.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\common.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\contracts.wsdl" />
+    <None Include="Service References\Bing.GeoCode\contracts.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\geocode.wsdl" />
+    <None Include="Service References\Bing.GeoCode\geocode.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Bing.GeoCode\WeTongji.Bing.GeoCode.GeocodeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ApplicationIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Images\Common\favourite_icon.png" />
+    <Resource Include="Pages\favourite_icon.png" />
+    <Resource Include="PanoramaBackground.png" />
+    <Resource Include="Images\AppSquare\activities_icon.png" />
+    <Resource Include="Images\AppSquare\favorite_icon.png" />
+    <Resource Include="Images\AppSquare\guide_book_icon.png" />
+    <Resource Include="Images\AppSquare\news_icon.png" />
+    <Resource Include="Images\AppSquare\schedule_icon.png" />
+    <Resource Include="Images\AppSquare\user_center_icon.png" />
+    <Resource Include="Images\FreshmanGuide\pic1.png" />
+    <Resource Include="Images\FreshmanGuide\pic10.png" />
+    <Resource Include="Images\FreshmanGuide\pic11.png" />
+    <Resource Include="Images\FreshmanGuide\pic2.png" />
+    <Resource Include="Images\FreshmanGuide\pic3.png" />
+    <Resource Include="Images\FreshmanGuide\pic4.png" />
+    <Resource Include="Images\FreshmanGuide\pic5.png" />
+    <Resource Include="Images\FreshmanGuide\pic6.png" />
+    <Resource Include="Images\FreshmanGuide\pic7.png" />
+    <Resource Include="Images\FreshmanGuide\pic8.png" />
+    <Resource Include="Images\FreshmanGuide\pic9.png" />
+    <Resource Include="Images\Features\wetongji_icon.png" />
+    <Resource Include="Images\UserCenter\default_avatar.jpg" />
+    <Content Include="icons\appbar.cancel.rest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\appbar.check.rest.png" />
+    <Content Include="icons\appbar.edit.rest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\appbar.favs.rest.png" />
+    <Content Include="icons\appbar.refresh.rest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\appbar.save.rest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Images\Temp\header_background.jpg" />
+    <Content Include="Images\Common\location_icon.png" />
+    <Content Include="Images\Common\time_icon.png" />
+    <Content Include="SplashScreenImage.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WTSDK\WTSDK.csproj">
+      <Project>{E43F9E0F-59D1-4BF2-8B1B-E1CF10F9792E}</Project>
+      <Name>WTSDK</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\Bing.GeoCode\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions />
+</Project>

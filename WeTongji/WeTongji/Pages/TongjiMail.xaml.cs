@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using Microsoft.Phone.Tasks;
+
+namespace WeTongji
+{
+    public partial class TongjiMail : PhoneApplicationPage
+    {
+        public TongjiMail()
+        {
+            InitializeComponent();
+        }
+
+        #region [Overridden]
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            ThemeManager.ToDarkTheme();
+        }
+
+        #endregion
+
+        void Button_Registered_Click(Object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/SignUp.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+        void Button_SignUpTongjiMail_Click(Object sender, RoutedEventArgs e)
+        {
+            var wbt = new WebBrowserTask();
+            wbt.Uri = new System.Uri("http://mail.tongji.edu.cn:9900/activate/register.jsp");
+            wbt.Show();
+        }
+    }
+}

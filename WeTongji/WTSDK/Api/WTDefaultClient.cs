@@ -1,0 +1,257 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using WeTongji.Api.Request;
+using System.Threading;
+using System.Diagnostics;
+using System.Reflection;
+using WeTongji.Api.Util;
+
+namespace WeTongji.Api
+{
+    public class WTDefaultClient<T> where T : WTResponse
+    {
+        #region [Const Strings]
+
+        public static readonly String METHOD = "M";
+        public static readonly String HASH = "H";
+        public static readonly String DEVICE = "D";
+        public static readonly String UID = "U";
+        public static readonly String PAGE = "P";
+        public static readonly String VERSION = "V";
+        public static readonly String SESSION = "S";
+
+        #endregion
+
+        #region [EventHandlers]
+
+        public EventHandler<WTExecuteCompletedEventArgs<T>> ExecuteCompleted;
+
+        public EventHandler<WTExecuteFailedEventArgs<T>> ExecuteFailed;
+
+        private void OnExecuteCompleted(IWTRequest<T> request, T response)
+        {
+            var handler = ExecuteCompleted;
+            if (handler != null)
+            {
+                handler(new object(), new WTExecuteCompletedEventArgs<T>(request, response));
+            }
+        }
+
+        private void OnExecuteFailed(IWTRequest<T> req, Exception err)
+        {
+            var handler = ExecuteFailed;
+            if (handler != null)
+            {
+                handler(new object(), new WTExecuteFailedEventArgs<T>(req, err));
+            }
+        }
+
+        #endregion
+
+        #region [Core]
+
+        public void Execute(IWTRequest<T> request)
+        {
+            #region [Validate Argument]
+
+            if (request == null)
+            {
+                OnExecuteFailed(request, new ArgumentNullException("request"));
+                return;
+            }
+
+            try
+            {
+                request.Validate();
+            }
+            catch (System.Exception ex)
+            {
+                OnExecuteFailed(request, ex);
+                return;
+            }
+
+            #endregion
+
+            #region [Create Dictionary]
+
+            var dict = new Dictionary<String, String>(request.GetParameters());
+            dict[METHOD] = request.GetApiName();
+            dict[DEVICE] = "iphone";
+            dict[VERSION] = "2.0";
+            dict[HASH] = ComputeHash(dict);
+
+            #endregion
+
+            var myWebRequest = HttpWebRequest.CreateHttp(Dictionary2Url(dict));
+            Debug.WriteLine(myWebRequest.RequestUri.AbsoluteUri);
+
+            #region [Get Response]
+
+            myWebRequest.BeginGetResponse((args) =>
+                        {
+                            try
+                            {
+                                var response = myWebRequest.EndGetResponse(args);
+                                using (var sr = new StreamReader(response.GetResponseStream()))
+                                {
+                                    var str = sr.ReadToEnd();
+                                    var responseEXT = JsonConvert.DeserializeObject<WTResponseEx<T>>(str);
+
+                                    if (responseEXT.Status.Id != Status.Success)
+                                    {
+                                        throw new WTException(responseEXT.Status);
+                                    }
+                                    else
+                                    {
+                                        OnExecuteCompleted(request, responseEXT.Data);
+                                        return;
+                                    }
+                                }
+                            }
+                            catch (System.Exception ex)
+                            {
+                                OnExecuteFailed(request, ex);
+                            }
+                        }, new object());
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Execute a request that requires session and uid
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <param name="session"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public void Execute(IWTRequest<T> request, String session, String uid)
+        {
+            #region [Validate Argument]
+
+            if (request == null)
+            {
+                OnExecuteFailed(request, new ArgumentNullException("request"));
+                return;
+            }
+
+            if (String.IsNullOrEmpty(session))
+            {
+                OnExecuteFailed(request, new ArgumentNullException("session"));
+                return;
+            }
+
+            if (String.IsNullOrEmpty(uid))
+            {
+                OnExecuteFailed(request, new ArgumentNullException("uid"));
+                return;
+            }
+
+            try
+            {
+                request.Validate();
+            }
+            catch (System.Exception ex)
+            {
+                OnExecuteFailed(request, ex);
+                return;
+            }
+
+            #endregion
+
+            #region [Create Dictionary]
+
+            var dict = new Dictionary<String, String>(request.GetParameters());
+            dict[METHOD] = request.GetApiName();
+            dict[DEVICE] = "iphone";
+            dict[VERSION] = "2.0";
+            dict[SESSION] = session;
+            dict[UID] = uid;
+            dict[HASH] = ComputeHash(dict);
+
+            #endregion
+
+            var myWebRequest = HttpWebRequest.CreateHttp(Dictionary2Url(dict));
+
+            #region [Get Response]
+
+            myWebRequest.BeginGetResponse((args) =>
+            {
+                try
+                {
+                    var response = myWebRequest.EndGetResponse(args);
+                    using (var sr = new StreamReader(response.GetResponseStream()))
+                    {
+                        var str = sr.ReadToEnd();
+                        var responseEXT = JsonConvert.DeserializeObject<WTResponseEx<T>>(str);
+
+                        if (responseEXT.Status.Id != Status.Success)
+                        {
+                            throw new WTException(responseEXT.Status);
+                        }
+                        else
+                        {
+                            OnExecuteCompleted(request, responseEXT.Data);
+                            return;
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    OnExecuteFailed(request, ex);
+                }
+            }, new object());
+            #endregion
+        }
+
+        #endregion
+
+        #region [Public Functions]
+
+        public void SetSystemParameters(IDictionary<String, String> systemParameters) { }
+        public void SetWTLogger(IWTLogger wtLogger) { }
+
+        #endregion
+
+        #region [Private Functions]
+
+        private String ComputeHash(IDictionary<String, String> dict)
+        {
+            if (dict == null)
+                throw new ArgumentNullException("dict");
+
+            StringBuilder sb = new StringBuilder();
+            var sort = dict.OrderBy(pair => pair.Key);
+            foreach (var pair in sort)
+            {
+                sb.AppendFormat("{0}={1}&", HttpUtility.UrlEncode(pair.Key), HttpUtility.UrlEncode(pair.Value));
+            }
+            sb.Remove(sb.Length - 1, 1);
+
+            return WeTongji.Api.Util.MD5Core.GetHashString(sb.ToString()).ToLower();
+        }
+
+        private String Dictionary2Url(IDictionary<String, String> dict)
+        {
+            //http://we.tongji.edu.cn/api/call?D=iPhone&H=5d0c8f9b49e043f7d00e487ee489170e&M=User.LogOn&NO=092983&Password=123456&V=2.0.0
+
+            if (dict == null)
+                throw new ArgumentNullException("null");
+            StringBuilder sb = new StringBuilder("http://we.tongji.edu.cn/api/call?");
+
+            foreach (var pair in dict)
+            {
+                sb.AppendFormat("{0}={1}&", HttpUtility.UrlEncode(pair.Key), HttpUtility.UrlEncode(pair.Value));
+            }
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        #endregion
+    }
+}

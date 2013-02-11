@@ -1,0 +1,87 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="WeTongji.EditPersonalProfile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    
+    <phone:PhoneApplicationPage.Resources>
+        <Converter:TextLengthToVisibilityConverter x:Key="TextLengthToVisibilityConverter"/>
+    </phone:PhoneApplicationPage.Resources>
+
+    <Grid Margin="20,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <!--Page title-->
+        <TextBlock Grid.Row="1"  Text="编辑个人资料" FontSize="56" Margin="0,-13,0,-7"/>
+
+        <ScrollViewer Grid.Row="3">
+            <StackPanel>
+
+                <!--Phone-->
+                <StackPanel Margin="0,30,0,0">
+                    <TextBlock Text="手机" FontSize="22" Margin="0,-7,0,-3"/>
+                    <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                        <TextBox x:Name="TextBox_Phone"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
+                                 Text="13000000000"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入手机" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
+										Visibility="{Binding Text,ElementName=TextBox_Phone, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!--QQ-->
+                <StackPanel Margin="0,30,0,0">
+                    <TextBlock Text="QQ" FontSize="22" Margin="0,-7,0,-3"/>
+                    <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                        <TextBox x:Name="TextBox_QQ"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入QQ" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
+										Visibility="{Binding Text,ElementName=TextBox_QQ, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!--Email-->
+                <StackPanel Margin="0,30,0,0">
+                    <TextBlock Text="电子邮箱" FontSize="22" Margin="0,-7,0,-3"/>
+                    <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                        <TextBox x:Name="TextBox_Email"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入电子邮箱" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
+										Visibility="{Binding Text,ElementName=TextBox_Email, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                    </Grid>
+                </StackPanel>
+
+                <!--Sina Micro Blog-->
+                <StackPanel Margin="0,30,0,0">
+                    <TextBlock Text="新浪微博" FontSize="22" Margin="0,-7,0,-3"/>
+                    <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                        <TextBox x:Name="TextBox_SinaMicroBlog"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入新浪微博" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
+										Visibility="{Binding Text,ElementName=TextBox_SinaMicroBlog, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                    </Grid>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.save.rest.png" Text="保存"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>
