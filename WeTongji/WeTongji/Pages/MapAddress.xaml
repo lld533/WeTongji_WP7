@@ -14,6 +14,8 @@
     xmlns:MSPCMCore="clr-namespace:Microsoft.Phone.Controls.Maps.Core;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:NokiaMapsSDK="clr-namespace:WeTongji.Extensions.NokiaMapsSDK"
     xmlns:GoogleMapsSDK="clr-namespace:WeTongji.Extensions.GoogleMapsSDK"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -21,53 +23,277 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
     <!---->
+    
+    <phone:PhoneApplicationPage.Resources>
+        <!--Style of the Button that gives the direction-->
+    <Style x:Key="IntelligentCurrentPlaceFinder" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill)" Storyboard.TargetName="ellipse">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <SolidColorBrush Color="Gray"/>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="path">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver"/>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="mousedown_ellipse">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:1.2">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="mousedown_ellipse">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:2.4" Value="3">
+                                                <EasingDoubleKeyFrame.EasingFunction>
+                                                    <SineEase EasingMode="EaseOut"/>
+                                                </EasingDoubleKeyFrame.EasingFunction>
+                                            </EasingDoubleKeyFrame>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="mousedown_ellipse">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:2.4" Value="3">
+                                                <EasingDoubleKeyFrame.EasingFunction>
+                                                    <SineEase EasingMode="EaseOut"/>
+                                                </EasingDoubleKeyFrame.EasingFunction>
+                                            </EasingDoubleKeyFrame>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="mousedown_ellipse">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1">
+                                                <EasingDoubleKeyFrame.EasingFunction>
+                                                    <SineEase EasingMode="EaseOut"/>
+                                                </EasingDoubleKeyFrame.EasingFunction>
+                                            </EasingDoubleKeyFrame>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:2.4" Value="0">
+                                                <EasingDoubleKeyFrame.EasingFunction>
+                                                    <SineEase EasingMode="EaseOut"/>
+                                                </EasingDoubleKeyFrame.EasingFunction>
+                                            </EasingDoubleKeyFrame>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.StrokeThickness)" Storyboard.TargetName="mousedown_ellipse">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="3"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:2.4" Value="2">
+                                                <EasingDoubleKeyFrame.EasingFunction>
+                                                    <QuarticEase EasingMode="EaseOut"/>
+                                                </EasingDoubleKeyFrame.EasingFunction>
+                                            </EasingDoubleKeyFrame>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Focused"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Ellipse x:Name="mousedown_ellipse" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed" Stroke="#EFFFFFFF" StrokeThickness="3">
+                            <Ellipse.RenderTransform>
+                                <CompositeTransform/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Grid x:Name="basic_elements">
+                            <Grid.Resources>
+                                <Storyboard x:Name="PointDirection">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="path">
+                                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:1" Value="180">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <SineEase EasingMode="EaseOut"/>
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:2" Value="180"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
+                                        <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="path">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:4" Value="19"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="10"/>
+                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="19"/>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </Grid.Resources>
+                            <Ellipse Stroke="White" StrokeThickness="2"/>
+                            <Ellipse Stroke="#E5000000" StrokeThickness="0.3"/>
+                            <Ellipse Fill="#E5000000" Height="44" Width="44"/>
+                            <Path x:Name="path" Width="8" VerticalAlignment="Bottom" UseLayoutRounding="False" Stretch="Fill" RenderTransformOrigin="0.5,1" Margin="0,0,0,24" Height="19" Fill="White" Data="M0,1 L1,1 L0.5,0 z" Opacity="0">
+                                <Path.RenderTransform>
+                                    <CompositeTransform/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <Ellipse x:Name="ellipse" Width="25" StrokeThickness="1.5" Stroke="White" Height="25" Fill="Green"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="IconPushpin" TargetType="BingMap:Pushpin">
+        <Image x:Name="image"  Stretch="None" Source="http://download.vcdn.nokia.com/p/d/places2/icons/categories/06.icon">
+            <Image.Resources>
+                <Storyboard x:Key="Open">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="88"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+
+                <Storyboard x:Key="Close">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="88">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <QuadraticEase EasingMode="EaseIn"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </Image.Resources>
+            <Image.Projection>
+                <PlaneProjection CenterOfRotationY="1" CenterOfRotationX="0.5"/>
+            </Image.Projection>
+        </Image>
+    </ControlTemplate>
+
+    <Converter:TurnOverNumberConverter x:Key="TurnOverNumberConverter"/>
+
+    <ControlTemplate x:Key="BillboardPushpin" TargetType="BingMap:Pushpin">
+        <Popup Name="popup" Opened="BillboardPopup_Opened">
+            <Popup.RenderTransform>
+                <CompositeTransform TranslateX="-55"/>
+            </Popup.RenderTransform>
+            <Popup.Resources>
+                <Storyboard x:Key="Open">
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Popup.IsOpen)" Storyboard.TargetName="popup">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <System:Boolean>True</System:Boolean>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="ShadowedBillboard">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="87"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+
+                <Storyboard x:Key="Close">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="ShadowedBillboard">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="87">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <QuadraticEase EasingMode="EaseIn"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Popup.IsOpen)" Storyboard.TargetName="popup">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0.4">
+                            <DiscreteObjectKeyFrame.Value>
+                                <System:Boolean>False</System:Boolean>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </Popup.Resources>
+            <Grid Name="ShadowedBillboard">
+                <Grid.Projection>
+                    <PlaneProjection CenterOfRotationY="1" CenterOfRotationX="0.5"/>
+                </Grid.Projection>
+                <StackPanel x:Name="billboard" VerticalAlignment="Bottom">
+                    <Border Canvas.ZIndex="1" Width="160" Margin="0,0,0,-1" Background="Black" BorderThickness="1,1,1,0" BorderBrush="White">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="TextBlock_Address" TextWrapping="Wrap" FontSize="15"
+											            Text="上海市杨浦区赤峰路35号" />
+                            <TextBlock x:Name="TextBlock_Distance" Grid.Row="1" TextAlignment="Right" FontSize="12" Foreground="Gray"
+											            Text="~11 min"/>
+                        </Grid>
+                    </Border>
+                    <Path Width="160" Stroke="White" Stretch="Fill" Margin="0,0,0,-19" Height="20" Fill="Black" Data="M0,0 L0,0.5 L0.435,0.5 L0.5,1 L0.565,0.5 L1,0.5 L1,0 z"/>
+                    <Ellipse x:Name="shadow" Width="18" RenderTransformOrigin="0.5,0.5" Margin="0,14,0,0" Height="9" Fill="#4B000000">
+                        <Ellipse.RenderTransform>
+                            <CompositeTransform/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                </StackPanel>
+            </Grid>
+        </Popup>
+    </ControlTemplate>
+    </phone:PhoneApplicationPage.Resources>
+
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid>
 
-        <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="WeTongji" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock Text="查看地址DEMO" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
+        <!--Map-->
+        <BingMap:Map x:Name="MyMap" CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
+                     CopyrightVisibility="Collapsed" LogoVisibility="Collapsed" ScaleVisibility="Collapsed" ZoomLevel="18">
+            <BingMap:Map.Mode>
+                <MSPCMCore:MercatorMode/>
+            </BingMap:Map.Mode>
 
-        <!--ContentPanel - place additional content here-->
-        <Grid Grid.Row="1" Margin="12,0,12,0">
-            <!--<BingMap:Map CredentialsProvider="AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P" x:Name="MyBingMap"/>-->
-            <!---->
+            <BingMap:MapTileLayer>
+                <BingMap:MapTileLayer.TileSources>
+                    <!--<NokiaMapsSDK:NokiaMapsTile TileTypes="Street"/>-->
+                    <GoogleMapsSDK:GoogleMapsRoadTileSource/>
+                </BingMap:MapTileLayer.TileSources>
+            </BingMap:MapTileLayer>
+
+            <BingMap:MapLayer>
+                <BingMap:Pushpin x:Name="MyPushpin" Template="{StaticResource IconPushpin}"/>
+                <BingMap:Pushpin x:Name="MyBillboardPushpin" Template="{StaticResource BillboardPushpin}"/>
+            </BingMap:MapLayer>
+        </BingMap:Map>
+
+        <!--Direction Button-->
+        <Button Content="Button" HorizontalAlignment="Left" Height="48" Margin="20,0,0,30" Style="{StaticResource IntelligentCurrentPlaceFinder}" VerticalAlignment="Bottom" Width="48"/>
+
+        <!--<BingMap:Map CredentialsProvider="AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P" x:Name="MyBingMap"/>-->
+        <!---->
             
-            <controls:Pivot>
-                <controls:PivotItem Header="Static Map">
+            <!--<controls:Pivot>-->
+        <!--<controls:PivotItem Header="Static Map">
                     <StaticMapServiceProvider:StaticMap x:Name="MyMap"  Provider="Google" ManipulationCompleted="StaticMap_ManipulationCompleted_1">
                         <StaticMapServiceProvider:StaticMap.MapCenter >
                             <geo:GeoCoordinate Latitude="31.278933472931385" Longitude="121.50434363633394"/>
                         </StaticMapServiceProvider:StaticMap.MapCenter>
                     </StaticMapServiceProvider:StaticMap>
-                </controls:PivotItem>
-                
-                            
-                <controls:PivotItem Header="Nokia Map">
-                    <BingMap:Map x:Name="MyNokiaMap"  CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
-                                CopyrightVisibility="Collapsed" LogoVisibility="Collapsed" ScaleVisibility="Visible">
-                        <BingMap:Map.Mode>
-                            <MSPCMCore:MercatorMode/>
-                        </BingMap:Map.Mode>
-                    
-                        <BingMap:MapTileLayer Margin="0,0,0,32" Height="647" Width="475">
-                            <BingMap:MapTileLayer.TileSources>
-                                <NokiaMapsSDK:NokiaMapsTile TileTypes="Street"/>                        
-                            </BingMap:MapTileLayer.TileSources>
-                        </BingMap:MapTileLayer>
-                        
-                        <BingMap:MapLayer x:Name="NokiaMap_PushPinLayer"/>
-                    </BingMap:Map>
-                </controls:PivotItem>
-       
-                <controls:PivotItem Header="Google Map">
+                </controls:PivotItem>-->
+
+        <!--<controls:PivotItem Header="Google Map">
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                         <StackPanel>                            
                             <BingMap:Map x:Name="MyGoogleMap"  CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
@@ -76,15 +302,19 @@
                                     <MSPCMCore:MercatorMode/>
                                 </BingMap:Map.Mode>
                     
-                                <BingMap:MapTileLayer Margin="0,0,0,32" Height="647" Width="475">
+                                <BingMap:MapTileLayer Margin="0,0,0,32">
                                     <BingMap:MapTileLayer.TileSources>
                                         <GoogleMapsSDK:GoogleMapsRoadTileSource/>                       
                                     </BingMap:MapTileLayer.TileSources>
                                 </BingMap:MapTileLayer>
                         
-                                <BingMap:MapLayer x:Name="GoogleMap_PushPinLayer"/>
+                                <BingMap:MapLayer x:Name="GoogleMap_PushPinLayer">
+                                    <BingMap:Pushpin x:Name="GoogleMap_Pushpin" Template="{StaticResource customPushpin}"/>
+                                </BingMap:MapLayer>
                             </BingMap:Map>
-                            <Grid>
+                            
+                            <StackPanel Visibility="Collapsed">
+                                <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition/>
@@ -110,12 +340,12 @@
                                 <TextBlock Text="经纬度:" Margin="0,0,10,0"/>
                                 <TextBlock x:Name="TextBlock_LatLng" Grid.Column="1" TextWrapping="Wrap"/>
                             </Grid>
+</StackPanel>
                                             
                         </StackPanel>    
                     </ScrollViewer>
                 </controls:PivotItem>
-            </controls:Pivot>
-        </Grid>
+            </controls:Pivot>-->
     </Grid>
 
 </phone:PhoneApplicationPage>

@@ -21,7 +21,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
     public class GoogleMapsRoadTileSource : GoogleMapsTileSourceBase
     {
         public GoogleMapsRoadTileSource()
-            : base("http://mt{0}.google.com/vt/lyrs=m@128&hl=en&x={1}&y={2}&z={3}&s=")
+            : base("http://mt1.google.com/vt/lyrs=m@62&hl=ch&x={1}&y={2}&z={3}")
         { }
     }
 
@@ -35,7 +35,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
     public class GoogleMapsLabelsTileSource : GoogleMapsTileSourceBase
     {
         public GoogleMapsLabelsTileSource()
-            : base("http://mt{0}.google.com/vt/lyrs=h@128&hl=en&x={1}&y={2}&z={3}&s=")
+            : base("http://mt{0}.google.com/vt/lyrs=h@128&hl=ch&x={1}&y={2}&z={3}&s=")
         { }
     }
 }
