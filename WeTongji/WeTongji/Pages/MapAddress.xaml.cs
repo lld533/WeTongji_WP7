@@ -77,7 +77,7 @@ namespace WeTongji
             var p = sender as Popup;
             var tr = p.RenderTransform as CompositeTransform;
             p.Child.UpdateLayout();
-            tr.TranslateY = -(p.Child as UIElement).RenderSize.Height;
+            tr.TranslateY = -(p.Child as UIElement).RenderSize.Height + 4;
         }
 
         public MapAddress()
