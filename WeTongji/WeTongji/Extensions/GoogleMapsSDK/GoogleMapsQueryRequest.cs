@@ -7,7 +7,7 @@ using System.Net;
 
 namespace WeTongji.Extensions.GoogleMapsSDK
 {
-    public class GoogleMapsQueryRequest
+    public class GoogleMapsQueryRequest : IGoogleMapsQueryRequest
     {
         #region [Fields]
 

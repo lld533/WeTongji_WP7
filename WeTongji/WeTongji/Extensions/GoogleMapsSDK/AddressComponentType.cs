@@ -112,6 +112,16 @@ namespace WeTongji.Extensions.GoogleMapsSDK
         /// <summary>
         /// indicates the room of a building address.
         /// </summary>
-        room
+        room,
+
+        /// <summary>
+        /// indicates a bus station
+        /// </summary>
+        bus_station,
+
+        /// <summary>
+        /// Undefined address types
+        /// </summary>
+        other
     }
 }

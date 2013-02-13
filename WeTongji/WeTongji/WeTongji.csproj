@@ -97,7 +97,9 @@
     <Compile Include="Extensions\GoogleMapsSDK\Geometry.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryClient.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryException.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsReverseQueryRequest.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsTile.cs" />
+    <Compile Include="Extensions\GoogleMapsSDK\IGoogleMapsQueryRequest.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\LatLng.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\LocationType.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryRequest.cs" />

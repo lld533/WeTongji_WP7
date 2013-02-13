@@ -17,7 +17,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
         public EventHandler<GoogleMapsQueryFailedEventArgs> ExecuteFailed;
 
-        private void OnExecuteCompleted(GoogleMapsQueryRequest req, GoogleMapsQueryResponse res)
+        private void OnExecuteCompleted(IGoogleMapsQueryRequest req, GoogleMapsQueryResponse res)
         {
             var handler = ExecuteCompleted;
             if (handler != null)
@@ -26,12 +26,12 @@ namespace WeTongji.Extensions.GoogleMapsSDK
             }
         }
 
-        private void OnExecuteFailed(Exception err)
+        private void OnExecuteFailed(IGoogleMapsQueryRequest req, Exception err)
         {
             var handler = ExecuteFailed;
             if (handler != null)
             {
-                handler(new object(), new GoogleMapsQueryFailedEventArgs(err));
+                handler(new object(), new GoogleMapsQueryFailedEventArgs(req, err));
             }
         }
 
@@ -46,7 +46,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
         /// <remarks>
         /// This method uses reflection.
         /// </remarks>
-        public void ExecuteAsync(GoogleMapsQueryRequest req)
+        public void ExecuteAsync(IGoogleMapsQueryRequest req)
         {
             try
             {
@@ -55,9 +55,9 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
                 #region [Make Url]
 
-                var url = "http://maps.googleapis.com/maps/api/geocode/json?";
+                var url = "https://maps.googleapis.com/maps/api/geocode/json?";
 
-                var properties = typeof(GoogleMapsQueryRequest).GetProperties();
+                var properties = req.GetType().GetProperties();
                 String[] strs = new String[properties.Count()];
 
                 int i = 0;
@@ -71,6 +71,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
                 #endregion
 
                 var webRequest = WebRequest.CreateHttp(url);
+                System.Diagnostics.Debug.WriteLine(webRequest.RequestUri.AbsoluteUri);
 
                 webRequest.BeginGetResponse((args) =>
                 {
@@ -81,7 +82,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
                         {
                             var str = sr.ReadToEnd();
                             var res = JsonConvert.DeserializeObject<GoogleMapsQueryResponse>(str);
-                            if (res.status != Status.OK)
+                            if (res.status != Status.OK && res.status!= Status.ZERO_RESULTS)
                             {
                                 throw new GoogleMapsQueryException(res.status);
                             }
@@ -89,15 +90,19 @@ namespace WeTongji.Extensions.GoogleMapsSDK
                         }
                         webResponse.Close();
                     }
+                    catch (Newtonsoft.Json.JsonSerializationException ex)
+                    {
+                        OnExecuteFailed(req, new Exception(webRequest.RequestUri.AbsoluteUri));
+                    }
                     catch (System.Exception ex)
                     {
-                        OnExecuteFailed(ex);
+                        OnExecuteFailed(req, ex);
                     }
                 }, new object());
             }
             catch (System.Exception ex)
             {
-                OnExecuteFailed(ex);
+                OnExecuteFailed(req, ex);
             }
         }
 
@@ -108,10 +113,10 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
     public class GoogleMapsQueryCompletedEventArgs : EventArgs
     {
-        public GoogleMapsQueryRequest Request { get; private set; }
+        public IGoogleMapsQueryRequest Request { get; private set; }
         public GoogleMapsQueryResponse Response { get; private set; }
 
-        public GoogleMapsQueryCompletedEventArgs(GoogleMapsQueryRequest req, GoogleMapsQueryResponse res)
+        public GoogleMapsQueryCompletedEventArgs(IGoogleMapsQueryRequest req, GoogleMapsQueryResponse res)
         {
             Request = req;
             Response = res;
@@ -120,10 +125,12 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
     public class GoogleMapsQueryFailedEventArgs : EventArgs
     {
+        public IGoogleMapsQueryRequest Request { get; set; }
         public Exception Error { get; private set; }
 
-        public GoogleMapsQueryFailedEventArgs(Exception err)
+        public GoogleMapsQueryFailedEventArgs(IGoogleMapsQueryRequest req, Exception err)
         {
+            Request = req;
             Error = err;
         }
     }

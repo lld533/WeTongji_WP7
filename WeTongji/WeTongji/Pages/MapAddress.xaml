@@ -16,6 +16,7 @@
     xmlns:GoogleMapsSDK="clr-namespace:WeTongji.Extensions.GoogleMapsSDK"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:Converter="clr-namespace:WeTongji.Converter"
+    xmlns:bb="clr-namespace:WeTongji"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -151,7 +152,44 @@
     </Style>
 
     <ControlTemplate x:Key="IconPushpin" TargetType="BingMap:Pushpin">
-        <Popup>
+        <Popup x:Name="popup">
+            <Popup.Resources>
+                <Storyboard x:Key="Open">
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Popup.IsOpen)" Storyboard.TargetName="popup">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <System:Boolean>True</System:Boolean>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="88"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+
+                <Storyboard x:Key="Close">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="88">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Popup.IsOpen)" Storyboard.TargetName="popup">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0.2">
+                            <DiscreteObjectKeyFrame.Value>
+                                <System:Boolean>False</System:Boolean>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </Popup.Resources>
 
             <!--
             Adjust the position so that the center point of the shadow
@@ -160,33 +198,10 @@
             <Popup.RenderTransform>
                 <CompositeTransform TranslateX="-23" TranslateY="-61"/>
             </Popup.RenderTransform>
-                    
-            <Image x:Name="image"  Stretch="None" Source="http://download.vcdn.nokia.com/p/d/places2/icons/categories/06.icon">
-                <Image.Resources>
-                    <Storyboard x:Key="Open">
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="88"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
-                                <EasingDoubleKeyFrame.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseIn"/>
-                                </EasingDoubleKeyFrame.EasingFunction>
-                            </EasingDoubleKeyFrame>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
 
-                    <Storyboard x:Key="Close">
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="image">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="88">
-                                <EasingDoubleKeyFrame.EasingFunction>
-                                    <QuadraticEase EasingMode="EaseIn"/>
-                                </EasingDoubleKeyFrame.EasingFunction>
-                            </EasingDoubleKeyFrame>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
-                </Image.Resources>
+            <Image x:Name="image"  Stretch="None" Source="http://download.vcdn.nokia.com/p/d/places2/icons/categories/06.icon" MouseLeftButtonUp="MyIconPushpinImage_MouseLeftButtonUp">
                 <Image.Projection>
-                    <PlaneProjection/>
+                    <PlaneProjection CenterOfRotationY="1" CenterOfRotationX="0.5"/>
                 </Image.Projection>
             </Image>
         </Popup>
@@ -220,7 +235,7 @@
                     </ObjectAnimationUsingKeyFrames>
                     <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="ShadowedBillboard">
                         <EasingDoubleKeyFrame KeyTime="0" Value="87"/>
-                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
                             <EasingDoubleKeyFrame.EasingFunction>
                                 <ExponentialEase EasingMode="EaseIn"/>
                             </EasingDoubleKeyFrame.EasingFunction>
@@ -231,14 +246,14 @@
                 <Storyboard x:Key="Close">
                     <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="ShadowedBillboard">
                         <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                        <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="87">
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="87">
                             <EasingDoubleKeyFrame.EasingFunction>
-                                <QuadraticEase EasingMode="EaseIn"/>
+                                <ExponentialEase EasingMode="EaseIn"/>
                             </EasingDoubleKeyFrame.EasingFunction>
                         </EasingDoubleKeyFrame>
                     </DoubleAnimationUsingKeyFrames>
                     <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Popup.IsOpen)" Storyboard.TargetName="popup">
-                        <DiscreteObjectKeyFrame KeyTime="0:0:0.4">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0.2">
                             <DiscreteObjectKeyFrame.Value>
                                 <System:Boolean>False</System:Boolean>
                             </DiscreteObjectKeyFrame.Value>
@@ -252,16 +267,12 @@
                 </Grid.Projection>
                 <StackPanel x:Name="billboard" VerticalAlignment="Bottom">
                     <Border Canvas.ZIndex="1" Width="160" Margin="0,0,0,-1" Background="Black" BorderThickness="1,1,1,0" BorderBrush="White">
-                        <Grid Margin="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <StackPanel Margin="10">
                             <TextBlock x:Name="TextBlock_Address" TextWrapping="Wrap" FontSize="15"
-											            Text="上海市杨浦区赤峰路35号" />
-                            <TextBlock x:Name="TextBlock_Distance" Grid.Row="1" TextAlignment="Right" FontSize="12" Foreground="Gray"
-											            Text="~11 min"/>
-                        </Grid>
+											            Text="{Binding Address}" />
+                            <TextBlock x:Name="TextBlock_Distance" TextAlignment="Right" FontSize="12" Foreground="Gray"
+											            Text="{Binding Distance}"/>
+                        </StackPanel>
                     </Border>
                     <Path Width="160" Stroke="White" Stretch="Fill" Margin="0,0,0,-19" Height="20" Fill="Black" Data="M0,0 L0,0.5 L0.435,0.5 L0.5,1 L0.565,0.5 L1,0.5 L1,0 z"/>
                     <Ellipse x:Name="shadow" Width="18" RenderTransformOrigin="0.5,0.5" Margin="0,12,0,0" Height="12" Fill="#4B000000">
@@ -273,6 +284,22 @@
             </Grid>
         </Popup>
     </ControlTemplate>
+
+    <ControlTemplate x:Key="CurrentPositionPushpin" TargetType="BingMap:Pushpin">
+        <Grid Width="30" Height="30" MouseLeftButtonUp="CurrentPositionPushpin_MouseLeftButtonUp">
+            <Grid.RenderTransform>
+                <CompositeTransform TranslateX="-13" TranslateY="13"/>
+            </Grid.RenderTransform>
+            <Ellipse Fill="Black"/>
+            <Ellipse Fill="White" Margin="2"/>
+            <Ellipse Fill="Green" Margin="4"/>
+        </Grid>
+    </ControlTemplate>
+
+
+    <bb:BillBoardItem x:Key="CurrentPositionBillBoardItem"/>
+    <bb:BillBoardItem x:Key="MyBillBoardItem"/>
+
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
@@ -292,13 +319,17 @@
             </BingMap:MapTileLayer>
 
             <BingMap:MapLayer>
-                <BingMap:Pushpin x:Name="MyPushpin" Template="{StaticResource IconPushpin}"/>
-                <BingMap:Pushpin x:Name="MyBillboardPushpin" Template="{StaticResource BillboardPushpin}"/>
+                <BingMap:Pushpin x:Name="TargetPushpin" Template="{StaticResource IconPushpin}"/>
+                <BingMap:Pushpin x:Name="TargetBillboardPushpin" Template="{StaticResource BillboardPushpin}" DataContext="{StaticResource MyBillBoardItem}"/>
+                <BingMap:Pushpin x:Name="CurrentPositionPushpin" Template="{StaticResource CurrentPositionPushpin}"/>
+                <BingMap:Pushpin x:Name="CurrentBillboardPushpin" Template="{StaticResource BillboardPushpin}" DataContext="{StaticResource CurrentPositionBillBoardItem}"/>
             </BingMap:MapLayer>
         </BingMap:Map>
 
         <!--Direction Button-->
-        <Button Content="Button" HorizontalAlignment="Left" Height="48" Margin="20,0,0,30" Style="{StaticResource IntelligentCurrentPlaceFinder}" VerticalAlignment="Bottom" Width="48"/>
+        <Button x:Name="DirectionButton" Content="Button" HorizontalAlignment="Left" Height="48" Margin="20,0,0,30" 
+                Style="{StaticResource IntelligentCurrentPlaceFinder}" VerticalAlignment="Bottom" Width="48"
+                Click="ViewCurrentLocation"/>
 
         <!--<BingMap:Map CredentialsProvider="AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P" x:Name="MyBingMap"/>-->
         <!---->

@@ -45,5 +45,17 @@ namespace WeTongji.Extensions.NokiaMapsSDK
         public String placeId { get; set; }
 
         public RelatedPlaces related { get; set; }
+
+        #region [Display Properties]
+
+        public String DisplayDistance
+        {
+            get
+            {
+            	return String.Format("{0} km", (double)distance / 1000.0F);
+            }
+        }
+
+        #endregion
     }
 }
