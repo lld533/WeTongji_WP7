@@ -5,6 +5,7 @@ namespace WeTongji.Api.Request
 {
     public interface IWTUploadRequest<T> : IWTRequest<T> where T : WeTongji.Api.WTResponse
     {
-        KeyValuePair<String, WeTongji.Api.Util.FileItem> GetFileParameter();
+        System.IO.Stream GetRequestStream();
+        String GetContentType();
     }
 }

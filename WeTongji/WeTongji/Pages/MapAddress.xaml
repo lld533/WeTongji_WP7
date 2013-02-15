@@ -32,6 +32,41 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Grid>
+                        <Grid.Resources>
+
+                            <Storyboard x:Name="RevealPointer">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="path">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="19"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+
+                            <Storyboard x:Name="PointDirection">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="path">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2" Value="180">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <SineEase EasingMode="EaseOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            
+                            <Storyboard x:Name="HidePointer">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2.5" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="path">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="19"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2" Value="19"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2.5" Value="10"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -112,29 +147,6 @@
                             </Ellipse.RenderTransform>
                         </Ellipse>
                         <Grid x:Name="basic_elements">
-                            <Grid.Resources>
-                                <Storyboard x:Name="PointDirection">
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="path">
-                                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:1" Value="180">
-                                            <EasingDoubleKeyFrame.EasingFunction>
-                                                <SineEase EasingMode="EaseOut"/>
-                                            </EasingDoubleKeyFrame.EasingFunction>
-                                        </EasingDoubleKeyFrame>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:2" Value="180"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="path">
-                                        <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="0"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="path">
-                                        <EasingDoubleKeyFrame KeyTime="0:0:4" Value="19"/>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="10"/>
-                                        <EasingDoubleKeyFrame KeyTime="0:0:4.5" Value="19"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </Grid.Resources>
                             <Ellipse Stroke="White" StrokeThickness="2"/>
                             <Ellipse Stroke="#E5000000" StrokeThickness="0.3"/>
                             <Ellipse Fill="#E5000000" Height="44" Width="44"/>
@@ -145,6 +157,7 @@
                             </Path>
                             <Ellipse x:Name="ellipse" Width="25" StrokeThickness="1.5" Stroke="White" Height="25" Fill="Green"/>
                         </Grid>
+                        <Border Name="PlaceHolder" Margin="-10" Background="#00FFFFFF"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -199,7 +212,7 @@
                 <CompositeTransform TranslateX="-23" TranslateY="-61"/>
             </Popup.RenderTransform>
 
-            <Image x:Name="image"  Stretch="None" Source="http://download.vcdn.nokia.com/p/d/places2/icons/categories/06.icon" MouseLeftButtonUp="MyIconPushpinImage_MouseLeftButtonUp">
+            <Image x:Name="image"  Stretch="None" Source="{Binding}"  MouseLeftButtonUp="MyIconPushpinImage_MouseLeftButtonUp">
                 <Image.Projection>
                     <PlaneProjection CenterOfRotationY="1" CenterOfRotationX="0.5"/>
                 </Image.Projection>
@@ -207,7 +220,7 @@
         </Popup>
     </ControlTemplate>
 
-    <Converter:TurnOverNumberConverter x:Key="TurnOverNumberConverter"/>
+    <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
     <ControlTemplate x:Key="BillboardPushpin" TargetType="BingMap:Pushpin">
         <Popup Name="popup" Opened="BillboardPopup_Opened">
@@ -265,6 +278,7 @@
                 <Grid.Projection>
                     <PlaneProjection CenterOfRotationY="1" CenterOfRotationX="0.5"/>
                 </Grid.Projection>
+
                 <StackPanel x:Name="billboard" VerticalAlignment="Bottom">
                     <Border Canvas.ZIndex="1" Width="160" Margin="0,0,0,-1" Background="Black" BorderThickness="1,1,1,0" BorderBrush="White">
                         <StackPanel Margin="10">
@@ -281,23 +295,32 @@
                         </Ellipse.RenderTransform>
                     </Ellipse>
                 </StackPanel>
+
+                <ProgressBar VerticalAlignment="Top" IsIndeterminate="True" IsEnabled="True" Visibility="{Binding IsSyncing, Converter={StaticResource BoolToVisibilityConverter}}"  Foreground="#FF299BD1" 
+                             Style="{StaticResource ProgressBarStyle1}" Margin="-30,5,-30,0"/>
             </Grid>
         </Popup>
     </ControlTemplate>
 
     <ControlTemplate x:Key="CurrentPositionPushpin" TargetType="BingMap:Pushpin">
-        <Grid Width="30" Height="30" MouseLeftButtonUp="CurrentPositionPushpin_MouseLeftButtonUp">
-            <Grid.RenderTransform>
-                <CompositeTransform TranslateX="-13" TranslateY="13"/>
-            </Grid.RenderTransform>
-            <Ellipse Fill="Black"/>
-            <Ellipse Fill="White" Margin="2"/>
-            <Ellipse Fill="Green" Margin="4"/>
-        </Grid>
+        <Border Width="100" Height="100" MouseLeftButtonUp="CurrentPositionPushpin_MouseLeftButtonUp">
+            <Border.RenderTransform>
+                <CompositeTransform TranslateX="-48" TranslateY="48"/>
+            </Border.RenderTransform>
+            <Grid Margin="35">
+                
+                <!--An invisible ellipse used to enlarge touchable place-->
+                <Ellipse Fill="#00000000" Margin="-35"/>
+                
+                <Ellipse Fill="Black"/>
+                <Ellipse Fill="White" Margin="2"/>
+                <Ellipse Fill="Green" Margin="4"/>
+            </Grid>
+        </Border>
     </ControlTemplate>
 
 
-    <bb:BillBoardItem x:Key="CurrentPositionBillBoardItem"/>
+    <bb:BillBoardItem x:Key="CurrentPositionBillBoardItem" PropertyChanged="CurrentPositionBillBoardItem_PropertyChanged"/>
     <bb:BillBoardItem x:Key="MyBillBoardItem"/>
 
     </phone:PhoneApplicationPage.Resources>
@@ -330,72 +353,6 @@
         <Button x:Name="DirectionButton" Content="Button" HorizontalAlignment="Left" Height="48" Margin="20,0,0,30" 
                 Style="{StaticResource IntelligentCurrentPlaceFinder}" VerticalAlignment="Bottom" Width="48"
                 Click="ViewCurrentLocation"/>
-
-        <!--<BingMap:Map CredentialsProvider="AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P" x:Name="MyBingMap"/>-->
-        <!---->
-            
-            <!--<controls:Pivot>-->
-        <!--<controls:PivotItem Header="Static Map">
-                    <StaticMapServiceProvider:StaticMap x:Name="MyMap"  Provider="Google" ManipulationCompleted="StaticMap_ManipulationCompleted_1">
-                        <StaticMapServiceProvider:StaticMap.MapCenter >
-                            <geo:GeoCoordinate Latitude="31.278933472931385" Longitude="121.50434363633394"/>
-                        </StaticMapServiceProvider:StaticMap.MapCenter>
-                    </StaticMapServiceProvider:StaticMap>
-                </controls:PivotItem>-->
-
-        <!--<controls:PivotItem Header="Google Map">
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                        <StackPanel>                            
-                            <BingMap:Map x:Name="MyGoogleMap"  CredentialsProvider="Ap_TDyefYA12RyiGzg2XQdbUxchZNo_IhE_aY-wNNpjQKuCFFGNPMEDhdNevQx7r" 
-                                    CopyrightVisibility="Collapsed" LogoVisibility="Collapsed" ScaleVisibility="Visible">
-                                <BingMap:Map.Mode>
-                                    <MSPCMCore:MercatorMode/>
-                                </BingMap:Map.Mode>
-                    
-                                <BingMap:MapTileLayer Margin="0,0,0,32">
-                                    <BingMap:MapTileLayer.TileSources>
-                                        <GoogleMapsSDK:GoogleMapsRoadTileSource/>                       
-                                    </BingMap:MapTileLayer.TileSources>
-                                </BingMap:MapTileLayer>
-                        
-                                <BingMap:MapLayer x:Name="GoogleMap_PushPinLayer">
-                                    <BingMap:Pushpin x:Name="GoogleMap_Pushpin" Template="{StaticResource customPushpin}"/>
-                                </BingMap:MapLayer>
-                            </BingMap:Map>
-                            
-                            <StackPanel Visibility="Collapsed">
-                                <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="地址：" Margin="0,0,10,0"/>
-                                <TextBlock x:Name="TextBlock_Address" Grid.Column="1" TextWrapping="Wrap"/>
-                            </Grid>
-                                                
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="类型：" Margin="0,0,10,0"/>
-                                <TextBlock x:Name="TextBlock_AddressType" Grid.Column="1" TextWrapping="Wrap"/>
-                            </Grid>
-                        
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="经纬度:" Margin="0,0,10,0"/>
-                                <TextBlock x:Name="TextBlock_LatLng" Grid.Column="1" TextWrapping="Wrap"/>
-                            </Grid>
-</StackPanel>
-                                            
-                        </StackPanel>    
-                    </ScrollViewer>
-                </controls:PivotItem>
-            </controls:Pivot>-->
     </Grid>
 
 </phone:PhoneApplicationPage>

@@ -11,9 +11,9 @@ using System.Windows.Shapes;
 
 namespace WeTongji.Api
 {
-    public abstract class WTResponse
+    public class WTResponse
     {
-        protected WTResponse() { }
+        public WTResponse() { }
 
         public object Data { get; set; }
     }

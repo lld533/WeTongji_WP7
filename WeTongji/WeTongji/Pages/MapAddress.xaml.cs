@@ -34,8 +34,10 @@ namespace WeTongji
         static GeoCoordinate CurrentLocation = new GeoCoordinate();
         static GeoCoordinateWatcher GCW = new GeoCoordinateWatcher();
 
+        private Boolean isCoreQueryExecuted = false;
+        private Boolean isCurrentLocationQueryExecuted = false;
         private String queryString = String.Empty;
-        private DispatcherTimer reverseQueryDispatcherTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(5) };
+        private DispatcherTimer reverseQueryDispatcherTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(20) };
 
         #endregion
 
@@ -46,6 +48,7 @@ namespace WeTongji
 
         #endregion
 
+        #region [Protected Functions]
         /// <remarks>
         /// [Query] /Pages/MapAddress.xaml?q=[%s]
         /// </remarks>
@@ -54,6 +57,7 @@ namespace WeTongji
             base.OnNavigatedTo(e);
 
             GCW.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(CurrentPositionChanged);
+            GCW.StatusChanged += new EventHandler<GeoPositionStatusChangedEventArgs>(GeoPositionStatusChanged);
             GCW.Start();
 
             var uri = e.Uri.ToString();
@@ -72,7 +76,47 @@ namespace WeTongji
             reverseQueryDispatcherTimer.Tick -= ReverseQueryTick;
             reverseQueryDispatcherTimer.Stop();
         }
+        #endregion
 
+        #region [Construction]
+
+        public MapAddress()
+        {
+            InitializeComponent();
+
+            #region [Loaded]
+            this.Loaded += (o, e) =>
+                        {
+                            {
+                                var popup = VisualTreeHelper.GetChild(TargetBillboardPushpin, 0) as Popup;
+                                popup.Opened += (obj, args) =>
+                                {
+                                    (popup.Child as UIElement).MouseLeftButtonUp += TargetBillboard_MouseLeftButtonUp;
+                                };
+                            }
+
+                            {
+                                var popup = VisualTreeHelper.GetChild(CurrentBillboardPushpin, 0) as Popup;
+                                popup.Opened += (obj, args) =>
+                                {
+                                    (popup.Child as UIElement).MouseLeftButtonUp += CurrentBillboard_MouseLeftButtonUp;
+                                };
+                            }
+
+                            {
+                                MyMap.ViewChangeEnd += MyMap_ViewChangeEnd;
+                            }
+                        };
+            #endregion
+        }
+        #endregion
+
+        #region [Event handlers]
+        /// <summary>
+        /// Update current icon when current position is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="arg"></param>
         private void CurrentPositionChanged(Object sender, GeoPositionChangedEventArgs<GeoCoordinate> arg)
         {
             #region [Update pushpin in the viewport]
@@ -85,6 +129,19 @@ namespace WeTongji
 
             if (!reverseQueryDispatcherTimer.IsEnabled)
                 reverseQueryDispatcherTimer.Start();
+        }
+
+        private void GeoPositionStatusChanged(object sender, GeoPositionStatusChangedEventArgs e)
+        {
+            if (e.Status == GeoPositionStatus.Ready)
+            {
+                DirectionButton.IsEnabled = true;
+                ExecuteCoreQuery();
+            }
+            else
+            {
+                DirectionButton.IsEnabled = false;
+            }
         }
 
         private void BillboardPopup_Opened(object sender, EventArgs e)
@@ -138,155 +195,27 @@ namespace WeTongji
             (popup.Resources["Open"] as Storyboard).Begin();
         }
 
-        public MapAddress()
-        {
-            InitializeComponent();
-
-            this.Loaded += (o, e) =>
-            {
-                {
-                    var popup = VisualTreeHelper.GetChild(TargetBillboardPushpin, 0) as Popup;
-                    popup.Opened += (obj, args) =>
-                    {
-                        (popup.Child as UIElement).MouseLeftButtonUp += TargetBillboard_MouseLeftButtonUp;
-                    };
-                }
-
-                {
-                    var popup = VisualTreeHelper.GetChild(CurrentBillboardPushpin, 0) as Popup;
-                    popup.Opened += (obj, args) =>
-                    {
-                        (popup.Child as UIElement).MouseLeftButtonUp += CurrentBillboard_MouseLeftButtonUp;
-                    };
-                }
-
-                GoogleMapsQueryRequest gRequest = new GoogleMapsQueryRequest(queryString, CurrentLocation, true);
-                GoogleMapsQueryClient gClient = new GoogleMapsQueryClient();
-
-                gClient.ExecuteCompleted += (obj, args) =>
-                {
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        DirectionButton.IsEnabled = true;
-
-                        var result = args.Response.results.FirstOrDefault();
-                        if (result != null)
-                        {
-                            var coordinate = new GeoCoordinate()
-                            {
-                                Latitude = result.geometry.location.lat,
-                                Longitude = result.geometry.location.lng
-                            };
-
-                            //...Set view
-                            MyMap.SetView(coordinate, 18);
-
-                            //...Set Pushpin
-                            TargetPushpin.Location = coordinate;
-                            TargetBillboardPushpin.Location = coordinate;
-                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                            bbi.Address = result.formatted_address;
-
-                            //TextBlock_Address.Text = result.formatted_address;
-                            //String[] strTypes = new String[result.types.Count()];
-                            //int i = 0;
-                            //foreach (var t in result.types)
-                            //{
-                            //    strTypes[i++] = t.ToString();
-                            //}
-                            //TextBlock_AddressType.Text = strTypes.Aggregate((a, b) => a + " " + b);
-                            //TextBlock_LatLng.Text = String.Format("{0},{1}", result.geometry.location.lat, result.geometry.location.lng);
-                        }
-                    });
-                };
-
-                                
-                gClient.ExecuteFailed += (obj, args) =>    
-                {
-                    this.Dispatcher.BeginInvoke(() =>
-                        {
-                            DirectionButton.IsEnabled = false;
-                            MessageBox.Show(args.Error.GetType() + " " + args.Error.Message);
-                        });                        
-                };
-
-                gClient.ExecuteAsync(gRequest);
-
-                QueryRequest request = new QueryRequest()
-                    {
-                        AppId = AppId,
-                        Token = Token,
-                        Query = queryString,
-                        CurrentPosition = new GeoPoint() { Latitude = CurrentLocation.Latitude, Longitude = CurrentLocation.Longitude }
-                    };
-
-                NokiaMapQueryClient client = new NokiaMapQueryClient();
-                client.ExecuteCompleted += (obj, args) =>
-                {
-                    //Debug.WriteLine("Success!");
-                    var first_result = args.Response.results.items.FirstOrDefault();
-                    if (first_result != null)
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            var coordinate = new GeoCoordinate()
-                            {
-                                Latitude = first_result.GeoPosition.Latitude,
-                                Longitude = first_result.GeoPosition.Longitude
-                            };
-
-                            //...Set view
-                            MyMap.SetView(coordinate, 18);
-
-                            //...Set pushpin
-                            TargetPushpin.Location = coordinate;
-                            TargetBillboardPushpin.Location = coordinate;
-                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                            bbi.Distance = first_result.DisplayDistance;
-
-
-
-                            int tickCount = 0;
-                            DispatcherTimer dt = new DispatcherTimer();
-                            dt.Interval = TimeSpan.FromSeconds(1);
-                            dt.Tick += (TickObj, TickArg) =>
-                            {
-#if DEBUG
-                                if ((++tickCount) == 25)
-#else
-                                if ((++tickCount) == 8)
-#endif
-                                {
-                                    dt.Stop();
-
-                                    //...Open TargetPushpin
-                                    var p = VisualTreeHelper.GetChild(TargetPushpin, 0) as Popup;
-                                    (p.Resources["Open"] as Storyboard).Begin();
-                                }
-                            };
-                            dt.Start();
-                        });
-                    }
-                };
-
-                client.ExecuteFailed += (obj,args)=>
-                {
-                    var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                    bbi.Distance = "? KM";
-                };
-
-                client.ExecuteAsync(request, new object());
-            };
-        }
-        
         private void ReverseQueryTick(Object sender, EventArgs e)
         {
-            if (CurrentBillboardPushpin.Visibility == Visibility.Visible)
+            var popup = VisualTreeHelper.GetChild(CurrentBillboardPushpin, 0) as Popup;
+
+            Debug.WriteLine("Reverse query tick!" + DateTime.Now);
+
+            Action coreAction = () =>
             {
                 #region [Update Current Address]
                 {
                     GoogleMapsReverseQueryRequest req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude);
                     GoogleMapsQueryClient client = new GoogleMapsQueryClient();
+
+                    client.ExecuteStarted += (o, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = true;
+                        });
+                    };
                     client.ExecuteCompleted += (o, args) =>
                     {
                         this.Dispatcher.BeginInvoke(() =>
@@ -295,6 +224,7 @@ namespace WeTongji
 
                             var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
                             bbi.Address = args.Response.results.First().formatted_address;
+                            bbi.IsSyncing = false;
                         });
                     };
                     client.ExecuteFailed += (o, args) =>
@@ -302,7 +232,8 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             DirectionButton.IsEnabled = false;
-                            MessageBox.Show(args.Error.GetType()+ " " + args.Error.Message);
+                            var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = false;
                         });
                     };
 
@@ -321,6 +252,16 @@ namespace WeTongji
                     };
 
                     NokiaMapQueryClient client = new NokiaMapQueryClient();
+
+                    client.ExecuteStarted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = true;
+                        });
+                    };
+
                     client.ExecuteCompleted += (obj, args) =>
                     {
                         var first_result = args.Response.results.items.FirstOrDefault();
@@ -330,6 +271,7 @@ namespace WeTongji
                             {
                                 var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
                                 bbi.Distance = first_result.DisplayDistance;
+                                bbi.IsSyncing = false;
                             });
                         }
                     };
@@ -339,13 +281,26 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                                bbi.Distance = "? KM";
+                            bbi.Distance = "? KM";
+                            bbi.IsSyncing = false;
                         });
                     };
 
                     client.ExecuteAsync(request, new object());
                 }
                 #endregion
+            };
+
+            if (popup.IsOpen)
+            {
+                coreAction.Invoke();
+            }
+            else
+            {
+                if (String.IsNullOrEmpty((CurrentBillboardPushpin.DataContext as BillBoardItem).Address))
+                {
+                    coreAction.Invoke();
+                }
             }
         }
 
@@ -373,12 +328,424 @@ namespace WeTongji
             var popup_bb = VisualTreeHelper.GetChild(TargetBillboardPushpin, 0) as Popup;
             (popup_bb.Resources["Open"] as Storyboard).Begin();
         }
+
+        /// <summary>
+        /// Set current address in advance and update layout to ensure
+        /// that current billboard locates in the center the green icon
+        /// if its ancestor popup is open.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// This function relies on this.resources["BillboardPushpin"], which is defined in MapAdrress.xaml.cs
+        /// </remarks>
+        private void CurrentPositionBillBoardItem_PropertyChanged(Object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Address")
+            {
+                var popup = VisualTreeHelper.GetChild(CurrentBillboardPushpin, 0) as Popup;
+                var obj = popup.Child as DependencyObject;
+                for (int i = 0; i < 4; ++i)
+                    obj = VisualTreeHelper.GetChild(obj, 0);
+                var txtblk = obj as TextBlock;
+                txtblk.Text = (CurrentBillboardPushpin.DataContext as BillBoardItem).Address;
+
+                if (popup.IsOpen)
+                {
+                    var tr = popup.RenderTransform as CompositeTransform;
+                    txtblk.UpdateLayout();
+
+                    tr.TranslateY = -(popup.Child as UIElement).RenderSize.Height + 4;
+                }
+            }
+        }
+
+        private void MyMap_ViewChangeEnd(Object sender, MapEventArgs e)
+        {
+            if (!e.Handled && DirectionButton.IsEnabled)
+            {
+                //var maplayer = VisualTreeHelper.GetParent(DirectionButton) as MapLayer;
+                var pnt = CurrentPositionPushpin.TransformToVisual(null).Transform(new Point());
+                if (pnt.X > -CurrentPositionPushpin.ActualWidth && pnt.X < this.ActualWidth
+                    && pnt.Y > -CurrentPositionPushpin.ActualHeight && pnt.Y < this.ActualHeight)
+                    return;
+
+                //...Get storyboard
+                var obj = VisualTreeHelper.GetChild(DirectionButton, 0);
+
+                var CoreStoryboard = (obj as FrameworkElement).Resources["PointDirection"] as Storyboard;
+                var RevealStoryboard = (obj as FrameworkElement).Resources["RevealPointer"] as Storyboard;
+
+
+                //...Get Map Pointer
+                obj = VisualTreeHelper.GetChild(obj, 1);
+                var pointer = VisualTreeHelper.GetChild(obj, 3) as UIElement;
+                var center = MyMap.TargetCenter;
+
+                //...Normalize rotation
+                if ((pointer.RenderTransform as CompositeTransform).Rotation > 180)
+                {
+                    (pointer.RenderTransform as CompositeTransform).Rotation -= 360;
+                }
+                else if ((pointer.RenderTransform as CompositeTransform).Rotation < -180)
+                {
+                    (pointer.RenderTransform as CompositeTransform).Rotation += 360;
+                }
+
+                const double tol = 0.001F;
+                double theta = 0.0F;
+
+                CoreStoryboard.Completed -= HideMapPointer;
+                CoreStoryboard.Pause();
+
+                //...Raw target rotation angle
+                if (Math.Abs(CurrentLocation.Latitude - center.Latitude) < tol)
+                    if (center.Longitude < CurrentLocation.Longitude)
+                        theta = 0;
+                    else
+                    {
+                        theta = (pointer.RenderTransform as CompositeTransform).Rotation < 0 ? -180 : 180;
+                    }
+                else
+                {
+                    double delta_lat = CurrentLocation.Latitude - center.Latitude;
+                    double delta_lng = CurrentLocation.Longitude - center.Longitude;
+
+
+                    if (delta_lng < 0)
+                    {
+                        if (delta_lat > 0)
+                        {
+                            theta = Math.Atan(delta_lng / delta_lat) / Math.PI * 180;
+                        }
+                        else
+                        {
+                            theta = Math.Atan(delta_lng / delta_lat) / Math.PI * 180 - 180;
+                        }
+                    }
+                    else
+                    {
+                        if (delta_lat > 0)
+                        {
+                            theta = Math.Atan(delta_lng / delta_lat) / Math.PI * 180;
+                        }
+                        else
+                        {
+                            theta = -Math.Atan(delta_lat / delta_lng) / Math.PI * 180 + 90;
+                        }
+                    }
+                }
+
+                //...Make shortest rotation way, clockwise or anti-clockwise.
+                {
+                    var distance = theta - (pointer.RenderTransform as CompositeTransform).Rotation;
+
+                    if (distance > 180)
+                        theta -= 360;
+                    else if (distance < -180)
+                        theta += 360;
+                }
+
+
+                var animation = CoreStoryboard.Children.Single() as DoubleAnimationUsingKeyFrames;
+                animation.KeyFrames[0].Value = (pointer.RenderTransform as CompositeTransform).Rotation;
+                animation.KeyFrames[1].Value = theta;
+
+                CoreStoryboard.Completed += HideMapPointer;
+                RevealStoryboard.Begin();
+                CoreStoryboard.Begin();
+            }
+        }
+
+        private void HideMapPointer(Object sender, EventArgs e)
+        {
+            //...Get storyboard and Map Pointer
+            var obj = VisualTreeHelper.GetChild(DirectionButton, 0);
+
+            var CoreStoryboard = (obj as FrameworkElement).Resources["PointDirection"] as Storyboard;
+            var HideStoryboard = (obj as FrameworkElement).Resources["HidePointer"] as Storyboard;
+
+            //...Get Map Pointer
+            obj = VisualTreeHelper.GetChild(obj, 1);
+            var pointer = VisualTreeHelper.GetChild(obj, 3) as UIElement;
+
+            var tr = pointer.RenderTransform as CompositeTransform;
+            if (tr.Rotation > 180)
+            {
+                tr.Rotation -= 360;
+            }
+            else
+            {
+                if (tr.Rotation < -180)
+                    tr.Rotation += 360;
+            }
+
+            CoreStoryboard.Completed -= HideMapPointer;
+            HideStoryboard.Begin();
+        }
+
+        #endregion
+
+        #region [Private Functions]
+
+        private void SetBestView(GeoCoordinate coord)
+        {
+            MyMap.SetView(new LocationRect(
+                Math.Max(coord.Latitude, CurrentLocation.Latitude),
+                Math.Min(coord.Longitude, CurrentLocation.Longitude),
+                Math.Min(coord.Latitude, CurrentLocation.Latitude),
+                Math.Max(coord.Longitude, CurrentLocation.Longitude)
+                ));
+        }
+
+        private void ExecuteCoreQuery()
+        {
+            #region [Do Core Query]
+            if (!isCoreQueryExecuted)
+            {
+                #region [GeoCode query location by using GoogleMapsSDK]
+
+                GoogleMapsQueryRequest gRequest = new GoogleMapsQueryRequest(queryString, CurrentLocation, true);
+                GoogleMapsQueryClient gClient = new GoogleMapsQueryClient();
+
+                gClient.ExecuteStarted += (obj, args) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                        bbi.IsSyncing = true;
+                    });
+                };
+                gClient.ExecuteCompleted += (obj, args) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        DirectionButton.IsEnabled = true;
+                        isCoreQueryExecuted = true;
+
+                        var result = args.Response.results.FirstOrDefault();
+                        if (result != null)
+                        {
+                            var coordinate = new GeoCoordinate()
+                            {
+                                Latitude = result.geometry.location.lat,
+                                Longitude = result.geometry.location.lng
+                            };
+
+                            //...Try to set view
+                            SetBestView(coordinate);
+
+                            //...Set Pushpin
+                            TargetPushpin.Location = coordinate;
+                            TargetBillboardPushpin.Location = coordinate;
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.Address = result.formatted_address;
+                            bbi.IsSyncing = false;
+
+                            //...Delay a while to open target pushpin
+                            int tickCount = 0;
+                            DispatcherTimer dt = new DispatcherTimer();
+                            dt.Interval = TimeSpan.FromSeconds(1);
+                            dt.Tick += (TickObj, TickArg) =>
+                            {
+                                if ((++tickCount) == 6)
+                                {
+                                    dt.Stop();
+
+                                    //...Open TargetPushpin
+                                    var p = VisualTreeHelper.GetChild(TargetPushpin, 0) as Popup;
+                                    (p.Resources["Open"] as Storyboard).Begin();
+                                }
+                            };
+                            dt.Start();
+                        }
+                    });
+                };
+
+
+                gClient.ExecuteFailed += (obj, args) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        DirectionButton.IsEnabled = false;
+                        var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                        bbi.IsSyncing = false;
+                    });
+                };
+
+                gClient.ExecuteAsync(gRequest);
+
+                #endregion
+
+                #region [Query distance and Image Pushpin icon by using NokiaMapsSDK]
+
+                if (!isCurrentLocationQueryExecuted)
+                {
+                    QueryRequest request = new QueryRequest()
+                                    {
+                                        AppId = AppId,
+                                        Token = Token,
+                                        Query = queryString,
+                                        CurrentPosition = new GeoPoint() { Latitude = CurrentLocation.Latitude, Longitude = CurrentLocation.Longitude }
+                                    };
+
+                    NokiaMapQueryClient client = new NokiaMapQueryClient();
+
+                    client.ExecuteStarted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = true;
+                        });
+                    };
+
+                    client.ExecuteCompleted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                            {
+                                isCurrentLocationQueryExecuted = true;
+                                var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                                bbi.IsSyncing = false;
+
+                                //...Set Distance
+                                var first_result = args.Response.results.items.FirstOrDefault();
+                                if (first_result != null)
+                                {
+                                    bbi.Distance = first_result.DisplayDistance;
+                                }
+                                else
+                                {
+                                    bbi.Distance = "? km";
+                                }
+
+                                //...Set Icon
+                                if (first_result != null && !String.IsNullOrEmpty(first_result.icon))
+                                    TargetPushpin.DataContext = new Uri(first_result.icon);
+                                else
+                                    TargetPushpin.DataContext = new Uri("/icons/DefaultBuildingIcon.png", UriKind.RelativeOrAbsolute);
+                            });
+
+                    };
+
+                    client.ExecuteFailed += (obj, args) =>
+                    {
+                        //...Set Distance
+                        var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                        bbi.Distance = "? km";
+                        bbi.IsSyncing = false;
+
+                        //...Set Icon
+                        TargetPushpin.DataContext = new Uri("/icons/DefaultBuildingIcon.png", UriKind.RelativeOrAbsolute);
+                    };
+
+                    client.ExecuteAsync(request, new object());
+                }
+
+                #endregion
+            }
+            #endregion
+
+            #region [Query current location]
+            {
+                #region [Update Current Address]
+                {
+                    GoogleMapsReverseQueryRequest req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude);
+                    GoogleMapsQueryClient client = new GoogleMapsQueryClient();
+
+                    client.ExecuteStarted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = true;
+                        });
+                    };
+                    client.ExecuteCompleted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            DirectionButton.IsEnabled = true;
+
+                            var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.Address = args.Response.results.First().formatted_address;
+                            bbi.IsSyncing = false;
+                        });
+                    };
+                    client.ExecuteFailed += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            DirectionButton.IsEnabled = false;
+                            var bbi = CurrentBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = false;
+                        });
+                    };
+
+                    client.ExecuteAsync(req);
+                }
+                #endregion
+
+                #region [Update Distance]
+                {
+                    QueryRequest request = new QueryRequest()
+                    {
+                        AppId = AppId,
+                        Token = Token,
+                        Query = queryString,
+                        CurrentPosition = new GeoPoint() { Latitude = CurrentLocation.Latitude, Longitude = CurrentLocation.Longitude }
+                    };
+
+                    NokiaMapQueryClient client = new NokiaMapQueryClient();
+
+                    client.ExecuteStarted += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.IsSyncing = true;
+                        });
+                    };
+
+                    client.ExecuteCompleted += (obj, args) =>
+                    {
+                        var first_result = args.Response.results.items.FirstOrDefault();
+                        if (first_result != null)
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                                bbi.Distance = first_result.DisplayDistance;
+                                bbi.IsSyncing = false;
+                            });
+                        }
+                    };
+
+                    client.ExecuteFailed += (obj, args) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.Distance = "? KM";
+                            bbi.IsSyncing = false;
+                        });
+                    };
+
+                    client.ExecuteAsync(request, new object());
+                }
+                #endregion
+            }
+            #endregion
+        }
+
+        #endregion
     }
 
     public sealed class BillBoardItem : INotifyPropertyChanged
     {
         private String address = String.Empty;
         private String distance = String.Empty;
+        private Boolean isSyncing = false;
 
         public String Address
         {
@@ -404,6 +771,18 @@ namespace WeTongji
                 {
                     distance = value;
                     NotifyChanged("Distance");
+                }
+            }
+        }
+        public Boolean IsSyncing
+        {
+            get { return isSyncing; }
+            set
+            {
+                if (value != isSyncing)
+                {
+                    isSyncing = value;
+                    NotifyChanged("IsSyncing");
                 }
             }
         }

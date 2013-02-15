@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WeTongji.Api.Request
 {
-    public class UserUpdatePasswordRequest<T> : WTRequest<T>, IWTUploadRequest<T> where T:WeTongji.Api.Response.UserUpdatePasswordResponse
+    public class UserUpdatePasswordRequest<T> : WTRequest<T>, IWTUploadRequest<T> where T : WeTongji.Api.Response.UserUpdatePasswordResponse
     {
         #region [Constructor]
 
@@ -52,6 +52,20 @@ namespace WeTongji.Api.Request
                 throw new ArgumentNullException("NewPassword");
 
             //...To do @_@ check length of Old and New Password
+        }
+
+        #endregion
+
+        #region [Implementation]
+
+        public System.IO.Stream GetRequestStream()
+        {
+            return null;
+        }
+
+        public String GetContentType()
+        {
+            return null;
         }
 
         #endregion

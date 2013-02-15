@@ -209,6 +209,137 @@ namespace WeTongji.Api
             #endregion
         }
 
+        public void Post(IWTUploadRequest<T> request, String session, String uid)
+        {
+            #region [Validate Parameters]
+
+            if (request == null)
+                throw new ArgumentNullException("request");
+            if (String.IsNullOrEmpty(session))
+                throw new ArgumentNullException("session");
+            if (String.IsNullOrEmpty(uid))
+                throw new ArgumentNullException("uid");
+
+            #endregion
+
+            #region [Create Dictionary]
+
+            var dict = new Dictionary<String, String>(request.GetParameters());
+            dict[METHOD] = request.GetApiName();
+            dict[DEVICE] = "iphone";
+            dict[VERSION] = "2.0";
+            dict[SESSION] = session;
+            dict[UID] = uid;
+            dict[HASH] = ComputeHash(dict);
+
+            #endregion
+
+            var myWebRequest = HttpWebRequest.CreateHttp(Dictionary2Url(dict));
+
+            myWebRequest.Method = "POST";
+
+            if (!String.IsNullOrEmpty(request.GetContentType()))
+            {
+                myWebRequest.ContentType = request.GetContentType();
+            }
+
+            var req_stream = request.GetRequestStream();
+
+            try
+            {
+                if (req_stream != null)
+                {
+                    myWebRequest.BeginGetRequestStream((args) =>
+                    {
+                        try
+                        {
+                            var requestStream = myWebRequest.EndGetRequestStream(args);
+                            req_stream.Seek(0, SeekOrigin.Begin);
+                            System.IO.StreamReader streamReader = new System.IO.StreamReader(req_stream);
+                            var requestString = streamReader.ReadToEnd();
+                            System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(requestStream);
+                            streamWriter.Write(requestString);
+                            streamWriter.Flush();
+                            requestStream.Close();
+
+                            Debug.WriteLine(myWebRequest.RequestUri.AbsoluteUri);
+
+                            myWebRequest.BeginGetResponse((arg) =>
+                            {
+                                try
+                                {
+                                    var response = myWebRequest.EndGetResponse(arg);
+
+                                    using (var sr = new StreamReader(response.GetResponseStream()))
+                                    {
+                                        var str = sr.ReadToEnd();
+                                        var responseEXT = JsonConvert.DeserializeObject<WTResponseEx<T>>(str);
+
+                                        if (responseEXT.Status.Id != Status.Success)
+                                        {
+                                            throw new WTException(responseEXT.Status);
+                                        }
+                                        else
+                                        {
+                                            OnExecuteCompleted(request, responseEXT.Data);
+                                            return;
+                                        }
+                                    }
+                                }
+                                catch (System.Exception ex)
+                                {
+                                    OnExecuteFailed(request, ex);
+                                }
+
+                            }, new object());
+                        }
+                        catch (System.Exception ex)
+                        {
+                            OnExecuteFailed(request, ex);
+                        }
+
+                    }, new object());
+                }
+                else
+                {
+                    myWebRequest.BeginGetResponse((arg) =>
+                    {
+                        try
+                        {
+                            var response = myWebRequest.EndGetResponse(arg);
+
+                            using (var sr = new StreamReader(response.GetResponseStream()))
+                            {
+                                var str = sr.ReadToEnd();
+                                var responseEXT = JsonConvert.DeserializeObject<WTResponseEx<T>>(str);
+
+                                if (responseEXT.Status.Id != Status.Success)
+                                {
+                                    throw new WTException(responseEXT.Status);
+                                }
+                                else
+                                {
+                                    OnExecuteCompleted(request, responseEXT.Data);
+                                    return;
+                                }
+                            }
+                        }
+                        catch (System.Exception ex)
+                        {
+                            OnExecuteFailed(request, ex);
+                        }
+
+                    }, new object());
+                }
+            }
+            catch (System.Exception ex)
+            {
+                OnExecuteFailed(request, ex);
+            }
+
+
+        }
+
         #endregion
 
         #region [Public Functions]

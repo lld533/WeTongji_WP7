@@ -335,6 +335,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\Temp\header_background.jpg" />
+    <Content Include="icons\DefaultBuildingIcon.png" />
     <Content Include="Images\Common\location_icon.png" />
     <Content Include="Images\Common\time_icon.png" />
     <Content Include="SplashScreenImage.jpg" />

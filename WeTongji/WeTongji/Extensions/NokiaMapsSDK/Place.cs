@@ -52,7 +52,14 @@ namespace WeTongji.Extensions.NokiaMapsSDK
         {
             get
             {
-            	return String.Format("{0} km", (double)distance / 1000.0F);
+                if (distance < 50L)
+                    return String.Format("<50m");
+                else if (distance < 1000L)
+                    return String.Format("{0}m", distance / 10L * 10L);
+                else if (distance > 50000L)
+                    return String.Format(">50km");
+                else
+                    return String.Format("~{0}km", (float)(distance / 100L * 100L) / 1000.0F);
             }
         }
 

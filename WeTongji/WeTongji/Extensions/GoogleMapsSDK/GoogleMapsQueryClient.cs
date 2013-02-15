@@ -17,6 +17,8 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
         public EventHandler<GoogleMapsQueryFailedEventArgs> ExecuteFailed;
 
+        public EventHandler ExecuteStarted;
+
         private void OnExecuteCompleted(IGoogleMapsQueryRequest req, GoogleMapsQueryResponse res)
         {
             var handler = ExecuteCompleted;
@@ -32,6 +34,15 @@ namespace WeTongji.Extensions.GoogleMapsSDK
             if (handler != null)
             {
                 handler(new object(), new GoogleMapsQueryFailedEventArgs(req, err));
+            }
+        }
+
+        private void OnExecuteStarted()
+        {
+            var handler = ExecuteStarted;
+            if (handler != null)
+            {
+                handler(new object(), new EventArgs());
             }
         }
 
@@ -72,6 +83,8 @@ namespace WeTongji.Extensions.GoogleMapsSDK
 
                 var webRequest = WebRequest.CreateHttp(url);
                 System.Diagnostics.Debug.WriteLine(webRequest.RequestUri.AbsoluteUri);
+
+                OnExecuteStarted();
 
                 webRequest.BeginGetResponse((args) =>
                 {

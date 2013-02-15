@@ -12,6 +12,7 @@ using WeTongji.Api;
 using WeTongji.Api.Request;
 using WeTongji.Api.Response;
 using WeTongji.DataBase;
+using WeTongji.Api.Domain;
 
 namespace WeTongji
 {
@@ -24,6 +25,7 @@ namespace WeTongji
 
         private void Test(Object sender, RoutedEventArgs e)
         {
+#if false
             var req = new PeopleGetRequest<PeopleGetResponse>();
 
             var client = new WTDefaultClient<PeopleGetResponse>();
@@ -32,6 +34,55 @@ namespace WeTongji
             client.ExecuteFailed += MyExecuteFailed;
 
             client.Execute(req);
+#endif
+
+            var req = new UserLogOnRequest<UserLogOnResponse>();
+            req.NO = "092983";
+            req.Password = "123456";
+            
+            var client = new WTDefaultClient<UserLogOnResponse>();
+
+            client.ExecuteCompleted += LogOnExecuteCompleted;
+            client.ExecuteFailed += LogOnExecuteFailed;
+
+            client.Execute(req);
+        }
+
+        private String session = String.Empty;
+        private User user = null;
+
+        private void LogOnExecuteCompleted(Object sender, WTExecuteCompletedEventArgs<UserLogOnResponse> e)
+        {
+            session = e.Result.Session;
+            user = e.Result.User;
+
+            UserUpdateRequest<WTResponse> req = new UserUpdateRequest<WTResponse>();
+            req.User = e.Result.User;
+            req.QQ = "1234567890";
+
+            var client = new WTDefaultClient<WTResponse>();
+            
+            client.ExecuteCompleted += UpdateUserCompleted;
+            client.ExecuteFailed += UpdateUserFailed;
+
+            client.Post(req, session, user.UID);
+        }
+
+        private void LogOnExecuteFailed(Object sender, WTExecuteFailedEventArgs<UserLogOnResponse> e)
+        {
+            var err = e.Error;
+            Debug.WriteLine(err);
+        }
+
+        private void UpdateUserCompleted(Object sender, WTExecuteCompletedEventArgs<WTResponse> e)
+        {
+            Debug.WriteLine("update user succeeded!");
+        }
+
+        private void UpdateUserFailed(Object sender, WTExecuteFailedEventArgs<WTResponse> e)
+        {
+            var err = e.Error;
+            Debug.WriteLine(err);
         }
 
         private void ViewDB(Object sender, RoutedEventArgs e)

@@ -8,26 +8,30 @@ namespace WeTongji.Api.Request
     {
         #region [Constructor]
 
-        public UserUpdateAvatar() { }
+        public UserUpdateAvatar()
+        {
+            base.dict["Image"] = String.Empty;
+        }
 
         #endregion
 
         #region [Property]
 
-        public Stream Avatar { get; set; }
+        public String JpegPhotoName { get; set; }
+
+        public Stream JpegPhotoStream { get; set; }
 
         #endregion
 
         #region [Overridden]
 
-        public KeyValuePair<String, WeTongji.Api.Util.FileItem> GetFileParameter()
-        {
-            return new KeyValuePair<String, WeTongji.Api.Util.FileItem>("Image", new Util.FileItem("Avatar.jpg", "Image/jpeg", Avatar));
-        }
-
         public override IDictionary<String, String> GetParameters()
         {
-            return base.dict;
+            Dictionary<String, String> dict = new Dictionary<String, String>(base.dict);
+
+            dict["Image"] = JpegPhotoName;
+
+            return dict;
         }
 
         public override String GetApiName()
@@ -37,10 +41,37 @@ namespace WeTongji.Api.Request
 
         public override void Validate()
         {
-            if (Avatar == null)
+            if (String.IsNullOrEmpty(JpegPhotoName))
             {
-                throw new ArgumentNullException("Avatar");
+                throw new ArgumentNullException("JpegPhotoName");
             }
+
+            var photoName = JpegPhotoName.ToLower();
+            if (!photoName.EndsWith("jpg") && !photoName.EndsWith("jpeg"))
+            {
+                throw new ArgumentOutOfRangeException("JpegPhotoName", "Expect a JPEG file.");
+            }
+
+            if (JpegPhotoStream == null)
+                throw new ArgumentNullException("JpegPhotoStream");
+            if (!(JpegPhotoStream.CanRead && JpegPhotoStream.CanSeek))
+            {
+                throw new ArgumentOutOfRangeException("JpegPhotoStream", "Can not read or seek stream.");
+            }
+        }
+
+        #endregion
+
+        #region [Implementation]
+
+        public System.IO.Stream GetRequestStream()
+        {
+            return JpegPhotoStream;
+        }
+
+        public String GetContentType()
+        {
+            return null;
         }
 
         #endregion

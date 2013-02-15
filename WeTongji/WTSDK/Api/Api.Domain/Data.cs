@@ -76,6 +76,11 @@ namespace WeTongji.Api.Domain
         public String Department { get; set; }
 
         public String Email { get; set; }
+
+        public User Clone()
+        {
+            return this.MemberwiseClone() as User;
+        }
     }
     #endregion
 
@@ -278,7 +283,7 @@ namespace WeTongji.Api.Domain
         public String JobTitle { get; set; }
 
         public String Words { get; set; }
-
+         
         public String NO { get; set; }
 
         public String Avatar { get; set; }

@@ -132,6 +132,8 @@ namespace WeTongji.Extensions.NokiaMapsSDK
 
         public EventHandler<ExecuteFailedEventArgs> ExecuteFailed;
 
+        public EventHandler ExecuteStarted;
+
         private void OnExecuteCompleted(QueryResponse response)
         {
             var handler = ExecuteCompleted;
@@ -147,6 +149,15 @@ namespace WeTongji.Extensions.NokiaMapsSDK
             if (handler != null)
             {
                 handler(new object(), new ExecuteFailedEventArgs(ex));
+            }
+        }
+
+        private void OnExecuteStarted()
+        {
+            var handler = ExecuteStarted;
+            if (handler != null)
+            {
+                handler(new object(), new EventArgs());
             }
         }
 
