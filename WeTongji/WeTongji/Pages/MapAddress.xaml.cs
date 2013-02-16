@@ -23,6 +23,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Windows.Input;
 
 
 namespace WeTongji
@@ -31,6 +32,7 @@ namespace WeTongji
     {
         #region [Fields]
 
+        static GeoCoordinate TargetLocation = new GeoCoordinate();
         static GeoCoordinate CurrentLocation = new GeoCoordinate();
         static GeoCoordinateWatcher GCW = new GeoCoordinateWatcher();
 
@@ -484,18 +486,42 @@ namespace WeTongji
             HideStoryboard.Begin();
         }
 
+        private void DirectionButtonHold(Object sender, GestureEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                SetBestView();
+            }
+        }
+
+        private void DirectionButtonIsEnabledChanged(Object sender, DependencyPropertyChangedEventArgs e)
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                if ((Boolean)e.NewValue)
+                {
+                    SetBestView();
+                }
+                else
+                {
+                    MessageBox.Show("请关闭飞行模式，并检查网络连接后重试。", "暂时无法查询地图", MessageBoxButton.OK);
+                }
+            });
+        }
+
         #endregion
 
         #region [Private Functions]
 
-        private void SetBestView(GeoCoordinate coord)
+        private void SetBestView()
         {
-            MyMap.SetView(new LocationRect(
-                Math.Max(coord.Latitude, CurrentLocation.Latitude),
-                Math.Min(coord.Longitude, CurrentLocation.Longitude),
-                Math.Min(coord.Latitude, CurrentLocation.Latitude),
-                Math.Max(coord.Longitude, CurrentLocation.Longitude)
-                ));
+            if (!TargetLocation.IsUnknown && !CurrentLocation.IsUnknown)
+                MyMap.SetView(new LocationRect(
+                    Math.Max(TargetLocation.Latitude, CurrentLocation.Latitude),
+                    Math.Min(TargetLocation.Longitude, CurrentLocation.Longitude),
+                    Math.Min(TargetLocation.Latitude, CurrentLocation.Latitude),
+                    Math.Max(TargetLocation.Longitude, CurrentLocation.Longitude)
+                    ));
         }
 
         private void ExecuteCoreQuery()
@@ -526,18 +552,18 @@ namespace WeTongji
                         var result = args.Response.results.FirstOrDefault();
                         if (result != null)
                         {
-                            var coordinate = new GeoCoordinate()
+                            TargetLocation = new GeoCoordinate()
                             {
                                 Latitude = result.geometry.location.lat,
                                 Longitude = result.geometry.location.lng
                             };
 
                             //...Try to set view
-                            SetBestView(coordinate);
+                            SetBestView();
 
                             //...Set Pushpin
-                            TargetPushpin.Location = coordinate;
-                            TargetBillboardPushpin.Location = coordinate;
+                            TargetPushpin.Location = TargetLocation;
+                            TargetBillboardPushpin.Location = TargetLocation;
                             var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
                             bbi.Address = result.formatted_address;
                             bbi.IsSyncing = false;
@@ -630,13 +656,16 @@ namespace WeTongji
 
                     client.ExecuteFailed += (obj, args) =>
                     {
-                        //...Set Distance
-                        var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                        bbi.Distance = "? km";
-                        bbi.IsSyncing = false;
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            //...Set Distance
+                            var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
+                            bbi.Distance = "? km";
+                            bbi.IsSyncing = false;
 
-                        //...Set Icon
-                        TargetPushpin.DataContext = new Uri("/icons/DefaultBuildingIcon.png", UriKind.RelativeOrAbsolute);
+                            //...Set Icon
+                            TargetPushpin.DataContext = new Uri("/icons/DefaultBuildingIcon.png", UriKind.RelativeOrAbsolute);
+                        });
                     };
 
                     client.ExecuteAsync(request, new object());

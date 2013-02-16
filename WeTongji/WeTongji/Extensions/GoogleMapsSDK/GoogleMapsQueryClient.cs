@@ -103,10 +103,6 @@ namespace WeTongji.Extensions.GoogleMapsSDK
                         }
                         webResponse.Close();
                     }
-                    catch (Newtonsoft.Json.JsonSerializationException ex)
-                    {
-                        OnExecuteFailed(req, new Exception(webRequest.RequestUri.AbsoluteUri));
-                    }
                     catch (System.Exception ex)
                     {
                         OnExecuteFailed(req, ex);

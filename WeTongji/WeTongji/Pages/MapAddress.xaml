@@ -14,6 +14,7 @@
     xmlns:MSPCMCore="clr-namespace:Microsoft.Phone.Controls.Maps.Core;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:NokiaMapsSDK="clr-namespace:WeTongji.Extensions.NokiaMapsSDK"
     xmlns:GoogleMapsSDK="clr-namespace:WeTongji.Extensions.GoogleMapsSDK"
+    xmlns:CustomControls="clr-namespace:WeTongji.WTCustomControls;assembly=TileBrush"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:Converter="clr-namespace:WeTongji.Converter"
     xmlns:bb="clr-namespace:WeTongji"
@@ -221,6 +222,7 @@
     </ControlTemplate>
 
     <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <Converter:ReversedBoolToVisibilityConverter x:Key="ReversedBoolToVisibilityConverter"/>
 
     <ControlTemplate x:Key="BillboardPushpin" TargetType="BingMap:Pushpin">
         <Popup Name="popup" Opened="BillboardPopup_Opened">
@@ -349,10 +351,16 @@
             </BingMap:MapLayer>
         </BingMap:Map>
 
+        <CustomControls:TilePanel x:Name="pnlTile" TileWidth="180" TileHeight="180" Visibility="{Binding IsEnabled, ElementName=DirectionButton, Converter={StaticResource ReversedBoolToVisibilityConverter}}">
+            <CustomControls:TilePanel.Image>
+                <ImageBrush ImageSource="BaseMapTile.png" />
+            </CustomControls:TilePanel.Image>
+        </CustomControls:TilePanel>
+
         <!--Direction Button-->
         <Button x:Name="DirectionButton" Content="Button" HorizontalAlignment="Left" Height="48" Margin="20,0,0,30" 
                 Style="{StaticResource IntelligentCurrentPlaceFinder}" VerticalAlignment="Bottom" Width="48"
-                Click="ViewCurrentLocation"/>
+                Click="ViewCurrentLocation" Hold="DirectionButtonHold" IsEnabled="False" IsEnabledChanged="DirectionButtonIsEnabledChanged"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

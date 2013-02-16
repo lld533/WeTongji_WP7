@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converter\ReversedBoolToVisibilityConverter.cs" />
     <Compile Include="Converter\TurnOverNumberConverter.cs" />
     <Compile Include="Converter\IntToVisibilityConverter.cs" />
     <Compile Include="Converter\TurnOverVisibilityConverter.cs" />
@@ -338,9 +339,14 @@
     <Content Include="icons\DefaultBuildingIcon.png" />
     <Content Include="Images\Common\location_icon.png" />
     <Content Include="Images\Common\time_icon.png" />
+    <Content Include="Pages\BaseMapTile.png" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TileBrush\WTCustomControls.csproj">
+      <Project>{540BC70B-8CCA-40D0-BB56-F19497AB3889}</Project>
+      <Name>WTCustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WTSDK\WTSDK.csproj">
       <Project>{E43F9E0F-59D1-4BF2-8B1B-E1CF10F9792E}</Project>
       <Name>WTSDK</Name>

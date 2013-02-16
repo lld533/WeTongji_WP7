@@ -35,7 +35,7 @@ namespace WeTongji.Extensions.GoogleMapsSDK
                 {
                     result[i] = JsonConvert.DeserializeObject<AddressType>(types[i]);
                 }
-                catch (System.Exception ex)
+                catch
                 {
                     result[i] = AddressType.other;
                     hasOtherType = true;
