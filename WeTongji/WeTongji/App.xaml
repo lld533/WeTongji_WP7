@@ -4,9 +4,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone" 
              xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone" 
-             xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:vm="clr-namespace:WeTongji.ViewModel" mc:Ignorable="d">
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+			 xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls" 
+			 mc:Ignorable="d">
     <!--Application Resources-->
     <Application.Resources>
+	
+        <SolidColorBrush x:Key="ActivityAgendaTitleBrush" Color="#FFF6D04C"/>
+        <SolidColorBrush x:Key="RequiredCourseAgendaTitleBrush" Color="#FF67AAF6"/>
+        <SolidColorBrush x:Key="OptionalCourseAgendaTitleBrush" Color="#FF18A42C"/>
+        <SolidColorBrush x:Key="ExamInfoAgendaTitleBrush" Color="#FFE62626"/>
+
+
+        <SolidColorBrush x:Key="UserThemeBrush" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ActivityThemeBrush" Color="#FF02EAFF"/>
+        <SolidColorBrush x:Key="PeopleOfWeekThemeBrush" Color="#FF55C147"/>
+        <SolidColorBrush x:Key="NewsThemeBrush" Color="#FFC231CF"/>
+
 
         <Style x:Key="BasicTextBoxStyle" TargetType="TextBox">
             <Setter Property="Template">
@@ -325,33 +342,33 @@
             <Grid Margin="0,0,0,50">
                 <StackPanel>
                     <!--Title-->
-                    <TextBlock TextWrapping="Wrap" FontSize="24" Margin="0,-6,0,0" 
+                    <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
                                Text="&quot;灯光.人.社会.社会责任&quot;主题座谈会"/>
 
                     <!--Time-->
-                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                         <Image Source="Images/Common/time_icon.png" Stretch="None"/>
-                        <TextBlock FontSize="18" Foreground="#FF9D9D9D" TextTrimming="WordEllipsis" Margin="10,0,0,0"
-                                           Text="2012/12/11(周二)18：30"/>
+                        <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
+                                           Text="2012/12/20(周四),18:30~20:30"/>
                     </StackPanel>
 
-                    <Grid>
+                    <Grid Margin="0,6,10,0">
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+							<ColumnDefinition/>
+							<ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <!--Place-->
-                        <StackPanel Orientation="Horizontal" Margin="0,6,10,0">
-                            <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
-                            <TextBlock FontSize="18" Foreground="#FF9D9D9D" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
-                                           Text="国会101"/>
-                        </StackPanel>
+                        <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
+                        <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
+                                   Text="长乐路325号近陕西南路地铁站"/>
 
                         <!--Number of Participants-->
-                        <TextBlock Grid.Column="1"  HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="18" Foreground="#FF9D9D9D" Margin="0,0,0,-3">
-                            <Run Text="0"/>
+                        <TextBlock Grid.Column="3"  HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White" Margin="0,0,0,-3">
+                            <Run Text="3"/>
                             <Run Text="参与"/>
                         </TextBlock>
 
@@ -552,13 +569,114 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
-
-        <SolidColorBrush x:Key="ActivityAgendaTitleBrush" Color="#FFF6D04C"/>
-        <SolidColorBrush x:Key="RequiredCourseAgendaTitleBrush" Color="#FF67AAF6"/>
-        <SolidColorBrush x:Key="OptionalCourseAgendaTitleBrush" Color="#FF18A42C"/>
-        <SolidColorBrush x:Key="ExamInfoAgendaTitleBrush" Color="#FFE62626"/>
+		
+				<Style x:Key="WTPivotHeaderItemStyle" TargetType="controlsPrimitives:PivotHeaderItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Padding" Value="21,0,1,0"/>
+			<Setter Property="CacheMode" Value="BitmapCache"/>
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="controlsPrimitives:PivotHeaderItem">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="SelectionStates">
+									<VisualState x:Name="Unselected"/>
+									<VisualState x:Name="Selected">
+										<Storyboard>
+											<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="contentPresenter"/>
+										</Storyboard>
+									</VisualState>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" Opacity=".4"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="WTPivotHeaderControlStyle" TargetType="controlsPrimitives:PivotHeadersControl">
+			<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+					<ItemsPanelTemplate>
+						<Canvas/>
+					</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="ItemContainerStyle">
+				<Setter.Value>
+					<Style TargetType="controlsPrimitives:PivotHeaderItem">
+						<Setter Property="FontSize" Value="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+						<Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiLight}"/>
+					</Style>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="controlsPrimitives:PivotHeadersControl">
+						<Grid>
+							<Canvas x:Name="Canvas">
+								<ItemsPresenter/>
+							</Canvas>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="WTPivotStyle" TargetType="controls:Pivot">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+					<ItemsPanelTemplate>
+						<Grid/>
+					</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="controls:Pivot">
+						<Grid HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid Background="{TemplateBinding Background}" CacheMode="BitmapCache" Grid.RowSpan="3"/>
+							<ContentPresenter ContentTemplate="{TemplateBinding TitleTemplate}" Content="{TemplateBinding Title}" Margin="18,17,0,-7"/>
+							<controlsPrimitives:PivotHeadersControl x:Name="HeadersListElement" Grid.Row="1" Margin="-2,36,0,12" ItemContainerStyle="{StaticResource WTPivotHeaderItemStyle}" FontSize="36" Style="{StaticResource WTPivotHeaderControlStyle}"/>
+							<ItemsPresenter x:Name="PivotItemPresenter" Grid.Row="2" Margin="6,0"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="WTPivotItemStyle" TargetType="controls:PivotItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+			<Setter Property="Margin" Value="12,28,12,0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="VerticalContentAlignment" Value="Stretch"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="controls:PivotItem">
+						<Grid Background="{TemplateBinding Background}" CacheMode="BitmapCache">
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="Pivot">
+									<VisualState x:Name="Right"/>
+									<VisualState x:Name="Left"/>
+									<VisualState x:Name="Center"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 
     </Application.Resources>
     <Application.ApplicationLifetimeObjects>

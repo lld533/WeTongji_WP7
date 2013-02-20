@@ -22,12 +22,6 @@ namespace WeTongji
             };
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            ThemeManager.ToLightTheme();
-        }
-
         private void ListBox_Core_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
             var lb = sender as ListBox;

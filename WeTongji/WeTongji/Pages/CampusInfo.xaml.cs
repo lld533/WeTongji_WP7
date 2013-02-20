@@ -24,27 +24,18 @@ namespace WeTongji
 
             this.Loaded += (o, e) =>
             {
-                ListBox_TongjiNews.ItemsSource = new TestSource[] 
+                ListBox_TongjiNews.ItemsSource = new Boolean[] 
                 { 
-                    new TestSource(){IsRecommended = true},
-                    new TestSource(){IsRecommended = false, HasPic=true},
-                    new TestSource(){IsRecommended = false, HasPic=false},
-                    new TestSource(){IsRecommended = false, HasPic=true},
-                    new TestSource(){IsRecommended = false, HasPic=true},
-                    new TestSource(){IsRecommended = false, HasPic=false},
-                    new TestSource(){IsRecommended = false, HasPic=false}
+                    true,false,true,true, false, false
                 };
-                ListBox_Nearby.ItemsSource = new bool[] { false, true, false, false, true, true };
-                ListBox_OfficialNotes.ItemsSource = new TestSource[] 
+
+                ListBox_NearBy.ItemsSource = new bool[] { false, true, false, false, true, true };
+
+                ListBox_OfficialNotes.ItemsSource = new Boolean[] 
                 { 
-                    new TestSource(){IsRecommended = true},
-                    new TestSource(){IsRecommended = false, HasPic=false},
-                    new TestSource(){IsRecommended = false, HasPic=true},
-                    new TestSource(){IsRecommended = false, HasPic=false},
-                    new TestSource(){IsRecommended = false, HasPic=false},
-                    new TestSource(){IsRecommended = false, HasPic=true},
-                    new TestSource(){IsRecommended = false, HasPic=true}
+                    true,false,true,true, false, false
                 };
+
                 ListBox_SocietyNews.ItemsSource = new bool[] { true, false, true, true, false, false };
             };
         }
@@ -61,7 +52,6 @@ namespace WeTongji
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ThemeManager.ToLightTheme();
 
             if (e.NavigationMode != NavigationMode.Back)
             {

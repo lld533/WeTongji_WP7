@@ -19,6 +19,8 @@ namespace WeTongji
         public Activity()
         {
             InitializeComponent();
+			
+			this.Loaded += (o,e)=>{ ListBox_Illustration.ItemsSource = new object[3]; };
         }
 
         #region [Overridden]

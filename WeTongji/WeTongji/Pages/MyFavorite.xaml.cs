@@ -26,13 +26,9 @@ namespace WeTongji
             {
                 ListBox_Activity.ItemsSource = new object[10];
                 ListBox_PeopleOfWeek.ItemsSource = new object[20];
-                ListBox_CampusInfo.ItemsSource = new FakeCampusInfoItem[]
+                ListBox_CampusInfo.ItemsSource = new Boolean[]
                 {
-                    new FakeCampusInfoItem(){FakeType = FakeCampusInfoItem.FakeCampusInfoType.NearBy},
-                    new FakeCampusInfoItem(){FakeType = FakeCampusInfoItem.FakeCampusInfoType.OfficialNote},
-                    new FakeCampusInfoItem(){FakeType = FakeCampusInfoItem.FakeCampusInfoType.SocietyNews},
-                    new FakeCampusInfoItem(){FakeType = FakeCampusInfoItem.FakeCampusInfoType.SocietyNews},
-                    new FakeCampusInfoItem(){FakeType = FakeCampusInfoItem.FakeCampusInfoType.TongjiNews}
+                    true, false, true, true, false, false
                 };
             };
         }
@@ -69,32 +65,10 @@ namespace WeTongji
 
             lb.SelectedIndex = -1;
 
-            var item = lb.SelectedItem as FakeCampusInfoItem;
-            this.NavigationService.Navigate(new Uri(String.Format("/Pages/{0}.xaml", item.FakeType.ToString()), UriKind.RelativeOrAbsolute));
+            //...Todo @_@ Tell from the type of item
+            this.NavigationService.Navigate(new Uri("/Pages/NearBy.xaml", UriKind.RelativeOrAbsolute));
         }
 
         #endregion
-    }
-
-    public class FakeCampusInfoItem
-    {
-        public enum FakeCampusInfoType
-        {
-            TongjiNews,
-            NearBy,
-            OfficialNote,
-            SocietyNews
-        }
-
-        public FakeCampusInfoType FakeType
-        {
-            get;
-            set;
-        }
-
-        public Boolean IsSocietyNews
-        {
-            get { return FakeType == FakeCampusInfoType.SocietyNews; }
-        }
     }
 }

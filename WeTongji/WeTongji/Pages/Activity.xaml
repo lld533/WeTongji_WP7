@@ -10,161 +10,138 @@
     x:Class="WeTongji.Activity" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+	x:Name="PageSelf">
 
-	<phone:PhoneApplicationPage.Resources>
-		<Style x:Key="PivotHeaderItemStyle1" TargetType="controlsPrimitives:PivotHeaderItem">
-			<Setter Property="FontSize" Value="40"/>
-			<Setter Property="Padding" Value="21,0,-8,0"/>
-		</Style>
-
-		<Style x:Key="PivotStyle1" TargetType="controls:Pivot">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0"/>
-			<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="ItemsPanel">
-				<Setter.Value>
-					<ItemsPanelTemplate>
-						<Grid/>
-					</ItemsPanelTemplate>
-				</Setter.Value>
-			</Setter>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="controls:Pivot">
-						<Grid HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="Auto"/>
-								<RowDefinition Height="*"/>
-							</Grid.RowDefinitions>
-							<Grid Background="{TemplateBinding Background}" CacheMode="BitmapCache" Grid.RowSpan="3"/>
-							<ContentPresenter ContentTemplate="{TemplateBinding TitleTemplate}" Content="{TemplateBinding Title}" Margin="24,14,0,-7"/>
-							<controlsPrimitives:PivotHeadersControl x:Name="HeadersListElement" Grid.Row="1" ItemContainerStyle="{StaticResource PivotHeaderItemStyle1}" Margin="0,34,0,0"/>
-							<ItemsPresenter x:Name="PivotItemPresenter" Margin="{TemplateBinding Padding}" Grid.Row="2"/>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<Style x:Key="ButtonStyle1" TargetType="Button">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
-			<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-			<Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
-			<Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-			<Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
-			<Setter Property="Padding" Value="10,3,10,5"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="Button">
-						<Grid Background="Transparent">
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver"/>
-									<VisualState x:Name="Pressed"/>
-									<VisualState x:Name="Disabled"/>
-								</VisualStateGroup>
-								<VisualStateGroup x:Name="FocusStates"/>
-							</VisualStateManager.VisualStateGroups>
-							<Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="0">
-								<ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-							</Border>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	</phone:PhoneApplicationPage.Resources>
-	<phone:PhoneApplicationPage.FontFamily>
-		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
-	</phone:PhoneApplicationPage.FontFamily>
-	<phone:PhoneApplicationPage.FontSize>
-		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
-	</phone:PhoneApplicationPage.FontSize>
-	<phone:PhoneApplicationPage.Foreground>
-		<StaticResource ResourceKey="PhoneForegroundBrush"/>
-	</phone:PhoneApplicationPage.Foreground>
+    <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="ButtonStyle1" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
+            <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
+            <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
+            <Setter Property="Padding" Value="10,3,10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed"/>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates"/>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="0">
+                                <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
+    <phone:PhoneApplicationPage.FontFamily>
+        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+    </phone:PhoneApplicationPage.FontFamily>
+    <phone:PhoneApplicationPage.FontSize>
+        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
+    </phone:PhoneApplicationPage.FontSize>
+    <phone:PhoneApplicationPage.Foreground>
+        <StaticResource ResourceKey="PhoneForegroundBrush"/>
+    </phone:PhoneApplicationPage.Foreground>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <!--Pivot Control-->
-        <controls:Pivot Title="第二十八届&quot;枫林节&quot;闭幕式" Style="{StaticResource PivotStyle1}">
+        <controls:Pivot Title="第二十八届&quot;枫林节&quot;闭幕式" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource ActivityThemeBrush}">
             <!--Pivot item one-->
-            <controls:PivotItem Header="活动介绍" Margin="24,28,24,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    
-                    <!--Author-->
-                    <StackPanel Orientation="Horizontal">
-                        <Rectangle Fill="Gray" Width="50" Height="50"/>
-                        <TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="微同济推广小编" FontSize="24" TextTrimming="WordEllipsis"/>
+            <controls:PivotItem Header="活动介绍" Style="{StaticResource WTPivotItemStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <StackPanel>
+
+                        <!--Title-->
+                        <TextBlock Grid.Row="2" TextWrapping="Wrap" FontSize="45" Margin="0,-13,0,0" Foreground="{StaticResource ActivityThemeBrush}"
+                                   Text="第二十八届&quot;枫林节&quot;闭幕式"/>
+
+                        <!--Time-->
+                        <Grid Grid.Row="4" Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="21"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="/Images/Common/time_icon.png" VerticalAlignment="Center" Height="19"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Margin="0,0,0,3"
+                                       Text="2012/12/20日(周四), 18:30~20:30"/>
+                        </Grid>
+
+                        <!--Place-->
+                        <Grid Grid.Row="6" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="21"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="/Images/Common/location_icon.png" VerticalAlignment="Center" Height="19"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" Margin="0,0,0,3"
+                                       Text="同济大学四平路校区129礼堂"/>
+                        </Grid>
+
+                        <!--Favorite and Like-->
+                        <Grid Margin="0,24,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
+                                <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
+                            </Grid>
+                            <TextBlock Grid.Column="2" FontSize="22" VerticalAlignment="Center"
+                                       Text="14" />
+
+                            <Grid Grid.Column="4">
+                                <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
+                                <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
+										Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
+                                <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
+                                <Ellipse Width="5" Height="5"  Fill="White"/>
+                            </Grid>
+                            <TextBlock Grid.Column="6" FontSize="22" VerticalAlignment="Center"
+                                       Text="35"/>
+                        </Grid>
+
+                        <TextBlock Text="发布方" FontSize="24" Margin="0,30,0,0"/>
+
+                        <!--Author-->
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <!--@_@-->
+                            <Image Stretch="UniformToFill"/>
+                            <Rectangle Fill="Gray" Width="50" Height="50"/>
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="微同济推广小编" FontSize="24" TextWrapping="Wrap"/>
+                        </Grid>
                     </StackPanel>
-                    
-                    <!--Title-->
-                    <TextBlock Grid.Row="2" TextWrapping="Wrap" FontSize="48"
-                               Text="第二十八届&quot;枫林节&quot;闭幕式"/>
-                    
-                    <!--Time-->
-                    <Grid Grid.Row="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="21"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="/Images/Common/time_icon.png" VerticalAlignment="Center" Height="19"/>
-                        <TextBlock FontSize="24" Foreground="#FFCCCCCC" Grid.Column="2" TextWrapping="Wrap"
-                            Text="2012年12月11日(周二)18:30~20:30"/>
-                    </Grid>
-                    
-                    <!--Place-->
-                    <Grid Grid.Row="6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="21"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="/Images/Common/location_icon.png" VerticalAlignment="Center" Height="19"/>
-                        <TextBlock FontSize="24" Foreground="#FFCCCCCC" Grid.Column="2" TextWrapping="Wrap"
-                            Text="同济大学四平路校区129礼堂"/>
-                    </Grid>
-
-                    <!--Like and Favorite-->
-                    <StackPanel Grid.Row="8" Orientation="Horizontal" VerticalAlignment="Top">
-                        <StackPanel Orientation="Horizontal">
-                            <Button Style="{StaticResource ButtonStyle_Like}" FontSize="24" Margin="0,-2,0,0"/>
-                            <TextBlock Margin="7,0,0,0"
-                                Text="20"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
-							<Button BorderThickness="0" Width="24" Style="{StaticResource ButtonStyle1}">
-								<Image Source="favourite_icon.png" Stretch="None"/>
-							</Button>
-							
-                            <TextBlock Margin="7,0,0,0"
-                                Text="20"/>
-                        </StackPanel>
-
-                    </StackPanel>
-                </Grid>
+                </ScrollViewer>
             </controls:PivotItem>
 
             <!--Pivot item two-->
-            <controls:PivotItem Header="活动详情">
-                <ScrollViewer Margin="12,0,12,0" >
+            <controls:PivotItem Header="活动详情" Style="{StaticResource WTPivotItemStyle}">
+                <ScrollViewer>
                     <TextBlock TextWrapping="Wrap" FontSize="24">
                         <TextBlock.Text>
                             第二十八届"枫林节"闭幕式暨Fealing Quarttet专场音乐会 特邀嘉宾：上海音乐学院Fealing Quarttet 上半场： 莫扎特嬉游曲第三首 巴赫小步舞曲多瑙河之波圆舞曲 下半场： 柴可夫斯基《如歌的行板〉勃拉姆斯《匈牙利舞曲第五首》 蓝色多瑙河 皮亚佐拉《LiberTango》
@@ -172,13 +149,21 @@
                     </TextBlock>
                 </ScrollViewer>
             </controls:PivotItem>
-            
-            <controls:PivotItem Header="活动配图">
-		          <Grid Width="400" HorizontalAlignment="Left" Background="Gray" Margin="12,0,0,0">
-					<Rectangle/>
-                </Grid>
-			</controls:PivotItem>
+
+            <controls:PivotItem Header="活动配图" Style="{StaticResource WTPivotItemStyle}">
+                <ListBox x:Name="ListBox_Illustration" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<!--@_@-->
+							<!--<Image Stretch="UniformToFill" Margin="0,0,0,20"/>-->
+                            <Grid>
+                                <Rectangle Height="240" Width="{Binding ActualWidth, ElementName=PageSelf}"  Fill="Pink" Margin="0,0,0,20"/>
+                            </Grid>
+                        </DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+            </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-    
+
 </phone:PhoneApplicationPage>

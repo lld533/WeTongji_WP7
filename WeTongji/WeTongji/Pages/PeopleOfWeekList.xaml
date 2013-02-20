@@ -13,37 +13,24 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
-    <Grid>
+    <Grid Margin="20,0,20,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         
-        <!--Title-->
-        <Grid Height="34" Margin="0,23,0,35">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="33"/>
-                <ColumnDefinition Width="11"/>                
-            </Grid.ColumnDefinitions>
+        <TextBlock Text="所有每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,16,0,15" FontSize="22"/>
 
-            <Rectangle Fill="#FF2D7ECA" Grid.ColumnSpan="3"/>
-            <TextBlock VerticalAlignment="Center" Grid.Column="1"
-                       Text="每周人物" Margin="0,-3,0,0"/>
-            <Path Data="M0,0 L11,17 L0,34 z" Grid.Column="3" Fill="#FF2D7ECA"/>
-
-        </Grid>
-        
         <!--List-->
-        <ListBox x:Name="ListBox_Core" Grid.Row="1"  BorderThickness="0" BorderBrush="{x:Null}"
-                 SelectionChanged="ListBox_Core_SelectionChanged">
+        <ListBox x:Name="ListBox_Core"  BorderThickness="0" BorderBrush="{x:Null}"
+                 SelectionChanged="ListBox_Core_SelectionChanged" Grid.Row="1"
+				 ScrollViewer.VerticalScrollBarVisibility="Hidden">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="28,0,28,28">
-                        <TextBlock FontSize="21" Foreground="#FF4C4C4C" Margin="0,-3,0,0"
+                    <StackPanel Margin="0,0,0,25">
+                        <TextBlock FontSize="21" Foreground="White" Margin="0,-3,0,0"
                                    Text="第一期"/>
-                        <Grid Height="60"  Margin="0,20,0,0">
+                        <Grid Height="60"  Margin="0,17,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"/>
                                 <ColumnDefinition Width="14"/>
@@ -56,9 +43,9 @@
 
                             <Grid Grid.Column="2" Margin="0,4">
                                 <TextBlock Text="徐磊" 
-                                           TextTrimming="WordEllipsis" VerticalAlignment="Top" Foreground="#FF4C4C4C" Margin="0,-5,0,0" FontSize="22"/>
+                                           TextTrimming="WordEllipsis" VerticalAlignment="Top" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,-7,0,0" FontSize="23"/>
                                 <TextBlock Text="钻石小鸟联合总裁，1997年毕业于同济大学" 
-                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="#FFB4B4B4" FontSize="14" Margin="0,0,0,-3"/>
+                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="#FF999999" FontSize="18" Margin="0,0,0,-4"/>
                             </Grid>
 
                         </Grid>
@@ -66,5 +53,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
     </Grid>
+
 </phone:PhoneApplicationPage>

@@ -106,8 +106,8 @@ namespace WeTongji
 
         private void NavToCampusInfo(Object sender, RoutedEventArgs e)
         {
-            var btn = sender as Button;
-            this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=" + btn.DataContext.ToString(), UriKind.RelativeOrAbsolute));
+            var ctrl = sender as Control;
+            this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=" + ctrl.DataContext.ToString(), UriKind.RelativeOrAbsolute));
         }
 
         private void ViewPersonalProfile(Object sender, RoutedEventArgs e)

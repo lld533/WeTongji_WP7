@@ -12,7 +12,7 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    
+
     <phone:PhoneApplicationPage.Resources>
         <Style x:Key="PictureStyle" TargetType="Image">
             <Setter Property="Margin" Value="0,0,0,20"/>
@@ -26,161 +26,165 @@
             <Setter Property="Fill" Value="#FF2D7ECA"/>
         </Style>
         <Style x:Key="NoBorderButton" TargetType="Button">
-        	<Setter Property="Background" Value="Transparent"/>
-        	<Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
-        	<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-        	<Setter Property="BorderThickness" Value="0"/>
-        	<Setter Property="FontSize" Value="18"/>
-			<Setter Property="FontFamily" Value="Segoe WP"/>
-        	<Setter Property="Padding" Value="0"/>
-        	<Setter Property="Template">
-        		<Setter.Value>
-        			<ControlTemplate TargetType="Button">
-        				<Grid Background="Transparent">
-        					<VisualStateManager.VisualStateGroups>
-        						<VisualStateGroup x:Name="CommonStates">
-        							<VisualState x:Name="Normal"/>
-        							<VisualState x:Name="MouseOver"/>
-        							<VisualState x:Name="Pressed">
-        								<Storyboard>
-        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentContainer">
-        										<DiscreteObjectKeyFrame KeyTime="0" Value="#FF737373"/>
-        									</ObjectAnimationUsingKeyFrames>
-        								</Storyboard>
-        							</VisualState>
-        							<VisualState x:Name="Disabled">
-        								<Storyboard>
-        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentContainer">
-        										<DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
-        									</ObjectAnimationUsingKeyFrames>
-        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ButtonBackground">
-        										<DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
-        									</ObjectAnimationUsingKeyFrames>
-        									<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
-        										<DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-        									</ObjectAnimationUsingKeyFrames>
-        								</Storyboard>
-        							</VisualState>
-        						</VisualStateGroup>
-        						<VisualStateGroup x:Name="FocusStates"/>
-        					</VisualStateManager.VisualStateGroups>
-        					<Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" CornerRadius="0">
-        						<ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Margin="15,5"/>
-        					</Border>
-        				</Grid>
-        			</ControlTemplate>
-        		</Setter.Value>
-        	</Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontFamily" Value="Segoe WP"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentContainer">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF737373"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentContainer">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ButtonBackground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ButtonBackground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates"/>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" CornerRadius="0">
+                                <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Margin="15,5"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </phone:PhoneApplicationPage.Resources>
 
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+        <StackPanel Margin="20,0,20,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-        <TextBlock Margin="22,17,0,-2" FontSize="21" Text="周边推荐"/>
+                <!--@_@-->
+                <!--<Image Stretch="UniformToFill"/>-->
+                <Rectangle Fill="SkyBlue" Width="120" Height="90"/>
 
-        <ScrollViewer Grid.Row="1"  Margin="22,19,0,0">
-            <StackPanel Margin="0,0,39,0">
-                <!--Thumbnail, Title, & Tags-->
-                <Grid Height="90">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="13"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!--Thumbnail-->
-                    <!--@_@-->
-                    <!--<Image Stretch="UniformToFill"/>-->
-                    <Rectangle Fill="#FF2D7ECA"/>
-                    
-                    <!--Title & Tags-->
-                    <Grid Grid.Column="2" Margin="0,5,0,2">
-                        <!--Title-->
-                        <TextBlock x:Name="TextBlock_Title"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="23" Margin="0,-5,0,0"
-                                   Text="新年祈福音乐会&quot;皇家佛乐-华夏梵音&quot;"/>
-                        <!--Tags-->
-                        <TextBlock TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="18" Foreground="#FF737373" Margin="0,0,0,-2" TextTrimming="WordEllipsis"
-                                   Text="音乐会 优惠"/>
-                    </Grid>
+                <Grid Grid.Column="1" Margin="15,0,0,0" >
+                    <TextBlock x:Name="TextBlock_Title"  VerticalAlignment="Top" TextWrapping="Wrap"
+									Text="新年祈福音乐会&quot;皇家佛乐-华夏梵音&quot;" FontSize="22" Foreground="{StaticResource NewsThemeBrush}"/>
+                    <TextBlock VerticalAlignment="Bottom"
+									Text="音乐会 优惠" FontSize="20" Foreground="#FF999999" Margin="0,0,0,-1"/>
                 </Grid>
-                
-                <!--Address, Telephone-->
-                <Grid Margin="0,35,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="23"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <StackPanel>
-                        <TextBlock Text="地址：" FontSize="18" Margin="0,-4,0,0"/>
-                        <TextBlock Text="电话：" FontSize="18" Margin="0,14,0,0"/>
-                    </StackPanel>
-                    
-                    <StackPanel Grid.Column="2">
-                        <Grid HorizontalAlignment="Left">
-                            <Button
-                                    Click="ViewMapAddress" Style="{StaticResource NoBorderButton}" Content="杨浦区赤峰路35号" Margin="0,-9,0,0"/>
-                        </Grid>
-                        <Grid HorizontalAlignment="Left">
-                            <Button Click="MakePhoneCall" Style="{StaticResource NoBorderButton}" Content="18121107473" Margin="0,4,0,0"/>
-                        </Grid>
-                    </StackPanel>
+            </Grid>
+
+
+            <Grid Margin="0,30,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="22"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="13"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="地址:"/>
+                <TextBlock Grid.Row="2" Text="电话:"/>
+
+                <Button Grid.Column="2" HorizontalAlignment="Left" Margin="-15,-3,0,0"  Click="ViewMapAddress" 
+                            Content="杨浦区赤峰路35号" Style="{StaticResource NoBorderButton}" />
+                <Button Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Content="18121107473"
+                            Margin="-15,-3,0,0" Style="{StaticResource NoBorderButton}"
+                            Click="MakePhoneCall"/>
+            </Grid>
+
+            <Grid Margin="0,15,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="13"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Height="40" Background="#FFF16C00" VerticalAlignment="Top">
+                    <TextBlock Text="票" Margin="10,6,0,0"/>
+                </Border>
+
+                <Border Grid.Column="2" Background="#FFD08B53">
+                    <TextBlock TextWrapping="Wrap" Margin="15,-3,14,0"
+									Text="108元（所有票面保证188~888）" VerticalAlignment="Center"/>
+                </Border>
+
+            </Grid>
+
+            <Grid Margin="0,15,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
+                    <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                 </Grid>
-                
-                <!--Ticket-->
-                <Grid Height="30" Margin="0,14,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30"/>
-                        <ColumnDefinition Width="17"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <Grid>
-                        <Rectangle Fill="#FFF16C00"/>
-                        <TextBlock Text="票" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                   FontSize="18" Margin="0,-3,0,0"/>
-                    </Grid>
-                    
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center" TextTrimming="WordEllipsis" FontSize="18"
-                               Text="108元（所有票面保证188~888）"/>
-                    
+                <TextBlock Text="14" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
+
+                <Grid Grid.Column="4">
+                    <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
+                    <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
+							 Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
+                    <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
+                    <Ellipse Width="5" Height="5"  Fill="White"/>
                 </Grid>
-                
-                <!--Introduction-->
-                <StackPanel Margin="0,30,0,0">
-                    <TextBlock Text="简介" Foreground="#FF2D7ECA" FontSize="20" Margin="0,-5,0,0"/>
-                    
-                    <TextBlock FontSize="20" TextWrapping="Wrap" Margin="0,14,0,0">
-                        <Run Text="买任意饮料加1元可换购葡式蛋挞或叉烧法式烧饼一只 增加新品如下： 1、抹茶泡芙、巧克力泡芙、草莓泡芙   均为7元 2、御寒姜母茶  中杯8元  大杯13元 3、6只装蛋挞礼盒  15元 4、8只装蛋挞礼盒  18元 5、美式咖啡  7元 7、香草拿铁  10元 8、焦糖玛奇朵  12元（以上信息由商家提供）"/>
-                        <LineBreak/>
+                <TextBlock Text="35" Grid.Column="6" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
+            </Grid>
+
+            <StackPanel Margin="0,23,0,0">
+                <TextBlock Text="简介" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+                <TextBlock TextWrapping="Wrap" Margin="0,11,0,0" FontSize="21">
+						<Run Text="买任意饮料加1元可换购葡式蛋挞或叉烧法式烧饼一只 增加新品如下： 1、抹茶泡芙、巧克力泡芙、草莓泡芙   均为7元 2、御寒姜母茶  中杯8元  大杯13元 3、6只装蛋挞礼盒  15元 4、8只装蛋挞礼盒  18元 5、美式咖啡  7元 7、香草拿铁  10元 8、焦糖玛奇朵  12元（以上信息由商家提供）"/>
                         <LineBreak/>
                         <Run Text="来源：同济大学学生会票务中心 刘霖波"/>
-                    </TextBlock>
-                </StackPanel>
-                
-                <!--Illustration-->
-                <StackPanel Margin="0,34,0,0">
-                    <TextBlock Text="图片" Foreground="#FF2D7ECA" FontSize="20" Margin="0,-5,0,0"/>
-
-                    <!--Insert All Pictures in this StackPanel-->
-                    <StackPanel x:Name="StackPanel_Pictures" Margin="0,17,0,0">
-                        <!--@_@-->
-                        <!--<Image Style="{StaticResource PictureStyle}"/>-->
-                        <Rectangle Width="320" Height="180" Style="{StaticResource FakePictureStyle}"/>
-                        <Rectangle Width="180" Height="320" Style="{StaticResource FakePictureStyle}"/>
-                    </StackPanel>
-                </StackPanel>
-                
+                </TextBlock>
             </StackPanel>
-        </ScrollViewer>
 
-    </Grid>
+            <StackPanel Margin="0,23,0,0">
+                <TextBlock Text="图片" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+
+                <!--Images-->
+                <StackPanel Margin="0,15,0,0">
+                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
+                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
