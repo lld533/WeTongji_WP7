@@ -23,6 +23,7 @@ namespace WeTongji
                 {
                     new FakeAgendaItem()
                     {
+                        Highlight = true,
                         FakeTitle="\"灯光.人.社会.社会责任\" 主题座谈会",
                         FakePlace = "同济大学中芬中心",
                         FakeType = FakeAgendaItem.FakeAgendaType.Activity,
@@ -56,6 +57,32 @@ namespace WeTongji
             };
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            //...Create AppButton_Today if it has not been created yet.
+            if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
+            {
+                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton(
+                    new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute))
+                {
+                    Text = "今日"
+                };
+                appBtn.Click += AppButton_Today_Clicked;
+                this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
+                this.ApplicationBar.Buttons.Add(appBtn);
+            }
+            //...Refresh the icon AppButton_Today if it has already been created.
+            else
+            {
+                var btn = this.ApplicationBar.Buttons[0] as Microsoft.Phone.Shell.ApplicationBarIconButton;
+                btn.IconUri = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute);
+            }
+        }
+
         private void ListBox_Core_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var lb = sender as ListBox;
@@ -79,6 +106,11 @@ namespace WeTongji
                     this.NavigationService.Navigate(new Uri("/Pages/CourseDetail.xaml", UriKind.RelativeOrAbsolute));
                     break;
             }
+        }
+
+        private void AppButton_Today_Clicked(Object sender, EventArgs e)
+        {
+            //...Todo @_@
         }
     }
 
@@ -110,12 +142,12 @@ namespace WeTongji
 
         public Brush FakeTitleBrush
         {
-            get 
+            get
             {
                 switch (FakeType)
                 {
                     case FakeAgendaType.Activity:
-                        return App.Current.Resources["ActivityAgendaTitleBrush"] as SolidColorBrush;
+                        return App.Current.Resources["ActivityThemeBrush"] as SolidColorBrush;
                     case FakeAgendaType.ExamInfo:
                         return App.Current.Resources["ExamInfoAgendaTitleBrush"] as SolidColorBrush;
                     case FakeAgendaType.RequiredCourse:
@@ -132,6 +164,8 @@ namespace WeTongji
         public FakeAgendaType FakeType { get; set; }
 
         public DateTime FakeTimeSource { set; private get; }
+
+        public Boolean Highlight { get; set; }
 
         public enum FakeAgendaType
         {
