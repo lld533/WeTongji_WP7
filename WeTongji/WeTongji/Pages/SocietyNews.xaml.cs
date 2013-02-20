@@ -15,6 +15,11 @@ namespace WeTongji
         public SocietyNews()
         {
             InitializeComponent();
+			
+			this.Loaded += (o,e) =>
+			{
+				NoIllustrationGrid.Visibility = Visibility.Visible;
+			};
         }
 
         #region [Overridden]

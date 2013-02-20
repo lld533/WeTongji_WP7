@@ -15,6 +15,12 @@ namespace WeTongji
         public OfficialNote()
         {
             InitializeComponent();
+
+            this.Loaded += (o, e) => 
+			{ 
+				IllustrationGrid.Visibility = Visibility.Visible; 
+				StackPanel_OtherImages.Visibility = Visibility.Visible;
+			};
         }
 
         #region [Overridden]

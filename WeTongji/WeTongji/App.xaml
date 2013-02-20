@@ -21,7 +21,7 @@
 
         <SolidColorBrush x:Key="UserThemeBrush" Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="ActivityThemeBrush" Color="#FF02EAFF"/>
-        <SolidColorBrush x:Key="PeopleOfWeekThemeBrush" Color="#FF55C147"/>
+        <SolidColorBrush x:Key="PeopleOfWeekThemeBrush" Color="#FF1FC374"/>
         <SolidColorBrush x:Key="NewsThemeBrush" Color="#FFC231CF"/>
 
 

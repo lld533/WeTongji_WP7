@@ -13,70 +13,113 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer Margin="20,0" VerticalScrollBarVisibility="Hidden">
+        <StackPanel>
+            <!--@_@ Illustration-->
 
-        <TextBlock Margin="22,17,0,-2" FontSize="21" Text="社团通告"/>
+            <TextBlock FontSize="38" Text="校领导与寒假留校学生共迎新春佳节" FontWeight="Bold"
+    					TextWrapping="Wrap" Margin="0,-3,0,0" Foreground="#FFDF2099"/>
 
-        <ScrollViewer Grid.Row="1"  Margin="22,19,0,0">
-            <StackPanel Margin="0,0,39,0">
-                <!--Title-->
-                <TextBlock FontSize="28" Text="微同济iOS 2.0 正式推出"
-                   TextWrapping="Wrap"/>
+            <!--Time & Host-->
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                <TextBlock Foreground="#FF858585" FontSize="18" Margin="0,-4,0,0"
+    						Text="2013/2/1 20:27"/>
+                <TextBlock Foreground="#FF858585" FontSize="18" Margin="9,-4,0,0"
+    						Text="学生处" TextTrimming="WordEllipsis"/>
+            </StackPanel>
 
-                <!--Time-->
-                <TextBlock Foreground="#FF858585" FontSize="16" Margin="0,10,0,0"
-                           Text="2012/12/24 18:21"/>
-                <!--Host Icon & Name-->
-                <Grid Margin="0,16,0,0">
+            <Grid x:Name="IllustrationGrid" Visibility="Collapsed">
+                <!--Favorite and Like-->
+                <Grid Margin="0,22,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="15"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid>
+                        <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
+                        <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
+                    </Grid>
+                    <TextBlock Grid.Column="2" FontSize="22" VerticalAlignment="Center"
+    							Text="14" />
+
+                    <Grid Grid.Column="4">
+                        <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
+                        <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
+    								Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
+                        <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
+                        <Ellipse Width="5" Height="5"  Fill="White"/>
+                    </Grid>
+                    <TextBlock Grid.Column="6" FontSize="22" VerticalAlignment="Center"
+    							Text="35"/>
+                </Grid>
+
+            </Grid>
+
+            <Grid x:Name="NoIllustrationGrid"  Margin="0,18,0,0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="23"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!--<Image Stretch="UniformToFill"/>-->
+                <Rectangle Height="330" Fill="Beige"/>
+
+                <Grid Grid.Column="2" VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="15"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
 
-                    <!--@_@-->
-                    <!--<Image Stretch="UniformToFill" Width="35" Height="35"/>-->
-                    <Rectangle Width="35" Height="35" Fill="Gray"/>
+                    <Grid>
+                        <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
+                        <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
+                    </Grid>
+                    <TextBlock Grid.Column="2" Text="14" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 
-                    <TextBlock Foreground="#FF858585" FontSize="16" Grid.Column="2" VerticalAlignment="Center"  Margin="-1,1,0,0"
-                           Text="微同济团队官方帐号" TextTrimming="WordEllipsis"/>
+                    <Grid Grid.Row="2">
+                        <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
+                        <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
+										Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
+                        <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
+                        <Ellipse Width="5" Height="5"  Fill="White"/>
+                    </Grid>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="35" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
                 </Grid>
 
-                <!--@_@ Illustration-->
-                <!--<Image Stretch="UniformToFill" Height="180" Margin="0,23,0,0"/>-->
-                <Rectangle Fill="#FF1BA1E2" Height="180" Margin="0,23,0,0"/>
+            </Grid>
 
-                <!--Paragraphs-->
-                <TextBlock FontSize="20" TextWrapping="Wrap" Margin="0,10,0,34">
-                    <Run Text="声明："/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="1.安卓用户们，WeTongji Android 版本也即将在圣诞前更新，同步本次2.0所有功能。"/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="2.Windows Phone仍在开发阶段，能否赶上圣诞节就要靠大家的支持了。"/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="3.由于更新版本正在等待苹果App Store的审核，先放出ipa文件吧！（传送门：http://vdisk.abcd.com）"/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="4.安卓用户们，WeTongji Android 版本也即将在圣诞前更新，同步本次2.0所有功能。"/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="5.Windows Phone仍在开发阶段，能否赶上圣诞节就要靠大家的支持了。"/>
-                    <LineBreak/>
-                    <LineBreak/>
-                    <Run Text="6.由于更新版本正在等待苹果App Store的审核，先放出ipa文件吧！（传送门：http://vdisk.abcd.com）"/>
-                </TextBlock>
+            <!--Paragraphs-->
+            <TextBlock FontSize="23" TextWrapping="Wrap" Margin="0,23,0,34" d:IsHidden="True">
+    					<Run Text="龙含宝珠辞旧岁，蛇吐瑞气贺新春。"/>
+    					<LineBreak/>
+    					<LineBreak/>
+    					<Run Text="2013年2月8日，同济大学举行春节留校学生茶话会和年夜饭，校党委书记周祖翼、校长裴钢、常务副校长陈以一、副校长郑惠强、江波、董琦，"/>
+            </TextBlock>
+
+            <StackPanel x:Name="StackPanel_OtherImages" Margin="0,23,0,0" Visibility="Collapsed">
+                <TextBlock Text="其他图片" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+
+                <!--Images-->
+                <StackPanel Margin="0,15,0,0">
+                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
+                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
+                </StackPanel>
             </StackPanel>
-        </ScrollViewer>
-
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
