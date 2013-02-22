@@ -298,8 +298,8 @@
                     </Ellipse>
                 </StackPanel>
 
-                <ProgressBar VerticalAlignment="Top" IsIndeterminate="True" IsEnabled="True" Visibility="{Binding IsSyncing, Converter={StaticResource BoolToVisibilityConverter}}"  Foreground="#FF299BD1" 
-                             Style="{StaticResource ProgressBarStyle1}" Margin="-30,5,-30,0"/>
+                <ProgressBar VerticalAlignment="Top" IsIndeterminate="{Binding IsSyncing}" Visibility="{Binding IsSyncing, Converter={StaticResource BoolToVisibilityConverter}}"  IsEnabled="True" Foreground="#FF299BD1" 
+                             Style="{StaticResource WTProgressBarStyle}" Margin="-30,5,-30,0"/>
             </Grid>
         </Popup>
     </ControlTemplate>

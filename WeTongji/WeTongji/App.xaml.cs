@@ -12,6 +12,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using System.IO.IsolatedStorage;
+using WeTongji.DataBase;
 
 namespace WeTongji
 {
@@ -63,12 +65,46 @@ namespace WeTongji
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            //IsolatedStorageExplorer.Explorer.Start("localhost");
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+
+#if false
+                if (!db.DatabaseExists())
+                {
+                    db.CreateDatabase();
+                }
+#else
+                if (db.DatabaseExists())
+                {
+                    db.DeleteDatabase();
+                }
+                db.CreateDatabase();
+#endif
+            }
+
+            //var store = IsolatedStorageFile.GetUserStoreForApplication();
+            //if (!store.FileExists("Settings.txt"))
+            //{
+            //    store.CreateFile("Settings.txt");
+            //}
+
+            //var settings = new WTSettings();
+            //settings.UID = "092983";
+            //settings.CryptPassword = "123456".GetCryptPassword();
+
+            //var fileStr = settings.GetSerializedString();
+            //var mySettings = fileStr.DeserializeSettings();
+
+            //var myPw = mySettings.CryptPassword.GetOriginalPassword();
         }
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+            //IsolatedStorageExplorer.Explorer.RestoreFromTombstone();
         }
 
         // Code to execute when the application is deactivated (sent to background)

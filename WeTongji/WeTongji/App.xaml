@@ -20,9 +20,11 @@
 
 
         <SolidColorBrush x:Key="UserThemeBrush" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="ActivityThemeBrush" Color="#FF02EAFF"/>
+        <SolidColorBrush x:Key="ActivityThemeBrush" Color="#FF23CED0"/>
         <SolidColorBrush x:Key="PeopleOfWeekThemeBrush" Color="#FF1FC374"/>
-        <SolidColorBrush x:Key="NewsThemeBrush" Color="#FFC231CF"/>
+        <SolidColorBrush x:Key="NewsThemeBrush" Color="#FFDF2099"/>
+        
+        <ImageBrush x:Key="MissingAvatar" ImageSource="/Images/missing.png"/>
 
 
         <Style x:Key="BasicTextBoxStyle" TargetType="TextBox">
@@ -336,41 +338,40 @@
         </Style>
 
         <sys:String x:Key="BingMapsKey">AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P</sys:String>
-
+        
         <!--Data Template of ActivityList-->
         <DataTemplate x:Key="ActivityListDataTemplate">
             <Grid Margin="0,0,0,50">
                 <StackPanel>
                     <!--Title-->
                     <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
-                               Text="&quot;灯光.人.社会.社会责任&quot;主题座谈会"/>
+                               Text="{Binding Title}"/>
 
                     <!--Time-->
                     <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                         <Image Source="Images/Common/time_icon.png" Stretch="None"/>
                         <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
-                                           Text="2012/12/20(周四),18:30~20:30"/>
+                                           Text="{Binding DisplayTime}"/>
                     </StackPanel>
 
-                    <Grid Margin="0,6,10,0">
+                    <Grid Margin="0,6,10,0" >
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-							<ColumnDefinition/>
-							<ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!--Place-->
-                        <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
-                        <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
-                                   Text="长乐路325号近陕西南路地铁站"/>
-
-                        <!--Number of Participants-->
-                        <TextBlock Grid.Column="3"  HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White" Margin="0,0,0,-3">
-                            <Run Text="3"/>
-                            <Run Text="参与"/>
-                        </TextBlock>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+								<ColumnDefinition Width="50"/>
+								<ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!--Place-->
+                            <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
+                            <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
+                                   Text="{Binding Location}"/>
+							
+							<!--Number of Participants-->
+							<TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
+								<Run Text="{Binding Schedule}"/>
+								<Run Text="参与"/>
+							</TextBlock>
 
                     </Grid>
                 </StackPanel>
@@ -433,7 +434,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ProgressBarStyle1" TargetType="ProgressBar">
+        <Style x:Key="WTProgressBarStyle" TargetType="ProgressBar">
             <Setter Property="Foreground" Value="{StaticResource PhoneAccentBrush}"/>
             <Setter Property="Background" Value="{StaticResource PhoneAccentBrush}"/>
             <Setter Property="Maximum" Value="100"/>

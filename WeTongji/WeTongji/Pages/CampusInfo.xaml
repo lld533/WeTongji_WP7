@@ -77,7 +77,8 @@
     <Grid>
         <Border Margin="18,0" x:Name="Border_PlaceHolder" IsHitTestVisible="False"/>
 
-        <controls:Pivot x:Name="Pivot_Core"  Style="{StaticResource WTPivotStyle}" Title="校园资讯" ItemContainerStyle="{StaticResource WTPivotItemStyle}">
+        <controls:Pivot x:Name="Pivot_Core" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WTPivotStyle}" ItemContainerStyle="{StaticResource WTPivotItemStyle}"
+                         Title="校园资讯">
             <controls:PivotItem Header="同济动态">
                 <ListBox x:Name="ListBox_TongjiNews" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
                      SelectionChanged="Listbox_TongjiNews_SelectionChanged">

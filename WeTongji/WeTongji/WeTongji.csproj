@@ -49,6 +49,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZLib.Phone">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ICSharpCode.SharpZLib.Phone.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.Controls">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.Filtering">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.Filtering.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.IO.Bmp">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.IO.Bmp.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.IO.Gif">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.IO.Gif.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.IO.Png">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.IO.Png.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageTools.Utils">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ImageTools.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="JeffWilcox.Maps">
       <HintPath>..\packages\JeffWilcox.Maps.1.1\lib\sl4-windowsphone71\JeffWilcox.Maps.dll</HintPath>
     </Reference>
@@ -71,6 +95,9 @@
     <Reference Include="NokiaMapSDK">
       <HintPath>..\packages\NokiaMapSDK.1.0\lib\sl4-wp71\NokiaMapSDK.dll</HintPath>
     </Reference>
+    <Reference Include="PhoneCodeContractsAssemblies">
+      <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\PhoneCodeContractsAssemblies.dll</HintPath>
+    </Reference>
     <Reference Include="system.data.linq" />
     <Reference Include="System.Device" />
     <Reference Include="System.Runtime.Serialization" />
@@ -86,12 +113,14 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\WTDispatcher.cs" />
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Converter\ReversedBoolToVisibilityConverter.cs" />
     <Compile Include="Converter\TurnOverNumberConverter.cs" />
     <Compile Include="Converter\IntToVisibilityConverter.cs" />
     <Compile Include="Converter\TurnOverVisibilityConverter.cs" />
     <Compile Include="DataBase\WTDataContext.cs" />
+    <Compile Include="DataBase\WTSettings.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\Address.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\AddressComponent.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\AddressComponentType.cs" />
@@ -150,6 +179,7 @@
     <Compile Include="Pages\PersonalProfile.xaml.cs">
       <DependentUpon>PersonalProfile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ProgressBarPopup.cs" />
     <Compile Include="Pages\SocietyNews.xaml.cs">
       <DependentUpon>SocietyNews.xaml</DependentUpon>
     </Compile>
@@ -188,6 +218,8 @@
     <Compile Include="TestSDKPage.xaml.cs">
       <DependentUpon>TestSDKPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\DateTimeToChineseDate.cs" />
+    <Compile Include="Utility\ImagePathToImageSource.cs" />
     <Compile Include="Utility\Unicode2String.cs" />
     <Compile Include="Converter\TextLengthToVisibilityConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -717,7 +749,9 @@
     <Content Include="icons\DefaultBuildingIcon.png" />
     <Content Include="Images\Common\location_icon.png" />
     <Content Include="Images\Common\time_icon.png" />
+    <Content Include="Images\missing.png" />
     <Content Include="Pages\BaseMapTile.png" />
+    <Content Include="Pages\missing.png" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>

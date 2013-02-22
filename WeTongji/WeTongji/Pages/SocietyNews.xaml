@@ -28,7 +28,7 @@
     						Text="学生处" TextTrimming="WordEllipsis"/>
             </StackPanel>
 
-            <Grid x:Name="IllustrationGrid" Visibility="Collapsed">
+            <Grid x:Name="NoIllustrationGrid" Visibility="Collapsed">
                 <!--Favorite and Like-->
                 <Grid Margin="0,22,0,0">
                     <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
 
             </Grid>
 
-            <Grid x:Name="NoIllustrationGrid"  Margin="0,18,0,0" Visibility="Collapsed">
+            <Grid x:Name="IllustrationGrid"  Margin="0,18,0,0" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="23"/>
@@ -109,15 +109,12 @@
     					<Run Text="2013年2月8日，同济大学举行春节留校学生茶话会和年夜饭，校党委书记周祖翼、校长裴钢、常务副校长陈以一、副校长郑惠强、江波、董琦，"/>
             </TextBlock>
 
-            <StackPanel x:Name="StackPanel_OtherImages" Margin="0,23,0,0" Visibility="Collapsed">
-                <TextBlock Text="其他图片" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
-
-                <!--Images-->
-                <StackPanel Margin="0,15,0,0">
-                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
-                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
-                </StackPanel>
+            <!--Images-->
+            <StackPanel x:Name="StackPanel_OtherImages" Visibility="Collapsed"  Margin="0,17,0,0">
+                <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
+                <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
             </StackPanel>
+            
         </StackPanel>
     </ScrollViewer>
 

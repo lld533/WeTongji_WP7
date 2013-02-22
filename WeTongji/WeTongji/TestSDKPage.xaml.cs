@@ -13,6 +13,7 @@ using WeTongji.Api.Request;
 using WeTongji.Api.Response;
 using WeTongji.DataBase;
 using WeTongji.Api.Domain;
+using WeTongji.Pages;
 
 namespace WeTongji
 {
@@ -36,16 +37,21 @@ namespace WeTongji
             client.Execute(req);
 #endif
 
-            var req = new UserLogOnRequest<UserLogOnResponse>();
-            req.NO = "092983";
-            req.Password = "123456";
+            //var req = new UserLogOnRequest<UserLogOnResponse>();
+            //req.NO = "092983";
+            //req.Password = "123456";
             
-            var client = new WTDefaultClient<UserLogOnResponse>();
+            //var client = new WTDefaultClient<UserLogOnResponse>();
 
-            client.ExecuteCompleted += LogOnExecuteCompleted;
-            client.ExecuteFailed += LogOnExecuteFailed;
+            //client.ExecuteCompleted += LogOnExecuteCompleted;
+            //client.ExecuteFailed += LogOnExecuteFailed;
 
-            client.Execute(req);
+            //client.Execute(req);
+
+            if (ProgressBarPopup.Instance.IsOpen)
+                ProgressBarPopup.Instance.Close();
+            else
+                ProgressBarPopup.Instance.Open();
         }
 
         private String session = String.Empty;
@@ -87,7 +93,7 @@ namespace WeTongji
 
         private void ViewDB(Object sender, RoutedEventArgs e)
         {
-            using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+            using (var db = WTShareDataContext.ShareDB)
             {
                 var people = db.People;
                 foreach (var person in people)
@@ -103,7 +109,7 @@ namespace WeTongji
 
             try
             {
-                using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+                using (var db = WTShareDataContext.ShareDB)
                 {
                     db.DeleteDatabase();
                     db.CreateDatabase();

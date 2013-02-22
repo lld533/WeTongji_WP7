@@ -7,19 +7,25 @@ using WeTongji.Api.Domain;
 
 namespace WeTongji.DataBase
 {
-    public class WTDataContext : DataContext
+    public class WTShareDataContext : DataContext
     {
-        public static String DBConntectionString = "Data Source='isostore:/WeTongji.sdf'";
+        private static String ShareDBConnectionString = "Data Source='isostore:/WeTongji.sdf'";
 
-        public WTDataContext(String connectionString) : base(connectionString) { }
+        private WTShareDataContext(String connectionString) : base(connectionString) { }
+
+        public static WTShareDataContext ShareDB
+        {
+            get 
+            {
+                return new WTShareDataContext(ShareDBConnectionString);
+            }
+        }
 
         #region [Tables]
 
         public Table<PersonExt> People;
 
         public Table<ImageExt> Images;
-
-        public Table<UserExt> Users;
 
         public Table<ActivityExt> Activities;
 
@@ -33,9 +39,22 @@ namespace WeTongji.DataBase
 
         public Table<ClubNewsExt> ClubNewsTable;
 
-        public Table<Course> Courses;
-
         public Table<Event> Events;
+
+        #endregion
+    }
+
+    public class WTUserDataContext : DataContext
+    {
+        public WTUserDataContext(String uid) : base(String.Format("Data Source='isostore:/{0}.sdf'", uid)) { }
+
+        #region [Tables]
+
+        public Table<UserExt> UserInfo;
+        
+        public Table<ImageExt> Images;
+        
+        public Table<Course> Courses;
 
         public Table<Exam> Exams;
 

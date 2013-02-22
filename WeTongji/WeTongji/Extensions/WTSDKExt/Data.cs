@@ -5,6 +5,13 @@ using System.Text;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
 using WeTongji.DataBase;
+using WeTongji.Utility;
+using System.Windows.Media;
+using System.IO.IsolatedStorage;
+using System.IO;
+using System.ComponentModel;
+using System.Net;
+using System.Windows.Media.Imaging;
 
 namespace WeTongji.Api.Domain
 {
@@ -16,12 +23,12 @@ namespace WeTongji.Api.Domain
     }
 
     [Table(Name = "Image")]
-    public class ImageExt : IWTObjectExt
+    public class ImageExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Properties]
 
-        [Column(IsPrimaryKey=true)]
-        public Guid Id { get; set; }
+        [Column(IsPrimaryKey = true)]
+        public String Id { get; set; }
 
         [Column]
         public String Description { get; set; }
@@ -51,18 +58,36 @@ namespace WeTongji.Api.Domain
         /// <returns></returns>
         public Type ExpectedType() { throw new NotImplementedException(); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region [Constructor]
 
-        public ImageExt() 
+        public ImageExt()
         {
-            Id = Guid.NewGuid();
         }
 
         public ImageExt(String url, String des = "")
         {
-            Id = Guid.NewGuid();
             Url = url;
             Description = des;
         }
@@ -71,7 +96,7 @@ namespace WeTongji.Api.Domain
     }
 
     [Table(Name = "Person")]
-    public class PersonExt : IWTObjectExt
+    public class PersonExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -125,7 +150,7 @@ namespace WeTongji.Api.Domain
         public String ImageExtList { get; set; }
 
         [Column()]
-        public Guid AvatarGuid { get; set; }
+        public String AvatarGuid { get; set; }
 
         #endregion
 
@@ -223,7 +248,7 @@ namespace WeTongji.Api.Domain
                         sb.AppendFormat("{0};", imgList[i++].Id.ToString());
                     }
 
-                    using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+                    using (var db = WTShareDataContext.ShareDB)
                     {
                         db.Images.InsertAllOnSubmit(imgList);
                         db.SubmitChanges();
@@ -243,7 +268,7 @@ namespace WeTongji.Api.Domain
 
             {
                 var avatarImg = new ImageExt();
-                using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+                using (var db = WTShareDataContext.ShareDB)
                 {
                     db.Images.InsertOnSubmit(avatarImg);
                     db.SubmitChanges();
@@ -276,6 +301,26 @@ namespace WeTongji.Api.Domain
 
         public Type ExpectedType() { return typeof(WeTongji.Api.Domain.Person); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region [Constructor]
@@ -288,7 +333,7 @@ namespace WeTongji.Api.Domain
     }
 
     [Table(Name = "User")]
-    public class UserExt : IWTObjectExt
+    public class UserExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -348,7 +393,7 @@ namespace WeTongji.Api.Domain
         #region [Extended Properties]
 
         [Column()]
-        public Guid AvatarGuid { get; set; }
+        public String AvatarGuid { get; set; }
 
         #endregion
 
@@ -393,7 +438,7 @@ namespace WeTongji.Api.Domain
             #region [Save Extended Properties]
 
             var img = new ImageExt() { Url = Avatar };
-            using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+            using (var db = new WTUserDataContext(user.UID))
             {
                 db.Images.InsertOnSubmit(img);
                 db.SubmitChanges();
@@ -433,11 +478,31 @@ namespace WeTongji.Api.Domain
             return typeof(WeTongji.Api.Domain.User);
         }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 
     [Table(Name = "Activity")]
-    public class ActivityExt : IWTObjectExt
+    public class ActivityExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -499,9 +564,67 @@ namespace WeTongji.Api.Domain
 
         #region [Extended Properties]
 
-        public Guid ImageGuid { get; set; }
+        [Column()]
+        public String ImageGuid { get; set; }
 
-        public Guid OrganizerAvatarGuid { get; set; }
+        [Column()]
+        public String OrganizerAvatarGuid { get; set; }
+
+        #endregion
+
+        #region [Data Binding]
+
+        public String DisplayTime
+        {
+            get
+            {
+                return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.GetChineseDate(), End);
+            }
+        }
+
+        /// <summary>
+        /// Get the organizer avatar for data binding.
+        /// [Fall back value] missing.png
+        /// </summary>
+        public ImageSource OrganizerAvatarImageBrush
+        {
+            get
+            {
+                if (OrganizerAvatar.EndsWith("missing.png"))
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+
+                var fileExt = OrganizerAvatar.GetImageFileExtension();
+                
+                var imgSrc = String.Format("{0}.{1}", OrganizerAvatarGuid, fileExt).GetImageSource();
+                
+                if (imgSrc == null)
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                else
+                    return imgSrc;
+            }
+        }
+
+        /// <summary>
+        /// Get the illustration of activity for data binding
+        /// [Fall back value] missing.png
+        /// </summary>
+        public ImageSource ActivityImageBrush
+        {
+            get
+            {
+                if (Image.EndsWith("missing.png"))
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+
+                var fileExt = Image.GetImageFileExtension();
+
+                var imgSrc = String.Format("{0}.{1}", ImageGuid, fileExt).GetImageSource();
+
+                if (imgSrc == null)
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                else
+                    return imgSrc;
+            }
+        }
 
         #endregion
 
@@ -538,37 +661,7 @@ namespace WeTongji.Api.Domain
             this.OrganizerAvatar = a.OrganizerAvatar;
             this.Status = a.Status;
             this.Image = a.Image;
-            this.CreatedAt = this.CreatedAt;
-
-            #endregion
-
-            #region [Save Extended Properties]
-
-            {
-                if (!String.IsNullOrEmpty(Image))
-                {
-                    var img = new ImageExt() { Url = Image };
-                    using (var db = new WTDataContext(WTDataContext.DBConntectionString))
-                    {
-                        db.Images.InsertOnSubmit(img);
-                        db.SubmitChanges();
-                    }
-                    ImageGuid = img.Id;
-                }
-            }
-
-            {
-                if (!String.IsNullOrEmpty(OrganizerAvatar))
-                {
-                    var img = new ImageExt() { Url = OrganizerAvatar };
-                    using (var db = new WTDataContext(WTDataContext.DBConntectionString))
-                    {
-                        db.Images.InsertOnSubmit(img);
-                        db.SubmitChanges();
-                    }
-                    OrganizerAvatarGuid = img.Id;
-                }
-            }
+            this.CreatedAt = a.CreatedAt;
 
             #endregion
         }
@@ -600,11 +693,140 @@ namespace WeTongji.Api.Domain
 
         public Type ExpectedType() { return typeof(WeTongji.Api.Domain.Activity); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region [Extended Functions]
+
+        public Boolean AvatarExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(String.Format("{0}.{1}", this.OrganizerAvatarGuid, this.OrganizerAvatar.GetImageFileExtension()));
+        }
+
+        public Boolean ImageExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(String.Format("{0}.{1}", this.ImageGuid, this.Image.GetImageFileExtension()));
+        }
+
+        /// <summary>
+        /// Save image stream of the organizer avatar of the activity.
+        /// Called after downloading it.
+        /// </summary>
+        /// <param name="stream">the organizer avatar file stream</param>
+        /// <remarks>
+        /// The name of the image file created in the isolated storage file:
+        /// Name = [OrganizerAvatarGuid].[OrganizerAvatar.GetImageFileExtension()]
+        /// where the OrganizerAvatarGuid is a new Guid string.
+        /// </remarks>
+        public void SaveAvatar(Stream stream)
+        {
+            var ava = new ImageExt()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Url = OrganizerAvatar
+            };
+
+            OrganizerAvatarGuid = ava.Id;
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                db.Images.InsertOnSubmit(ava);
+
+                var act = db.Activities.Where((a) => a.Id == this.Id).FirstOrDefault();
+                if (act != null)
+                    act.OrganizerAvatarGuid = ava.Id;
+
+                db.SubmitChanges();
+            }
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                var act = db.Activities.Where((a) => a.Id == this.Id).FirstOrDefault();
+            }
+
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            using (var fileStream = store.CreateFile(String.Format("{0}.{1}", ava.Id, OrganizerAvatar.GetImageFileExtension())))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(fileStream);
+                fileStream.Flush();
+                fileStream.Close();
+            }
+        }
+
+        /// <summary>
+        /// Save image stream of the illustration of the activity.
+        /// Called after downloading it.
+        /// </summary>
+        /// <param name="stream">the image file stream</param>
+        /// <remarks>
+        /// The name of the image file created in the isolated storage file:
+        /// Name = [ImageGuid].[Image.GetImageFileExtension()]
+        /// where the ImageGuid is a new Guid string.
+        /// </remarks>
+        public void SaveImage(Stream stream)
+        {
+            if (!String.IsNullOrEmpty(Image))
+            {
+                var img = new ImageExt()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Url = Image
+                };
+
+                ImageGuid = img.Id.ToString();
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    db.Images.InsertOnSubmit(img);
+
+                    var act = db.Activities.Where((a) => a.Id == this.Id).FirstOrDefault();
+                    if (act != null)
+                        act.ImageGuid = this.ImageGuid;
+
+                    db.SubmitChanges();
+                }
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+                using (var fileStream = store.CreateFile(String.Format("{0}.{1}", img.Id, Image.GetImageFileExtension())))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+        }
         #endregion
     }
 
     [Table(Name = "Channel")]
-    public class ChannelExt : IWTObjectExt
+    public class ChannelExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -628,7 +850,7 @@ namespace WeTongji.Api.Domain
         #region [Extended Property]
 
         [Column()]
-        public Guid ImageGuid { get; set; }
+        public String ImageGuid { get; set; }
 
         #endregion
 
@@ -674,7 +896,7 @@ namespace WeTongji.Api.Domain
             #region [Save Extended Property]
 
             var img = new ImageExt() { Url = Image };
-            using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+            using (var db = WTShareDataContext.ShareDB)
             {
                 db.Images.InsertOnSubmit(img);
                 db.SubmitChanges();
@@ -686,11 +908,31 @@ namespace WeTongji.Api.Domain
 
         public Type ExpectedType() { return typeof(WeTongji.Api.Domain.Channel); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 
-    [Table(Name="SchoolNews")]
-    public class SchoolNewsExt : IWTObjectExt
+    [Table(Name = "SchoolNews")]
+    public class SchoolNewsExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -801,11 +1043,31 @@ namespace WeTongji.Api.Domain
 
         public virtual Type ExpectedType() { return typeof(WeTongji.Api.Domain.WTNews); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 
-    [Table(Name="Around")]
-    public class AroundExt : IWTObjectExt
+    [Table(Name = "Around")]
+    public class AroundExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -916,11 +1178,31 @@ namespace WeTongji.Api.Domain
 
         public virtual Type ExpectedType() { return typeof(WeTongji.Api.Domain.WTNews); }
 
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 
-    [Table(Name="ForStaff")]
-    public class ForStaffExt : IWTObjectExt
+    [Table(Name = "ForStaff")]
+    public class ForStaffExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -1030,12 +1312,32 @@ namespace WeTongji.Api.Domain
         }
 
         public virtual Type ExpectedType() { return typeof(WeTongji.Api.Domain.WTNews); }
+
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
 
         #endregion
     }
 
     [Table(Name = "ClubNews")]
-    public class ClubNewsExt
+    public class ClubNewsExt : INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -1087,7 +1389,7 @@ namespace WeTongji.Api.Domain
         public String SerializedImages { get; set; }
 
         [Column()]
-        public Guid OrganizerAvatarGuid { get; set; }
+        public String OrganizerAvatarGuid { get; set; }
 
         #endregion
 
@@ -1101,7 +1403,7 @@ namespace WeTongji.Api.Domain
         public void SetObject(WTObject obj)
         {
             #region [Check Argument]
-            
+
             if (obj == null)
                 throw new ArgumentNullException("obj");
             if (!(obj is WeTongji.Api.Domain.ClubNews))
@@ -1132,7 +1434,7 @@ namespace WeTongji.Api.Domain
             #region [Save Extended Property]
 
             var img = new ImageExt() { Url = cn.OrganizerAvatar };
-            using (var db = new WTDataContext(WTDataContext.DBConntectionString))
+            using (var db = WTShareDataContext.ShareDB)
             {
                 db.Images.InsertOnSubmit(img);
                 db.SubmitChanges();
@@ -1169,7 +1471,27 @@ namespace WeTongji.Api.Domain
 
             return cn;
         }
-        
+
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }

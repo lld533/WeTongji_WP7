@@ -78,6 +78,7 @@
     <Compile Include="Api\Api.Request\Around\AroundReadRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnLikeRequest.cs" />
+    <Compile Include="Api\WTDownloadImageClient.cs" />
     <Compile Include="Api\Api.Request\Person\PersonFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Person\PeopleGetRequest.cs" />
     <Compile Include="Api\Api.Request\Person\PersonLikeRequest.cs" />
@@ -148,7 +149,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />

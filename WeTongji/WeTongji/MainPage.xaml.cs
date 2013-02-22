@@ -21,6 +21,16 @@ using System.Globalization;
 using System.Windows.Controls.Primitives;
 using Microsoft.Phone.Shell;
 using System.Windows.Navigation;
+using WeTongji.DataBase;
+using System.IO.IsolatedStorage;
+using WeTongji.Api.Domain;
+using System.Collections.ObjectModel;
+using WeTongji.Business;
+using WeTongji.Api.Request;
+using WeTongji.Api.Response;
+using WeTongji.Api;
+using WeTongji.Pages;
+
 
 namespace WeTongji
 {
@@ -30,11 +40,7 @@ namespace WeTongji
         public MainPage()
         {
             InitializeComponent();
-
-            this.Loaded += (o, e) =>
-            {
-                this.ListBox_Activity.ItemsSource = new bool[] { true, false, true, true, false, false };
-            };
+            ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>();
 
         }
 
@@ -44,6 +50,94 @@ namespace WeTongji
         {
             base.OnNavigatedTo(e);
             ThemeManager.ToDarkTheme();
+
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var a in db.Activities)
+                    {
+                        (ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>).Add(a);
+                    }
+                }
+
+                WTDispatcher.Instance.Do(() =>
+                {
+                    ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
+                    WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
+
+                    //...Tell the user that the background thread starts to work
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Open();
+                    });
+
+                    //...Update Activities
+                    client.ExecuteCompleted += (o, arg) =>
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            int count = arg.Result.Activities.Count();
+                            for (int i = 0; i < count; ++i)
+                            {
+                                var item = arg.Result.Activities.ElementAt(i);
+                                var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                                //...There is no such item
+                                if (itemInDB == null)
+                                {
+                                    var tmp = new ActivityExt();
+                                    tmp.SetObject(item);
+
+                                    db.Activities.InsertOnSubmit(tmp);
+
+                                    //list.Add(tmp);
+                                    this.Dispatcher.BeginInvoke(() =>
+                                    {
+                                        (ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>).Add(tmp);
+                                    });
+                                }
+                                //...Already in DB
+                                else
+                                {
+                                    itemInDB.Favorite = item.Favorite;
+                                    itemInDB.Like = item.Like;
+                                    itemInDB.Schedule = item.Schedule;
+
+                                    //...Todo @_@ Update CanFavorite, CanSchedule, CanLike, etc.
+                                    // if user signed in.
+                                }
+                            }
+
+                            //...Todo @_@ Update NextPager;
+
+
+                            db.SubmitChanges();
+                        }
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            //...Tell the user that the background thread stops working.
+                            ProgressBarPopup.Instance.Close();
+                        });
+                    };
+
+                    client.ExecuteFailed += (o, arg) =>
+                    {
+                        //...Do Nothing if failed
+                        Debug.WriteLine(arg.Error);
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                        });
+                    };
+
+                    client.Execute(req);
+                });
+            }
         }
 
         #endregion
@@ -100,8 +194,9 @@ namespace WeTongji
             if (lb.SelectedIndex == -1)
                 return;
 
+            var a = lb.SelectedItem as ActivityExt;
             lb.SelectedIndex = -1;
-            this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml", UriKind.RelativeOrAbsolute));
+            this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + a.Id, UriKind.RelativeOrAbsolute));
         }
 
         private void NavToCampusInfo(Object sender, RoutedEventArgs e)
