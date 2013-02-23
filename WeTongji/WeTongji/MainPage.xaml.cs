@@ -40,7 +40,16 @@ namespace WeTongji
         public MainPage()
         {
             InitializeComponent();
-            ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>();
+
+            this.Loaded += (o, e) =>
+                {
+                    var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>(db.Activities);
+                    }
+                };
 
         }
 
@@ -53,91 +62,24 @@ namespace WeTongji
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                var store = IsolatedStorageFile.GetUserStoreForApplication();
-
                 using (var db = WTShareDataContext.ShareDB)
                 {
-                    foreach (var a in db.Activities)
+#if true
+                    if (!db.DatabaseExists())
                     {
-                        (ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>).Add(a);
+                        db.CreateDatabase();
+                        Refresh();
                     }
+#else
+                    if (db.DatabaseExists())
+                    {
+                        db.DeleteDatabase();
+                    }
+                    db.CreateDatabase();
+                    Refresh();
+#endif
                 }
-
-                WTDispatcher.Instance.Do(() =>
-                {
-                    ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
-                    WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
-
-                    //...Tell the user that the background thread starts to work
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ProgressBarPopup.Instance.Open();
-                    });
-
-                    //...Update Activities
-                    client.ExecuteCompleted += (o, arg) =>
-                    {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            int count = arg.Result.Activities.Count();
-                            for (int i = 0; i < count; ++i)
-                            {
-                                var item = arg.Result.Activities.ElementAt(i);
-                                var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
-
-                                //...There is no such item
-                                if (itemInDB == null)
-                                {
-                                    var tmp = new ActivityExt();
-                                    tmp.SetObject(item);
-
-                                    db.Activities.InsertOnSubmit(tmp);
-
-                                    //list.Add(tmp);
-                                    this.Dispatcher.BeginInvoke(() =>
-                                    {
-                                        (ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>).Add(tmp);
-                                    });
-                                }
-                                //...Already in DB
-                                else
-                                {
-                                    itemInDB.Favorite = item.Favorite;
-                                    itemInDB.Like = item.Like;
-                                    itemInDB.Schedule = item.Schedule;
-
-                                    //...Todo @_@ Update CanFavorite, CanSchedule, CanLike, etc.
-                                    // if user signed in.
-                                }
-                            }
-
-                            //...Todo @_@ Update NextPager;
-
-
-                            db.SubmitChanges();
-                        }
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            //...Tell the user that the background thread stops working.
-                            ProgressBarPopup.Instance.Close();
-                        });
-                    };
-
-                    client.ExecuteFailed += (o, arg) =>
-                    {
-                        //...Do Nothing if failed
-                        Debug.WriteLine(arg.Error);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            ProgressBarPopup.Instance.Close();
-                        });
-                    };
-
-                    client.Execute(req);
-                });
-            }
+            }           
         }
 
         #endregion
@@ -247,6 +189,89 @@ namespace WeTongji
         /// <param name="e"></param>
         private void LogOn_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void Refresh()
+        {
+            RefreshActivityList();
+        }
+
+        private void RefreshActivityList()
+        {
+            WTDispatcher.Instance.Do(() =>
+            {
+                ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
+                WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
+
+                //...Tell the user that the background thread starts to work
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                //...Update Activities
+                client.ExecuteCompleted += (o, arg) =>
+                {
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        int count = arg.Result.Activities.Count();
+                        for (int i = 0; i < count; ++i)
+                        {
+                            var item = arg.Result.Activities.ElementAt(i);
+                            var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                            //...There is no such item
+                            if (itemInDB == null)
+                            {
+                                var tmp = new ActivityExt();
+                                tmp.SetObject(item);
+
+                                db.Activities.InsertOnSubmit(tmp);
+
+                                //list.Add(tmp);
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    (ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>).Add(tmp);
+                                });
+                            }
+                            //...Already in DB
+                            else
+                            {
+                                itemInDB.Favorite = item.Favorite;
+                                itemInDB.Like = item.Like;
+                                itemInDB.Schedule = item.Schedule;
+
+                                //...Todo @_@ Update CanFavorite, CanSchedule, CanLike, etc.
+                                // if user signed in.
+                            }
+                        }
+
+                        //...Todo @_@ Update NextPager;
+
+
+                        db.SubmitChanges();
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        //...Tell the user that the background thread stops working.
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.ExecuteFailed += (o, arg) =>
+                {
+                    //...Do Nothing if failed
+                    Debug.WriteLine(arg.Error);
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.Execute(req);
+            });
         }
 
         #endregion

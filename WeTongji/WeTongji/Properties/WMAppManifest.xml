@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{e2411cb4-c653-4ab2-ba80-8eb37e2933b9}" Title="WeTongji" RuntimeType="Silverlight" Version="1.0.0.5" Genre="apps.normal" Author="WeTongji author" Description="Sample description" Publisher="WeTongji" BitsPerPixel="32">
+  <App xmlns="" ProductID="{e2411cb4-c653-4ab2-ba80-8eb37e2933b9}" Title="WeTongji" RuntimeType="Silverlight" Version="1.0.0.6" Genre="apps.normal" Author="WeTongji author" Description="Sample description" Publisher="WeTongji" BitsPerPixel="32">
     <IconPath IsRelative="true" IsResource="false">ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_GAMERSERVICES" />

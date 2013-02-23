@@ -16,6 +16,7 @@ using WeTongji.DataBase;
 using WeTongji.Api;
 using System.IO.IsolatedStorage;
 using WeTongji.Pages;
+using WeTongji.Business;
 
 namespace WeTongji
 {
@@ -71,92 +72,119 @@ namespace WeTongji
 
             this.DataContext = a;
 
-            int imagesDownloading = 0;
-
-            if (!a.OrganizerAvatar.EndsWith("missing.png") && String.IsNullOrEmpty(a.OrganizerAvatarGuid) && !a.AvatarExists())
+            WTDispatcher.Instance.Do(() =>
             {
-                WTDownloadImageClient client = new WTDownloadImageClient();
-                client.DownloadImageStarted += (obj, arg) =>
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            ++imagesDownloading;
-                            ProgressBarPopup.Instance.Open();
-                        });
-                        System.Diagnostics.Debug.WriteLine("download avatar started: {0}", arg.Url);
-                    };
-                client.DownloadImageFailed += (obj, arg) =>
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --imagesDownloading;
-                            if (0 == imagesDownloading)
-                                ProgressBarPopup.Instance.Close();
-                        });
+                int imagesDownloading = 0;
 
-                        System.Diagnostics.Debug.WriteLine("download avatar failed: {0}\nError: {1}", arg.Url, arg.Error);
-                    };
-                client.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        System.Diagnostics.Debug.WriteLine("download completed: {0}", arg.Url);
-
-                        this.Dispatcher.BeginInvoke(() =>
+                if (!a.OrganizerAvatar.EndsWith("missing.png") && String.IsNullOrEmpty(a.OrganizerAvatarGuid) && !a.AvatarExists())
+                {
+                    WTDownloadImageClient client = new WTDownloadImageClient();
+                    client.DownloadImageStarted += (obj, arg) =>
                         {
-                            if (String.IsNullOrEmpty(a.OrganizerAvatarGuid))
+                            this.Dispatcher.BeginInvoke(() =>
                             {
-                                a.SaveAvatar(arg.ImageStream);
-                                (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
+                                ++imagesDownloading;
+                                ProgressBarPopup.Instance.Open();
+                            });
+                            System.Diagnostics.Debug.WriteLine("download avatar started: {0}", arg.Url);
+                        };
+                    client.DownloadImageFailed += (obj, arg) =>
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                --imagesDownloading;
+                                if (0 == imagesDownloading)
+                                    ProgressBarPopup.Instance.Close();
+                            });
+
+                            System.Diagnostics.Debug.WriteLine("download avatar failed: {0}\nError: {1}", arg.Url, arg.Error);
+                        };
+                    client.DownloadImageCompleted += (obj, arg) =>
+                        {
+                            System.Diagnostics.Debug.WriteLine("download completed: {0}", arg.Url);
+
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                if (String.IsNullOrEmpty(a.OrganizerAvatarGuid))
+                                {
+                                    a.SaveAvatar(arg.ImageStream);
+                                    (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
+                                }
+
+                                --imagesDownloading;
+                                if (0 == imagesDownloading)
+                                    ProgressBarPopup.Instance.Close();
+                            });
+                        };
+                    client.Execute(a.OrganizerAvatar);
+                }
+
+                //...Current activity is illustrated.
+                if (!a.Image.EndsWith("missing.png"))
+                {
+                    #region [Illustration is in isolated storage folder]
+
+                    if (a.ImageExists())
+                    {
+                        NoIllustrationHint.Visibility = Visibility.Collapsed;
+                    }
+
+                    #endregion
+                    #region [Illustration needs downloading from the server]
+
+                    else
+                    {
+                        WTDownloadImageClient client = new WTDownloadImageClient();
+                        client.DownloadImageStarted += (obj, arg) =>
+                        {
+                            System.Diagnostics.Debug.WriteLine("download image started: {0}", arg.Url);
+
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                ++imagesDownloading;
+                                ProgressBarPopup.Instance.Open();
+                            });
+                        };
+                        client.DownloadImageFailed += (obj, arg) =>
+                        {
+                            System.Diagnostics.Debug.WriteLine("download image failed: {0}\nError: {1}", arg.Url, arg.Error);
+
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                --imagesDownloading;
+                                if (0 == imagesDownloading)
+                                    ProgressBarPopup.Instance.Close();
+                            });
+                        };
+                        client.DownloadImageCompleted += (obj, arg) =>
+                        {
+                            System.Diagnostics.Debug.WriteLine("download image completed: {0}", arg.Url);
+
+                            if (String.IsNullOrEmpty(a.ImageGuid))
+                            {
+                                a.SaveImage(arg.ImageStream);
                             }
 
-                            --imagesDownloading;
-                            if (0 == imagesDownloading)
-                                ProgressBarPopup.Instance.Close();
-                        });
-                    };
-                client.Execute(a.OrganizerAvatar);
-            }
-            if (!a.Image.EndsWith("missing.png") && String.IsNullOrEmpty(a.ImageGuid) && !a.ImageExists())
-            {
-                WTDownloadImageClient client = new WTDownloadImageClient();
-                client.DownloadImageStarted += (obj, arg) =>
-                {
-                    System.Diagnostics.Debug.WriteLine("download image started: {0}", arg.Url);
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                (this.DataContext as ActivityExt).SendPropertyChanged("ActivityImageBrush");
+                                Illustration.Visibility = Visibility.Visible;
 
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ++imagesDownloading;
-                        ProgressBarPopup.Instance.Open();
-                    });
-                };
-                client.DownloadImageFailed += (obj, arg) =>
-                {
-                    System.Diagnostics.Debug.WriteLine("download image failed: {0}\nError: {1}", arg.Url, arg.Error);
+                                --imagesDownloading;
+                                if (0 == imagesDownloading)
+                                    ProgressBarPopup.Instance.Close();
+                            });
+                        };
+                        client.Execute(a.Image);
+                    }
 
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        --imagesDownloading;
-                        if (0 == imagesDownloading)
-                            ProgressBarPopup.Instance.Close();
-                    });
-                };
-                client.DownloadImageCompleted += (obj, arg) =>
+                    #endregion
+                }
+                else
                 {
-                    System.Diagnostics.Debug.WriteLine("download image completed: {0}", arg.Url);
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        if (String.IsNullOrEmpty(a.ImageGuid))
-                        {
-                            a.SaveImage(arg.ImageStream);
-                            (this.DataContext as ActivityExt).SendPropertyChanged("ActivityImageBrush");
-                        }
-
-                        --imagesDownloading;
-                        if (0 == imagesDownloading)
-                            ProgressBarPopup.Instance.Close();
-                    });
-                };
-                client.Execute(a.Image);
-            }
+                    //...Do nothing.
+                }
+            });
         }
 
         #endregion

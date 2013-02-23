@@ -50,7 +50,7 @@
             <Setter Property="CacheMode" Value="BitmapCache"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
+            <Setter Property="Margin" Value="0,0,-30,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PanoramaItem">
@@ -103,211 +103,254 @@
 
     </phone:PhoneApplicationPage.Resources>
 
+    <Grid>
 
-    <controls:Panorama SelectionChanged="Panorama_SelectionChanged" TitleTemplate="{StaticResource WT_PanoramaHeadTemplate}" Margin="-12,0,0,0">
+        <Border x:Name="Border_PanoramaItemReferenceWidth" Margin="18,0,78,0"/>
 
-        <!--
+        <controls:Panorama SelectionChanged="Panorama_SelectionChanged" TitleTemplate="{StaticResource WT_PanoramaHeadTemplate}" Margin="-12,0,0,0">
+
+            <!--
 动态   
                 -->
-        <Grid>
-            <!--Sign Out-->
-            <Border x:Name="Border_SignIn">
-                <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-                    <StackPanel>
-                        <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20"/>
-                        <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                            <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
+            <Grid>
+                <!--Sign Out-->
+                <Border x:Name="Border_SignIn">
+                    <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                        <StackPanel>
+                            <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20"/>
+                            <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                                <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
                                      TextChanged="UpdateLoginButton"/>
-                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
+                                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
                                        Visibility="{Binding Text,ElementName=TextBox_Id, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
-                        </Grid>
-
-                        <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
-                        <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
-                            <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}"
-                                         PasswordChanged="PasswordBox_Password_PasswordChanged"/>
-                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
-                                       Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
-                        </Grid>
-
-                        <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,0" Padding="0" FontSize="20"
-                                Click="NavToForgotPassword">
-                            <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
-                        </Button>
-                    </StackPanel>
-                </controls:PanoramaItem>
-            </Border>
-            <!--[SIGN IN]-->
-            <Border x:Name="Border_SignOut" Visibility="{Binding Visibility, ElementName=Border_SignIn, Converter={StaticResource TurnOverVisibilityConverter}}">
-                <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                        <Grid>
-                            <Grid.RowDefinitions>
-
-                                <!--Avatar & Favorites-->
-                                <RowDefinition Height="141"/>
-                                <RowDefinition Height="20"/>
-
-                                <!--Alarm-->
-                                <RowDefinition Height="141"/>
-                                <RowDefinition Height="20"/>
-
-                                <!--Agendar-->
-                                <RowDefinition Height="141"/>
-                            </Grid.RowDefinitions>
-
-                            <!--Avatar & Favorites-->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="141"/>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="141"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!---Avatar-->
-                                <Button Style="{StaticResource NoBorderButtonStyle}" Click="ViewPersonalProfile">
-                                    <Button.Content>
-                                        <Grid Width="141" Height="141">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="35"/>
-                                                <RowDefinition Height="141"/>
-                                            </Grid.RowDefinitions>
-
-                                            <Border Background="#FF1BA1E2">
-                                                <!--Name-->
-                                                <TextBlock Text="蔡思雨" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <!--Avatar-->
-                                            <!--@_@-->
-                                            <!--<Image Grid.Row="1" Stretch="UniformToFill"/>-->
-                                            <Rectangle Fill="Orange" Grid.Row="1"/>
-
-                                        </Grid>
-                                    </Button.Content>
-                                </Button>
-
-                                <!--Favorites-->
-                                <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Column="2"
-                                        Click="ViewMyFavorite">
-                                    <Button.Content>
-                                        <Grid Background="#FF1BA1E2" Width="141" Height="141">
-                                            <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
-                                          Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
-
-                                            <!--Count of Favorites-->
-                                            <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="1" FontSize="40"/>
-
-                                            <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
-                                        </Grid>
-                                    </Button.Content>
-                                </Button>
                             </Grid>
 
-                            <!--Alarm-->
-                            <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Row="2" HorizontalAlignment="Left"
-                        Click="ViewAlarmItem">
-                                <Button.Content>
-                                    <Grid Background="#FF1BA1E2" Width="302" Height="141">
-                                        <!--Icon-->
-                                        <Grid Width="60" Height="67" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,14,0,0">
-                                            <Ellipse x:Name="AlarmBody" Height="35" Stroke="White" StrokeThickness="4" Width="35"/>
-                                            <Path x:Name="AlarmRightEar" Data="M68.312,349.25 C73.9379,351.313 79.1882,354.938 81.7498,361.312 C84.8121,361.062 86.2507,351.688 81.313,348.064 C78.3756,345.314 71.34,345.34 68.312,349.25 z" Height="16.176" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Width="17.23" Fill="White" Margin="28,-31,0,0"/>
-                                            <Path x:Name="VerticalLine" Data="M62.345,352.576 L62.3541,344.93" Fill="White" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Opacity="0.995" Margin="29.344,5.531,28.562,46.417" StrokeThickness="2"/>
-                                            <Ellipse x:Name="AlarmRing" Fill="White" Height="5" Stroke="White" Width="5" Margin="28,2,27,53"/>
-                                            <Path x:Name="AlarmLeftEar" Data="M42.956,358.275 C47.5894,353.212 50.5528,351.333 56.8763,349.865 C55.672,348.597 54.4516,348.184 52.5292,347.624 C50.4293,347.355 48.3295,347.292 46.4367,347.707 C44.8248,347.925 42.163,349.264 41.0441,350.612 C40.8617,350.83 40.0188,351.691 40.0188,354.243 C40.1075,356.629 42.2069,358.095 42.956,358.275 z" Stretch="Fill" Stroke="White" UseLayoutRounding="False" StrokeThickness="0" Fill="White" Margin="8,9.738,34.188,40.896"/>
-                                            <Path x:Name="AlarmLeftFoot" Data="M48.625,380.042 L44.125,387.25 L47.75,389.333 L51.5833,383 z" Height="9.291" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="7.458" Fill="White" Margin="-28,31,0,0"/>
-                                            <Path x:Name="AlarmRightFoot" Data="M73.4167,382.833 L77.4164,389.208 L80.2492,387.583 L76.3328,380.083 z" Fill="White" Height="9.125" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="6.833" Margin="0,31,-30,0"/>
-                                            <Path x:Name="MinutePointer" Data="M61.5595,364.479 L61.5382,371.063" Height="9.584" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Width="3.021" Margin="-1,-3,0,0" RenderTransformOrigin="0.5,0.85"/>
-                                            <Path x:Name="HourPointer" Data="M66.9609,371.098 L60.9707,371.098" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Margin="28.125,33.813,22.969,30.156" RenderTransformOrigin="0.155,0.5"/>
-                                        </Grid>
-                                        <TextBlock Text="提醒" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"/>
+                            <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
+                            <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
+                                <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}"
+                                         PasswordChanged="PasswordBox_Password_PasswordChanged"/>
+                                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
+                                       Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                            </Grid>
 
-                                        <!--Core Item-->
-                                        <Grid VerticalAlignment="Top" Margin="0,20,17,0">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.382*"/>
-                                                <ColumnDefinition Width="0.618*"/>
-                                            </Grid.ColumnDefinitions>
+                            <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,0" Padding="0" FontSize="20"
+                                Click="NavToForgotPassword">
+                                <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
+                            </Button>
+                        </StackPanel>
+                    </controls:PanoramaItem>
+                </Border>
+                <!--[SIGN IN]-->
+                <Border x:Name="Border_SignOut" Visibility="{Binding Visibility, ElementName=Border_SignIn, Converter={StaticResource TurnOverVisibilityConverter}}">
+                    <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
-                                            <!--Time-->
-                                            <TextBlock Grid.Column="1" Text="8:00" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
-                                            <!--Title-->
-                                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <Grid>
+                                <Grid.RowDefinitions>
+
+                                    <!--Avatar & Favorites-->
+                                    <RowDefinition Height="141"/>
+                                    <RowDefinition Height="20"/>
+
+                                    <!--Alarm-->
+                                    <RowDefinition Height="141"/>
+                                    <RowDefinition Height="20"/>
+
+                                    <!--Agendar-->
+                                    <RowDefinition Height="141"/>
+                                </Grid.RowDefinitions>
+
+                                <!--Avatar & Favorites-->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="141"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="141"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!---Avatar-->
+                                    <Button Style="{StaticResource NoBorderButtonStyle}" Click="ViewPersonalProfile">
+                                        <Button.Content>
+                                            <Grid Width="141" Height="141">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="35"/>
+                                                    <RowDefinition Height="141"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Border Background="#FF1BA1E2">
+                                                    <!--Name-->
+                                                    <TextBlock Text="蔡思雨" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <!--Avatar-->
+                                                <!--@_@-->
+                                                <!--<Image Grid.Row="1" Stretch="UniformToFill"/>-->
+                                                <Rectangle Fill="Orange" Grid.Row="1"/>
+
+                                            </Grid>
+                                        </Button.Content>
+                                    </Button>
+
+                                    <!--Favorites-->
+                                    <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Column="2"
+                                        Click="ViewMyFavorite">
+                                        <Button.Content>
+                                            <Grid Background="#FF1BA1E2" Width="141" Height="141">
+                                                <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
+                                          Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
+
+                                                <!--Count of Favorites-->
+                                                <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="1" FontSize="40"/>
+
+                                                <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
+                                            </Grid>
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+
+                                <!--Alarm-->
+                                <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Row="2" HorizontalAlignment="Left" 
+                                        Click="ViewAlarmItem">
+                                    <Button.Content>
+                                        <Grid Background="#FF1BA1E2" Width="302" Height="141">
+                                            <!--Icon-->
+                                            <Grid Width="60" Height="67" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,14,0,0">
+                                                <Ellipse x:Name="AlarmBody" Height="35" Stroke="White" StrokeThickness="4" Width="35"/>
+                                                <Path x:Name="AlarmRightEar" Data="M68.312,349.25 C73.9379,351.313 79.1882,354.938 81.7498,361.312 C84.8121,361.062 86.2507,351.688 81.313,348.064 C78.3756,345.314 71.34,345.34 68.312,349.25 z" Height="16.176" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Width="17.23" Fill="White" Margin="28,-31,0,0"/>
+                                                <Path x:Name="VerticalLine" Data="M62.345,352.576 L62.3541,344.93" Fill="White" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Opacity="0.995" Margin="29.344,5.531,28.562,46.417" StrokeThickness="2"/>
+                                                <Ellipse x:Name="AlarmRing" Fill="White" Height="5" Stroke="White" Width="5" Margin="28,2,27,53"/>
+                                                <Path x:Name="AlarmLeftEar" Data="M42.956,358.275 C47.5894,353.212 50.5528,351.333 56.8763,349.865 C55.672,348.597 54.4516,348.184 52.5292,347.624 C50.4293,347.355 48.3295,347.292 46.4367,347.707 C44.8248,347.925 42.163,349.264 41.0441,350.612 C40.8617,350.83 40.0188,351.691 40.0188,354.243 C40.1075,356.629 42.2069,358.095 42.956,358.275 z" Stretch="Fill" Stroke="White" UseLayoutRounding="False" StrokeThickness="0" Fill="White" Margin="8,9.738,34.188,40.896"/>
+                                                <Path x:Name="AlarmLeftFoot" Data="M48.625,380.042 L44.125,387.25 L47.75,389.333 L51.5833,383 z" Height="9.291" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="7.458" Fill="White" Margin="-28,31,0,0"/>
+                                                <Path x:Name="AlarmRightFoot" Data="M73.4167,382.833 L77.4164,389.208 L80.2492,387.583 L76.3328,380.083 z" Fill="White" Height="9.125" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="6.833" Margin="0,31,-30,0"/>
+                                                <Path x:Name="MinutePointer" Data="M61.5595,364.479 L61.5382,371.063" Height="9.584" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Width="3.021" Margin="-1,-3,0,0" RenderTransformOrigin="0.5,0.85"/>
+                                                <Path x:Name="HourPointer" Data="M66.9609,371.098 L60.9707,371.098" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Margin="28.125,33.813,22.969,30.156" RenderTransformOrigin="0.155,0.5"/>
+                                            </Grid>
+                                            <TextBlock Text="提醒" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"/>
+
+                                            <!--Core Item-->
+                                            <Grid VerticalAlignment="Top" Margin="0,20,17,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.382*"/>
+                                                    <ColumnDefinition Width="0.618*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--Time-->
+                                                <TextBlock Grid.Column="1" Text="8:00" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
+                                                <!--Title-->
+                                                <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
 											Text="毛泽东思想和中国特色社会主义理论体系概论"/>
-                                        </Grid>
+                                            </Grid>
 
-                                        <!--No Arrangement case-->
-                                        <TextBlock x:Name="TextBlock_NoCourse" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Collapsed"
+                                            <!--No Arrangement case-->
+                                            <TextBlock x:Name="TextBlock_NoCourse" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Collapsed"
                                                    HorizontalAlignment="Right" VerticalAlignment="Top">
                                             <Run Text="今天"/>
                                             <LineBreak/>
                                             <Run Text="没有安排"/>
-                                        </TextBlock>
-                                    </Grid>
-                                </Button.Content>
-                            </Button>
-
-                            <!--Agendar-->
-                            <Grid Grid.Row="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="141"/>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="141"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Button Style="{StaticResource NoBorderButtonStyle}"
-                                        Click="ViewMyAgenda">
-                                    <Button.Content>
-                                        <Grid Background="#FF1BA1E2" Width="141" Height="141">
-                                            <!--Icon-->
-                                            <Grid Width="41" Height="44" Margin="0,-13,0,0">
-                                                <Path x:Name="LeftEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" StrokeThickness="5" Margin="6.383,-2.989,28.445,37.578"/>
-                                                <Path x:Name="RightEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeThickness="5" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" Margin="29.008,-2.989,6.258,37.578"/>
-                                                <Path x:Name="CalendarBody" Data="M45.4299,579.254 L45.7714,550.888 L48.4267,550.888 C48.416,551.837 48.5324,553.095 49.0639,553.813 C49.5491,554.579 50.1209,554.939 51.3236,555.604 C53.0311,556.255 54.1758,556.413 55.9132,555.793 C56.9822,555.291 58.3229,554.332 58.9919,552.78 C59.2123,552.016 59.2537,551.228 59.2584,550.416 L67.1757,550.401 C67.2928,551.873 67.7099,553.131 68.3083,554.094 C68.937,554.897 69.5686,555.517 70.7787,555.895 C71.9521,556.17 72.8522,556.367 74.4801,555.895 C75.3859,555.438 75.9489,555.109 76.6426,554.227 C77.2461,553.413 77.6803,551.908 77.6375,550.697 L80.8743,550.726 L80.607,578.944 C80.6477,580.439 79.061,581.998 77.8009,581.942 L48.8008,581.825 C47.9395,581.924 45.3805,581.111 45.4299,579.254 z" Stretch="Fill" Stroke="White" StrokeThickness="3" StrokeLineJoin="Round" UseLayoutRounding="False" Margin="-2.063,1.74,-2.062,2.069"/>
-                                                <Path x:Name="Brow" Data="M45.8151,554.178 L46.1558,557.656 L80.2089,557.656 L80.2089,551.125 L79.2185,551.125 C78.0085,554.137 75.8139,555.862 72.5008,556.125 C69.1564,555.211 66.8804,553.368 65.783,550.5 L59.282,550.5 C58.5448,553.225 56.6965,554.827 54.1276,555.703 L47.7508,554.229 C46.7212,551.52 46.0764,551.506 45.8151,554.178 z" Stretch="Fill" StrokeThickness="0" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Margin="0.583,1.757,0.438,30.422"/>
-                                                <!--@_@-->
-                                                <!--This DAY-->
-                                                <TextBlock FontSize="22" Text="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
-                                            </Grid>
-
-                                            <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
+                                            </TextBlock>
                                         </Grid>
                                     </Button.Content>
                                 </Button>
 
+                                <!--Agendar-->
+                                <Grid Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="141"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="141"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Style="{StaticResource NoBorderButtonStyle}"
+                                        Click="ViewMyAgenda">
+                                        <Button.Content>
+                                            <Grid Background="#FF1BA1E2" Width="141" Height="141">
+                                                <!--Icon-->
+                                                <Grid Width="41" Height="44" Margin="0,-13,0,0">
+                                                    <Path x:Name="LeftEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" StrokeThickness="5" Margin="6.383,-2.989,28.445,37.578"/>
+                                                    <Path x:Name="RightEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeThickness="5" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" Margin="29.008,-2.989,6.258,37.578"/>
+                                                    <Path x:Name="CalendarBody" Data="M45.4299,579.254 L45.7714,550.888 L48.4267,550.888 C48.416,551.837 48.5324,553.095 49.0639,553.813 C49.5491,554.579 50.1209,554.939 51.3236,555.604 C53.0311,556.255 54.1758,556.413 55.9132,555.793 C56.9822,555.291 58.3229,554.332 58.9919,552.78 C59.2123,552.016 59.2537,551.228 59.2584,550.416 L67.1757,550.401 C67.2928,551.873 67.7099,553.131 68.3083,554.094 C68.937,554.897 69.5686,555.517 70.7787,555.895 C71.9521,556.17 72.8522,556.367 74.4801,555.895 C75.3859,555.438 75.9489,555.109 76.6426,554.227 C77.2461,553.413 77.6803,551.908 77.6375,550.697 L80.8743,550.726 L80.607,578.944 C80.6477,580.439 79.061,581.998 77.8009,581.942 L48.8008,581.825 C47.9395,581.924 45.3805,581.111 45.4299,579.254 z" Stretch="Fill" Stroke="White" StrokeThickness="3" StrokeLineJoin="Round" UseLayoutRounding="False" Margin="-2.063,1.74,-2.062,2.069"/>
+                                                    <Path x:Name="Brow" Data="M45.8151,554.178 L46.1558,557.656 L80.2089,557.656 L80.2089,551.125 L79.2185,551.125 C78.0085,554.137 75.8139,555.862 72.5008,556.125 C69.1564,555.211 66.8804,553.368 65.783,550.5 L59.282,550.5 C58.5448,553.225 56.6965,554.827 54.1276,555.703 L47.7508,554.229 C46.7212,551.52 46.0764,551.506 45.8151,554.178 z" Stretch="Fill" StrokeThickness="0" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Margin="0.583,1.757,0.438,30.422"/>
+                                                    <!--@_@-->
+                                                    <!--This DAY-->
+                                                    <TextBlock FontSize="22" Text="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
+                                                </Grid>
+
+                                                <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
+                                            </Grid>
+                                        </Button.Content>
+                                    </Button>
+
+                                </Grid>
+
                             </Grid>
 
-                        </Grid>
-
-                    </ScrollViewer>
-                </controls:PanoramaItem>
-            </Border>
-        </Grid>
-        <!--
+                        </ScrollViewer>
+                    </controls:PanoramaItem>
+                </Border>
+            </Grid>
+            <!--
 推荐活动
                 -->
-        <Border>
-            <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-                <Grid>
-                    <ListBox x:Name="ListBox_Activity" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         SelectionChanged="ListBox_Activity_SelectionChanged" ItemTemplate="{StaticResource ActivityListDataTemplate}"/>
-                </Grid>
-            </controls:PanoramaItem>
-        </Border>
+            <Border>
+                <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                    <Grid>
+                        <ListBox x:Name="ListBox_Activity" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         SelectionChanged="ListBox_Activity_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_PanoramaItemReferenceWidth}" Margin="0,0,0,47">
+                                        <StackPanel>
+                                            <!--Title-->
+                                            <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
+                               Text="{Binding Title}"/>
 
-        <!--
+                                            <!--Time-->
+                                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                                <Image Source="Images/Common/time_icon.png" Stretch="None"/>
+                                                <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
+                                           Text="{Binding DisplayTime}"/>
+                                            </StackPanel>
+
+                                            <Grid Margin="0,6,10,0" >
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <!--Place-->
+                                                <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
+                                                <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
+                                   Text="{Binding Location}"/>
+
+                                                <!--Number of Participants-->
+                                                <TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
+								<Run Text="{Binding Schedule}"/>
+								<Run Text="参与"/>
+                                                </TextBlock>
+
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </controls:PanoramaItem>
+            </Border>
+
+            <!--
 校园资讯
                 -->
-        <Border>
-            <controls:PanoramaItem Header="校园资讯" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-                <!--<Grid>
+            <Border>
+                <controls:PanoramaItem Header="校园资讯" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                    <!--<Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="173"/>
                     <RowDefinition Height="24"/>
@@ -334,88 +377,90 @@
                                     DataContext="1"
                                     Click="NavToCampusInfo"/>
             </Grid>-->
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <StackPanel>
-                        <Button Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <StackPanel>
+                            <Button Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
                             DataContext="2" Click="NavToCampusInfo"/>
 
-                        <Button Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
+                            <Button Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
                             DataContext="3" Click="NavToCampusInfo"/>
 
-                        <Button Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
+                            <Button Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
                             DataContext="0" Click="NavToCampusInfo"/>
 
-                        <Button Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
+                            <Button Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
                             DataContext="1" Click="NavToCampusInfo"/>
-                    </StackPanel>
-                </ScrollViewer>
-            </controls:PanoramaItem>
-        </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </controls:PanoramaItem>
+            </Border>
 
-        <!--
+            <!--
 每周人物
                 -->
-        <Border>
-            <controls:PanoramaItem Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+            <Border>
+                <controls:PanoramaItem Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <StackPanel>
 
-                        <!--Basic Information-->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <!--Icon-->
-                            <!--<Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"/>-->
-                            <Rectangle Fill="LightSkyBlue" VerticalAlignment="Top" Width="45" Height="45"/>
-
-                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                <!--Name-->
-                                <TextBlock Text="徐磊" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
-                                <!--Title-->
-                                <TextBlock Text="钻石小鸟联合总裁，1997年毕业于同济大学" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <!--Large Image-->
-                        <!--<Image Stretch="UniformToFill" Margin="0,30,0,0"/>-->
-                        <Rectangle Height="247" Fill="LightGoldenrodYellow" Margin="0,29,0,0"/>
-
-
-                        <Grid Margin="0,24,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                            <!--Basic Information-->
                             <Grid>
-                                <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="0,0,0,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
-                                <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="19.844,0,-0.816,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--Icon-->
+                                <!--<Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"/>-->
+                                <Rectangle Fill="LightSkyBlue" VerticalAlignment="Top" Width="45" Height="45"/>
+
+                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                    <!--Name-->
+                                    <TextBlock Text="徐磊" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
+                                    <!--Title-->
+                                    <TextBlock Text="钻石小鸟联合总裁，1997年毕业于同济大学" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
+                                </StackPanel>
                             </Grid>
 
-                            <!--One sentence-->
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="因为梦想，所以坚持。" TextWrapping="Wrap" Margin="11,-3,0,-1"/>
-                        </Grid>
+                            <!--Large Image-->
+                            <!--<Image Stretch="UniformToFill" Margin="0,30,0,0"/>-->
+                            <Rectangle Height="247" Fill="LightGoldenrodYellow" Margin="0,29,0,0"/>
 
 
-                        <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,24,0,0"
+                            <Grid Margin="0,24,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="0,0,0,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                    <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="19.844,0,-0.816,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                </Grid>
+
+                                <!--One sentence-->
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="因为梦想，所以坚持。" TextWrapping="Wrap" Margin="11,-3,0,-1"/>
+                            </Grid>
+
+
+                            <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,24,0,0"
 							Click="NavToPeopleOfWeek"/>
 
 
-                    </StackPanel>
-                </ScrollViewer>
+                        </StackPanel>
+                    </ScrollViewer>
 
-            </controls:PanoramaItem>
-        </Border>
+                </controls:PanoramaItem>
+            </Border>
 
 
-    </controls:Panorama>
+        </controls:Panorama>
+    </Grid>
+
 
     <phone:PhoneApplicationPage.FontFamily>
         <StaticResource ResourceKey="PhoneFontFamilyNormal"/>

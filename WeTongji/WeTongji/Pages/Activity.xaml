@@ -6,7 +6,7 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls" 
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     x:Class="WeTongji.Activity" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     SupportedOrientations="Portrait"  Orientation="Portrait"
@@ -14,36 +14,9 @@
 	x:Name="PageSelf">
 
     <phone:PhoneApplicationPage.Resources>
-        <Style x:Key="ButtonStyle1" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-            <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
-            <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-            <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
-            <Setter Property="Padding" Value="10,3,10,5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver"/>
-                                    <VisualState x:Name="Pressed"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FocusStates"/>
-                            </VisualStateManager.VisualStateGroups>
-                            <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="0">
-                                <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
+    
     <phone:PhoneApplicationPage.FontFamily>
         <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
     </phone:PhoneApplicationPage.FontFamily>
@@ -150,9 +123,11 @@
             </controls:PivotItem>
 
             <controls:PivotItem Header="活动配图" Style="{StaticResource WTPivotItemStyle}">
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <Image x:Name="Illustration" Stretch="UniformToFill" Source="{Binding ActivityImageBrush}"/>
-                </ScrollViewer>
+                <Grid>
+                    <Image x:Name="Illustration" Visibility="Collapsed" Stretch="UniformToFill" Source="{Binding ActivityImageBrush}"/>
+                    <TextBlock x:Name="NoIllustrationHint" Text="暂无图片信息" FontSize="22" Foreground="#FF999999"
+                               Visibility="{Binding Visibility, ElementName=Illustration, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"/>
+                </Grid>
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>

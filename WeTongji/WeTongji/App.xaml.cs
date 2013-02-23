@@ -67,23 +67,6 @@ namespace WeTongji
         {
             //IsolatedStorageExplorer.Explorer.Start("localhost");
 
-            using (var db = WTShareDataContext.ShareDB)
-            {
-
-#if false
-                if (!db.DatabaseExists())
-                {
-                    db.CreateDatabase();
-                }
-#else
-                if (db.DatabaseExists())
-                {
-                    db.DeleteDatabase();
-                }
-                db.CreateDatabase();
-#endif
-            }
-
             //var store = IsolatedStorageFile.GetUserStoreForApplication();
             //if (!store.FileExists("Settings.txt"))
             //{
@@ -168,7 +151,9 @@ namespace WeTongji
         {
             // Set the root visual to allow the application to render
             if (RootVisual != RootFrame)
+            {
                 RootVisual = RootFrame;
+            }
 
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
