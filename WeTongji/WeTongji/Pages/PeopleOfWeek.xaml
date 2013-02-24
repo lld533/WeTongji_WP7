@@ -10,62 +10,79 @@
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
-	
-		<controls:Pivot Title="每周人物-徐磊" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource PeopleOfWeekThemeBrush}">
-			<controls:PivotItem Header="人物介绍" Style="{StaticResource WTPivotItemStyle}" d:IsHidden="True">
-				<ScrollViewer VerticalScrollBarVisibility="Hidden">
-					<StackPanel>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition Width="23"/>
-								<ColumnDefinition Width="Auto"/>
-							</Grid.ColumnDefinitions>
+    
+    <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
 
-							<!--<Image Stretch="UniformToFill"/>-->
-							<Rectangle Height="330" Fill="Beige"/>
+    <controls:Pivot x:Name="Pivot_Core" Visibility="Collapsed" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource PeopleOfWeekThemeBrush}"
+                    ItemContainerStyle="{StaticResource WTPivotItemStyle}">
+        <controls:Pivot.Title>
+            <TextBlock>
+                <Run Text="每周人物-"/>
+                <Run Text="{Binding Name}"/>
+            </TextBlock>
+        </controls:Pivot.Title>
+        <controls:PivotItem Header="人物介绍">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="23"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-							<Grid Grid.Column="2" VerticalAlignment="Top">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="40"/>
-									<ColumnDefinition Width="15"/>
-									<ColumnDefinition/>
-								</Grid.ColumnDefinitions>
-								<Grid.RowDefinitions>
-									<RowDefinition/>
-									<RowDefinition Height="12"/>
-									<RowDefinition/>
-								</Grid.RowDefinitions>
+                        <Image Stretch="UniformToFill" Source="{Binding FirstImageBrush}"/>
 
-								<Grid>
-									<Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
-									<Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
-								</Grid>
-								<TextBlock Grid.Column="2" Text="14" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                        <Grid Grid.Column="2" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="12"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-								<Grid Grid.Row="2">
-									<Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
-									<Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
+                            <Grid>
+                                <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
+                                <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
+                            </Grid>
+                            <TextBlock Grid.Column="2" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                           Text="{Binding Like}"/>
+
+                            <Grid Grid.Row="2">
+                                <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
+                                <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
 										Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
-									<Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
-									<Ellipse Width="5" Height="5"  Fill="White"/>
-								</Grid>
-								<TextBlock Grid.Row="2" Grid.Column="2" Text="35" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-							</Grid>
+                                <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
+                                <Ellipse Width="5" Height="5"  Fill="White"/>
+                            </Grid>
+                            <TextBlock Grid.Row="2" Grid.Column="2" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                           Text="{Binding Read}"/>
+                        </Grid>
 
-						</Grid>
+                    </Grid>
 
-						<TextBlock Text="徐磊" Margin="0,12,0,0" FontSize="38" Foreground="{StaticResource PeopleOfWeekThemeBrush}"/>
+                    <TextBlock Text="{Binding Name}" Margin="0,12,0,0" FontSize="38" Foreground="{StaticResource PeopleOfWeekThemeBrush}"/>
 
-						<TextBlock Foreground="#FF999999" TextWrapping="Wrap"
-							Text="钻石小鸟联合总裁，1997年毕业于同济大学" Margin="0,8,0,0" FontSize="22"/>
-					</StackPanel>
-				</ScrollViewer>
-			</controls:PivotItem>
-			<controls:PivotItem Header="经历故事" Style="{StaticResource WTPivotItemStyle}">
-				<ScrollViewer VerticalScrollBarVisibility="Hidden">
-					<StackPanel>
-					<Grid>
+                    <TextBlock Foreground="#FF999999" TextWrapping="Wrap"
+							Text="{Binding JobTitle}" Margin="0,8,0,0" FontSize="22"/>
+                </StackPanel>
+            </ScrollViewer>
+        </controls:PivotItem>
+        <controls:PivotItem Header="经历故事">
+            <ScrollViewer Margin="0,0,-20,0" VerticalScrollBarVisibility="Hidden">
+                <StackPanel HorizontalAlignment="Left" Margin="0,0,20,0">
+
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
@@ -79,37 +96,41 @@
                             <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="19.844,0,-0.816,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
                         </Grid>
 
-                        <!--One sentence-->
                         <TextBlock Grid.Row="1" Grid.Column="1" Foreground="{StaticResource PeopleOfWeekThemeBrush}" TextWrapping="Wrap" Margin="14,-20,0,-1" FontSize="36"
-									Text="因为梦想，所以坚持。"/>
+									Text="{Binding Words}"/>
                     </Grid>
 
-					<TextBlock Foreground="White" TextWrapping="Wrap" FontSize="22" Margin="0,21,0,0"
-								Text="       你很难把这位略显粗犷的男人与美丽而精致的钻石联系在一起，可他的确拥有着众多钻石珠宝界的专业头衔："/>
-					</StackPanel>
-				</ScrollViewer>
-			</controls:PivotItem>
-			<controls:PivotItem Header="生活图片" Style="{StaticResource WTPivotItemStyle}">				
-				<ListBox x:Name="ListBox_Pic" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid Margin="0,0,0,40">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="260"/>
-									<ColumnDefinition Width="15"/>
-									<ColumnDefinition/>
-								</Grid.ColumnDefinitions>
+                    <!--<TextBlock x:Name="TextBlock_Description" Foreground="White" TextWrapping="Wrap" FontSize="22" Margin="0,21,0,0"/>-->
+                    <!--<RichTextBox x:Name="RichTextBox_Description" Foreground="White" TextWrapping="Wrap" FontSize="22" Margin="0,21,0,0"/>-->
+                    <StackPanel x:Name="StackPanel_Description"  Margin="0,21,0,0">
+                        
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
 
-								<!--<Image Stretch="UniformToFill"/>-->
-								<Rectangle Height="180" Fill="Pink"/>
-								<TextBlock Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="22"
-											Text="钻石小鸟惊艳2010中国钻石论坛" Margin="0,-4,0,0"/>
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>				
-			</controls:PivotItem>
-		</controls:Pivot>
+        </controls:PivotItem>
+        <controls:PivotItem Header="生活图片">
+            <ListBox x:Name="ListBox_Pic"  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                     SelectionChanged="IgnoreSelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,0,0,40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="260"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Stretch="UniformToFill" Source="{Binding ImageBrush}"/>
+                            <TextBlock Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="22"  Margin="0,-4,0,0"
+                                       Text="{Binding Description}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </controls:PivotItem>
+    </controls:Pivot>
+
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>

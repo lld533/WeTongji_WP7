@@ -47,7 +47,24 @@ namespace WeTongji
 
                     using (var db = WTShareDataContext.ShareDB)
                     {
-                        ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>(db.Activities);
+                        //...Activity
+                        {
+                            ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>(db.Activities);
+                        }
+
+                        //...PeopleOfWeek
+                        {
+                            var q = from PersonExt person in db.People
+                                    orderby person.NO descending
+                                    select person;
+                            var latestPerson = q.FirstOrDefault();
+                            if (latestPerson != null)
+                            {
+                                StackPanel_PeopleOfWeek.Visibility = Visibility.Visible;
+                                PanoramaItem_PeopleOfWeek.DataContext = latestPerson;
+                            }
+                        }
+
                     }
                 };
 
@@ -79,7 +96,7 @@ namespace WeTongji
                     Refresh();
 #endif
                 }
-            }           
+            }
         }
 
         #endregion
@@ -116,7 +133,10 @@ namespace WeTongji
 
         void NavToPeopleOfWeek(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new Uri("/Pages/PeopleOfWeek.xaml", UriKind.RelativeOrAbsolute));
+            var p = PanoramaItem_PeopleOfWeek.DataContext as PersonExt;
+
+            if(p!=null)
+                this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", p.Id), UriKind.RelativeOrAbsolute));
         }
 
         void NavToForgotPassword(Object sender, RoutedEventArgs e)
@@ -194,6 +214,7 @@ namespace WeTongji
         private void Refresh()
         {
             RefreshActivityList();
+            RefreshPeopleOfWeek();
         }
 
         private void RefreshActivityList()
@@ -272,6 +293,183 @@ namespace WeTongji
 
                 client.Execute(req);
             });
+        }
+
+        private void RefreshPeopleOfWeek()
+        {
+            WTDispatcher.Instance.Do(() =>
+            {
+                PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
+                WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
+
+                //...Tell the user that the background thread starts to work
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                //...Update Activities
+                client.ExecuteCompleted += (o, arg) =>
+                {
+                    PersonExt p = null;
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        int count = arg.Result.People.Count();
+
+                        for (int i = 0; i < count; ++i)
+                        {
+                            var item = arg.Result.People.ElementAt(i);
+                            var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                            //...There is no such item
+                            if (itemInDB == null)
+                            {
+                                var tmp = new PersonExt();
+                                tmp.SetObject(item);
+
+                                db.People.InsertOnSubmit(tmp);
+                            }
+                            //...Already in DB
+                            else
+                            {
+                                itemInDB.Favorite = item.Favorite;
+                                itemInDB.Like = item.Like;
+                                itemInDB.Read = item.Read;
+
+                                //...Todo @_@ Update CanFavorite, CanLike, etc.
+                                // if user signed in.
+                            }
+                        }
+
+                        //...Todo @_@ Update NextPager;
+
+                        db.SubmitChanges();
+                    }
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        //...Query the latest person of week
+                        var q = from PersonExt person in db.People
+                                orderby person.NO descending
+                                select person;
+
+                        p = q.FirstOrDefault();
+                    }
+
+                    if (p != null)
+                        UpdatePeopleOfWeekImages(p);
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            //...Update UI
+                            if (p != null)
+                            {
+                                StackPanel_PeopleOfWeek.Visibility = Visibility.Visible;
+                                PanoramaItem_PeopleOfWeek.DataContext = p;
+                            }
+                        }
+
+                        //...Tell the user that the background thread stops working.
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.ExecuteFailed += (o, arg) =>
+                {
+                    //...Do Nothing if failed
+                    Debug.WriteLine(arg.Error);
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.Execute(req);
+            });
+        }
+
+        private void UpdatePeopleOfWeekImages(PersonExt person)
+        {
+            if (null == person)
+                throw new ArgumentNullException("person");
+
+            #region [Update Avatar]
+
+            if (!person.Avatar.EndsWith("missing.png")
+                && !String.IsNullOrEmpty(person.AvatarGuid)
+                && !person.AvatarExists())
+            {
+                var client = new WTDownloadImageClient();
+
+                client.DownloadImageStarted += (obj, arg) =>
+                    {
+                        Debug.WriteLine("Download person avatar started: {0}", arg.Url);
+                    };
+
+                client.DownloadImageCompleted += (obj, arg) =>
+                    {
+                        Debug.WriteLine("Download person avatar completed: {0}", arg.Url);
+
+                        person.SaveAvatar(arg.ImageStream);
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            try
+                            {
+                                (PanoramaItem_PeopleOfWeek.DataContext as PersonExt).SendPropertyChanged("AvatarImageBrush");
+                            }
+                            catch { }
+                        });
+                    };
+
+                client.DownloadImageFailed += (obj, arg) =>
+                {
+                    Debug.WriteLine("Download person avatar FAILED: {0}\nErr:{1}", arg.Url, arg.Error);
+                };
+
+                client.Execute(person.Avatar);
+            }
+
+            #endregion
+
+            #region [Update First Image]
+
+            var images = person.GetImages();
+            if (images.Count > 0 && !person.ImageExists())
+            {
+                var kv = images.First();
+                var client = new WTDownloadImageClient();
+
+                client.DownloadImageStarted += (obj, arg) =>
+                {
+                    Debug.WriteLine("Download person's first image started: {0}", arg.Url);
+                };
+
+                client.DownloadImageCompleted += (obj, arg) =>
+                {
+                    Debug.WriteLine("Download person's first image completed: {0}", arg.Url);
+
+                    person.SaveImage(arg.ImageStream);
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        (PanoramaItem_PeopleOfWeek.DataContext as PersonExt).SendPropertyChanged("FirstImageBrush");
+                    });
+                };
+
+                client.DownloadImageFailed += (obj, arg) =>
+                {
+                    Debug.WriteLine("Download person's first image FAILED: {0}\nErr:{1}", arg.Url, arg.Error);
+                };
+
+                client.Execute(kv.Key);
+            }
+
+            #endregion
         }
 
         #endregion

@@ -399,10 +399,11 @@
 每周人物
                 -->
             <Border>
-                <controls:PanoramaItem Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                <controls:PanoramaItem x:Name="PanoramaItem_PeopleOfWeek"  Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                        <StackPanel>
+                        <Grid>
+                            <StackPanel x:Name="StackPanel_PeopleOfWeek" Visibility="Collapsed">
 
                             <!--Basic Information-->
                             <Grid>
@@ -411,22 +412,23 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
 
-                                <!--Icon-->
-                                <!--<Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"/>-->
-                                <Rectangle Fill="LightSkyBlue" VerticalAlignment="Top" Width="45" Height="45"/>
+                                <!--Avatar-->
+                                <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
+                                       Source="/Images/missing.png"/>
+                                <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
+                                       Source="{Binding AvatarImageBrush}"/>
 
                                 <StackPanel Grid.Column="1" Margin="12,0,0,0">
                                     <!--Name-->
-                                    <TextBlock Text="徐磊" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
+                                    <TextBlock Text="{Binding Name}" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
                                     <!--Title-->
-                                    <TextBlock Text="钻石小鸟联合总裁，1997年毕业于同济大学" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
+                                    <TextBlock Text="{Binding JobTitle}" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
                                 </StackPanel>
                             </Grid>
 
                             <!--Large Image-->
-                            <!--<Image Stretch="UniformToFill" Margin="0,30,0,0"/>-->
-                            <Rectangle Height="247" Fill="LightGoldenrodYellow" Margin="0,29,0,0"/>
-
+                            <Image Stretch="UniformToFill" Margin="0,29,0,0"
+                                   Source="{Binding FirstImageBrush}"/>
 
                             <Grid Margin="0,24,0,0">
                                 <Grid.ColumnDefinitions>
@@ -443,15 +445,20 @@
                                 </Grid>
 
                                 <!--One sentence-->
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="因为梦想，所以坚持。" TextWrapping="Wrap" Margin="11,-3,0,-1"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Words}" TextWrapping="Wrap" Margin="11,-3,0,-1"/>
                             </Grid>
 
 
                             <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,24,0,0"
-							Click="NavToPeopleOfWeek"/>
+							        Click="NavToPeopleOfWeek"/>
 
 
                         </StackPanel>
+                            <TextBlock Foreground="#FF999999" VerticalAlignment="Top" HorizontalAlignment="Left" Text="暂无&quot;每周人物&quot;信息"
+									   Visibility="{Binding Visibility, ElementName=StackPanel_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"
+                                       />
+                        </Grid>
+                        
                     </ScrollViewer>
 
                 </controls:PanoramaItem>

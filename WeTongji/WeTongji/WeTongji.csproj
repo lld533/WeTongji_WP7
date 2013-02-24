@@ -115,6 +115,7 @@
   <ItemGroup>
     <Compile Include="Business\WTDispatcher.cs" />
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converter\NumberToChineseNumberStringConverter.cs" />
     <Compile Include="Converter\ReversedBoolToVisibilityConverter.cs" />
     <Compile Include="Converter\TurnOverNumberConverter.cs" />
     <Compile Include="Converter\IntToVisibilityConverter.cs" />
@@ -219,6 +220,7 @@
       <DependentUpon>TestSDKPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\DateTimeToChineseDate.cs" />
+    <Compile Include="Utility\DescriptionToInlineCollection.cs" />
     <Compile Include="Utility\ImagePathToImageSource.cs" />
     <Compile Include="Utility\Unicode2String.cs" />
     <Compile Include="Converter\TextLengthToVisibilityConverter.cs" />

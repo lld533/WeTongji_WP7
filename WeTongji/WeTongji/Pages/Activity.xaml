@@ -16,7 +16,7 @@
     <phone:PhoneApplicationPage.Resources>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
-    
+
     <phone:PhoneApplicationPage.FontFamily>
         <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
     </phone:PhoneApplicationPage.FontFamily>
@@ -30,7 +30,8 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <!--Pivot Control-->
-        <controls:Pivot Title="{Binding Title}" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource ActivityThemeBrush}">
+        <controls:Pivot Title="{Binding Title}" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource ActivityThemeBrush}"
+                        TitleTemplate="{StaticResource WTPivotTitleTemplate}">
             <!--Pivot item one-->
             <controls:PivotItem Header="活动介绍" Style="{StaticResource WTPivotItemStyle}">
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
@@ -84,11 +85,8 @@
                                        Text="{Binding Like}" />
 
                             <Grid Grid.Column="4">
-                                <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
-                                <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
-										Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
-                                <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
-                                <Ellipse Width="5" Height="5"  Fill="White"/>
+                                <Ellipse Width="40" Height="40" StrokeThickness="0" Fill="#FFFFCD01"/>
+                                <Path Data="M17.8752,16.0417 C18.3136,13.5979 18.6566,11.9707 20.0002,9.8333 C21.1848,11.9274 21.8936,14.0459 22.1677,16.147 C24.7069,15.81 27.5324,16.0325 29.3763,16.5011 C27.9863,18.6603 26.0461,19.706 23.6674,21.2087 C24.9117,23.6366 25.6177,26.1097 25.8342,28.624 C24.4351,28.367 22.5198,27.0915 19.9588,24.5414 C17.4534,27.1555 16.483,27.6123 14.2923,28.707 C14.5588,26.1425 15.3314,23.58 16.3751,21.2087 C14.1869,19.8743 12.1049,18.3897 10.6666,16.4162 C13.0567,15.9188 15.4873,15.8026 17.8752,16.0417 z" HorizontalAlignment="Left" Height="18.877" Margin="10.667,9.831,0,0" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="18.708" Fill="White"/>
                             </Grid>
                             <TextBlock Grid.Column="6" FontSize="22" VerticalAlignment="Center"
                                        Text="{Binding Schedule}"/>

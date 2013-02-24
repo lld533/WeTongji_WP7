@@ -276,7 +276,7 @@ namespace WeTongji.Api.Domain
     #region [Person]
     public class Person : WTObject
     {
-        public String Id { get; set; }
+        public int Id { get; set; }
 
         public String Name { get; set; }
 

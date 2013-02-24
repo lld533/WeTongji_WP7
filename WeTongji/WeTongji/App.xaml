@@ -570,8 +570,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
-		
-				<Style x:Key="WTPivotHeaderItemStyle" TargetType="controlsPrimitives:PivotHeaderItem">
+
+        <DataTemplate x:Key="WTPivotTitleTemplate">
+            <Grid>
+                <TextBlock Text="{Binding}" TextTrimming="WordEllipsis"/>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="WTPivotHeaderItemStyle" TargetType="controlsPrimitives:PivotHeaderItem">
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Padding" Value="21,0,1,0"/>
 			<Setter Property="CacheMode" Value="BitmapCache"/>
@@ -646,7 +651,7 @@
 								<RowDefinition Height="*"/>
 							</Grid.RowDefinitions>
 							<Grid Background="{TemplateBinding Background}" CacheMode="BitmapCache" Grid.RowSpan="3"/>
-							<ContentPresenter ContentTemplate="{TemplateBinding TitleTemplate}" Content="{TemplateBinding Title}" Margin="18,17,0,-7"/>
+							<ContentPresenter ContentTemplate="{TemplateBinding TitleTemplate}" Content="{TemplateBinding Title}" Margin="18,17,47,-7"/>
 							<controlsPrimitives:PivotHeadersControl x:Name="HeadersListElement" Grid.Row="1" Margin="-2,36,0,12" ItemContainerStyle="{StaticResource WTPivotHeaderItemStyle}" FontSize="36" Style="{StaticResource WTPivotHeaderControlStyle}"/>
 							<ItemsPresenter x:Name="PivotItemPresenter" Grid.Row="2" Margin="6,0"/>
 						</Grid>

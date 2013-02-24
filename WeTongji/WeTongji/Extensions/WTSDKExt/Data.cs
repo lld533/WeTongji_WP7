@@ -12,6 +12,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Net;
 using System.Windows.Media.Imaging;
+using System.Collections.ObjectModel;
 
 namespace WeTongji.Api.Domain
 {
@@ -80,6 +81,18 @@ namespace WeTongji.Api.Domain
 
         #endregion
 
+        #region [Data Binding]
+
+        public ImageSource ImageBrush
+        {
+            get
+            {
+                return String.Format("{0}.{1}", Id, Url.GetImageFileExtension()).GetImageSource();
+            }
+        }
+
+        #endregion
+
         #region [Constructor]
 
         public ImageExt()
@@ -101,7 +114,7 @@ namespace WeTongji.Api.Domain
         #region [Basic Properties]
 
         [Column(IsPrimaryKey = true)]
-        public String Id { get; set; }
+        public int Id { get; set; }
 
         [Column()]
         public String Name { get; set; }
@@ -139,13 +152,14 @@ namespace WeTongji.Api.Domain
         [Column()]
         public bool CanFavorite { get; set; }
 
-        [Column()]
-        public String SerializedImages { get; set; }
-
         #endregion
 
         #region [Extended Properties]
 
+        /// <summary>
+        /// "[Guid(0)]":"[FileExt(0)]";"[Guid(1)]":"[FileExt(1)]";...."[Guid(n)]":"[FileExt(n)]"
+        /// where n = number of images
+        /// </summary>
         [Column()]
         public String ImageExtList { get; set; }
 
@@ -156,21 +170,187 @@ namespace WeTongji.Api.Domain
 
         #region [Extended Methods]
 
+        /// <summary>
+        /// Key: Url
+        /// Value: Description
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<String, String> GetImages()
         {
-            var Images = new Dictionary<string, string>();
+            var Images = new Dictionary<String, String>();
 
-            if (!String.IsNullOrEmpty(SerializedImages))
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
             {
-                var kvPairs = SerializedImages.Split(',');
-                foreach (var pair in kvPairs)
+                foreach (var img in imgList)
                 {
-                    var strs = pair.Split(':');
-                    Images.Add(strs[0].Trim('\"'), strs[1].Trim('\"'));
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        Images[target.Url] = target.Description;
                 }
             }
 
+
             return Images;
+        }
+
+        public Boolean AvatarExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(String.Format("{0}.{1}", this.AvatarGuid, this.Avatar.GetImageFileExtension()));
+        }
+
+        public Boolean ImageExists(int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                return store.FileExists(fileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public void SaveAvatar(Stream stream)
+        {
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(String.Format("{0}.{1}", AvatarGuid, Avatar.GetImageFileExtension())))
+                {
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Save an image stream.
+        /// </summary>
+        /// <param name="stream">image stream</param>
+        /// <param name="index">
+        /// The zero-based index of Person's images. By default, the value is 0.
+        /// </param>
+        public void SaveImage(Stream stream, int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(fileName))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public IEnumerable<ImageExt> GetImageExts()
+        {
+            var result = new ObservableCollection<ImageExt>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        result.Add(target);
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region [Data Binding]
+
+        public ImageSource AvatarImageBrush
+        {
+            get
+            {
+                if (AvatarGuid.EndsWith("missing.png"))
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+
+                var fileExt = Avatar.GetImageFileExtension();
+
+                var imgSrc = String.Format("{0}.{1}", AvatarGuid, fileExt).GetImageSource();
+
+                if (imgSrc == null)
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                else
+                    return imgSrc;
+            }
+        }
+
+        public ImageSource FirstImageBrush
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKV = ImageExtList.Split(';').FirstOrDefault();
+                if (String.IsNullOrEmpty(imgKV))
+                    return null;
+
+                var fileKV = imgKV.Split(':');
+
+                var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public IEnumerable<ImageSource> ImageBrushList
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKVs = ImageExtList.Split(';');
+
+                var result = new ObservableCollection<ImageSource>();
+
+                foreach (var imgKV in imgKVs)
+                {
+                    var fileKV = imgKV.Split(':');
+
+                    var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                    var imgSrc = fileName.GetImageSource();
+
+                    if (imgSrc != null)
+                        result.Add(imgSrc);
+                }
+
+                return result;
+            }
         }
 
         #endregion
@@ -217,35 +397,23 @@ namespace WeTongji.Api.Domain
 
             #region [Save Images]
 
-            if (p.Images.Count > 0)
+            if (p.Images.Count() > 0)
             {
-                #region [Make SerializedImages]
-
-                {
-                    String[] strs = new String[p.Images.Count];
-                    StringBuilder sb = new StringBuilder();
-
-                    foreach (var kvp in p.Images)
-                    {
-                        sb.Append(String.Format("\"{0}\":\"{1}\",", kvp.Key, kvp.Value));
-                    }
-
-                    SerializedImages = sb.ToString().TrimEnd(',');
-                }
-
-                #endregion
-
                 #region [Make ImageExt List]
 
                 {
-                    var imgList = new ImageExt[p.Images.Count];
+                    var imgList = new ImageExt[p.Images.Count()];
                     int i = 0;
                     StringBuilder sb = new StringBuilder();
 
                     foreach (var kvp in p.Images)
                     {
-                        imgList[i] = new WeTongji.Api.Domain.ImageExt(kvp.Key, kvp.Value);
-                        sb.AppendFormat("{0};", imgList[i++].Id.ToString());
+                        imgList[i] = new WeTongji.Api.Domain.ImageExt(kvp.Key, kvp.Value)
+                            {
+                                Id = Guid.NewGuid().ToString()
+                            };
+                        sb.AppendFormat("\"{0}\":\"{1}\";", imgList[i].Id, imgList[i].Url.GetImageFileExtension());
+                        ++i;
                     }
 
                     using (var db = WTShareDataContext.ShareDB)
@@ -261,13 +429,13 @@ namespace WeTongji.Api.Domain
             }
             else
             {
-                SerializedImages = String.Empty;
+                ImageExtList = String.Empty;
             }
 
             #region [Save Avatar]
 
             {
-                var avatarImg = new ImageExt();
+                var avatarImg = new ImageExt() { Id = Guid.NewGuid().ToString() };
                 using (var db = WTShareDataContext.ShareDB)
                 {
                     db.Images.InsertOnSubmit(avatarImg);
@@ -594,9 +762,9 @@ namespace WeTongji.Api.Domain
                     return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
 
                 var fileExt = OrganizerAvatar.GetImageFileExtension();
-                
+
                 var imgSrc = String.Format("{0}.{1}", OrganizerAvatarGuid, fileExt).GetImageSource();
-                
+
                 if (imgSrc == null)
                     return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
                 else
@@ -617,12 +785,7 @@ namespace WeTongji.Api.Domain
 
                 var fileExt = Image.GetImageFileExtension();
 
-                var imgSrc = String.Format("{0}.{1}", ImageGuid, fileExt).GetImageSource();
-
-                if (imgSrc == null)
-                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
-                else
-                    return imgSrc;
+                return String.Format("{0}.{1}", ImageGuid, fileExt).GetImageSource();
             }
         }
 
