@@ -75,157 +75,186 @@
 
 
     <Grid>
-        <Border Margin="18,0" x:Name="Border_PlaceHolder" IsHitTestVisible="False"/>
+        <Border Margin="18,0" x:Name="Border_ItemWidthReference" IsHitTestVisible="False"/>
 
         <controls:Pivot x:Name="Pivot_Core" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WTPivotStyle}" ItemContainerStyle="{StaticResource WTPivotItemStyle}"
                          Title="校园资讯">
             <controls:PivotItem Header="同济动态">
-                <ListBox x:Name="ListBox_TongjiNews" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                <Grid>
+                    <ListBox x:Name="ListBox_TongjiNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
                      SelectionChanged="Listbox_TongjiNews_SelectionChanged">
-					 <ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="190"/>
-                                    </Grid.ColumnDefinitions>
-									
-									<Grid>
-										<Grid Margin="21,12,21,14">
-                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										Text="&quot;精品期刊&quot;如何炼成?" FontSize="26" Foreground="Black"/>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                    <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="190"/>
+                                        </Grid.ColumnDefinitions>
 
-                                        <Grid VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                        <Grid>
+                                            <Grid Margin="21,12,21,14">
+                                                <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+										                Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                            <TextBlock Text="15:12:42" Foreground="#FF999999"/>
+                                                <Grid VerticalAlignment="Bottom">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="6"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											Text="新闻中心"/>
+                                                    <!--Creation time-->
+                                                    <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                    <!--News source-->
+                                                    <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+											                Text="{Binding Source}"/>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
-										</Grid>
-									</Grid>
-                                    <!--@_@-->
-                                    <!--<Image Stretch="UniformToFill"/>-->
-                                    <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                        <!--@_@-->
+                                        <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                        <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
 
-                                </Grid>
-								<Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="36"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="20"/>
-                                    </Grid.ColumnDefinitions>
+                                    </Grid>
+                                    <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="36"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
+                                        <!--News summary-->
+                                        <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="同济大学举行春节留校学生茶话会和年夜饭。" MaxHeight="80" Margin="0,9,0,0"/>
+											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
-                                    <Grid Grid.Column="3" Margin="0,9,0,17">
-                                        <TextBlock VerticalAlignment="Top" Foreground="Black"
+                                        <Grid Grid.Column="3" Margin="0,9,0,17">
+                                            <!--Title-->
+                                            <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											Text="校领导与寒假留校学生共迎新春佳节" MaxHeight="80"/>
-                                        
-                                        
-                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+											Text="{Binding Title}" MaxHeight="80"/>
 
-                                            <TextBlock Text="2013/02/11" Foreground="#FF999999"/>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-														Text="学生处"/>
+                                            <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="6"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--Creation time-->
+                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                <!--News source-->
+                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+														Text="{Binding Source}"/>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-							</Grid>
-						</DataTemplate>
-					 </ListBox.ItemTemplate>
-                </ListBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <TextBlock Text="暂无&quot;同济动态&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="{Binding Visibility, ElementName=ListBox_TongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                </Grid>
+
             </controls:PivotItem>
             <controls:PivotItem Header="周边推荐">
-                <ListBox x:Name="ListBox_NearBy" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                <Grid>
+                    <ListBox x:Name="ListBox_NearBy" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
                      SelectionChanged="ListBox_NearBy_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8">
+                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="190"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!--@_@-->
-                                <!--<Image Stretch="UniformToFill"/>-->
+                                <!--Title image-->
                                 <Rectangle Grid.Column="1" Fill="LightGoldenrodYellow"/>
-								
-								<Grid Grid.Column="1" HorizontalAlignment="Right" Height="64" VerticalAlignment="Top" Width="111" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}}">
-									<Path Data="M0,0 L62,0 L111,29 L111,64 z" Fill="#FFF07817" Opacity="0.9"/>
-									<TextBlock Text="票" RenderTransformOrigin="0.5,0.5">
-										<TextBlock.RenderTransform>
-											<CompositeTransform Rotation="30" TranslateX="40" TranslateY="26"/>
-										</TextBlock.RenderTransform>
-									</TextBlock>
-								</Grid>
+                                <Image Grid.Column="1"  Stretch="UniformToFill"
+                                       Source="{Binding TitleImageBrush}"/>
+
+                                <Grid Grid.Column="1" HorizontalAlignment="Right" Height="64" VerticalAlignment="Top" Width="111" Visibility="{Binding HasTicket, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Path Data="M0,0 L62,0 L111,29 L111,64 z" Fill="#FFF07817" Opacity="0.9"/>
+                                    <TextBlock Text="票" RenderTransformOrigin="0.5,0.5">
+                                        <TextBlock.RenderTransform>
+                                            <CompositeTransform Rotation="30" TranslateX="40" TranslateY="26"/>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </Grid>
 
                                 <Grid Margin="21,12">
-									<TextBlock FontSize="26" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" MaxHeight="104" TextTrimming="WordEllipsis"
-												Text="新年祈福音乐会&quot;皇家佛乐-华夏梵音&quot;"/>
+                                    <TextBlock FontSize="26" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" MaxHeight="104" TextTrimming="WordEllipsis"
+												Text="{Binding Title}"/>
 
                                     <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis" VerticalAlignment="Bottom" FontSize="18"
-                                           Text="美食 新品推荐 优惠"/>
+                                           Text="{Binding Summary}"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                    <TextBlock Text="暂无&quot;周边推荐&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="{Binding Visibility, ElementName=ListBox_NearBy, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                </Grid>
+                
             </controls:PivotItem>
             <controls:PivotItem Header="校务通知">
-                <ListBox x:Name="ListBox_OfficialNotes" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                <Grid>
+                    <ListBox x:Name="ListBox_OfficialNotes" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
                      SelectionChanged="Listbox_OfficialNotes_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-							<Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="190"/>
                                     </Grid.ColumnDefinitions>
-									
-									<Grid>
-										<Grid Margin="21,12,21,14">
-                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										Text="同济大学2012年赴台湾暑期学校图片展" FontSize="26" Foreground="Black"/>
 
-                                        <Grid VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Grid Margin="21,12,21,14">
+                                            <!--Title-->
+                                            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+										            Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                            <TextBlock Text="2013/02/07" Foreground="#FF999999"/>
+                                            <Grid VerticalAlignment="Bottom">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="6"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											Text="外事办公室"/>
+                                                <!--Creation time-->
+                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                <!--Source-->
+                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+											                Text="{Binding Source}"/>
+                                            </Grid>
                                         </Grid>
-										</Grid>
-									</Grid>
-                                    <!--@_@-->
-                                    <!--<Image Stretch="UniformToFill"/>-->
+                                    </Grid>
+
+                                    <!--First Image-->
                                     <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                    <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
 
                                 </Grid>
-								<Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="20"/>
                                         <ColumnDefinition Width="150"/>
@@ -234,16 +263,18 @@
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
 
+                                    <!--Summary-->
                                     <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="德国马堡大学2013暑期班报名通知" MaxHeight="80" Margin="0,9,0,0"/>
+											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
                                     <Grid Grid.Column="3" Margin="0,9,0,17">
+                                        <!--Title-->
                                         <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											Text="德国马堡大学2013暑期班报名通知" MaxHeight="80"/>
-                                        
-                                        
+											Text="{Binding Title}" MaxHeight="80"/>
+
+
                                         <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -251,55 +282,68 @@
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Text="16:20:18" Foreground="#FF999999"/>
+                                            <!--Creation time-->
+                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
+                                            <!--News source-->
                                             <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-														Text="外事办公室"/>
+														Text="{Binding Source}"/>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-							</Grid>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                    <TextBlock Text="暂无&quot;校务通知&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="{Binding Visibility, ElementName=ListBox_OfficialNotes, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                </Grid>
+                
             </controls:PivotItem>
             <controls:PivotItem Header="社团通告">
-                <ListBox x:Name="ListBox_SocietyNews" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                <Grid>
+                    <ListBox x:Name="ListBox_SocietyNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
                      SelectionChanged="ListBox_SocietyNews_SelectionChanged">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>							
-							<Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}}">
+                        <DataTemplate>
+                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="190"/>
                                     </Grid.ColumnDefinitions>
-									
-									<Grid>
-										<Grid Margin="21,12,21,14">
-                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										Text="微同济2013新年贺词" FontSize="26" Foreground="Black"/>
 
-                                        <Grid VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Grid Margin="21,12,21,14">
+                                            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+										                Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                            <TextBlock Text="2013/02/09" Foreground="#FF999999"/>
+                                            <Grid VerticalAlignment="Bottom">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="6"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											Text="微同济团队官方帐号"/>
+                                                <!--Created at-->
+                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                <!--News source-->
+                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+											    Text="{Binding Source}"/>
+                                            </Grid>
                                         </Grid>
-										</Grid>
-									</Grid>
-                                    <!--@_@-->
-                                    <!--<Image Stretch="UniformToFill"/>-->
+                                    </Grid>
+
+                                    <!--First Image-->
                                     <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                    <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
 
                                 </Grid>
-								<Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="20"/>
                                         <ColumnDefinition Width="150"/>
@@ -308,16 +352,18 @@
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
 
+                                    <!--Summary-->
                                     <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="同济大学举行春节留校学生茶话会和年夜饭。" MaxHeight="80" Margin="0,9,0,0"/>
+											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
                                     <Grid Grid.Column="3" Margin="0,9,0,17">
+                                        <!--Title-->
                                         <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											Text="微同济iOS2.0正式推出" MaxHeight="80"/>
-                                        
-                                        
+											Text="{Binding Title}" MaxHeight="80"/>
+
+
                                         <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -325,17 +371,25 @@
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Text="2012/12/09" Foreground="#FF999999"/>
+                                            <!--Created at-->
+                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
+                                            <!--News source-->
                                             <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-														Text="微同济团队官方帐号"/>
+														Text="{Binding Source}"/>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-							</Grid>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                    <TextBlock Text="暂无&quot;社团通告&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="{Binding Visibility, ElementName=ListBox_SocietyNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                </Grid>
+                
             </controls:PivotItem>
         </controls:Pivot>
 

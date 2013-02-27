@@ -255,7 +255,19 @@ namespace WeTongji.Api.Domain
     #endregion
 
     #region [Around]
-    public class Around : WTNews { }
+    public class Around : WTNews 
+    {
+        /// <summary>
+        /// A string that contains the url info of a title image
+        /// </summary>
+        public String Image { get; set; }
+
+        public String Location { get; set; }
+
+        public String Contact { get; set; }
+
+        public String TicketService { get; set; }
+    }
     #endregion
 
     #region [For Staff]

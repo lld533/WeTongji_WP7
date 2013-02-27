@@ -28,7 +28,7 @@ namespace WeTongji.Api.Request
 
         public override String GetApiName()
         {
-            return "ForStaff.Get";
+            return "ForStaffs.Get";
         }
 
         public override IDictionary<String, String> GetParameters()

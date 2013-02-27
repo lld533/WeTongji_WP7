@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -13,23 +14,38 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
-    <ScrollViewer Margin="20,0" VerticalScrollBarVisibility="Hidden">
-        <StackPanel>
-            <!--@_@ Illustration-->
+    <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="23"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
 
-            <TextBlock FontSize="38" Text="校领导与寒假留校学生共迎新春佳节" FontWeight="Bold"
+        <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </phone:PhoneApplicationPage.Resources>
+
+
+    <ScrollViewer Margin="20,0" VerticalScrollBarVisibility="Hidden">
+        <StackPanel x:Name="StackPanel_Root">
+            
+            <TextBlock FontSize="38" Text="{Binding Title}" FontWeight="Bold"
     					TextWrapping="Wrap" Margin="0,-3,0,0" Foreground="#FFDF2099"/>
 
-            <!--Time & Host-->
-            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                <TextBlock Foreground="#FF858585" FontSize="18" Margin="0,-4,0,0"
-    						Text="2013/2/1 20:27"/>
-                <TextBlock Foreground="#FF858585" FontSize="18" Margin="9,-4,0,0"
-    						Text="学生处" TextTrimming="WordEllipsis"/>
-            </StackPanel>
+            <!--Creation time & News source-->
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="9"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Foreground="#FF858585" FontSize="18"
+                           Text="{Binding FullDisplayCreationTime}"/>
+                <TextBlock Grid.Column="2" Foreground="#FF858585" FontSize="18"
+                           Text="{Binding Source}" TextTrimming="WordEllipsis"/>
+            </Grid>
 
             <Grid x:Name="NoIllustrationGrid" Visibility="Collapsed">
-                <!--Favorite and Like-->
+                <!--Like and Read-->
                 <Grid Margin="0,22,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
@@ -46,7 +62,7 @@
                         <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                     </Grid>
                     <TextBlock Grid.Column="2" FontSize="22" VerticalAlignment="Center"
-    							Text="14" />
+    							Text="{Binding Like}" />
 
                     <Grid Grid.Column="4">
                         <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
@@ -56,7 +72,7 @@
                         <Ellipse Width="5" Height="5"  Fill="White"/>
                     </Grid>
                     <TextBlock Grid.Column="6" FontSize="22" VerticalAlignment="Center"
-    							Text="35"/>
+    							Text="{Binding Read}"/>
                 </Grid>
 
             </Grid>
@@ -68,8 +84,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!--<Image Stretch="UniformToFill"/>-->
-                <Rectangle Height="330" Fill="Beige"/>
+                <!--First Image-->
+                <Image Source="{Binding FirstImageBrush}" Stretch="UniformToFill"/>
 
                 <Grid Grid.Column="2" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
@@ -87,7 +103,7 @@
                         <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
                         <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                     </Grid>
-                    <TextBlock Grid.Column="2" Text="14" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Like}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 
                     <Grid Grid.Row="2">
                         <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
@@ -96,25 +112,25 @@
                         <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
                         <Ellipse Width="5" Height="5"  Fill="White"/>
                     </Grid>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="35" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Read}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
                 </Grid>
 
             </Grid>
 
-            <!--Paragraphs-->
-            <TextBlock FontSize="23" TextWrapping="Wrap" Margin="0,23,0,34" d:IsHidden="True">
-    					<Run Text="龙含宝珠辞旧岁，蛇吐瑞气贺新春。"/>
-    					<LineBreak/>
-    					<LineBreak/>
-    					<Run Text="2013年2月8日，同济大学举行春节留校学生茶话会和年夜饭，校党委书记周祖翼、校长裴钢、常务副校长陈以一、副校长郑惠强、江波、董琦，"/>
-            </TextBlock>
+            <!--Context-->
+            <StackPanel x:Name="StackPanel_Description" Margin="0,23,0,0"/>
 
-            <!--Images-->
-            <StackPanel x:Name="StackPanel_OtherImages" Visibility="Collapsed"  Margin="0,17,0,0">
-                <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
-                <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
-            </StackPanel>
-            
+            <!--The rest images(Except the first one)-->
+            <ListBox x:Name="ListBox_Pic" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}">
+                            <Image Source="{Binding ImageBrush}" HorizontalAlignment="Left" Stretch="UniformToFill"  Margin="0,0,0,24"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </ScrollViewer>
 

@@ -1136,8 +1136,12 @@ namespace WeTongji.Api.Domain
 
         #region [Extended Properties]
 
+        /// <summary>
+        /// "[Guid(0)]":"[FileExt(0)]";"[Guid(1)]":"[FileExt(1)]";...."[Guid(n)]":"[FileExt(n)]"
+        /// where n = number of images
+        /// </summary>
         [Column()]
-        public String SerializedImages { get; set; }
+        public String ImageExtList { get; set; }
 
         #endregion
 
@@ -1172,7 +1176,26 @@ namespace WeTongji.Api.Domain
 
             #region [Save Extended Properties]
 
-            SerializedImages = news.Images.Aggregate((a, b) => String.Format("\"{0}\",\"{1}\"", a, b));
+            if (news.Images.Count() > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var img in news.Images)
+                    {
+                        var imgExt = new ImageExt(img) { Id = Guid.NewGuid().ToString() };
+
+                        sb.AppendFormat("\"{0}\":\"{1}\";", imgExt.Id, imgExt.Url.GetImageFileExtension());
+
+                        db.Images.InsertOnSubmit(imgExt);
+                    }
+
+                    db.SubmitChanges();
+                }
+
+                ImageExtList = sb.ToString(0, sb.Length - 1);
+            }
 
             #endregion
 
@@ -1194,12 +1217,20 @@ namespace WeTongji.Api.Domain
             news.Favorite = this.Favorite;
             news.CanFavorite = this.CanFavorite;
 
-            var imgs = SerializedImages.Split(',');
-            for (int i = 0; i < imgs.Count(); ++i)
+            if (String.IsNullOrEmpty(ImageExtList))
             {
-                imgs[i] = imgs[i].Trim('\"');
+                news.Images = new String[0];
             }
-            news.Images = imgs;
+            else
+            {
+                var imgs = ImageExtList.Split(';');
+                for (int i = 0; i < imgs.Count(); ++i)
+                {
+                    var tmp = imgs[i].Split(':').First();
+                    imgs[i] = tmp.Trim('\"');
+                }
+                news.Images = imgs;
+            }
 
             return news;
         }
@@ -1225,6 +1256,164 @@ namespace WeTongji.Api.Domain
         }
 
         #endregion
+
+        #endregion
+
+        #region [Extended Methods]
+
+        public Boolean ImageExists(int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                return store.FileExists(fileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Save an image stream.
+        /// </summary>
+        /// <param name="stream">image stream</param>
+        /// <param name="index">
+        /// The zero-based index of Person's images. By default, the value is 0.
+        /// </param>
+        public void SaveImage(Stream stream, int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(fileName))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public IEnumerable<ImageExt> GetImageExts()
+        {
+            var result = new ObservableCollection<ImageExt>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        result.Add(target);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<String> GetImagesURL()
+        {
+            var Images = new List<String>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        Images.Add(target.Url);
+                }
+            }
+
+            return Images;
+        }
+
+        #endregion
+
+        #region [Data Binding]
+
+        public ImageSource FirstImageBrush
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKV = ImageExtList.Split(';').FirstOrDefault();
+                if (String.IsNullOrEmpty(imgKV))
+                    return null;
+
+                var fileKV = imgKV.Split(':');
+
+                var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public Boolean IsIllustrated
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(ImageExtList);
+            }
+        }
+
+        /// <summary>
+        /// 5分钟前 or 5小时前 or 10:20:05 or 2013/02/05
+        /// </summary>
+        public String DisplayCreationTime
+        {
+            get 
+            {
+                var span = DateTime.Now - CreatedAt;
+
+                if (span < TimeSpan.FromHours(1))
+                {
+                    return String.Format("{0}分钟前", (int)span.TotalMinutes);
+                }
+                else if (span < TimeSpan.FromHours(6))
+                {
+                    return String.Format("{0}小时前", (int)span.TotalHours);
+                }
+                else if (CreatedAt.Date == DateTime.Now.Date)
+                {
+                    return CreatedAt.ToString("HH:mm:ss");
+                }
+                else
+                    return CreatedAt.ToString("yyyy/MM/dd");
+            }
+        }
+
+        /// <summary>
+        /// 2013/02/03 20:18
+        /// </summary>
+        public String FullDisplayCreationTime
+        {
+            get
+            {
+                return CreatedAt.ToString("yyyy/MM/dd hh:mm");
+            }
+        }
 
         #endregion
     }
@@ -1267,12 +1456,37 @@ namespace WeTongji.Api.Domain
         [Column()]
         public bool CanFavorite { get; set; }
 
+        /// <summary>
+        /// The url of the title image
+        /// </summary>
+        /// <remarks>
+        /// Refers to "Image" property of class Around
+        /// </remarks>
+        [Column()]
+        public String TitleImage { get; set; }
+
+        [Column()]
+        public String Location { get; set; }
+
+        [Column()]
+        public String Contact { get; set; }
+
+        [Column()]
+        public String TicketService { get; set; }
+
         #endregion
 
         #region [Extended Properties]
 
+        /// <summary>
+        /// "[Guid(0)]":"[FileExt(0)]";"[Guid(1)]":"[FileExt(1)]";...."[Guid(n)]":"[FileExt(n)]"
+        /// where n = number of images
+        /// </summary>
         [Column()]
-        public String SerializedImages { get; set; }
+        public String ImageExtList { get; set; }
+
+        [Column]
+        public String TitleImageGuid { get; set; }
 
         #endregion
 
@@ -1283,11 +1497,11 @@ namespace WeTongji.Api.Domain
             #region [Check Arguments]
             if (obj == null)
                 throw new ArgumentNullException("obj");
-            if (!(obj is WeTongji.Api.Domain.WTNews))
+            if (!(obj is WeTongji.Api.Domain.Around))
                 throw new ArgumentOutOfRangeException("obj");
             #endregion
 
-            var news = obj as WeTongji.Api.Domain.WTNews;
+            var news = obj as WeTongji.Api.Domain.Around;
 
             #region [Save Basic Properties]
 
@@ -1302,20 +1516,54 @@ namespace WeTongji.Api.Domain
             this.CanLike = news.CanLike;
             this.Favorite = news.Favorite;
             this.CanFavorite = news.CanFavorite;
+            this.TitleImage = news.Image;
+            this.Location = news.Location;
+            this.Contact = news.Contact;
+            this.TicketService = news.TicketService;
 
             #endregion
 
             #region [Save Extended Properties]
 
-            SerializedImages = news.Images.Aggregate((a, b) => String.Format("\"{0}\",\"{1}\"", a, b));
+            //...Save Images
+            if (news.Images.Count() > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var img in news.Images)
+                    {
+                        var imgExt = new ImageExt(img) { Id = Guid.NewGuid().ToString() };
+
+                        sb.AppendFormat("\"{0}\":\"{1}\";", imgExt.Id, imgExt.Url.GetImageFileExtension());
+
+                        db.Images.InsertOnSubmit(imgExt);
+                    }
+
+                    db.SubmitChanges();
+                }
+
+                ImageExtList = sb.ToString(0, sb.Length - 1);
+            }
+
+            //...Save title image
+            {
+                var titleImg = new ImageExt() { Id = Guid.NewGuid().ToString() };
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    db.Images.InsertOnSubmit(titleImg);
+                    db.SubmitChanges();
+                }
+                TitleImageGuid = titleImg.Id;
+            }
 
             #endregion
-
         }
 
         public virtual WTObject GetObject()
         {
-            var news = new WeTongji.Api.Domain.WTNews();
+            var news = new WeTongji.Api.Domain.Around();
 
             news.Id = this.Id;
             news.Title = this.Title;
@@ -1328,18 +1576,30 @@ namespace WeTongji.Api.Domain
             news.CanLike = this.CanLike;
             news.Favorite = this.Favorite;
             news.CanFavorite = this.CanFavorite;
+            news.Image = this.TitleImage;
+            news.Location = this.Location;
+            news.Contact = this.Contact;
+            news.TicketService = this.TicketService;
 
-            var imgs = SerializedImages.Split(',');
-            for (int i = 0; i < imgs.Count(); ++i)
+            if (String.IsNullOrEmpty(ImageExtList))
             {
-                imgs[i] = imgs[i].Trim('\"');
+                news.Images = new String[0];
             }
-            news.Images = imgs;
+            else
+            {
+                var imgs = ImageExtList.Split(';');
+                for (int i = 0; i < imgs.Count(); ++i)
+                {
+                    var tmp = imgs[i].Split(':').First();
+                    imgs[i] = tmp.Trim('\"');
+                }
+                news.Images = imgs;
+            }
 
             return news;
         }
 
-        public virtual Type ExpectedType() { return typeof(WeTongji.Api.Domain.WTNews); }
+        public virtual Type ExpectedType() { return typeof(WeTongji.Api.Domain.Around); }
 
         #region [PropertyChanged]
 
@@ -1360,6 +1620,198 @@ namespace WeTongji.Api.Domain
         }
 
         #endregion
+
+        #endregion
+
+        #region [Data Binding]
+
+        public ImageSource FirstImageBrush
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKV = ImageExtList.Split(';').FirstOrDefault();
+                if (String.IsNullOrEmpty(imgKV))
+                    return null;
+
+                var fileKV = imgKV.Split(':');
+
+                var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public ImageSource TitleImageBrush
+        {
+            get
+            {
+                var fileName = String.Format("{0}.{1}", TitleImageGuid, TitleImage.GetImageFileExtension());
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public Boolean IsIllustrated
+        {
+            get { return !String.IsNullOrEmpty(this.ImageExtList); }
+        }
+
+        public Boolean HasTicket
+        {
+            get { return !String.IsNullOrEmpty(TicketService); }
+        }
+
+        /// <summary>
+        /// 5分钟前 or 5小时前 or 10:20:05 or 2013/02/05
+        /// </summary>
+        public String DisplayCreationTime
+        {
+            get
+            {
+                var span = DateTime.Now - CreatedAt;
+
+                if (span < TimeSpan.FromHours(1))
+                {
+                    return String.Format("{0}分钟前", (int)span.TotalMinutes);
+                }
+                else if (span < TimeSpan.FromHours(7))
+                {
+                    return String.Format("{0}小时前", (int)span.TotalHours);
+                }
+                else if (CreatedAt.Date == DateTime.Now.Date)
+                {
+                    return CreatedAt.ToString("HH:mm:ss");
+                }
+                else
+                    return CreatedAt.ToString("yyyy/MM/dd");
+            }
+        }
+
+        /// <summary>
+        /// 2013/02/03 20:18
+        /// </summary>
+        public String FullDisplayCreationTime
+        {
+            get 
+            {
+                return CreatedAt.ToString("yyyy/MM/dd hh:mm");
+            }
+        }
+
+        #endregion
+
+        #region [Extended Methods]
+
+        public IEnumerable<String> GetImagesURL()
+        {
+            var Images = new List<String>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        Images.Add(target.Url);
+                }
+            }
+
+            return Images;
+        }
+
+        public Boolean ImageExists(int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                return store.FileExists(fileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public Boolean IsTitleImageExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(String.Format("{0}.{1}", TitleImageGuid, TitleImage.GetImageFileExtension()));
+        }
+
+        public void SaveTitleImage(Stream stream)
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            var fileName = String.Format("{0}.{1}", TitleImageGuid, TitleImage.GetImageFileExtension());
+
+            using (var fileStream = store.CreateFile(fileName))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(fileStream);
+                fileStream.Flush();
+                stream.Close();
+            }
+        }
+
+        /// <summary>
+        /// Save an image stream.
+        /// </summary>
+        /// <param name="stream">image stream</param>
+        /// <param name="index">
+        /// The zero-based index of Person's images. By default, the value is 0.
+        /// </param>
+        public void SaveImage(Stream stream, int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(fileName))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public IEnumerable<ImageExt> GetImageExts()
+        {
+            var result = new ObservableCollection<ImageExt>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        result.Add(target);
+                }
+            }
+
+            return result;
+        }
 
         #endregion
     }
@@ -1406,8 +1858,12 @@ namespace WeTongji.Api.Domain
 
         #region [Extended Properties]
 
+        /// <summary>
+        /// "[Guid(0)]":"[FileExt(0)]";"[Guid(1)]":"[FileExt(1)]";...."[Guid(n)]":"[FileExt(n)]"
+        /// where n = number of images
+        /// </summary>
         [Column()]
-        public String SerializedImages { get; set; }
+        public String ImageExtList { get; set; }
 
         #endregion
 
@@ -1442,7 +1898,26 @@ namespace WeTongji.Api.Domain
 
             #region [Save Extended Properties]
 
-            SerializedImages = news.Images.Aggregate((a, b) => String.Format("\"{0}\",\"{1}\"", a, b));
+            if (news.Images.Count() > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var img in news.Images)
+                    {
+                        var imgExt = new ImageExt(img) { Id = Guid.NewGuid().ToString() };
+
+                        sb.AppendFormat("\"{0}\":\"{1}\";", imgExt.Id, imgExt.Url.GetImageFileExtension());
+
+                        db.Images.InsertOnSubmit(imgExt);
+                    }
+
+                    db.SubmitChanges();
+                }
+
+                ImageExtList = sb.ToString(0, sb.Length - 1);
+            }
 
             #endregion
 
@@ -1464,12 +1939,20 @@ namespace WeTongji.Api.Domain
             news.Favorite = this.Favorite;
             news.CanFavorite = this.CanFavorite;
 
-            var imgs = SerializedImages.Split(',');
-            for (int i = 0; i < imgs.Count(); ++i)
+            if (String.IsNullOrEmpty(ImageExtList))
             {
-                imgs[i] = imgs[i].Trim('\"');
+                news.Images = new String[0];
             }
-            news.Images = imgs;
+            else
+            {
+                var imgs = ImageExtList.Split(';');
+                for (int i = 0; i < imgs.Count(); ++i)
+                {
+                    var tmp = imgs[i].Split(':').First();
+                    imgs[i] = tmp.Trim('\"');
+                }
+                news.Images = imgs;
+            }
 
             return news;
         }
@@ -1495,6 +1978,161 @@ namespace WeTongji.Api.Domain
         }
 
         #endregion
+
+        #endregion
+
+        #region [Data Binding]
+
+        public ImageSource FirstImageBrush
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKV = ImageExtList.Split(';').FirstOrDefault();
+                if (String.IsNullOrEmpty(imgKV))
+                    return null;
+
+                var fileKV = imgKV.Split(':');
+
+                var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public Boolean IsIllustrated
+        {
+            get { return !String.IsNullOrEmpty(ImageExtList); }
+        }
+
+        /// <summary>
+        /// 5分钟前 or 5小时前 or 10:20:05 or 2013/02/05
+        /// </summary>
+        public String DisplayCreationTime
+        {
+            get
+            {
+                var span = DateTime.Now - CreatedAt;
+
+                if (span < TimeSpan.FromHours(1))
+                {
+                    return String.Format("{0}分钟前", (int)span.TotalMinutes);
+                }
+                else if (span < TimeSpan.FromHours(6))
+                {
+                    return String.Format("{0}小时前", (int)span.TotalHours);
+                }
+                else if (CreatedAt.Date == DateTime.Now.Date)
+                {
+                    return CreatedAt.ToString("HH:mm:ss");
+                }
+                else
+                    return CreatedAt.ToString("yyyy/MM/dd");
+            }
+        }
+
+        /// <summary>
+        /// 2013/02/03 20:18
+        /// </summary>
+        public String FullDisplayCreationTime
+        {
+            get
+            {
+                return CreatedAt.ToString("yyyy/MM/dd hh:mm");
+            }
+        }
+
+        #endregion
+
+        #region [Extended Methods]
+
+        public IEnumerable<String> GetImagesURL()
+        {
+            var Images = new List<String>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        Images.Add(target.Url);
+                }
+            }
+
+            return Images;
+        }
+
+        public Boolean ImageExists(int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                return store.FileExists(fileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Save an image stream.
+        /// </summary>
+        /// <param name="stream">image stream</param>
+        /// <param name="index">
+        /// The zero-based index of Person's images. By default, the value is 0.
+        /// </param>
+        public void SaveImage(Stream stream, int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(fileName))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public IEnumerable<ImageExt> GetImageExts()
+        {
+            var result = new ObservableCollection<ImageExt>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        result.Add(target);
+                }
+            }
+
+            return result;
+        }
 
         #endregion
     }
@@ -1549,7 +2187,7 @@ namespace WeTongji.Api.Domain
         #region [Extended Properties]
 
         [Column()]
-        public String SerializedImages { get; set; }
+        public String ImageExtList { get; set; }
 
         [Column()]
         public String OrganizerAvatarGuid { get; set; }
@@ -1596,13 +2234,44 @@ namespace WeTongji.Api.Domain
 
             #region [Save Extended Property]
 
-            var img = new ImageExt() { Url = cn.OrganizerAvatar };
-            using (var db = WTShareDataContext.ShareDB)
+            //...Avatar
             {
-                db.Images.InsertOnSubmit(img);
-                db.SubmitChanges();
+                var img = new ImageExt()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Url = cn.OrganizerAvatar
+                };
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    db.Images.InsertOnSubmit(img);
+                    db.SubmitChanges();
+                }
+                OrganizerAvatarGuid = img.Id;
             }
-            OrganizerAvatarGuid = img.Id;
+
+            //...Images
+            {
+                if (cn.Images.Count() > 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        foreach (var img in cn.Images)
+                        {
+                            var imgExt = new ImageExt(img) { Id = Guid.NewGuid().ToString() };
+
+                            sb.AppendFormat("\"{0}\":\"{1}\";", imgExt.Id, imgExt.Url.GetImageFileExtension());
+
+                            db.Images.InsertOnSubmit(imgExt);
+                        }
+
+                        db.SubmitChanges();
+                    }
+
+                    ImageExtList = sb.ToString(0, sb.Length - 1);
+                }
+            }
 
             #endregion
         }
@@ -1625,12 +2294,20 @@ namespace WeTongji.Api.Domain
             cn.Organizer = this.Organizer;
             cn.OrganizerAvatar = this.OrganizerAvatar;
 
-            var imgs = this.SerializedImages.Split(',');
-            for (int i = 0; i < imgs.Count(); ++i)
+            if (String.IsNullOrEmpty(ImageExtList))
             {
-                imgs[i] = imgs[i].Trim('\"');
+                cn.Images = new String[0];
             }
-            cn.Images = imgs;
+            else
+            {
+                var imgs = ImageExtList.Split(';');
+                for (int i = 0; i < imgs.Count(); ++i)
+                {
+                    var tmp = imgs[i].Split(':').First();
+                    imgs[i] = tmp.Trim('\"');
+                }
+                cn.Images = imgs;
+            }
 
             return cn;
         }
@@ -1654,6 +2331,202 @@ namespace WeTongji.Api.Domain
         }
 
         #endregion
+
+        #endregion
+
+        #region [Extended Methods]
+
+        public Boolean ImageExists(int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                return store.FileExists(fileName);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Save an image stream.
+        /// </summary>
+        /// <param name="stream">image stream</param>
+        /// <param name="index">
+        /// The zero-based index of Person's images. By default, the value is 0.
+        /// </param>
+        public void SaveImage(Stream stream, int index = 0)
+        {
+            try
+            {
+                var imgKVs = ImageExtList.Split(';');
+                var imgKV = imgKVs[index].Split(':');
+                var fileName = String.Format("{0}.{1}", imgKV[0].Trim('\"'), imgKV[1].Trim('\"'));
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(fileName))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public void SaveAvatar(Stream stream)
+        {
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                using (var fileStream = store.CreateFile(String.Format("{0}.{1}", OrganizerAvatarGuid, OrganizerAvatar.GetImageFileExtension())))
+                {
+                    stream.CopyTo(fileStream);
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
+            catch { }
+        }
+
+        public IEnumerable<ImageExt> GetImageExts()
+        {
+            var result = new ObservableCollection<ImageExt>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        result.Add(target);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<String> GetImagesURL()
+        {
+            var Images = new List<String>();
+
+            var imgList = ImageExtList.Split(';');
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                foreach (var img in imgList)
+                {
+                    var guid = img.Split(':').First().Trim('\"');
+                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                    if (target != null)
+                        Images.Add(target.Url);
+                }
+            }
+
+            return Images;
+        }
+
+        public Boolean AvatarExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(String.Format("{0}.{1}", this.OrganizerAvatarGuid, this.OrganizerAvatar.GetImageFileExtension()));
+        }
+
+        #endregion
+
+        #region [Data Binding]
+
+        public ImageSource AvatarImageBrush
+        {
+            get
+            {
+                if (OrganizerAvatar.EndsWith("missing.png"))
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+
+                var fileExt = OrganizerAvatar.GetImageFileExtension();
+
+                var imgSrc = String.Format("{0}.{1}", OrganizerAvatarGuid, fileExt).GetImageSource();
+
+                if (imgSrc == null)
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                else
+                    return imgSrc;
+            }
+        }
+
+        public ImageSource FirstImageBrush
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ImageExtList))
+                    return null;
+
+                var imgKV = ImageExtList.Split(';').FirstOrDefault();
+                if (String.IsNullOrEmpty(imgKV))
+                    return null;
+
+                var fileKV = imgKV.Split(':');
+
+                var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
+
+                return fileName.GetImageSource();
+            }
+        }
+
+        public Boolean IsIllustrated
+        {
+            get { return !String.IsNullOrEmpty(ImageExtList); }
+        }
+
+        /// <summary>
+        /// 5分钟前 or 5小时前 or 10:20:05 or 2013/02/05
+        /// </summary>
+        public String DisplayCreationTime
+        {
+            get
+            {
+                var span = DateTime.Now - CreatedAt;
+
+                if (span < TimeSpan.FromHours(1))
+                {
+                    return String.Format("{0}分钟前", (int)span.TotalMinutes);
+                }
+                else if (span < TimeSpan.FromHours(6))
+                {
+                    return String.Format("{0}小时前", (int)span.TotalHours);
+                }
+                else if (CreatedAt.Date == DateTime.Now.Date)
+                {
+                    return CreatedAt.ToString("HH:mm:ss");
+                }
+                else
+                    return CreatedAt.ToString("yyyy/MM/dd");
+            }
+        }
+
+        /// <summary>
+        /// 2013/02/03 20:18
+        /// </summary>
+        public String FullDisplayCreationTime
+        {
+            get
+            {
+                return CreatedAt.ToString("yyyy/MM/dd hh:mm");
+            }
+        }
 
         #endregion
     }

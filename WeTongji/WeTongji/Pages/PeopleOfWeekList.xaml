@@ -16,6 +16,8 @@
 
     <phone:PhoneApplicationPage.Resources>
         <Converter:NumberToChineseNumberStringConverter x:Key="NumberToChineseNumberStringConverter"/>
+        <Converter:StringIsIntToVisibilityConverter x:Key="StringIsIntToVisibilityConverter"/>
+        <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
     
     <Grid Margin="20,0,20,0">
@@ -33,11 +35,18 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="0,0,0,25">
-                        <TextBlock FontSize="21" Foreground="White" Margin="0,-3,0,0">
+                        <!--Title-->
+                        <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
+                                   Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
                             <Run Text="第"/>
                             <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
                             <Run Text="期"/>
                         </TextBlock>
+                        <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
+                                   Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                   Text="{Binding NO}"/>
+
+                        <!--Avatar & Name-->
                         <Grid Height="60"  Margin="0,17,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"/>
@@ -53,7 +62,7 @@
                                 <TextBlock Text="{Binding Name}" 
                                            TextTrimming="WordEllipsis" VerticalAlignment="Top" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,-7,0,0" FontSize="23"/>
                                 <TextBlock Text="{Binding JobTitle}"
-                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="#FF999999" FontSize="18" Margin="0,0,0,-4"/>
+                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="{StaticResource PhoneForegroundBrush}" FontSize="18" Margin="0,0,0,-4"/>
                             </Grid>
 
                         </Grid>

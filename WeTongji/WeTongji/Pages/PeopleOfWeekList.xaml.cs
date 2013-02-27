@@ -23,11 +23,16 @@ namespace WeTongji
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Load PeopleOfWeek Table from database when navigate to this page for the first time.
+        /// Otherwise, check for not loaded person and reload data if it needs.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            #region [Update items source]
+            #region [First time]
 
             if (e.NavigationMode == NavigationMode.New)
             {
@@ -35,10 +40,10 @@ namespace WeTongji
                 {
                     PersonExt[] people = null;
 
-                    using (var store = WTShareDataContext.ShareDB)
+                    using (var db = WTShareDataContext.ShareDB)
                     {
-                        var q = from PersonExt p in store.People
-                                orderby p.NO descending
+                        var q = from PersonExt p in db.People
+                                orderby p.Id descending
                                 select p;
                         people = q.ToArray();
                     }
@@ -47,8 +52,64 @@ namespace WeTongji
                     {
                         ListBox_Core.ItemsSource = people;
                     });
+                });
+            }
 
-                    #region [Download unstored Avatar images]
+            #endregion
+            #region [Otherwise]
+
+            else
+            {
+                var src = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
+
+                WTDispatcher.Instance.Do(() =>
+                {
+                    // Any person in db has not been loaded.
+                    bool flag = false;
+
+                    PersonExt[] people = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        if (src != null && src.Count() > 0)
+                        {
+                            people = db.People.ToArray();
+                        }
+                    }
+
+                    if (people != null)
+                        flag = (from PersonExt p in people
+                                where src.Where((person) => person.Id == p.Id).SingleOrDefault() == null
+                                select p).Count() > 0;
+
+                    //...Reload data if there is at least one person not inserted to the ListBox.
+                    if (flag)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            using (var db = WTShareDataContext.ShareDB)
+                            {
+                                var q = from PersonExt p in db.People
+                                        orderby p.Id descending
+                                        select p;
+                                ListBox_Core.ItemsSource = q.ToArray();
+                            }
+                        });
+                    }
+                });
+            }
+
+            #endregion
+
+            DownloadUnStoredAvatars();
+        }
+
+        private void DownloadUnStoredAvatars()
+        {
+            WTDispatcher.Instance.Do(() =>
+            {
+                var people = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
+                if (people != null)
+                {
                     int count = people.Count();
                     for (int i = 0; i < count; ++i)
                     {
@@ -83,74 +144,8 @@ namespace WeTongji
                             client.Execute(p.Avatar);
                         }
                     }
-                    #endregion
-                });
-            }
-            else
-            {
-                WTDispatcher.Instance.Do(() =>
-                {
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        var people = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
-                        var dbPeople = db.People.ToArray();
-                        var q = from PersonExt pdb in dbPeople
-                                where people.Where( (p)=>p.Id == pdb.Id).SingleOrDefault() == null
-                                select pdb;
-
-                        if (q != null && q.Count() > 0)
-                        {
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                ListBox_Core.ItemsSource = people;
-                            });
-
-                            #region [Download unstored Avatar images]
-                            int count = people.Count();
-                            for (int i = 0; i < count; ++i)
-                            {
-                                var p = people.ElementAt(i);
-
-                                if (!p.Avatar.EndsWith("missing.png") && !p.AvatarExists())
-                                {
-                                    var client = new WTDownloadImageClient();
-
-                                    client.DownloadImageStarted += (obj, arg) =>
-                                    {
-                                        Debug.WriteLine("Download person's avatar started: {0}", arg.Url);
-                                    };
-
-                                    client.DownloadImageFailed += (obj, arg) =>
-                                    {
-                                        Debug.WriteLine("Download person's avatar FAILED: {0}\nErr: {1}", arg.Url, arg.Error);
-                                    };
-
-                                    client.DownloadImageCompleted += (obj, arg) =>
-                                    {
-                                        Debug.WriteLine("Download person's avatar completed: {0}", arg.Url);
-
-                                        p.SaveAvatar(arg.ImageStream);
-
-                                        this.Dispatcher.BeginInvoke(() =>
-                                        {
-                                            p.SendPropertyChanged("AvatarImageBrush");
-                                        });
-                                    };
-
-                                    client.Execute(p.Avatar);
-                                }
-                            }
-                            #endregion
-                        }
-                    }
-                });
-            }
-
-            #endregion
-
-            #region [Update Avatar]
-
-            #endregion
+                }
+            });
         }
 
         private void ListBox_Core_SelectionChanged(Object sender, SelectionChangedEventArgs e)

@@ -15,6 +15,10 @@
 
     <phone:PhoneApplicationPage.Resources>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+        <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
     </phone:PhoneApplicationPage.Resources>
 
     <phone:PhoneApplicationPage.FontFamily>
@@ -115,8 +119,9 @@
             <!--Pivot item two-->
             <controls:PivotItem Header="活动详情" Style="{StaticResource WTPivotItemStyle}">
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <TextBlock TextWrapping="Wrap" FontSize="24"
-                               Text="{Binding Description}"/>
+                    <!--<TextBlock TextWrapping="Wrap" FontSize="24"
+                               Text="{Binding Description}"/>-->
+                    <StackPanel x:Name="StackPanel_Description"/>
                 </ScrollViewer>
             </controls:PivotItem>
 

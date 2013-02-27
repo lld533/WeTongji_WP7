@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -157,6 +158,9 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+        <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+        
 	</phone:PhoneApplicationPage.Resources>
 	<Grid Margin="20,0">
 		<Grid.RowDefinitions>
@@ -189,18 +193,18 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Text="蔡思雨" FontSize="28" Margin="0,0,0,-4"/>
+							<TextBlock Text="李力达" FontSize="28" Margin="0,0,0,-4"/>
 
 							<!--Sex-->
 							<Grid Grid.Column="2">
 								<!--Male-->								
-								<Grid Visibility="Collapsed">
+								<Grid x:Name="Grid_Male">
 									<Ellipse Width="14" Height="14" Stroke="White" StrokeThickness="2" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
 									<Border BorderThickness="0,1" BorderBrush="White" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
 									<Border BorderThickness="1,0" BorderBrush="White" HorizontalAlignment="Center" Height="11" VerticalAlignment="Bottom"/>
 								</Grid>
 								<!--Todo @_@ Female-->
-								<Grid>
+                                <Grid Visibility="{Binding Visibility, ElementName=Grid_Male,Converter={StaticResource TurnOverVisibilityConverter}}">
 									<Ellipse Width="14" Height="14" Stroke="White" StrokeThickness="2" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 									<Path Data="M269,546 L277.542,537.458" Stretch="Fill" Stroke="White" StrokeThickness="2" UseLayoutRounding="False" Width="11" HorizontalAlignment="Right" Height="11" Margin="0,0,-8,-2"/>
 									<Path Data="M13.0557,12.4593 L21.9199,12.4686 L21.8158,21.2056" HorizontalAlignment="Left" Height="10.755" Margin="12.037,11.477,-8.9,0" Stretch="Fill" Stroke="White" StrokeThickness="2" UseLayoutRounding="False" VerticalAlignment="Top" Width="10.863"/>
@@ -234,7 +238,7 @@
 				</Grid>
 				<StackPanel Margin="0,37,0,0">
 					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="学号" VerticalAlignment="Top" Margin="0,-5,0,0"/>
-					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="093011" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
+					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="092983" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
 				</StackPanel>
 				<StackPanel Margin="0,34,0,0">
 					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="专业" VerticalAlignment="Top" Margin="0,-5,0,0"/>
@@ -242,7 +246,7 @@
 				</StackPanel>
 				<StackPanel x:Name="StackPanel_Phone_Value" Margin="0,34,0,0">
 					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="手机" VerticalAlignment="Top" Margin="0,-5,0,0"/>
-					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="13916081244" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
+					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="15900000000" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
 				</StackPanel>
 				<StackPanel x:Name="StackPanel_QQ_Value" Margin="0,34,0,0" Visibility="Collapsed">
 					<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="QQ" VerticalAlignment="Top" Margin="0,-5,0,0"/>

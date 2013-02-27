@@ -89,8 +89,8 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
 
-                            <!--<Image Stretch="UniformToFill">-->
                             <Rectangle Fill="Gray"/>
+                            <Image Stretch="UniformToFill" Source="{Binding FirstImageBrush}"/>
                             <Border Width="130" VerticalAlignment="Top" Opacity="0.5" Margin="0,12,12,0" Height="40" HorizontalAlignment="Right" Background="Black">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
                             </Border>
@@ -114,7 +114,7 @@
                 -->
             <Grid>
                 <!--Sign Out-->
-                <Border x:Name="Border_SignIn">
+                <Border x:Name="Border_SignIn" >
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                         <StackPanel>
                             <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20"/>
@@ -179,7 +179,7 @@
 
                                                 <Border Background="#FF1BA1E2">
                                                     <!--Name-->
-                                                    <TextBlock Text="蔡思雨" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
+                                                    <TextBlock Text="李力达" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                                 <!--Avatar-->
@@ -379,17 +379,18 @@
             </Grid>-->
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                         <StackPanel>
-                            <Button Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
-                            DataContext="2" Click="NavToCampusInfo"/>
-
-                            <Button Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
-                            DataContext="3" Click="NavToCampusInfo"/>
-
-                            <Button Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
-                            DataContext="0" Click="NavToCampusInfo"/>
-
-                            <Button Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
-                            DataContext="1" Click="NavToCampusInfo"/>
+                            <Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
+                                    Click="NavToOfficialNotesList"/>
+                            
+                            <Button x:Name="Button_ClubNews"  Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
+                                    Click="NavToClubNewsList"/>
+                            
+                            <Button x:Name="Button_TongjiNews"  Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
+                                    Click="NavToTongjiNewsList"/>
+                            
+                            <Button x:Name="Button_AroundNews"  Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
+                                    Click="NavToAroundNewsList"/>
+                            
                         </StackPanel>
                     </ScrollViewer>
                 </controls:PanoramaItem>
@@ -427,10 +428,10 @@
                             </Grid>
 
                             <!--Large Image-->
-                            <Image Stretch="UniformToFill" Margin="0,29,0,0"
+                            <Image Stretch="UniformToFill" Margin="0,23,0,0"
                                    Source="{Binding FirstImageBrush}"/>
 
-                            <Grid Margin="0,24,0,0">
+                            <Grid Margin="0,20,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition/>
@@ -445,11 +446,11 @@
                                 </Grid>
 
                                 <!--One sentence-->
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Words}" TextWrapping="Wrap" Margin="11,-3,0,-1"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Words}" TextWrapping="Wrap" Margin="11,-18,0,-1"/>
                             </Grid>
 
 
-                            <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,24,0,0"
+                            <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,12,0,0"
 							        Click="NavToPeopleOfWeek"/>
 
 

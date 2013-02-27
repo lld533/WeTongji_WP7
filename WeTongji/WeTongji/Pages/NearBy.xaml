@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -14,17 +15,11 @@
     shell:SystemTray.IsVisible="True">
 
     <phone:PhoneApplicationPage.Resources>
-        <Style x:Key="PictureStyle" TargetType="Image">
-            <Setter Property="Margin" Value="0,0,0,20"/>
-            <Setter Property="Stretch" Value="UniformToFill"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="21"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
-
-        <Style x:Key="FakePictureStyle" TargetType="Rectangle">
-            <Setter Property="Margin" Value="0,0,0,20"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="Fill" Value="#FF2D7ECA"/>
-        </Style>
+        
         <Style x:Key="NoBorderButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
@@ -72,6 +67,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Hidden">
@@ -82,19 +79,21 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <!--@_@-->
-                <!--<Image Stretch="UniformToFill"/>-->
-                <Rectangle Fill="SkyBlue" Width="120" Height="90"/>
+                <!--Title Image-->
+                <Image Source="{Binding TitleImageBrush}" MaxWidth="120"  Stretch="UniformToFill"/>
 
-                <Grid Grid.Column="1" Margin="15,0,0,0" >
-                    <TextBlock x:Name="TextBlock_Title"  VerticalAlignment="Top" TextWrapping="Wrap"
-									Text="新年祈福音乐会&quot;皇家佛乐-华夏梵音&quot;" FontSize="22" Foreground="{StaticResource NewsThemeBrush}"/>
-                    <TextBlock VerticalAlignment="Bottom"
-									Text="音乐会 优惠" FontSize="20" Foreground="#FF999999" Margin="0,0,0,-1"/>
-                </Grid>
+                <StackPanel Grid.Column="1" Margin="15,0,0,0" >
+                    <!--Title-->
+                    <TextBlock x:Name="TextBlock_Title"  TextWrapping="Wrap" FontSize="22" Foreground="{StaticResource NewsThemeBrush}"
+                               Text="{Binding Title}" />
+                    <!--Summary-->
+                    <TextBlock TextWrapping="Wrap" FontSize="20" Foreground="#FF999999" Margin="0,10,0,0"
+                               Text="{Binding Summary}" />
+                </StackPanel>
             </Grid>
 
 
+            <!--Location & Contact-->
             <Grid Margin="0,30,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -111,14 +110,16 @@
                 <TextBlock Text="地址:"/>
                 <TextBlock Grid.Row="2" Text="电话:"/>
 
-                <Button Grid.Column="2" HorizontalAlignment="Left" Margin="-15,-3,0,0"  Click="ViewMapAddress" 
-                            Content="杨浦区赤峰路35号" Style="{StaticResource NoBorderButton}" />
-                <Button Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Content="18121107473"
+                <Button Grid.Column="2" HorizontalAlignment="Left" Margin="-15,-3,0,0" Click="ViewMapAddress" Style="{StaticResource NoBorderButton}">
+                    <TextBlock Text="{Binding Location}" TextWrapping="Wrap"/>
+                </Button>
+                <Button Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" Content="{Binding Contact}"
                             Margin="-15,-3,0,0" Style="{StaticResource NoBorderButton}"
                             Click="MakePhoneCall"/>
             </Grid>
 
-            <Grid Margin="0,15,0,0">
+            <!--Ticket service info-->
+            <Grid Margin="0,15,0,0" Visibility="{Binding HasTicket, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="13"/>
@@ -131,7 +132,7 @@
 
                 <Border Grid.Column="2" Background="#FFD08B53">
                     <TextBlock TextWrapping="Wrap" Margin="15,-3,14,0"
-									Text="108元（所有票面保证188~888）" VerticalAlignment="Center"/>
+									Text="{Binding TicketService}" VerticalAlignment="Center"/>
                 </Border>
 
             </Grid>
@@ -151,7 +152,7 @@
                     <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
                     <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                 </Grid>
-                <TextBlock Text="14" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
+                <TextBlock Text="{Binding Like}" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
 
                 <Grid Grid.Column="4">
                     <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
@@ -160,26 +161,29 @@
                     <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
                     <Ellipse Width="5" Height="5"  Fill="White"/>
                 </Grid>
-                <TextBlock Text="35" Grid.Column="6" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
+                <TextBlock Text="{Binding Read}" Grid.Column="6" VerticalAlignment="Center" Margin="0,0,0,-2" FontSize="24"/>
             </Grid>
 
-            <StackPanel Margin="0,23,0,0">
-                <TextBlock Text="简介" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
-                <TextBlock TextWrapping="Wrap" Margin="0,11,0,0" FontSize="21">
-						<Run Text="买任意饮料加1元可换购葡式蛋挞或叉烧法式烧饼一只 增加新品如下： 1、抹茶泡芙、巧克力泡芙、草莓泡芙   均为7元 2、御寒姜母茶  中杯8元  大杯13元 3、6只装蛋挞礼盒  15元 4、8只装蛋挞礼盒  18元 5、美式咖啡  7元 7、香草拿铁  10元 8、焦糖玛奇朵  12元（以上信息由商家提供）"/>
-                        <LineBreak/>
-                        <Run Text="来源：同济大学学生会票务中心 刘霖波"/>
-                </TextBlock>
-            </StackPanel>
+
+            <!--Context-->
+            <TextBlock Text="简介" Margin="0,23,0,0" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+            <StackPanel x:Name="StackPanel_Description" Margin="0,11,0,0"/>
 
             <StackPanel Margin="0,23,0,0">
                 <TextBlock Text="图片" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
 
-                <!--Images-->
-                <StackPanel Margin="0,15,0,0">
-                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="180" Margin="0,0,0,24"/>
-                    <Rectangle Fill="#FF2D7ECA" Width="320" HorizontalAlignment="Left" Height="200" Margin="0,0,0,24"/>
-                </StackPanel>
+                <!--Related images-->
+                <ListBox x:Name="ListBox_Pic" Margin="0,15,0,0"
+                         Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}">
+                                <Image Source="{Binding ImageBrush}" HorizontalAlignment="Left" Stretch="UniformToFill"  Margin="0,0,0,24"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
 
         </StackPanel>

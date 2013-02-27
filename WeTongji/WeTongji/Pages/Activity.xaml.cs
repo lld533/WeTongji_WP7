@@ -17,6 +17,7 @@ using WeTongji.Api;
 using System.IO.IsolatedStorage;
 using WeTongji.Pages;
 using WeTongji.Business;
+using WeTongji.Utility;
 
 namespace WeTongji
 {
@@ -70,7 +71,18 @@ namespace WeTongji
                 }
             }
 
-            this.DataContext = a;
+            if (a != null)
+            {
+                this.DataContext = a;
+                var tbs = a.Description.GetInlineCollection();
+                int count = tbs.Count();
+                for (int i = 0; i < count; ++i)
+                {
+                    var tb = tbs.ElementAt(i);
+                    tb.Style = this.Resources["DescriptionTextBlockStyle"] as Style;
+                    StackPanel_Description.Children.Add(tb);
+                }
+            }
 
             WTDispatcher.Instance.Do(() =>
             {
@@ -126,7 +138,10 @@ namespace WeTongji
 
                     if (a.ImageExists())
                     {
-                        NoIllustrationHint.Visibility = Visibility.Collapsed;
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            Illustration.Visibility = Visibility.Visible;
+                        });
                     }
 
                     #endregion
