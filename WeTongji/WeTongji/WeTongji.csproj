@@ -113,6 +113,7 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\Global.cs" />
     <Compile Include="Business\WTDispatcher.cs" />
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Converter\NumberToChineseNumberStringConverter.cs" />
@@ -198,7 +199,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppSquare.cs" />
-    <Compile Include="Global.cs" />
     <Compile Include="Pages\Activity.xaml.cs">
       <DependentUpon>Activity.xaml</DependentUpon>
     </Compile>

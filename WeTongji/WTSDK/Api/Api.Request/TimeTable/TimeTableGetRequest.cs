@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WeTongji.Api.Request
 {
-    class TimeTableGetRequest<T> : WTRequest<T> where T : WeTongji.Api.Response.TimeTableGetResponse
+    public class TimeTableGetRequest<T> : WTRequest<T> where T : WeTongji.Api.Response.TimeTableGetResponse
     {
         #region [Constructor]
         public TimeTableGetRequest() { }

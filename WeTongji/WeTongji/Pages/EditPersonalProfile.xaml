@@ -36,7 +36,7 @@
                 <StackPanel Margin="0,30,0,0">
                     <TextBlock Text="手机" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                        <TextBox x:Name="TextBox_Phone"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
+                        <TextBox x:Name="TextBox_Phone"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"
                                  Text="13000000000"/>
                         <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入手机" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
 										Visibility="{Binding Text,ElementName=TextBox_Phone, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
@@ -47,7 +47,7 @@
                 <StackPanel Margin="0,30,0,0">
                     <TextBlock Text="QQ" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                        <TextBox x:Name="TextBox_QQ"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBox x:Name="TextBox_QQ"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"/>
                         <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入QQ" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
 										Visibility="{Binding Text,ElementName=TextBox_QQ, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
@@ -57,7 +57,7 @@
                 <StackPanel Margin="0,30,0,0">
                     <TextBlock Text="电子邮箱" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                        <TextBox x:Name="TextBox_Email"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBox x:Name="TextBox_Email"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="EmailUserName"/>
                         <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入电子邮箱" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
 										Visibility="{Binding Text,ElementName=TextBox_Email, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
@@ -67,7 +67,7 @@
                 <StackPanel Margin="0,30,0,0">
                     <TextBlock Text="新浪微博" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                        <TextBox x:Name="TextBox_SinaMicroBlog"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"/>
+                        <TextBox x:Name="TextBox_SinaMicroBlog"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Text"/>
                         <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入新浪微博" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
 										Visibility="{Binding Text,ElementName=TextBox_SinaMicroBlog, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>

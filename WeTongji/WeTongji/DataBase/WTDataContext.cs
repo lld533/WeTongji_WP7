@@ -46,7 +46,11 @@ namespace WeTongji.DataBase
 
     public class WTUserDataContext : DataContext
     {
-        public WTUserDataContext(String uid) : base(String.Format("Data Source='isostore:/{0}.sdf'", uid)) { }
+        public WTUserDataContext(String uid) : base(String.Format("Data Source='isostore:/{0}.sdf'", uid)) 
+        {
+            if (!this.DatabaseExists())
+                CreateDatabase();
+        }
 
         #region [Tables]
 
@@ -54,9 +58,13 @@ namespace WeTongji.DataBase
         
         public Table<ImageExt> Images;
         
-        public Table<Course> Courses;
+        public Table<CourseExt> Courses;
 
-        public Table<Exam> Exams;
+        public Table<ExamExt> Exams;
+
+        public Table<ActivityExt> Favorites;
+
+        public Table<Semester> Semesters;
 
         #endregion
     }

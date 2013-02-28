@@ -86,42 +86,31 @@ namespace WeTongji.Api.Domain
 
     #region [Course]
 
-    [Table]
     public class Course : WTObject
     {
-        [Column(IsPrimaryKey=true)]
         public String NO { get; set; }
 
-        [Column()]
         public int Hours { get; set; }
         
-        [Column()]
         public float Point { get; set; }
 
-        [Column()]
         public String Name { get; set; }
 
-        [Column()]
         public String Teacher { get; set; }
 
-        [Column()]
         public String WeekType { get; set; }
 
-        [Column()]
         public String WeekDay { get; set; }
 
-        [Column()]
         public int SectionStart { get; set; }
 
-        [Column()]
         public int SectionEnd { get; set; }
 
-        [Column()]
-        public bool Required { get; set; }
+        public String Required { get; set; }
 
-        [Column()]
         public String Location { get; set; }
     }
+
     #endregion
 
     #region [Event]
@@ -208,34 +197,24 @@ namespace WeTongji.Api.Domain
 
     #region [Exam]
 
-    [Table]
-    public class Exam
+    public class Exam : WTObject
     {
-        [Column(IsPrimaryKey=true)]
         public String NO { get; set; }
 
-        [Column()]
         public String Name { get; set; }
 
-        [Column()]
         public String Teacher { get; set; }
 
-        [Column()]
         public String Location { get; set; }
 
-        [Column()]
         public DateTime Begin { get; set; }
 
-        [Column()]
         public DateTime End { get; set; }
 
-        [Column()]
         public float Point { get; set; }
 
-        [Column()]
         public bool Required { get; set; }
 
-        [Column()]
         public int Hours { get; set; }
     }
 

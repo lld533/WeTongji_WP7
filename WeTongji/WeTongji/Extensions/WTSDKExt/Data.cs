@@ -605,7 +605,11 @@ namespace WeTongji.Api.Domain
 
             #region [Save Extended Properties]
 
-            var img = new ImageExt() { Url = Avatar };
+            var img = new ImageExt()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Url = Avatar
+            };
             using (var db = new WTUserDataContext(user.UID))
             {
                 db.Images.InsertOnSubmit(img);
@@ -665,6 +669,427 @@ namespace WeTongji.Api.Domain
         }
 
         #endregion
+
+        #endregion
+
+        #region [Extended Methods]
+
+        public Boolean AvatarImageExists()
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            var fileExt = Avatar.GetImageFileExtension();
+            var fileName = String.Format("{0}.{1}", AvatarGuid, fileExt);
+
+            return store.FileExists(fileName);
+        }
+
+        public void SaveAvatarImage(Stream stream)
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            var fileExt = Avatar.GetImageFileExtension();
+            var fileName = String.Format("{0}.{1}", AvatarGuid, fileExt);
+
+            using (var fs = store.CreateFile(fileName))
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(fs);
+
+                fs.Flush();
+                fs.Close();
+            }
+        }
+
+        #endregion
+
+        #region [Data Binding]
+
+        public int FavoritesCount
+        {
+            get
+            {
+                int result = 0;
+
+                using (var db = new WTUserDataContext(this.UID))
+                {
+                    result = db.Favorites.Count();
+                }
+
+                return result;
+            }
+        }
+
+        public ImageSource AvatarImageBrush
+        {
+            get
+            {
+                if (AvatarGuid.EndsWith("missing.png"))
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+
+                var fileExt = Avatar.GetImageFileExtension();
+
+                var imgSrc = String.Format("{0}.{1}", AvatarGuid, fileExt).GetImageSource();
+
+                if (imgSrc == null)
+                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                else
+                    return imgSrc;
+            }
+        }
+
+        #endregion
+    }
+
+    [Table(Name = "Course")]
+    public class CourseExt : IWTObjectExt, INotifyPropertyChanged
+    {
+        #region [Basic Properties]
+
+        [Column()]
+        public String NO { get; set; }
+
+        [Column()]
+        public int Hours { get; set; }
+
+        [Column()]
+        public float Point { get; set; }
+
+        [Column()]
+        public String Name { get; set; }
+
+        [Column()]
+        public String Teacher { get; set; }
+
+        [Column()]
+        public String WeekType { get; set; }
+
+        [Column()]
+        public String WeekDay { get; set; }
+
+        [Column()]
+        public int SectionStart { get; set; }
+
+        [Column()]
+        public int SectionEnd { get; set; }
+
+        [Column()]
+        public String Required { get; set; }
+
+        [Column()]
+        public String Location { get; set; }
+
+        #endregion
+
+        #region [Extended Properties]
+
+        /// <summary>
+        /// [SemesterGuid]_[NO]_[WeekDay]_[SectionStart]_[SectionEnd]
+        /// </summary>
+        [Column(IsPrimaryKey = true)]
+        public String Id
+        {
+            get
+            {
+                return String.Format("{0}_{1}_{2}_{3}_{4}", this.SemesterGuid, this.NO, this.WeekDay, this.SectionStart, this.SectionEnd);
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// The guid of the course's semester.
+        /// </summary>
+        [Column(CanBeNull = false)]
+        public String SemesterGuid { get; set; }
+
+        /// <summary>
+        /// Refers to the exam of the course.
+        /// Equals null or String.Empty if it has no exam info temporarily.
+        /// </summary>
+        [Column()]
+        public String ExamNO { get; set; }
+
+        /// <summary>
+        /// The UID of the user that takes this course.
+        /// </summary>
+        [Column(CanBeNull = false)]
+        public String UID { get; set; }
+
+        #endregion
+
+        #region [Implementation]
+
+        /// <summary>
+        /// </summary>
+        /// <remarks>
+        /// This function ONLY sets the public properties of
+        /// an instance of a WeTongji.Api.Domain.Course.
+        /// </remarks>
+        /// <param name="obj"></param>
+        public void SetObject(WTObject obj)
+        {
+            #region [Check Argument]
+
+            if (obj == null)
+                throw new ArgumentNullException("obj");
+            if (!(obj is WeTongji.Api.Domain.Course))
+                throw new ArgumentOutOfRangeException("obj");
+
+            #endregion
+
+            var c = obj as WeTongji.Api.Domain.Course;
+
+            #region [Save Basic Properties]
+
+            this.NO = c.NO;
+            this.Hours = c.Hours;
+            this.Point = c.Point;
+            this.Name = c.Name;
+            this.Teacher = c.Teacher;
+            this.WeekType = c.WeekType;
+            this.WeekDay = c.WeekDay;
+            this.SectionStart = c.SectionStart;
+            this.SectionEnd = c.SectionEnd;
+            this.Required = c.Required;
+            this.Location = c.Location;
+
+            #endregion
+        }
+
+        public WTObject GetObject()
+        {
+            var c = new WeTongji.Api.Domain.Course();
+
+            c.NO = this.NO;
+            c.Hours = this.Hours;
+            c.Point = this.Point;
+            c.Name = this.Name;
+            c.Teacher = this.Teacher;
+            c.WeekDay = this.WeekDay;
+            c.SectionStart = this.SectionStart;
+            c.SectionEnd = this.SectionEnd;
+            c.Required = this.Required;
+            c.Location = this.Location;
+
+            return c;
+        }
+
+        public Type ExpectedType() { return typeof(WeTongji.Api.Domain.Course); }
+
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region [Extended Methods]
+
+        /// <summary>
+        /// Update the value of the exam 
+        /// </summary>
+        /// <param name="no"></param>
+        public void SetExamNO(String no)
+        {
+            this.ExamNO = no;
+            using (var db = new WTUserDataContext(UID))
+            {
+                var courseInDB = db.Courses.Where((c) => c.Id == this.Id).SingleOrDefault();
+
+                if (courseInDB != null)
+                {
+                    courseInDB.ExamNO = no;
+                    db.SubmitChanges();
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    [Table(Name = "Exam")]
+    public class ExamExt : IWTObjectExt, INotifyPropertyChanged
+    {
+        #region [Basic Properties]
+
+        [Column()]
+        public String NO { get; set; }
+
+        [Column()]
+        public String Name { get; set; }
+
+        [Column()]
+        public String Teacher { get; set; }
+
+        [Column()]
+        public String Location { get; set; }
+
+        [Column()]
+        public DateTime Begin { get; set; }
+
+        [Column()]
+        public DateTime End { get; set; }
+
+        [Column()]
+        public float Point { get; set; }
+
+        [Column()]
+        public bool Required { get; set; }
+
+        [Column()]
+        public int Hours { get; set; }
+
+        #endregion
+
+        #region [Extended Properties]
+
+        /// <summary>
+        /// [SemesterGuid]_[NO]
+        /// </summary>
+        [Column(IsPrimaryKey = true)]
+        public String Id
+        {
+            get
+            {
+                return String.Format("{0}_{1}", this.SemesterGuid, this.NO);
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// The guid of the course's semester.
+        /// Equals null or String.Empty if it is invalid.
+        /// </summary>
+        [Column(CanBeNull = false)]
+        public String SemesterGuid { get; set; }
+
+        /// <summary>
+        /// Refers to the exam of the course.
+        /// Equals null or String.Empty if it has no exam info temporarily.
+        /// </summary>
+        [Column()]
+        public String CourseNO { get; set; }
+
+        /// <summary>
+        /// The UID of the user that takes this exam.
+        /// </summary>
+        [Column(CanBeNull = false)]
+        public String UID { get; set; }
+
+        #endregion
+
+        #region [Implementation]
+
+        /// <summary>
+        /// </summary>
+        /// <remarks>
+        /// This function ONLY sets the public properties of
+        /// an instance of a WeTongji.Api.Domain.Course.
+        /// </remarks>
+        /// <param name="obj"></param>
+        public void SetObject(WTObject obj)
+        {
+            #region [Check Argument]
+
+            if (obj == null)
+                throw new ArgumentNullException("obj");
+            if (!(obj is WeTongji.Api.Domain.Exam))
+                throw new ArgumentOutOfRangeException("obj");
+
+            #endregion
+
+            var c = obj as WeTongji.Api.Domain.Exam;
+
+            #region [Save Basic Properties]
+
+            this.NO = c.NO;
+            this.Name = c.Name;
+            this.Teacher = c.Teacher;
+            this.Location = c.Location;
+            this.Begin = c.Begin;
+            this.End = c.End;
+            this.Point = c.Point;
+            this.Required = c.Required;
+            this.Hours = c.Hours;
+
+            #endregion
+        }
+
+        public WTObject GetObject()
+        {
+            var c = new WeTongji.Api.Domain.Exam();
+
+            c.NO = this.NO;
+            c.Name = this.Name;
+            c.Teacher = this.Teacher;
+            c.Location = this.Location;
+            c.Begin = this.Begin;
+            c.End = this.End;
+            c.Point = this.Point;
+            c.Hours = this.Hours;
+
+            return c;
+        }
+
+        public Type ExpectedType() { return typeof(WeTongji.Api.Domain.Exam); }
+
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region [Extended Methods]
+
+        /// <summary>
+        /// Update this.CourseNO & the value in database.
+        /// </summary>
+        /// <param name="no">Course NO</param>
+        public void SetCourseNO(String no)
+        {
+            this.CourseNO = no;
+            using (var db = new WTUserDataContext(UID))
+            {
+                var examInDB = db.Exams.Where((e) => e.Id == this.Id).SingleOrDefault();
+
+                if (examInDB != null)
+                {
+                    examInDB.CourseNO = no;
+                    db.SubmitChanges();
+                }
+            }
+        }
 
         #endregion
     }
@@ -1383,7 +1808,7 @@ namespace WeTongji.Api.Domain
         /// </summary>
         public String DisplayCreationTime
         {
-            get 
+            get
             {
                 var span = DateTime.Now - CreatedAt;
 
@@ -1695,7 +2120,7 @@ namespace WeTongji.Api.Domain
         /// </summary>
         public String FullDisplayCreationTime
         {
-            get 
+            get
             {
                 return CreatedAt.ToString("yyyy/MM/dd hh:mm");
             }
@@ -2138,7 +2563,7 @@ namespace WeTongji.Api.Domain
     }
 
     [Table(Name = "ClubNews")]
-    public class ClubNewsExt : INotifyPropertyChanged
+    public class ClubNewsExt : IWTObjectExt, INotifyPropertyChanged
     {
         #region [Basic Properties]
 
@@ -2526,6 +2951,113 @@ namespace WeTongji.Api.Domain
             {
                 return CreatedAt.ToString("yyyy/MM/dd hh:mm");
             }
+        }
+
+        #endregion
+    }
+
+    [Table()]
+    public class Semester : IWTObjectExt, INotifyPropertyChanged
+    {
+        #region [Properties]
+
+        /// <summary>
+        /// A guid string
+        /// </summary>
+        [Column(IsPrimaryKey = true)]
+        public String Id { get; set; }
+
+        [Column()]
+        public DateTime SchoolYearStartAt { get; set; }
+
+        /// <summary>
+        /// 学年总周数
+        /// </summary>
+        [Column()]
+        public int SchoolYearWeekCount { get; set; }
+
+        /// <summary>
+        /// 学年教学周数
+        /// </summary>
+        [Column()]
+        public int SchoolYearCourseWeekCount { get; set; }
+
+        #endregion
+
+        #region [Implementation]
+
+        /// <summary>
+        /// throw NotSupportException
+        /// </summary>
+        /// <returns></returns>
+        public Type ExpectedType()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throw NotSupportException
+        /// </summary>
+        /// <returns></returns>
+        public void SetObject(WTObject obj)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throw NotSupportException
+        /// </summary>
+        /// <returns></returns>
+        public WTObject GetObject()
+        {
+            throw new NotSupportedException();
+        }
+
+        #region [PropertyChanged]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SendPropertyChanged(String propertyName)
+        {
+            NotifyPropertyChanged(propertyName);
+        }
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region [Overridden]
+
+        /// <summary>
+        /// Same SchoolYearStartAt & Same SchoolYearWeekCount
+        /// means the same semester.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            var result = false;
+            var s = obj as Semester;
+
+            if (s != null)
+                result = this.SchoolYearStartAt == s.SchoolYearStartAt
+                    && this.SchoolYearWeekCount == s.SchoolYearWeekCount;
+
+            return result;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         #endregion

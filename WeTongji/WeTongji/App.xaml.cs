@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System.IO.IsolatedStorage;
-using WeTongji.DataBase;
+using WeTongji.Business;
 
 namespace WeTongji
 {
@@ -66,21 +66,6 @@ namespace WeTongji
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
             //IsolatedStorageExplorer.Explorer.Start("localhost");
-
-            //var store = IsolatedStorageFile.GetUserStoreForApplication();
-            //if (!store.FileExists("Settings.txt"))
-            //{
-            //    store.CreateFile("Settings.txt");
-            //}
-
-            //var settings = new WTSettings();
-            //settings.UID = "092983";
-            //settings.CryptPassword = "123456".GetCryptPassword();
-
-            //var fileStr = settings.GetSerializedString();
-            //var mySettings = fileStr.DeserializeSettings();
-
-            //var myPw = mySettings.CryptPassword.GetOriginalPassword();
         }
 
         // Code to execute when the application is activated (brought to foreground)

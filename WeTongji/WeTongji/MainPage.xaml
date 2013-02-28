@@ -113,35 +113,42 @@
 动态   
                 -->
             <Grid>
-                <!--Sign Out-->
-                <Border x:Name="Border_SignIn" >
+                <!--Signed Out-->
+                <Border x:Name="Border_SignedOut" >
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-                        <StackPanel>
-                            <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20"/>
+                        <ScrollViewer x:Name="ScrollViewer_SignOutRoot"  VerticalScrollBarVisibility="Disabled">
+                            <StackPanel>
+                            <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20" Margin="0,-3,0,0"/>
                             <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                                <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
-                                     TextChanged="UpdateLoginButton"/>
+                                <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Number" 
+                                         TextChanged="UpdateLoginButton"
+                                         GotFocus="SignInControl_GotFocus"
+                                         LostFocus="SignInControl_LostFocus"/>
                                 <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
                                        Visibility="{Binding Text,ElementName=TextBox_Id, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                             </Grid>
 
                             <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
                             <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
-                                <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}"
-                                         PasswordChanged="PasswordBox_Password_PasswordChanged"/>
+                                <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}" 
+                                             PasswordChanged="PasswordBox_Password_PasswordChanged" 
+                                             GotFocus="SignInControl_GotFocus"
+                                             LostFocus="SignInControl_LostFocus"/>
                                 <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
                                        Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                             </Grid>
 
-                            <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,0" Padding="0" FontSize="20"
+                            <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,300" Padding="0" FontSize="20"
                                 Click="NavToForgotPassword">
                                 <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
                             </Button>
                         </StackPanel>
+                        </ScrollViewer>
+                        
                     </controls:PanoramaItem>
                 </Border>
-                <!--[SIGN IN]-->
-                <Border x:Name="Border_SignOut" Visibility="{Binding Visibility, ElementName=Border_SignIn, Converter={StaticResource TurnOverVisibilityConverter}}">
+                <!--Signed in-->
+                <Border x:Name="Border_SignedIn" Visibility="{Binding Visibility, ElementName=Border_SignedOut, Converter={StaticResource TurnOverVisibilityConverter}}">
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden">
@@ -179,13 +186,16 @@
 
                                                 <Border Background="#FF1BA1E2">
                                                     <!--Name-->
-                                                    <TextBlock Text="李力达" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
+                                                
                                                 <!--Avatar-->
-                                                <!--@_@-->
-                                                <!--<Image Grid.Row="1" Stretch="UniformToFill"/>-->
-                                                <Rectangle Fill="Orange" Grid.Row="1"/>
+                                                <Grid Grid.Row="1">
+                                                    <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                                                    <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
+                                                </Grid>
+                                                
 
                                             </Grid>
                                         </Button.Content>
@@ -197,10 +207,10 @@
                                         <Button.Content>
                                             <Grid Background="#FF1BA1E2" Width="141" Height="141">
                                                 <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
-                                          Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
+                                                      Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
 
                                                 <!--Count of Favorites-->
-                                                <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="1" FontSize="40"/>
+                                                <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding FavoritesCount}" FontSize="40"/>
 
                                                 <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
                                             </Grid>
@@ -299,7 +309,7 @@
             <Border>
                 <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
-                        <ListBox x:Name="ListBox_Activity" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        <ListBox x:Name="ListBox_Activity" Visibility="Collapsed"  BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
                          SelectionChanged="ListBox_Activity_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -341,6 +351,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                        <TextBlock x:Name="TextBlock_NoActivity"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
+                                   Text="暂无&quot;推荐活动&quot;信息" Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
                 </controls:PanoramaItem>
             </Border>
@@ -482,7 +494,7 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
             <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="注册" Click="NavigateToSignUp"/>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

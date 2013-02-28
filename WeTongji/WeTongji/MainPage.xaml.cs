@@ -56,82 +56,13 @@ namespace WeTongji
                 {
                     if (!isResourceLoaded)
                     {
-                        //...Activity
-                        using (var db = WTShareDataContext.ShareDB)
+                        var thread = new System.Threading.Thread(new System.Threading.ThreadStart(LoadDataFromDatabase)) 
                         {
-                            if (db.Activities.Count() > 0)
-                            {
-                                //...Todo @_@ Take SORTing into consideration
-                                var q = from ActivityExt a in db.Activities
-                                        orderby a.Id descending
-                                        select a;
-                                ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>(q);
-                            }
-                        }
+                            IsBackground = true,
+                            Name = "LoadDataFromDatabase"
+                        };
 
-                        //...PeopleOfWeek
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            var q = from PersonExt person in db.People
-                                    orderby person.NO descending
-                                    select person;
-                            var latestPerson = q.FirstOrDefault();
-                            if (latestPerson != null)
-                            {
-                                StackPanel_PeopleOfWeek.Visibility = Visibility.Visible;
-                                PanoramaItem_PeopleOfWeek.DataContext = latestPerson;
-                            }
-                        }
-
-                        //Activity Info
-                        {
-                            {
-                                SchoolNewsExt[] sn = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    sn = db.SchoolNewsTable.ToArray();
-                                }
-
-                                if(sn!=null)
-                                    Button_TongjiNews.DataContext = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                            }
-
-                            {
-                                AroundExt[] an = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    an = db.AroundTable.ToArray();
-                                }
-
-                                if (an != null)
-                                    Button_AroundNews.DataContext = an.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                            }
-
-                            {
-                                ForStaffExt[] fs = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    fs = db.ForStaffTable.ToArray();
-                                }
-
-                                if (fs != null)
-                                    Button_OfficialNotes.DataContext = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                            }
-
-                            {
-                                ClubNewsExt[] cn = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    cn = db.ClubNewsTable.ToArray();
-                                }
-
-                                if (cn != null)
-                                    Button_ClubNews.DataContext = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                            }
-
-                        }
-
-                        isResourceLoaded = true;
+                        thread.Start();
                     }
                 };
         }
@@ -346,8 +277,299 @@ namespace WeTongji
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LogOn_Click(object sender, RoutedEventArgs e)
+        private void LogOn_Click(object sender, EventArgs e)
         {
+            Button_Login.IsEnabled = false;
+            this.Focus();
+
+            var no = this.TextBox_Id.Text;
+            var pw = this.PasswordBox_Password.Password;
+
+            WTDispatcher.Instance.Do(() =>
+            {
+                var req = new UserLogOnRequest<UserLogOnResponse>();
+                var client = new WTDefaultClient<UserLogOnResponse>();
+
+                req.NO = no;
+                req.Password = pw;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                    {
+                        Debug.WriteLine("User signed in. StuNo:{0}, UID:{1}, Session:{2}", no, arg.Result.User.UID, arg.Result.Session);
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            Border_SignedOut.Visibility = Visibility.Collapsed;
+                            Border_SignedIn.Visibility = Visibility.Visible;
+                            TextBox_Id.Text = String.Empty;
+                            PasswordBox_Password.Password = String.Empty;
+
+                            //...Todo @_@ Refresh app bar
+                        });
+
+
+                        WeTongji.Business.Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
+
+                        UserExt targetUser = null;
+
+                        #region [Handle database]
+
+                        using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
+                        {
+                            var userInfo = db.UserInfo.SingleOrDefault();
+
+                            //...Create an instance if the user never signs in.
+                            if (userInfo == null)
+                            {
+                                targetUser = new UserExt();
+                                targetUser.SetObject(arg.Result.User);
+
+                                db.UserInfo.InsertOnSubmit(targetUser);
+                            }
+                            //...Update user's info
+                            else
+                            {
+                                userInfo.SetObject(arg.Result.User);
+                                targetUser = userInfo;
+                            }
+
+                            db.SubmitChanges();
+                        }
+
+                        #endregion
+
+                        #region [Update UI]
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
+                            {
+                                Border_SignedIn.DataContext = targetUser = db.UserInfo.SingleOrDefault();
+                            }
+                        });
+
+                        #endregion
+
+                        #region [Update Avatar]
+
+                        if (targetUser != null && !targetUser.Avatar.EndsWith("missing.png") && !targetUser.AvatarImageExists())
+                        {
+                            var img_client = new WTDownloadImageClient();
+
+                            img_client.DownloadImageStarted += (s, args) =>
+                                {
+                                    Debug.WriteLine("Download user's avatar started: {0}", args.Url);
+                                };
+                            img_client.DownloadImageFailed += (s, args) =>
+                                {
+                                    Debug.WriteLine("Download user's avatar failed: {0}\nError:{1}", args.Url, args.Error);
+                                };
+                            img_client.DownloadImageCompleted += (s, args) =>
+                                {
+                                    Debug.WriteLine("Download user's avatar completed: {0}", args.Url);
+
+                                    targetUser.SaveAvatarImage(args.ImageStream);
+
+                                    this.Dispatcher.BeginInvoke(() =>
+                                    {
+                                        targetUser.SendPropertyChanged("AvatarImageBrush");
+                                    });
+                                };
+
+                            img_client.Execute(targetUser.Avatar);
+                        }
+
+                        #endregion
+
+
+                        #region [Update user's favorite, courses & other info]
+#if false
+                        #region [Favorites]
+
+                    {
+                        var fav_req = new FavoriteGetRequest<FavoriteGetResponse>();
+                        var fav_client = new WTDefaultClient<FavoriteGetResponse>();
+
+                        #region [Add handlers]
+
+                        fav_client.ExecuteFailed += (s, args) =>
+                                                    {
+                                                        Debug.WriteLine("Fail to get user's favorite.\nError:{0}", args.Error);
+                                                    };
+
+                        fav_client.ExecuteCompleted += (s, args) =>
+                            {
+                                foreach (var a in args.Result.Activities)
+                                {
+                                    ActivityExt itemInShareDB = null;
+                                    ActivityExt itemInUserDB = null;
+                                    using (var db = WTShareDataContext.ShareDB)
+                                    {
+                                        itemInShareDB = db.Activities.Where((ac) => ac.Id == a.Id).SingleOrDefault();
+                                    }
+
+                                    using (var userDB = new WTUserDataContext(arg.Result.User.UID))
+                                    {
+                                        itemInUserDB = userDB.Favorites.Where((ac) => ac.Id == a.Id).SingleOrDefault();
+                                    }
+
+                        #region [Handle Share DB]
+
+                                    //...Not stored in Share DB
+                                    if (itemInShareDB == null)
+                                    {
+                                        itemInShareDB = new ActivityExt();
+                                        itemInShareDB.SetObject(a);
+
+                                        using (var db = WTShareDataContext.ShareDB)
+                                        {
+                                            db.Activities.InsertOnSubmit(itemInShareDB);
+
+                                            db.SubmitChanges();
+                                        }
+                                    }
+                                    //...Stored in share DB
+                                    else
+                                    {
+                                        using (var db = WTShareDataContext.ShareDB)
+                                        {
+                                            itemInShareDB = db.Activities.Where((ac) => ac.Id == a.Id).SingleOrDefault();
+                                            itemInShareDB.SetObject(a);
+
+                                            db.SubmitChanges();
+                                        }
+                                    }
+                        #endregion
+
+                        #region [Handle User DB]
+
+                                    //...Not stored in user DB
+                                    if (itemInUserDB == null)
+                                    {
+                                        //...Create a new instance and store in user's database
+                                        using (var db = new WTUserDataContext(arg.Result.User.UID))
+                                        {
+                                            db.Favorites.InsertOnSubmit(itemInShareDB);
+
+                                            db.SubmitChanges();
+                                        }
+                                    }
+                                    //...Stored in user DB
+                                    else
+                                    {
+                                        //...Update activity
+                                        using (var db = WTShareDataContext.ShareDB)
+                                        {
+                                            itemInUserDB = db.Activities.Where((ac) => ac.Id == a.Id).SingleOrDefault();
+                                            itemInUserDB.SetObject(a);
+
+                                            db.SubmitChanges();
+                                        }
+                                    }
+
+                        #endregion
+                                }
+
+                                //...Update UI
+                                this.Dispatcher.BeginInvoke(() => 
+                                {
+                                    var dc = Border_SignedIn.DataContext as UserExt;
+                                    if (dc != null)
+                                    {
+                                        dc.SendPropertyChanged("FavoritesCount");
+                                    }
+                                });
+                            };
+
+                        #endregion
+
+                        fav_client.Execute(fav_req, arg.Result.Session, arg.Result.User.UID);
+
+                        //...Todo @_@ NextPager
+                    }
+
+                        #endregion
+#endif
+
+                        #region [Update User's courses]
+
+                        {
+                            var tt_req = new TimeTableGetRequest<TimeTableGetResponse>();
+                            var tt_client = new WTDefaultClient<TimeTableGetResponse>();
+
+                            #region [Add handlers]
+
+                            tt_client.ExecuteFailed += (s, args) =>
+                                {
+                                    Debug.WriteLine("Fail to get user's course.\nError:{0}", args.Error);
+                                };
+
+                            tt_client.ExecuteCompleted += (s, args) =>
+                                {
+                                    Debug.WriteLine("Get user's courses completed.\t [start] Course_Updater");
+
+                                    var thread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(OnDownloadTimeTableCompleted))
+                                    {
+                                        IsBackground = true,
+                                        Name = "Course_Updater"
+                                    };
+
+                                    thread.Start(args.Result);
+                                };
+
+                            #endregion
+
+                            tt_client.Execute(tt_req, arg.Result.Session, arg.Result.User.UID);
+                        }
+
+                        #endregion
+
+                        //...Todo @_@ Update other info
+
+                        #endregion
+
+                    };
+
+                client.ExecuteFailed += (obj, arg) =>
+                    {
+                        Debug.WriteLine("Sign in failed. StuNo:{0}, Pw:{1}\nError:{2}", no, pw, arg.Error);
+
+                        var err = arg.Error;
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            if (err is WTException)
+                            {
+                                var wte = err as WTException;
+                                switch (wte.StatusCode.Id)
+                                {
+                                    case WeTongji.Api.Util.Status.LoginTimeOut:
+                                        MessageBox.Show("登录超时,请重试");
+                                        return;
+                                    case WeTongji.Api.Util.Status.NoAccount:
+                                        MessageBox.Show("账号不存在,请重试");
+                                        return;
+                                    case WeTongji.Api.Util.Status.NotActivatedAccount:
+                                        MessageBox.Show("账号未激活,请重试");
+                                        return;
+                                    case WeTongji.Api.Util.Status.NotRegistered:
+                                        MessageBox.Show("用户没有注册,请重试");
+                                        return;
+                                    case WeTongji.Api.Util.Status.InvalidPassword:
+                                        MessageBox.Show("密码不符合要求,请重新输入");
+                                        return;
+                                    case WeTongji.Api.Util.Status.AccountPasswordDismatch:
+                                        MessageBox.Show("密码错误,请重新输入");
+                                        return;
+                                }
+
+                                MessageBox.Show("登录失败，请重试");
+                            }
+                        });
+                    };
+
+                client.Execute(req);
+            });
         }
 
         #region [Refresh related functions]
@@ -356,9 +578,9 @@ namespace WeTongji
         {
             refreshCounter = 0;
 
-            RefreshActivityList();
-            RefreshPeopleOfWeek();
-            RefreshCampusInfo();
+            //RefreshActivityList();
+            //RefreshPeopleOfWeek();
+            //RefreshCampusInfo();
         }
 
         #region [Activities]
@@ -1077,6 +1299,17 @@ namespace WeTongji
             UpdateLoginButton(null, null);
         }
 
+        private void SignInControl_GotFocus(Object sender, RoutedEventArgs e)
+        {
+            ScrollViewer_SignOutRoot.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+        }
+
+        private void SignInControl_LostFocus(Object sender, RoutedEventArgs e)
+        {
+            ScrollViewer_SignOutRoot.ScrollToVerticalOffset(0);
+            ScrollViewer_SignOutRoot.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        }
+
         private void UpdateLoginButton(object sender, TextChangedEventArgs e)
         {
             if (!String.IsNullOrEmpty(PasswordBox_Password.Password) && !String.IsNullOrEmpty(TextBox_Id.Text))
@@ -1091,6 +1324,236 @@ namespace WeTongji
 
         private void Panorama_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
+        }
+
+        #endregion
+
+        #region [Data Operatings]
+
+        private void LoadDataFromDatabase()
+        {
+            IEnumerable<ActivityExt> activitySrc = null;
+            PersonExt personSrc = null;
+            SchoolNewsExt snSrc = null;
+            AroundExt anSrc = null;
+            ForStaffExt fsSrc = null;
+            ClubNewsExt cnSrc = null;
+
+            //...Activity
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                if (db.Activities.Count() > 0)
+                {
+                    //...Todo @_@ Take SORTing into consideration
+                    activitySrc = db.Activities.Reverse();
+                }
+            }
+
+            //...PeopleOfWeek
+            PersonExt[] personArr = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                personArr = db.People.ToArray();
+            }
+
+            if (null != personArr)
+                personSrc = personArr.LastOrDefault();
+
+            //Campus Info
+            {
+                {
+                    SchoolNewsExt[] sn = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        sn = db.SchoolNewsTable.ToArray();
+                    }
+
+                    if (sn != null)
+                        //Button_TongjiNews.DataContext = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                        snSrc = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                }
+
+                {
+                    AroundExt[] an = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        an = db.AroundTable.ToArray();
+                    }
+
+                    if (an != null)
+                        //Button_AroundNews.DataContext = an.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                        anSrc = an.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                }
+
+                {
+                    ForStaffExt[] fs = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        fs = db.ForStaffTable.ToArray();
+                    }
+
+                    if (fs != null)
+                        //Button_OfficialNotes.DataContext = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                        fsSrc = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                }
+
+                {
+                    ClubNewsExt[] cn = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        cn = db.ClubNewsTable.ToArray();
+                    }
+
+                    if (cn != null)
+                        //Button_ClubNews.DataContext = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                        cnSrc = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                }
+
+            }
+
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                if (activitySrc != null)
+                {
+                    ListBox_Activity.ItemsSource = activitySrc;
+                    ListBox_Activity.Visibility = Visibility.Visible;
+                }
+
+                if (personSrc != null)
+                {
+                    StackPanel_PeopleOfWeek.Visibility = Visibility.Visible;
+                    PanoramaItem_PeopleOfWeek.DataContext = personSrc;
+                }
+
+                Button_TongjiNews.DataContext = snSrc;
+                Button_AroundNews.DataContext = anSrc;
+                Button_OfficialNotes.DataContext = fsSrc;
+                Button_ClubNews.DataContext = cnSrc;
+
+                isResourceLoaded = true;
+            });
+
+        }
+
+
+        /// <summary>
+        /// Update corresponding semester properties and delete existing courses of the response semester
+        /// if the response semester exists in the database, then inserting response courses.
+        /// Otherwise, create a new semester and the semester's courses from the response and store them
+        /// in database.
+        /// </summary>
+        /// <remarks>
+        /// This function is called when timetable has been downloaded completely.
+        /// </remarks>
+        /// <param name="param">TimetableGetResponse</param>
+        private void OnDownloadTimeTableCompleted(Object param)
+        {
+            var result = param as TimeTableGetResponse;
+
+            if (result == null)
+                throw new NotSupportedException("TimeTableGetResponse is expected");
+
+            // target semester
+            Semester semester = null;
+
+            #region [Create or update semester in database]
+
+            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+            {
+                semester = db.Semesters.Where((sem) => sem.SchoolYearStartAt == result.SchoolYearStartAt
+                    && sem.SchoolYearWeekCount == result.SchoolYearWeekCount).SingleOrDefault();
+            }
+
+            if (semester != null)
+            {
+                //...Update semester info.
+                using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                {
+                    try
+                    {
+                        db.Semesters.Attach(semester);
+                    }
+                    catch { }
+
+                    semester.SchoolYearStartAt = result.SchoolYearStartAt;
+                    semester.SchoolYearWeekCount = result.SchoolYearWeekCount;
+                    semester.SchoolYearCourseWeekCount = result.SchoolYearCourseWeekCount;
+                    string id = semester.Id;
+
+                    db.SubmitChanges();
+                }
+
+                //...Delete courses which belong to the existing semester before inserting new items.
+                //...[Ensure that the courses will be up-to-date]
+                while (true)
+                {
+                    using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                    {
+                        var courseInDB = db.Courses.Where((c) => c.SemesterGuid == semester.Id).FirstOrDefault();
+
+                        if (courseInDB == null)
+                            break;
+                        else
+                        {
+                            try
+                            {
+                                db.Courses.Attach(courseInDB);
+                                db.Courses.DeleteOnSubmit(courseInDB);
+                            }
+                            catch { }
+
+                            db.SubmitChanges();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //...Create and store a new semester
+                semester = new Semester()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    SchoolYearStartAt = result.SchoolYearStartAt,
+                    SchoolYearWeekCount = result.SchoolYearWeekCount,
+                    SchoolYearCourseWeekCount = result.SchoolYearCourseWeekCount
+                };
+
+                using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                {
+                    db.Semesters.InsertOnSubmit(semester);
+
+                    db.SubmitChanges();
+                }
+            }
+
+            #endregion
+
+            #region [Inserting courses]
+
+            int courseCount = result.Courses.Count();
+            CourseExt[] courseExtArr = null;
+
+            if (courseCount > 0)
+            {
+                courseExtArr = new CourseExt[courseCount];
+                for (int i = 0; i < courseCount; ++i)
+                {
+                    courseExtArr[i] = new CourseExt()
+                    {
+                        UID = Global.Instance.Settings.UID,
+                        SemesterGuid = semester.Id
+                    };
+                    courseExtArr[i].SetObject(result.Courses[i]);
+                }
+
+                using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                {
+                    db.Courses.InsertAllOnSubmit(courseExtArr);
+                    db.SubmitChanges();
+                }
+            }
+            #endregion
         }
 
         #endregion
