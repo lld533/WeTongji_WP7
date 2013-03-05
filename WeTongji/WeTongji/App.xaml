@@ -338,45 +338,6 @@
         </Style>
 
         <sys:String x:Key="BingMapsKey">AtGEKtXv_hB0Brppk_gQUIUt1JHUC-ldvJe1DxEYG-xOQSniPnyWR6nmF3Hk6m0P</sys:String>
-        
-        <!--Data Template of ActivityList-->
-        <DataTemplate x:Key="ActivityListDataTemplate">
-            <Grid Margin="0,0,0,50">
-                <StackPanel>
-                    <!--Title-->
-                    <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
-                               Text="{Binding Title}"/>
-
-                    <!--Time-->
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                        <Image Source="Images/Common/time_icon.png" Stretch="None"/>
-                        <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
-                                           Text="{Binding DisplayTime}"/>
-                    </StackPanel>
-
-                    <Grid Margin="0,6,10,0" >
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-								<ColumnDefinition Width="50"/>
-								<ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <!--Place-->
-                            <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
-                            <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
-                                   Text="{Binding Location}"/>
-							
-							<!--Number of Participants-->
-							<TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
-								<Run Text="{Binding Schedule}"/>
-								<Run Text="参与"/>
-							</TextBlock>
-
-                    </Grid>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
 
         <ControlTemplate x:Key="PhoneProgressBarSliderThumb" TargetType="Thumb">
             <Rectangle Fill="{TemplateBinding Foreground}" Height="4" IsHitTestVisible="False" Width="4"/>

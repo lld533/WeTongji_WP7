@@ -13,8 +13,8 @@ namespace WeTongji.Api.Request
             Begin = DateTime.MinValue;
             End = DateTime.MinValue;
 
-            base.dict["Begin"] = JsonConvert.SerializeObject(Begin);
-            base.dict["End"] = JsonConvert.SerializeObject(End);
+            base.dict["Begin"] = Begin.ToString();
+            base.dict["End"] = End.ToString();
         }
 
         #endregion
@@ -35,8 +35,8 @@ namespace WeTongji.Api.Request
 
         public override IDictionary<String, String> GetParameters()
         {
-            base.dict["Begin"] = JsonConvert.SerializeObject(Begin);
-            base.dict["End"] = JsonConvert.SerializeObject(End);
+            base.dict["Begin"] = Begin.ToString();
+            base.dict["End"] = End.ToString();
             return base.dict;
         }
 

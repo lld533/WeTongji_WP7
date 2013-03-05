@@ -4,6 +4,7 @@ using System.Data.Linq;
 using System.Linq;
 using System.Text;
 using WeTongji.Api.Domain;
+using System.IO.IsolatedStorage;
 
 namespace WeTongji.DataBase
 {
@@ -15,7 +16,7 @@ namespace WeTongji.DataBase
 
         public static WTShareDataContext ShareDB
         {
-            get 
+            get
             {
                 return new WTShareDataContext(ShareDBConnectionString);
             }
@@ -46,23 +47,39 @@ namespace WeTongji.DataBase
 
     public class WTUserDataContext : DataContext
     {
-        public WTUserDataContext(String uid) : base(String.Format("Data Source='isostore:/{0}.sdf'", uid)) 
+        public WTUserDataContext(String uid)
+            : base(String.Format("Data Source='isostore:/{0}.sdf'", uid))
         {
             if (!this.DatabaseExists())
+            {
                 CreateDatabase();
+
+                for (uint i = 0; i < (uint)FavoriteIndex.FavoriteTypeCount;++i )
+                {
+                    this.Favorites.InsertOnSubmit(new FavoriteObject() { Id = i, Value = String.Empty });
+                }
+                this.SubmitChanges();
+            }
+        }
+
+        public static Boolean UserDataContextExists(String uid)
+        {
+            var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            return store.FileExists(uid + ".sdf");
         }
 
         #region [Tables]
 
         public Table<UserExt> UserInfo;
-        
+
         public Table<ImageExt> Images;
-        
+
         public Table<CourseExt> Courses;
 
         public Table<ExamExt> Exams;
 
-        public Table<ActivityExt> Favorites;
+        public Table<FavoriteObject> Favorites;
 
         public Table<Semester> Semesters;
 

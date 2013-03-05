@@ -13,20 +13,20 @@
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
     >
-    
-	<phone:PhoneApplicationPage.FontFamily>
-		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
-	</phone:PhoneApplicationPage.FontFamily>
-	<phone:PhoneApplicationPage.FontSize>
-		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
-	</phone:PhoneApplicationPage.FontSize>
-	<phone:PhoneApplicationPage.Foreground>
-		<StaticResource ResourceKey="PhoneForegroundBrush"/>
-	</phone:PhoneApplicationPage.Foreground>
 
-	<phone:PhoneApplicationPage.Resources>
-		
-		<Style x:Key="CapusInfoListBoxItemStyle" TargetType="ListBoxItem">
+    <phone:PhoneApplicationPage.FontFamily>
+        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+    </phone:PhoneApplicationPage.FontFamily>
+    <phone:PhoneApplicationPage.FontSize>
+        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
+    </phone:PhoneApplicationPage.FontSize>
+    <phone:PhoneApplicationPage.Foreground>
+        <StaticResource ResourceKey="PhoneForegroundBrush"/>
+    </phone:PhoneApplicationPage.Foreground>
+
+    <phone:PhoneApplicationPage.Resources>
+
+        <Style x:Key="CapusInfoListBoxItemStyle" TargetType="ListBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -66,124 +66,203 @@
                 </Setter.Value>
             </Setter>
         </Style>
-		
+
         <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
-	</phone:PhoneApplicationPage.Resources>
-	
-		<controls:Pivot Title="我的收藏" Style="{StaticResource WTPivotStyle}">
-			<controls:PivotItem Header="推荐活动" x:Name="PivotItem_Activity" Style="{StaticResource WTPivotItemStyle}" d:IsHidden="True">
-				<ListBox x:Name="ListBox_Activity" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemTemplate="{StaticResource ActivityListDataTemplate}"
-						SelectionChanged="ListBox_Activity_SelectionChanged"/>
-			</controls:PivotItem>
-			<controls:PivotItem Header="校园资讯" x:Name="PivotItem_CampusInfo" Style="{StaticResource WTPivotItemStyle}">
-				<ListBox x:Name="ListBox_CampusInfo" ScrollViewer.VerticalScrollBarVisibility="Hidden"
-						ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-						SelectionChanged="Listbox_CampusInfo_SelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="190"/>
-                                    </Grid.ColumnDefinitions>
-									
-									<Grid>
-										<Grid Margin="21,12,21,14">
-                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										Text="&quot;精品期刊&quot;如何炼成?" FontSize="26" Foreground="Black"/>
+        <Converter:NumberToChineseNumberStringConverter x:Key="NumberToChineseNumberStringConverter"/>
+        <Converter:StringIsIntToVisibilityConverter x:Key="StringIsIntToVisibilityConverter"/>
+    </phone:PhoneApplicationPage.Resources>
 
-                                        <Grid VerticalAlignment="Bottom">
+
+    <Grid>
+        <Border x:Name="Border_WidthMeter" Margin="18,0" IsHitTestVisible="False"/>
+
+        <controls:Pivot Title="我的收藏" Style="{StaticResource WTPivotStyle}">
+            <controls:PivotItem Header="推荐活动" x:Name="PivotItem_Activity" Style="{StaticResource WTPivotItemStyle}" d:IsHidden="True">
+                <Grid>
+                    <TextBlock x:Name="TextBlock_NoActivities" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
+                           Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"
+                           Text="暂未收藏&quot;推荐活动&quot;"/>
+
+                    <ListBox x:Name="ListBox_Activity" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Collapsed"
+						SelectionChanged="ListBox_Activity_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,50" Width="{Binding ActualWidth, ElementName=Border_WidthMeter}">
+                                    <StackPanel>
+                                        <!--Title-->
+                                        <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
+                                                        Text="{Binding Title}"/>
+
+                                        <!--Time-->
+                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                            <Image Source="Images/Common/time_icon.png" Stretch="None"/>
+                                            <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
+                                           Text="{Binding DisplayTime}"/>
+                                        </StackPanel>
+
+                                        <Grid Margin="0,6,10,0" >
+
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
                                                 <ColumnDefinition/>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
+                                            <!--Place-->
+                                            <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
+                                            <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
+                                                            Text="{Binding Location}"/>
 
-                                            <TextBlock Text="15:12:42" Foreground="#FF999999"/>
+                                            <!--Number of Participants-->
+                                            <TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
+								                    <Run Text="{Binding Schedule}"/>
+								                    <Run Text="参与"/>
+                                            </TextBlock>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											Text="新闻中心"/>
                                         </Grid>
-										</Grid>
-									</Grid>
-                                    <!--@_@-->
-                                    <!--<Image Stretch="UniformToFill"/>-->
-                                    <Rectangle Grid.Column="1" Fill="BurlyWood"/>
-
+                                    </StackPanel>
                                 </Grid>
-								<Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="36"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="20"/>
-                                    </Grid.ColumnDefinitions>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </controls:PivotItem>
+            <controls:PivotItem Header="校园资讯" x:Name="PivotItem_CampusInfo" Style="{StaticResource WTPivotItemStyle}">
+                <Grid>
+                    <TextBlock x:Name="TextBlock_NoCampusInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
+                           Visibility="{Binding Visibility, ElementName=ListBox_CampusInfo, Converter={StaticResource TurnOverVisibilityConverter}}"
+                           Text="暂未收藏&quot;校园资讯&quot;"/>
 
-                                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
+                    <ListBox x:Name="ListBox_CampusInfo" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+						ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+						SelectionChanged="Listbox_CampusInfo_SelectionChanged"
+                         Visibility="Collapsed">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                      Width="{Binding ActualWidth, ElementName=Border_WidthMeter}">
+                                    <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="190"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid>
+                                            <Grid Margin="21,12,21,14">
+                                                <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+										Text="{Binding Title}" FontSize="26" Foreground="Black"/>
+
+                                                <Grid VerticalAlignment="Bottom">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="6"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                    <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+											Text="{Binding Source}"/>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                        <Image Grid.Column="1" Stretch="UniformToFill" Source="{Binding CampusInfoImageBrush}"/>
+
+                                    </Grid>
+                                    <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="36"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="同济大学举行春节留校学生茶话会和年夜饭。" MaxHeight="80" Margin="0,9,0,0"/>
+											Text="{Binding Sumary}" MaxHeight="80" Margin="0,9,0,0"/>
 
-                                    <Grid Grid.Column="3" Margin="0,9,0,17">
-                                        <TextBlock VerticalAlignment="Top" Foreground="Black"
+                                        <Grid Grid.Column="3" Margin="0,9,0,17">
+                                            <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											Text="校领导与寒假留校学生共迎新春佳节" MaxHeight="80"/>
-                                        
-                                        
-                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+											Text="{Binding Title}" MaxHeight="80"/>
 
-                                            <TextBlock Text="2013/02/11" Foreground="#FF999999"/>
 
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-														Text="学生处"/>
+                                            <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="6"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+														Text="{Binding Source}"/>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-							</Grid>
-						</DataTemplate>
-					 </ListBox.ItemTemplate>
-				</ListBox>
-			</controls:PivotItem>
-			<controls:PivotItem Header="每周人物" x:Name="PivotItem_PeopleOfWeek" Style="{StaticResource WTPivotItemStyle}">				
-				<ListBox x:Name="ListBox_PeopleOfWeek" ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </controls:PivotItem>
+            <controls:PivotItem Header="每周人物" x:Name="PivotItem_PeopleOfWeek" Style="{StaticResource WTPivotItemStyle}">
+                <Grid>
+                    <TextBlock x:Name="TextBlock_NoPeopleOfWeek" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
+                           Visibility="{Binding Visibility, ElementName=ListBox_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}}"
+                           Text="暂未收藏&quot;每周人物&quot;"/>
+
+                    <ListBox x:Name="ListBox_PeopleOfWeek" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Collapsed"
 						SelectionChanged="ListBox_PeopleOfWeek_SelectionChanged">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-                    <StackPanel Margin="0,0,0,25">
-                        <TextBlock FontSize="21" Foreground="White" Margin="0,-3,0,0"
-                                   Text="第一期"/>
-                        <Grid Height="60"  Margin="0,17,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,25">
+                                    <!--Title-->
+                                    <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
+                                   Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
+                                        <Run Text="第"/>
+                                        <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
+                                        <Run Text="期"/>
+                                    </TextBlock>
+                                    <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
+                                   Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                   Text="{Binding NO}"/>
 
-                            <!--@_@-->
-                            <!--<Image Stretch="UniformToFill"/>-->
-                            <Rectangle Fill="#FF2D7ECA"/>
+                                    <!--Avatar & Name-->
+                                    <Grid Height="60"  Margin="0,17,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="14"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Column="2" Margin="0,4">
-                                <TextBlock Text="徐磊" 
+                                        <!--@_@-->
+                                        <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                                        <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
+
+                                        <Grid Grid.Column="2" Margin="0,4">
+                                            <TextBlock Text="{Binding Name}" 
                                            TextTrimming="WordEllipsis" VerticalAlignment="Top" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,-7,0,0" FontSize="23"/>
-                                <TextBlock Text="钻石小鸟联合总裁，1997年毕业于同济大学" 
-                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="#FF999999" FontSize="18" Margin="0,0,0,-4"/>
-                            </Grid>
+                                            <TextBlock Text="{Binding JobTitle}"
+                                           TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="{StaticResource PhoneForegroundBrush}" FontSize="18" Margin="0,0,0,-4"/>
+                                        </Grid>
 
-                        </Grid>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-				
-				</ListBox>
-			</controls:PivotItem>
-		</controls:Pivot>
+                                    </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                    </ListBox>
+                </Grid>
+
+            </controls:PivotItem>
+        </controls:Pivot>
+
+    </Grid>
 
 </phone:PhoneApplicationPage>

@@ -118,33 +118,33 @@
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                         <ScrollViewer x:Name="ScrollViewer_SignOutRoot"  VerticalScrollBarVisibility="Disabled">
                             <StackPanel>
-                            <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20" Margin="0,-3,0,0"/>
-                            <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
-                                <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Number" 
+                                <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20" Margin="0,-6,0,0"/>
+                                <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
+                                    <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Number" 
                                          TextChanged="UpdateLoginButton"
                                          GotFocus="SignInControl_GotFocus"
                                          LostFocus="SignInControl_LostFocus"/>
-                                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
+                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
                                        Visibility="{Binding Text,ElementName=TextBox_Id, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
-                            </Grid>
+                                </Grid>
 
-                            <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
-                            <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
-                                <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}" 
+                                <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
+                                <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
+                                    <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}" 
                                              PasswordChanged="PasswordBox_Password_PasswordChanged" 
                                              GotFocus="SignInControl_GotFocus"
                                              LostFocus="SignInControl_LostFocus"/>
-                                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
+                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
                                        Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
-                            </Grid>
+                                </Grid>
 
-                            <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,300" Padding="0" FontSize="20"
+                                <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,300" Padding="0" FontSize="20"
                                 Click="NavToForgotPassword">
-                                <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
-                            </Button>
-                        </StackPanel>
+                                    <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
+                                </Button>
+                            </StackPanel>
                         </ScrollViewer>
-                        
+
                     </controls:PanoramaItem>
                 </Border>
                 <!--Signed in-->
@@ -176,7 +176,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!---Avatar-->
-                                    <Button Style="{StaticResource NoBorderButtonStyle}" Click="ViewPersonalProfile">
+                                    <Button x:Name="Button_PersonalProfile"  Style="{StaticResource NoBorderButtonStyle}" Click="ViewPersonalProfile">
                                         <Button.Content>
                                             <Grid Width="141" Height="141">
                                                 <Grid.RowDefinitions>
@@ -189,20 +189,20 @@
                                                     <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
                                                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-                                                
+
                                                 <!--Avatar-->
                                                 <Grid Grid.Row="1">
                                                     <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
                                                     <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
                                                 </Grid>
-                                                
+
 
                                             </Grid>
                                         </Button.Content>
                                     </Button>
 
                                     <!--Favorites-->
-                                    <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Column="2"
+                                    <Button x:Name="Button_Favorite"  Style="{StaticResource NoBorderButtonStyle}" Grid.Column="2"
                                         Click="ViewMyFavorite">
                                         <Button.Content>
                                             <Grid Background="#FF1BA1E2" Width="141" Height="141">
@@ -219,7 +219,7 @@
                                 </Grid>
 
                                 <!--Alarm-->
-                                <Button Style="{StaticResource NoBorderButtonStyle}" Grid.Row="2" HorizontalAlignment="Left" 
+                                <Button x:Name="Button_Alarm" Style="{StaticResource NoBorderButtonStyle}" Grid.Row="2" HorizontalAlignment="Left" 
                                         Click="ViewAlarmItem">
                                     <Button.Content>
                                         <Grid Background="#FF1BA1E2" Width="302" Height="141">
@@ -249,16 +249,16 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <!--Time-->
-                                                <TextBlock Grid.Column="1" Text="8:00" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
                                                 <!--Title-->
                                                 <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
-											TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
-											Text="毛泽东思想和中国特色社会主义理论体系概论"/>
+											               TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
+											               Text="{Binding Title}"/>
                                             </Grid>
 
                                             <!--No Arrangement case-->
-                                            <TextBlock x:Name="TextBlock_NoCourse" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Collapsed"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Top">
+                                            <TextBlock x:Name="TextBlock_NoArrangement" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Collapsed"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Top">
                                             <Run Text="今天"/>
                                             <LineBreak/>
                                             <Run Text="没有安排"/>
@@ -287,7 +287,7 @@
                                                     <Path x:Name="Brow" Data="M45.8151,554.178 L46.1558,557.656 L80.2089,557.656 L80.2089,551.125 L79.2185,551.125 C78.0085,554.137 75.8139,555.862 72.5008,556.125 C69.1564,555.211 66.8804,553.368 65.783,550.5 L59.282,550.5 C58.5448,553.225 56.6965,554.827 54.1276,555.703 L47.7508,554.229 C46.7212,551.52 46.0764,551.506 45.8151,554.178 z" Stretch="Fill" StrokeThickness="0" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Margin="0.583,1.757,0.438,30.422"/>
                                                     <!--@_@-->
                                                     <!--This DAY-->
-                                                    <TextBlock FontSize="22" Text="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
+                                                    <TextBlock x:Name="TextBlock_Today" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
                                                 </Grid>
 
                                                 <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
@@ -317,7 +317,7 @@
                                         <StackPanel>
                                             <!--Title-->
                                             <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
-                               Text="{Binding Title}"/>
+                                                        Text="{Binding Title}"/>
 
                                             <!--Time-->
                                             <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
@@ -337,12 +337,12 @@
                                                 <!--Place-->
                                                 <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
                                                 <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
-                                   Text="{Binding Location}"/>
+                                                            Text="{Binding Location}"/>
 
                                                 <!--Number of Participants-->
                                                 <TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
-								<Run Text="{Binding Schedule}"/>
-								<Run Text="参与"/>
+								                    <Run Text="{Binding Schedule}"/>
+								                    <Run Text="参与"/>
                                                 </TextBlock>
 
                                             </Grid>
@@ -351,7 +351,8 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <TextBlock x:Name="TextBlock_NoActivity"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
+
+                        <TextBlock x:Name="TextBlock_NoActivity"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22" Margin="0,-5,0,0"
                                    Text="暂无&quot;推荐活动&quot;信息" Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
                 </controls:PanoramaItem>
@@ -393,16 +394,16 @@
                         <StackPanel>
                             <Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToOfficialNotesList"/>
-                            
+
                             <Button x:Name="Button_ClubNews"  Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToClubNewsList"/>
-                            
+
                             <Button x:Name="Button_TongjiNews"  Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToTongjiNewsList"/>
-                            
+
                             <Button x:Name="Button_AroundNews"  Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToAroundNewsList"/>
-                            
+
                         </StackPanel>
                     </ScrollViewer>
                 </controls:PanoramaItem>
@@ -413,67 +414,66 @@
                 -->
             <Border>
                 <controls:PanoramaItem x:Name="PanoramaItem_PeopleOfWeek"  Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                    <Grid>
+                        <ScrollViewer x:Name="ScrollViewer_PeopleOfWeek" Visibility="Collapsed" VerticalScrollBarVisibility="Hidden">
+                            <StackPanel>
 
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                        <Grid>
-                            <StackPanel x:Name="StackPanel_PeopleOfWeek" Visibility="Collapsed">
+                                <!--Basic Information-->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
 
-                            <!--Basic Information-->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-
-                                <!--Avatar-->
-                                <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
+                                    <!--Avatar-->
+                                    <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
                                        Source="/Images/missing.png"/>
-                                <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
+                                    <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
                                        Source="{Binding AvatarImageBrush}"/>
 
-                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <!--Name-->
-                                    <TextBlock Text="{Binding Name}" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
-                                    <!--Title-->
-                                    <TextBlock Text="{Binding JobTitle}" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!--Large Image-->
-                            <Image Stretch="UniformToFill" Margin="0,23,0,0"
-                                   Source="{Binding FirstImageBrush}"/>
-
-                            <Grid Margin="0,20,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="0,0,0,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
-                                    <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="19.844,0,-0.816,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <!--Name-->
+                                        <TextBlock Text="{Binding Name}" FontSize="24" Margin="0,-5,0,0" Foreground="White"/>
+                                        <!--Title-->
+                                        <TextBlock Text="{Binding JobTitle}" TextWrapping="Wrap" Margin="0,6,0,-3" Foreground="#FF999999"/>
+                                    </StackPanel>
                                 </Grid>
 
-                                <!--One sentence-->
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Words}" TextWrapping="Wrap" Margin="11,-18,0,-1"/>
-                            </Grid>
+                                <!--Large Image-->
+                                <Image Stretch="UniformToFill" Margin="0,23,0,0"
+                                   Source="{Binding FirstImageBrush}"/>
+
+                                <Grid Margin="0,20,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid>
+                                        <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="0,0,0,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                        <Path Data="M28.5305,644.727 L28.7085,634.415 C28.6804,634.109 28.6877,633.965 28.1268,633.952 L23.1972,633.952 C23.0852,630.451 25.8413,627.828 28.4369,627.953 L28.448,624.886 C22.2934,623.853 19.7389,629.486 19.5221,631.238 C19.3655,632.349 19.4079,640.344 19.4251,644.835 C19.4551,645.063 19.4663,645.127 19.8097,645.179 L27.9703,645.179 C28.4184,645.153 28.4969,644.972 28.5305,644.727 z" Fill="#FFAAACAF" HorizontalAlignment="Left" Height="24.694" Margin="19.844,0,-0.816,-0.694" Stretch="Fill" Stroke="White" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="12.972"/>
+                                    </Grid>
+
+                                    <!--One sentence-->
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Words}" TextWrapping="Wrap" Margin="11,-18,0,-1"/>
+                                </Grid>
 
 
-                            <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,12,0,0"
+                                <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,12,0,0"
 							        Click="NavToPeopleOfWeek"/>
 
 
-                        </StackPanel>
-                            <TextBlock Foreground="#FF999999" VerticalAlignment="Top" HorizontalAlignment="Left" Text="暂无&quot;每周人物&quot;信息"
-									   Visibility="{Binding Visibility, ElementName=StackPanel_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"
-                                       />
-                        </Grid>
-                        
-                    </ScrollViewer>
+                            </StackPanel>
+                        </ScrollViewer>
 
+
+                        <TextBlock Foreground="#FF999999" VerticalAlignment="Top" HorizontalAlignment="Left" Text="暂无&quot;每周人物&quot;信息" Margin="0,-5,0,0"
+									   Visibility="{Binding Visibility, ElementName=ScrollViewer_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"
+                                       />
+                    </Grid>
                 </controls:PanoramaItem>
             </Border>
 

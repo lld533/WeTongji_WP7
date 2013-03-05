@@ -57,18 +57,14 @@ namespace WeTongji.Api.Request
                 }
             }
 
-            //...To do @_@ check length of NO
-
             #endregion
 
             #region [Password]
 
-            if (String.IsNullOrEmpty(Password) || String.IsNullOrWhiteSpace(Password))
+            if (String.IsNullOrEmpty(Password) || Password.Length < 6)
             {
                 throw new ArgumentNullException("Password", "Password can NOT be empty.");
             }
-
-            //...To do @_@ check password length
 
             #endregion
         }

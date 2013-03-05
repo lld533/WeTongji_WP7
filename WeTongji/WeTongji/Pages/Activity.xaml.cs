@@ -88,7 +88,7 @@ namespace WeTongji
             {
                 int imagesDownloading = 0;
 
-                if (!a.OrganizerAvatar.EndsWith("missing.png") && String.IsNullOrEmpty(a.OrganizerAvatarGuid) && !a.AvatarExists())
+                if (!a.OrganizerAvatar.EndsWith("missing.png") && !a.AvatarExists())
                 {
                     WTDownloadImageClient client = new WTDownloadImageClient();
                     client.DownloadImageStarted += (obj, arg) =>
@@ -117,11 +117,8 @@ namespace WeTongji
 
                             this.Dispatcher.BeginInvoke(() =>
                             {
-                                if (String.IsNullOrEmpty(a.OrganizerAvatarGuid))
-                                {
-                                    a.SaveAvatar(arg.ImageStream);
-                                    (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
-                                }
+                                a.SaveAvatar(arg.ImageStream);
+                                (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
 
                                 --imagesDownloading;
                                 if (0 == imagesDownloading)
@@ -175,10 +172,7 @@ namespace WeTongji
                         {
                             System.Diagnostics.Debug.WriteLine("download image completed: {0}", arg.Url);
 
-                            if (String.IsNullOrEmpty(a.ImageGuid))
-                            {
-                                a.SaveImage(arg.ImageStream);
-                            }
+                            a.SaveImage(arg.ImageStream);
 
                             this.Dispatcher.BeginInvoke(() =>
                             {

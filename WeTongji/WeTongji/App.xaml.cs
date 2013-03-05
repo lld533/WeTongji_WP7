@@ -66,6 +66,7 @@ namespace WeTongji
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
             //IsolatedStorageExplorer.Explorer.Start("localhost");
+
         }
 
         // Code to execute when the application is activated (brought to foreground)

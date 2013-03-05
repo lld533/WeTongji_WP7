@@ -177,6 +177,7 @@ namespace WeTongji.Api
             #endregion
 
             var myWebRequest = HttpWebRequest.CreateHttp(Dictionary2Url(dict));
+            Debug.WriteLine(myWebRequest.RequestUri.ToString());
 
             #region [Get Response]
 
@@ -238,10 +239,10 @@ namespace WeTongji.Api
 
             myWebRequest.Method = "POST";
 
-            if (!String.IsNullOrEmpty(request.GetContentType()))
-            {
-                myWebRequest.ContentType = request.GetContentType();
-            }
+            //if (!String.IsNullOrEmpty(request.GetContentType()))
+            //{
+            //    myWebRequest.ContentType = request.GetContentType();
+            //}
 
             var req_stream = request.GetRequestStream();
 

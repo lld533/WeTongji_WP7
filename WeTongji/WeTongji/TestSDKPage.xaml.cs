@@ -64,7 +64,6 @@ namespace WeTongji
 
             UserUpdateRequest<WTResponse> req = new UserUpdateRequest<WTResponse>();
             req.User = e.Result.User;
-            req.QQ = "1234567890";
 
             var client = new WTDefaultClient<WTResponse>();
             

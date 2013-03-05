@@ -213,7 +213,7 @@ namespace WeTongji.Api.Domain
 
         public float Point { get; set; }
 
-        public bool Required { get; set; }
+        public String Required { get; set; }
 
         public int Hours { get; set; }
     }

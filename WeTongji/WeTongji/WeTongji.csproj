@@ -139,7 +139,22 @@
     <Compile Include="Extensions\GoogleMapsSDK\BoundingBox.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\GoogleMapsQueryResponse.cs" />
     <Compile Include="Extensions\GoogleMapsSDK\Status.cs" />
-    <Compile Include="Extensions\WTSDKExt\Data.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ActivityExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\AroundExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ChannelExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ClubNewsExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\CourseExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ExamExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ForStaffExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\ImageExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\PersonExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\SchoolNewsExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\DomainExt\UserExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\IWTObjectExt.cs" />
+    <Compile Include="Extensions\WTSDKExt\Supplemental\CalendarNode.cs" />
+    <Compile Include="Extensions\WTSDKExt\Supplemental\FavoriteObject.cs" />
+    <Compile Include="Extensions\WTSDKExt\Supplemental\ICampusInfo.cs" />
+    <Compile Include="Extensions\WTSDKExt\Supplemental\Semester.cs" />
     <Compile Include="Pages\MySettings.xaml.cs">
       <DependentUpon>MySettings.xaml</DependentUpon>
     </Compile>
