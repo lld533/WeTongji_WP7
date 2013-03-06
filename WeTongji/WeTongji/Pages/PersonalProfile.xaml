@@ -213,23 +213,23 @@
 
                                     <!--Gender-->
                                     <Grid Grid.Column="2">
-                                        <!--Male-->
-                                        <Grid x:Name="Grid_Male" 
-                                          Visibility="{Binding IsMale, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <!--Female-->
+                                        <Grid x:Name="Grid_Female" 
+                                          Visibility="{Binding Visibility, ElementName=Grid_Male,Converter={StaticResource TurnOverVisibilityConverter}}">
 
-                                            <Ellipse Width="14" Height="14" Stroke="White" StrokeThickness="2" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
-                                            <Border BorderThickness="0,1" BorderBrush="White" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
-                                            <Border BorderThickness="1,0" BorderBrush="White" HorizontalAlignment="Center" Height="11" VerticalAlignment="Bottom"/>
+                                            <Ellipse Width="14" Height="14" Stroke="#FFF366B5" StrokeThickness="2" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                                            <Border BorderThickness="0,1" BorderBrush="#FFF366B5" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+                                            <Border BorderThickness="1,0" BorderBrush="#FFF366B5" HorizontalAlignment="Center" Height="11" VerticalAlignment="Bottom"/>
 
                                         </Grid>
 
-                                        <!--Female-->
-                                        <Grid x:Name="Grid_Female"
-                                          Visibility="{Binding Visibility, ElementName=Grid_Male,Converter={StaticResource TurnOverVisibilityConverter}}">
+                                        <!--Male-->
+                                        <Grid x:Name="Grid_Male"
+                                          Visibility="{Binding IsMale, Converter={StaticResource BoolToVisibilityConverter}}">
 
-                                            <Ellipse Width="14" Height="14" Stroke="White" StrokeThickness="2" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-                                            <Path Data="M269,546 L277.542,537.458" Stretch="Fill" Stroke="White" StrokeThickness="2" UseLayoutRounding="False" Width="11" HorizontalAlignment="Right" Height="11" Margin="0,0,-8,-2"/>
-                                            <Path Data="M13.0557,12.4593 L21.9199,12.4686 L21.8158,21.2056" HorizontalAlignment="Left" Height="10.755" Margin="12.037,11.477,-8.9,0" Stretch="Fill" Stroke="White" StrokeThickness="2" UseLayoutRounding="False" VerticalAlignment="Top" Width="10.863"/>
+                                            <Ellipse Width="14" Height="14" Stroke="#FF00A0E9" StrokeThickness="2" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                                            <Path Data="M269,546 L277.542,537.458" Stretch="Fill" Stroke="#FF00A0E9" StrokeThickness="2" UseLayoutRounding="False" Width="11" HorizontalAlignment="Right" Height="11" Margin="0,0,-8,-2"/>
+                                            <Path Data="M13.0557,12.4593 L21.9199,12.4686 L21.8158,21.2056" HorizontalAlignment="Left" Height="10.755" Margin="12.037,11.477,-8.9,0" Stretch="Fill" Stroke="#FF00A0E9" StrokeThickness="2" UseLayoutRounding="False" VerticalAlignment="Top" Width="10.863"/>
 
                                         </Grid>
                                     </Grid>

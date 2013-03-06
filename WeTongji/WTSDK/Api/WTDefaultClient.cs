@@ -81,7 +81,7 @@ namespace WeTongji.Api
 
             var dict = new Dictionary<String, String>(request.GetParameters());
             dict[METHOD] = request.GetApiName();
-            dict[DEVICE] = "iphone";
+            dict[DEVICE] = "WP7";
             dict[VERSION] = "2.0";
             dict[HASH] = ComputeHash(dict);
 
@@ -168,7 +168,7 @@ namespace WeTongji.Api
 
             var dict = new Dictionary<String, String>(request.GetParameters());
             dict[METHOD] = request.GetApiName();
-            dict[DEVICE] = "iphone";
+            dict[DEVICE] = "WP7";
             dict[VERSION] = "2.0";
             dict[SESSION] = session;
             dict[UID] = uid;

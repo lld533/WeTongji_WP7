@@ -110,35 +110,38 @@ namespace WeTongji.Api.Domain
             }
             else
             {
-                var kvpairs = ImageExtList.Split(';');
-
-                var store = IsolatedStorageFile.GetUserStoreForApplication();
-
-                foreach (var pair in kvpairs)
+                if (!String.IsNullOrEmpty(ImageExtList))
                 {
-                    var imgkv = pair.Split(':');
-                    var imgId = imgkv[0].Trim('\"');
-                    var imgExt = imgkv[1].Trim('\"');
+                    var kvpairs = ImageExtList.Split(';');
 
-                    using (var db = WTShareDataContext.ShareDB)
+                    var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+                    foreach (var pair in kvpairs)
                     {
-                        var imgInDB = db.Images.Where((img) => img.Id == imgId).SingleOrDefault();
-                        if (imgInDB != null)
+                        var imgkv = pair.Split(':');
+                        var imgId = imgkv[0].Trim('\"');
+                        var imgExt = imgkv[1].Trim('\"');
+
+                        using (var db = WTShareDataContext.ShareDB)
                         {
-                            db.Images.DeleteOnSubmit(imgInDB);
-                            db.SubmitChanges();
+                            var imgInDB = db.Images.Where((img) => img.Id == imgId).SingleOrDefault();
+                            if (imgInDB != null)
+                            {
+                                db.Images.DeleteOnSubmit(imgInDB);
+                                db.SubmitChanges();
+                            }
+                        }
+
+                        var fileName = String.Format("{0}.{1}", imgId, imgExt);
+
+                        if (store.FileExists(fileName))
+                        {
+                            store.DeleteFile(fileName);
                         }
                     }
 
-                    var fileName = String.Format("{0}.{1}", imgId, imgExt);
-
-                    if (store.FileExists(fileName))
-                    {
-                        store.DeleteFile(fileName);
-                    }
+                    ImageExtList = String.Empty;
                 }
-
-                ImageExtList = String.Empty;
             }
 
             #endregion
@@ -214,9 +217,9 @@ namespace WeTongji.Api.Domain
                 }
                 catch
                 {
-                	return String.Empty;
+                    return String.Empty;
                 }
-                
+
             }
         }
 

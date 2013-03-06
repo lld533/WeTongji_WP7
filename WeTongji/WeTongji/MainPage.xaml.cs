@@ -266,6 +266,16 @@ namespace WeTongji
             this.NavigationService.Navigate(new Uri("/Pages/MyAgenda.xaml", UriKind.RelativeOrAbsolute));
         }
 
+        private void NavigateToSettings(Object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/MySettings.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+        private void NavigateToAbout(Object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/About.xaml", UriKind.RelativeOrAbsolute));
+        }
+
         #endregion
 
         #region [Api]

@@ -486,7 +486,7 @@ namespace WeTongji
             HideStoryboard.Begin();
         }
 
-        private void DirectionButtonHold(Object sender, GestureEventArgs e)
+        private void DirectionButtonHold(Object sender, System.Windows.Input.GestureEventArgs e)
         {
             if (!e.Handled)
             {

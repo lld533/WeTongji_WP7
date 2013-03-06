@@ -494,8 +494,16 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="注册" Click="NavigateToSignUp"/>
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
+                <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="注册" Click="NavigateToSignUp"/>
+            </shell:ApplicationBar.Buttons>
+            
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="设置" Click="NavigateToSettings"/>
+                <shell:ApplicationBarMenuItem Text="关于" Click="NavigateToAbout"/>
+            </shell:ApplicationBar.MenuItems>
+
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>
