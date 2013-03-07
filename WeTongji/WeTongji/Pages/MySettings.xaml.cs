@@ -8,7 +8,6 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone;
-using System.Xml.Linq;
 using System.IO.IsolatedStorage;
 using System.IO;
 using System.Diagnostics;
@@ -20,6 +19,7 @@ using WeTongji.Api.Response;
 using WeTongji.Api;
 using System.Threading;
 using WeTongji.Pages;
+using WeTongji.Utility;
 
 namespace WeTongji
 {
@@ -32,7 +32,7 @@ namespace WeTongji
 
         private void SettingsPageLoaded(Object sender, RoutedEventArgs e)
         {
-            Run_Version.Text = XDocument.Load("WMAppManifest.xml").Root.Element("App").Attribute("Version").Value;
+            Run_Version.Text = AppVersion.Current;
 
             var thread = new Thread(new ThreadStart(ComputeImageCacheSize))
             {

@@ -242,6 +242,7 @@
     <Compile Include="TestSDKPage.xaml.cs">
       <DependentUpon>TestSDKPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\AppVersion.cs" />
     <Compile Include="Utility\DateTimeToChineseDate.cs" />
     <Compile Include="Utility\DescriptionToInlineCollection.cs" />
     <Compile Include="Utility\ImagePathToImageSource.cs" />

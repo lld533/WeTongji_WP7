@@ -14,8 +14,99 @@
     shell:SystemTray.IsVisible="True">
 
 
-    <StackPanel>
-        <TextBlock Text="Todo @_@ About page~~~~~"/>
-    </StackPanel>
+    <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="AgreeementButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,3,10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentContainer">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Gray"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="0">
+                                <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
+    <Grid>
+
+
+        <TextBlock TextWrapping="Wrap" Text="关于" Margin="21,16,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="22"/>
+
+        <Grid VerticalAlignment="Top" Margin="0,125,0,0" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <!--@_@ Icon image-->
+                <Rectangle Fill="#FF00A0E9" Width="125" Height="125"/>
+                <TextBlock Grid.Column="1" Text="微同济" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+            </Grid>
+
+            <StackPanel Grid.Row="1">
+                <TextBlock FontSize="24" Margin="0,17,0,0">
+                    <Run Text="Windows Phone 版本 " />
+                    <Run x:Name="Run_Version"/>
+                </TextBlock>
+                <Button x:Name="Button_ViewAgreement"  Margin="0,9,0,0" Style="{StaticResource AgreeementButtonStyle}"
+                        Click="Button_ViewAgreement_Click">
+                    <TextBlock Text="微同济用户协议" FontSize="22" TextDecorations="Underline"/>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Margin="0,76,0,0">
+                <Button x:Name="Button_Rate"  Content="为我们评分" Style="{StaticResource AgreeementButtonStyle}"
+                        Click="Button_Rate_Click"/>
+                <Button x:Name="Button_FeedBack"  Content="用户反馈" Style="{StaticResource AgreeementButtonStyle}" Margin="0,1,0,0"
+                        Click="Button_FeedBack_Click"/>
+            </StackPanel>
+
+        </Grid>
+
+
+
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,13" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="著作权" FontSize="15"/>
+
+            <TextBlock Grid.Column="1" FontFamily="Segoe UI Symbol" Text="Ⓒ" FontSize="15" Margin="2,0"/>
+
+            <TextBlock Grid.Column="2" Text="2012 同济大学 保留所有权利" FontSize="15"/>
+        </Grid>
+    </Grid>
 
 </phone:PhoneApplicationPage>
