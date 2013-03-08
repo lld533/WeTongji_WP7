@@ -7,24 +7,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls"
-    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:Converter="clr-namespace:WeTongji.Converter"
     x:Class="WeTongji.CourseDetail" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
     >
-    
-	<phone:PhoneApplicationPage.FontFamily>
-		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
-	</phone:PhoneApplicationPage.FontFamily>
-	<phone:PhoneApplicationPage.FontSize>
-		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
-	</phone:PhoneApplicationPage.FontSize>
-	<phone:PhoneApplicationPage.Foreground>
-		<StaticResource ResourceKey="PhoneForegroundBrush"/>
-	</phone:PhoneApplicationPage.Foreground>
+
+    <phone:PhoneApplicationPage.FontFamily>
+        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+    </phone:PhoneApplicationPage.FontFamily>
+    <phone:PhoneApplicationPage.FontSize>
+        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
+    </phone:PhoneApplicationPage.FontSize>
+    <phone:PhoneApplicationPage.Foreground>
+        <StaticResource ResourceKey="PhoneForegroundBrush"/>
+    </phone:PhoneApplicationPage.Foreground>
 
     <phone:PhoneApplicationPage.Resources>
+
+        <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+
         <Style x:Key="PivotHeaderItemStyle1" TargetType="controlsPrimitives:PivotHeaderItem">
             <Setter Property="FontSize" Value="40"/>
             <Setter Property="Padding" Value="21,0,-8,0"/>
@@ -70,97 +74,118 @@
                 <TextBlock FontSize="22" Margin="24,13,0,4" HorizontalAlignment="Left"
                            Text="软件工程"/>
             </controls:Pivot.Title>
-            
+
             <!--
 课程详情
             -->
-            <controls:PivotItem Header="课程详情" Margin="0,30,0,0">
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <StackPanel Margin="20,0">
-                        <!--Course Name-->
-                        <TextBlock TextWrapping="Wrap" FontSize="45" Margin="0,0,0,-10"
-								Text="软件工程"/>
+            <controls:PivotItem x:Name="PivotItem_Course"  Header="课程详情" Margin="0,30,0,0">
 
-                        <!--Time-->
-                        <Grid Margin="0,34,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="15"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+                <Grid>
+                    <TextBlock x:Name="TextBlock_NoCourseHint" Text="暂无课程详情" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"
+                               Visibility="Collapsed"/>
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoCourseHint, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <TextBlock x:Name="TextBlock_QueryCourse" Text="正在加载课程详情" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                      Visibility="{Binding Visibility, ElementName=TextBlock_QueryCourse, Converter={StaticResource TurnOverVisibilityConverter}}">
+                            <StackPanel Margin="20,0">
+                                <!--Course Name-->
+                                <TextBlock TextWrapping="Wrap" FontSize="45" Margin="0,0,0,-10"
+								Text="{Binding Name}"/>
 
-                            <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/time_icon.png" Stretch="None"/>
+                                <!--Time-->
+                                <Grid Margin="0,34,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
-									Text="2012/12/20（周四），8:00~9:50" Margin="0,-4,0,-2"/>
-                        </Grid>
+                                    <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/time_icon.png" Stretch="None"/>
 
-                        <!--Place-->
-                        <Grid Margin="0,20,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="15"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+									Text="{Binding DisplayBeginTimeAndEndTime}" Margin="0,-4,0,-2"/>
+                                </Grid>
 
-                            <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/location_icon.png" Stretch="None"/>
+                                <!--Place-->
+                                <Grid Margin="0,20,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="15"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
-									Text="专用教室" Margin="0,-3,0,-2"/>
-                        </Grid>
+                                    <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/location_icon.png" Stretch="None"/>
 
-                        <!--Teacher-->
-                        <StackPanel Margin="0,33,0,0">
-                            <TextBlock Text="老师" FontSize="20"/>
-                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
-									Text="朱少民"/>
-                        </StackPanel>
+                                    <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+									Text="{Binding Location}" Margin="0,-3,0,-2"/>
+                                </Grid>
 
-                        <!--Course Id-->
-                        <StackPanel Margin="0,15,0,0">
-                            <TextBlock Text="课号" FontSize="20"/>
-                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
-									Text="000000"/>
-                        </StackPanel>
+                                <!--Teacher-->
+                                <StackPanel Margin="0,33,0,0">
+                                    <TextBlock Text="老师" FontSize="20"/>
+                                    <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="{Binding Teacher}"/>
+                                </StackPanel>
 
-                        <!--Course Point-->
-                        <StackPanel Margin="0,15,0,0">
-                            <TextBlock Text="学分" FontSize="20"/>
-                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
-									Text="3.0"/>
-                        </StackPanel>
+                                <!--Course Id-->
+                                <StackPanel Margin="0,15,0,0">
+                                    <TextBlock Text="课号" FontSize="20"/>
+                                    <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="{Binding NO}"/>
+                                </StackPanel>
 
-                        <!--Course Hours-->
-                        <StackPanel Margin="0,15,0,0">
-                            <TextBlock Text="学时" FontSize="20"/>
-                            <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
-									Text="34"/>
-                        </StackPanel>
+                                <!--Course Point-->
+                                <StackPanel Margin="0,15,0,0">
+                                    <TextBlock Text="学分" FontSize="20"/>
+                                    <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="{Binding Point}"/>
+                                </StackPanel>
 
-                    </StackPanel>
-                </ScrollViewer>
+                                <!--Course Hours-->
+                                <StackPanel Margin="0,15,0,0">
+                                    <TextBlock Text="学时" FontSize="20"/>
+                                    <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
+									Text="{Binding Hours}"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
 
             </controls:PivotItem>
 
             <!--
 考试安排
             -->
-            <controls:PivotItem Header="考试安排" Margin="0,30,0,0">
-                <StackPanel Margin="20,0">
-                    <!--Time-->
-                    <StackPanel>
-                        <TextBlock Text="时间" FontSize="22"/>
-                        <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
-                                   Text="2012/12/20（周四），8:00~9:50"/>
-                    </StackPanel>
+            <controls:PivotItem x:Name="PivotItem_Exam"  Header="考试安排" Margin="0,30,0,0">
+                <Grid>
+                    <TextBlock x:Name="TextBlock_NoExamHint" Text="暂无考试安排" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"
+                               Visibility="Collapsed"/>
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoExamHint, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <TextBlock x:Name="TextBlock_QueryExam" Text="正在加载考试安排" Foreground="#FF999999" FontSize="22"
+                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"/>
+                        <StackPanel Margin="20,0"
+                                    Visibility="{Binding Visibility, ElementName=TextBlock_QueryExam, Converter={StaticResource TurnOverVisibilityConverter}}">
+                            <!--Time-->
+                            <StackPanel>
+                                <TextBlock Text="时间" FontSize="22"/>
+                                <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
+                                   Text="{Binding DisplayBeginTimeAndEndTime}"/>
+                            </StackPanel>
 
-                    <!--Place-->
-                    <StackPanel Margin="0,14,0,0">
-                        <TextBlock Text="地点" FontSize="22"/>
-                        <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
-                                   Text="专教"/>
-                    </StackPanel>
-                </StackPanel>
+                            <!--Place-->
+                            <StackPanel Margin="0,14,0,0">
+                                <TextBlock Text="地点" FontSize="22"/>
+                                <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
+                                   Text="{Binding Location}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </controls:PivotItem>
 
         </controls:Pivot>

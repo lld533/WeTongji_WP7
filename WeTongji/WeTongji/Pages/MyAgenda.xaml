@@ -7,73 +7,195 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Converter="clr-namespace:WeTongji.Converter"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    
+
     <phone:PhoneApplicationPage.Resources>
         <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+        <Converter:DateTimeToAgendaDateStringConverter x:Key="DateTimeToAgendaDateStringConverter"/>
+
+        <DataTemplate x:Key="MyGroupHeaderTemplate">
+            <Grid>
+                <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToAgendaDateStringConverter}}" 
+                           Margin="0,-6,0,16" FontSize="22" Foreground="#FF999999"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="MyTemplatedListBoxStyle" TargetType="toolkitPrimitives:TemplatedListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="toolkitPrimitives:TemplatedListBox">
+                        <ScrollViewer x:Name="ScrollViewer" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
+                                      VerticalScrollBarVisibility="Hidden">
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="MyLongListSelectorStyle" TargetType="toolkit:LongListSelector">
+            <Setter Property="Background" Value="{StaticResource PhoneBackgroundBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="toolkit:LongListSelector">
+                        <toolkitPrimitives:TemplatedListBox x:Name="TemplatedListBox" Background="{TemplateBinding Background}" Style="{StaticResource MyTemplatedListBoxStyle}">
+                            <toolkitPrimitives:TemplatedListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </toolkitPrimitives:TemplatedListBox.ItemContainerStyle>
+                        </toolkitPrimitives:TemplatedListBox>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </phone:PhoneApplicationPage.Resources>
+
 
     <Grid Margin="20,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
+        <Border x:Name="Border_WidthMeter" IsHitTestVisible="False"/>
+
         <!--Date of the Top item-->
         <TextBlock x:Name="TextBlock_TopItem" FontSize="22" Margin="3,16,0,28"
                    Text="今日（周一）"/>
-        
-        <ListBox x:Name="ListBox_Core" BorderBrush="{x:Null}" BorderThickness="0" Background="{x:Null}" Grid.Row="1"
-                 ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                 SelectionChanged="ListBox_Core_SelectionChanged">
-            <ListBox.ItemTemplate>
+
+
+        <TextBlock x:Name="TextBlock_Loading"  Grid.Row="1" FontSize="22" Foreground="#FF999999" Text="正在加载，请稍后..."
+                   HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+        <toolkit:LongListSelector x:Name="LongListSelector_Core" Grid.Row="1"
+                                  Visibility="{Binding Visibility, ElementName=TextBlock_Loading, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                  Style="{StaticResource MyLongListSelectorStyle}"
+                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                  GroupHeaderTemplate="{StaticResource MyGroupHeaderTemplate}"
+                                  SelectionChanged="LongListtSelector_SelectionChanged">
+            <toolkit:LongListSelector.GroupItemsPanel>
+                <ItemsPanelTemplate>
+                    <toolkit:WrapPanel/>
+                </ItemsPanelTemplate>
+            </toolkit:LongListSelector.GroupItemsPanel>
+            <toolkit:LongListSelector.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="0,0,0,34">
-                        <!--Date-->
-                        <TextBlock FontSize="18" Foreground="#FF9D9D9D" Margin="3,-5,0,0"
-                                   Text="{Binding FakeDate}"/>
-                        
-                        <!--Time-->
-                        <Grid x:Name="HighlightTime" Background="#FFFFCD01" Margin="0,15,0,0" Height="42"
-                              Visibility="{Binding Highlight, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock FontSize="24" Foreground="Black" VerticalAlignment="Center" Margin="3,0,0,2"
-                                   Text="{Binding FakeTime}"/>
-                        </Grid>
-                        <Grid  Margin="3,16,0,0"
-                               Visibility="{Binding Visibility, ElementName=HighlightTime, Converter={StaticResource TurnOverVisibilityConverter}}">
-                            <TextBlock FontSize="24"
-                                   Text="{Binding FakeTime}"/>
+                    <Grid Margin="0,0,0,34">
+
+                        <Grid.Resources>
+                            <Storyboard x:Name="LostHighlight">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlock">
+                                    <EasingColorKeyFrame KeyTime="0:0:0.2" Value="Black"/>
+                                    <EasingColorKeyFrame KeyTime="0:0:1" Value="White">
+                                        <EasingColorKeyFrame.EasingFunction>
+                                            <SineEase EasingMode="EaseOut"/>
+                                        </EasingColorKeyFrame.EasingFunction>
+                                    </EasingColorKeyFrame>
+                                </ColorAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Name="GetHighlight">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlock">
+                                    <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                    <EasingColorKeyFrame KeyTime="0:0:0.6" Value="Black">
+                                        <EasingColorKeyFrame.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </EasingColorKeyFrame.EasingFunction>
+                                    </EasingColorKeyFrame>
+                                </ColorAnimationUsingKeyFrames>
+                            </Storyboard>
+
+                            <Storyboard x:Name="LostHighlight_NoArrangement">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle_NoArrangement">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Name="GetHighlight_NoArrangement">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="Grid_NoArrangement">
+                                    <EasingDoubleKeyFrame KeyTime="0" Value="-810"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:2.5" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut"/>
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </Grid.Resources>
+
+                        <Grid x:Name="Grid_NoArrangement"
+                              Visibility="{Binding IsNoArrangementNode, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid.Projection>
+                                <PlaneProjection/>
+                            </Grid.Projection>
+                            <Rectangle x:Name="rectangle_NoArrangement" Fill="#FFFFCD01" Height="55" Width="{Binding ActualWidth, ElementName=Border_WidthMeter}"/>
+                            <TextBlock x:Name="textblock_NoArrangement" Text="今天没有安排了，好好休息吧~" Foreground="Black" FontSize="22" VerticalAlignment="Center" Margin="2,0,0,0"/>
                         </Grid>
 
-                        <!--Title-->
-                        <TextBlock FontSize="28" Margin="3,3,0,0" TextWrapping="Wrap" Foreground="{Binding FakeTitleBrush}"
-                                   Text="{Binding FakeTitle}"/>
-                        
-                        <!--Place-->
-                        <Grid Margin="3,6,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="16"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Image VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="14" Source="Images/Common/location_icon.png" Stretch="None"/>
+                        <StackPanel 
+                            Visibility="{Binding Visibility, ElementName=Grid_NoArrangement, Converter={StaticResource TurnOverVisibilityConverter}}">
+                            <!--Time-->
+                            <Grid x:Name="HighlightTime" Height="42" Margin="0,-12,0,0">
+                                <Rectangle x:Name="rectangle" Fill="#FFFFCD01" Opacity="0"/>
+                                <TextBlock x:Name="textBlock" FontSize="24" Foreground="White" VerticalAlignment="Center" Margin="3,0,0,2"
+                                                Text="{Binding DisplayDayTimeOfBeginTime}"/>
+                            </Grid>
 
-                            <TextBlock Grid.Column="2" FontSize="22" Foreground="#FFC5C5C5" Margin="0,0,0,-3"
-                                   Text="{Binding FakePlace}"/>
-                        </Grid>
+                            <!--Title-->
+                            <TextBlock FontSize="28" Margin="3,3,0,0" TextWrapping="Wrap" Foreground="{Binding NodeBrush}"
+                                   Text="{Binding Title}"/>
 
-                    </StackPanel>
+                            <!--Place-->
+                            <Grid Margin="3,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <Image VerticalAlignment="Top" HorizontalAlignment="Left" Width="14" Source="Images/Common/location_icon.png" Stretch="None" Margin="0,7,0,0"/>
+
+                                <TextBlock Grid.Column="2" FontSize="22" Foreground="#FFC5C5C5" Margin="0,0,0,-3" TextWrapping="Wrap"
+                                                Text="{Binding Location}"/>
+                            </Grid>
+
+                        </StackPanel>
+                    </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        
+            </toolkit:LongListSelector.ItemTemplate>
+        </toolkit:LongListSelector>
     </Grid>
+
+
 
 </phone:PhoneApplicationPage>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 
 namespace WeTongji.Api.Domain
 {
@@ -13,7 +15,7 @@ namespace WeTongji.Api.Domain
         kExam
     }
 
-    public class CalendarNode
+    public class CalendarNode : INotifyPropertyChanged, IComparable
     {
         #region [Properties]
 
@@ -100,6 +102,92 @@ namespace WeTongji.Api.Domain
         public String DisplayEndTime
         {
             get { return EndTime.ToString("HH:mm"); }
+        }
+
+        public String DisplayDateofBeginTime
+        {
+            get
+            {
+                if (BeginTime.Date == DateTime.Now.Date)
+                {
+                    return "今日";
+                }
+
+                return BeginTime.ToString("M月d日");
+            }
+        }
+
+        public String DisplayDayTimeOfBeginTime
+        {
+            get
+            {
+                return BeginTime.ToString("HH:mm");
+            }
+        }
+
+        public Boolean IsNoArrangementNode
+        {
+            get { return BeginTime == DateTime.Now.Date && EndTime == DateTime.MinValue; }
+        }
+
+        public SolidColorBrush NodeBrush
+        {
+            get 
+            {
+                switch (NodeType)
+                {
+                    case CalendarNodeType.kActivity:
+                        return App.Current.Resources["ActivityAgendaTitleBrush"] as SolidColorBrush;
+                    case CalendarNodeType.kObligedCourse:
+                        return App.Current.Resources["RequiredCourseAgendaTitleBrush"] as SolidColorBrush;
+                    case CalendarNodeType.kOptionalCourse:
+                        return App.Current.Resources["OptionalCourseAgendaTitleBrush"] as SolidColorBrush;
+                    case CalendarNodeType.kExam:
+                        return App.Current.Resources["ExamInfoAgendaTitleBrush"] as SolidColorBrush;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        #endregion
+
+        #region [ICompare]
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+                throw new ArgumentNullException();
+
+            var node = obj as CalendarNode;
+
+            if (node == null)
+                throw new NotSupportedException("CalendarNode is expected.");
+
+            if (node.NodeType == this.NodeType && node.Id == this.Id)
+                return 0;
+            else if (this < node)
+                return -1;
+            else
+                return 1;
+        }
+
+        #endregion
+
+        #region [Notify Property Changed]
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        #region [Special Calendar node]
+
+        public static CalendarNode NoArrangementNode
+        {
+            get
+            {
+                return new CalendarNode() { BeginTime = DateTime.Now.Date, EndTime = DateTime.MinValue };
+            }
         }
 
         #endregion

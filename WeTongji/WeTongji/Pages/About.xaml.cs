@@ -34,6 +34,11 @@ namespace WeTongji
             task.Show();
         }
 
+        private void Button_ViewOfficialWebsite_Click(Object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/ViewOfficialWebsite.xaml", UriKind.RelativeOrAbsolute));
+        }
+
         private void Button_FeedBack_Click(Object sender, RoutedEventArgs e)
         {
             var task = new Microsoft.Phone.Tasks.EmailComposeTask();

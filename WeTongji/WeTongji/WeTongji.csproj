@@ -117,6 +117,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converter\DateTimeToAgendaDateStringConverter.cs" />
     <Compile Include="Pages\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -239,6 +240,9 @@
     <Compile Include="Pages\TongjiNews.xaml.cs">
       <DependentUpon>TongjiNews.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ViewOfficialWebsite.xaml.cs">
+      <DependentUpon>ViewOfficialWebsite.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TestSDKPage.xaml.cs">
       <DependentUpon>TestSDKPage.xaml</DependentUpon>
     </Compile>
@@ -339,6 +343,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\TongjiNews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ViewOfficialWebsite.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1414,10 +1414,7 @@ namespace WeTongji
                             {
                                 db.Courses.Attach(c);
                             }
-                            catch (System.Exception ex)
-                            {
-
-                            }
+                            catch { }
 
                             db.Courses.DeleteOnSubmit(c);
                             db.SubmitChanges();

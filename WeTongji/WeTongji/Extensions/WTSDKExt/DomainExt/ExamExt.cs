@@ -162,6 +162,48 @@ namespace WeTongji.Api.Domain
 
         #endregion
 
+        #region [Data Binding]
+
+        public String DisplayBeginTimeAndEndTime
+        {
+            get
+            {
+                var sb = new StringBuilder(Begin.ToString("yyyy/MM/dd(周"));
+                switch (Begin.DayOfWeek)
+                {
+                    case System.DayOfWeek.Sunday:
+                        sb.Append("日");
+                        break;
+                    case System.DayOfWeek.Monday:
+                        sb.Append("一");
+                        break;
+                    case System.DayOfWeek.Tuesday:
+                        sb.Append("二");
+                        break;
+                    case System.DayOfWeek.Wednesday:
+                        sb.Append("三");
+                        break;
+                    case System.DayOfWeek.Thursday:
+                        sb.Append("四");
+                        break;
+                    case System.DayOfWeek.Friday:
+                        sb.Append("五");
+                        break;
+                    case System.DayOfWeek.Saturday:
+                        sb.Append("六");
+                        break;
+                }
+
+                sb.AppendFormat(") {0}~{1}", Begin.ToString("HH:mm"), End.ToString("HH:mm"));
+
+
+                return sb.ToString();
+            }
+        }
+        
+        #endregion
+
+
         #region [Extended Methods]
 
         /// <summary>
