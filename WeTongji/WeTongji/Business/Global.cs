@@ -28,6 +28,15 @@ namespace WeTongji.Business
 
         #endregion
 
+        #region [Field]
+
+        /// <summary>
+        /// Lock this object when saving settings
+        /// </summary>
+        private Object objectToLock;
+
+        #endregion
+
         #region [Properties]
 
         public WTSettings Settings { get; private set; }
@@ -38,9 +47,10 @@ namespace WeTongji.Business
 
         #region [Constructor]
 
-        private Global() 
+        private Global()
         {
             Settings = new WTSettings();
+            objectToLock = new Object();
         }
 
         #endregion
@@ -62,23 +72,26 @@ namespace WeTongji.Business
                 var sr = new StreamReader(fs);
                 var str = sr.ReadToEnd();
                 Settings = str.DeserializeSettings();
-                
+
                 fs.Close();
             }
         }
 
         public void SaveSettings()
         {
-            var store = IsolatedStorageFile.GetUserStoreForApplication();
-
-            using (var fs = store.OpenFile(WTSettingsExt.SettingsFileName, FileMode.OpenOrCreate))
+            lock (objectToLock)
             {
-                var str = Settings.GetSerializedString();
-                StreamWriter sw = new StreamWriter(fs);
-                sw.Write(str);
-                sw.Flush();
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
 
-                fs.Close();
+                using (var fs = store.OpenFile(WTSettingsExt.SettingsFileName, FileMode.OpenOrCreate))
+                {
+                    var str = Settings.GetSerializedString();
+                    StreamWriter sw = new StreamWriter(fs);
+                    sw.Write(str);
+                    sw.Flush();
+
+                    fs.Close();
+                }
             }
         }
 

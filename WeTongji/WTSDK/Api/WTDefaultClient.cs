@@ -10,6 +10,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Reflection;
 using WeTongji.Api.Util;
+using System.Security.Cryptography;
 
 namespace WeTongji.Api
 {
@@ -361,7 +362,7 @@ namespace WeTongji.Api
             var sort = dict.OrderBy(pair => pair.Key);
             foreach (var pair in sort)
             {
-                sb.AppendFormat("{0}={1}&", HttpUtility.UrlEncode(pair.Key), HttpUtility.UrlEncode(pair.Value));
+                sb.AppendFormat("{0}={1}&", pair.Key, HttpUtility.UrlEncode(pair.Value));
             }
             sb.Remove(sb.Length - 1, 1);
 
@@ -370,8 +371,6 @@ namespace WeTongji.Api
 
         private String Dictionary2Url(IDictionary<String, String> dict)
         {
-            //http://we.tongji.edu.cn/api/call?D=iPhone&H=5d0c8f9b49e043f7d00e487ee489170e&M=User.LogOn&NO=092983&Password=123456&V=2.0.0
-
             if (dict == null)
                 throw new ArgumentNullException("null");
             StringBuilder sb = new StringBuilder("http://we.tongji.edu.cn/api/call?");

@@ -247,19 +247,20 @@ namespace WeTongji
             var item = lls.SelectedItem as CalendarNode;
             lls.SelectedItem = null;
 
-            switch (item.NodeType)
-            {
-                case CalendarNodeType.kActivity:
-                    this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + item.Id, UriKind.RelativeOrAbsolute));
-                    return;
-                case CalendarNodeType.kObligedCourse:
-                case CalendarNodeType.kOptionalCourse:
-                    this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}&d={1}",item.Id, item.BeginTime), UriKind.RelativeOrAbsolute));
-                    return;
-                case CalendarNodeType.kExam:
-                    this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", item.Id), UriKind.RelativeOrAbsolute));
-                    return;
-            }
+            if (!item.IsNoArrangementNode)
+                switch (item.NodeType)
+                {
+                    case CalendarNodeType.kActivity:
+                        this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + item.Id, UriKind.RelativeOrAbsolute));
+                        return;
+                    case CalendarNodeType.kObligedCourse:
+                    case CalendarNodeType.kOptionalCourse:
+                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}&d={1}", item.Id, item.BeginTime), UriKind.RelativeOrAbsolute));
+                        return;
+                    case CalendarNodeType.kExam:
+                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", item.Id), UriKind.RelativeOrAbsolute));
+                        return;
+                }
         }
 
 

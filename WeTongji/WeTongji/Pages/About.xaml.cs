@@ -38,16 +38,5 @@ namespace WeTongji
         {
             this.NavigationService.Navigate(new Uri("/Pages/ViewOfficialWebsite.xaml", UriKind.RelativeOrAbsolute));
         }
-
-        private void Button_FeedBack_Click(Object sender, RoutedEventArgs e)
-        {
-            var task = new Microsoft.Phone.Tasks.EmailComposeTask();
-            var version = AppVersion.Current;
-
-            task.Body = String.Format("我正在使用微同济Windows Phone v{0}，", version);
-            task.Subject = String.Format("[用户反馈]微同济Windows Phone v{0}", version);
-            task.To = "we@tongji.edu.cn";
-            task.Show();
-        }
     }
 }

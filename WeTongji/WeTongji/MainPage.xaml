@@ -107,7 +107,7 @@
 
         <Border x:Name="Border_PanoramaItemReferenceWidth" Margin="18,0,78,0"/>
 
-        <controls:Panorama SelectionChanged="Panorama_SelectionChanged" TitleTemplate="{StaticResource WT_PanoramaHeadTemplate}" Margin="-12,0,0,0">
+        <controls:Panorama x:Name="Panorama_Core"  SelectionChanged="Panorama_SelectionChanged" TitleTemplate="{StaticResource WT_PanoramaHeadTemplate}" Margin="-12,0,0,0">
 
             <!--
 动态   
@@ -148,7 +148,8 @@
                     </controls:PanoramaItem>
                 </Border>
                 <!--Signed in-->
-                <Border x:Name="Border_SignedIn" Visibility="{Binding Visibility, ElementName=Border_SignedOut, Converter={StaticResource TurnOverVisibilityConverter}}">
+                <Border x:Name="Border_SignedIn" Visibility="{Binding Visibility, ElementName=Border_SignedOut, Converter={StaticResource TurnOverVisibilityConverter}}"
+                        VerticalAlignment="Top">
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden">
@@ -157,11 +158,11 @@
 
                                     <!--Avatar & Favorites-->
                                     <RowDefinition Height="141"/>
-                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="13"/>
 
                                     <!--Alarm-->
                                     <RowDefinition Height="141"/>
-                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="13"/>
 
                                     <!--Agendar-->
                                     <RowDefinition Height="141"/>
@@ -306,7 +307,7 @@
             <!--
 推荐活动
                 -->
-            <Border>
+            <Border x:Name="Border_Activities">
                 <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
                         <ListBox x:Name="ListBox_Activity" Visibility="Collapsed"  BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -496,12 +497,14 @@
         <shell:ApplicationBar>
             <shell:ApplicationBar.Buttons>
                 <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="注册" Click="NavigateToSignUp"/>
+                <shell:ApplicationBarIconButton IconUri="/icons/appbar.register.rest.png" Text="注册" Click="NavigateToSignUp"/>
             </shell:ApplicationBar.Buttons>
             
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="设置" Click="NavigateToSettings"/>
                 <shell:ApplicationBarMenuItem Text="关于" Click="NavigateToAbout"/>
+                <shell:ApplicationBarMenuItem Text="用户反馈" Click="SendFeedback"/>
+                <shell:ApplicationBarMenuItem Text="邮件分享给好友" Click="ShareToFriends"/>
             </shell:ApplicationBar.MenuItems>
 
         </shell:ApplicationBar>

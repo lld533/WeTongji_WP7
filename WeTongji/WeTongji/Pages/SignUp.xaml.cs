@@ -12,6 +12,9 @@ using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System.Windows.Navigation;
+using WeTongji.Api.Request;
+using WeTongji.Api.Response;
+using WeTongji.Api;
 
 namespace WeTongji
 {
@@ -52,6 +55,73 @@ namespace WeTongji
 
         private void Button_Done_Click(Object sender, EventArgs e)
         {
+            var req = new UserActiveRequest<WTResponse>();
+            var client = new WTDefaultClient<WTResponse>();
+
+            req.NO = TextBox_Id.Text;
+            req.Name = TextBox_Name.Text;
+            req.Password = PasswordBox_Password.Password;
+
+            client.ExecuteCompleted += (obj, args) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    MessageBox.Show("请登录", "注册成功", MessageBoxButton.OK);
+                    this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.RelativeOrAbsolute));
+                });
+            };
+
+            client.ExecuteFailed += (obj, args) =>
+                {
+                    if (args.Error is WTException)
+                    {
+                        var err = args.Error as WTException;
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            switch (err.StatusCode.Id)
+                            {
+                                case Api.Util.Status.AlreadyRegistered:
+                                    MessageBox.Show("账号已经注册,请登录");
+                                    this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.RelativeOrAbsolute));
+                                    return;
+                                case Api.Util.Status.NoAccount:
+                                    MessageBox.Show("您输入的账号不存在，请检查后重试");
+                                    return;
+                                case Api.Util.Status.IdNameDismatch:
+                                    MessageBox.Show("学号与姓名不符，请检查后重试");
+                                    TextBox_Id.Focus();
+                                    TextBox_Id.SelectAll();
+                                    return;
+                                case Api.Util.Status.InvalidParameter:
+                                    MessageBox.Show("注册信息有误，请检查后重试");
+                                    TextBox_Id.Focus();
+                                    TextBox_Id.SelectAll();
+                                    return;
+                                default:
+                                    MessageBox.Show("注册失败，请重试");
+                                    return;
+                            }
+                        });
+
+                    }
+                    else if (args.Error is System.Net.WebException)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            MessageBox.Show("注册失败，请检查Wifi或网络连接后重试");
+                        });
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            MessageBox.Show("注册失败，请重试");
+                        });
+                    }
+                };
+
+
+            client.Execute(req);
         }
 
         #endregion

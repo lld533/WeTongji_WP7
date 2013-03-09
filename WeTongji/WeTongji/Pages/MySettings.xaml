@@ -110,7 +110,8 @@
 								Text="退出应用是否弹出对话框"/>
                     </StackPanel>
 
-                    <toolkit:ToggleSwitch Grid.Column="1" IsChecked="True" Style="{StaticResource MyToggleSwitchStyle}"/>
+                    <toolkit:ToggleSwitch x:Name="ToggleSwitch_HintOnExit" Grid.Column="1" Style="{StaticResource MyToggleSwitchStyle}"
+                                          Checked="ToggleSwitch_HintOnExit_Checked" Unchecked="ToggleSwitch_HintOnExit_UnChecked"/>
                 </Grid>
 
                 <Grid Margin="0,-20,0,0">
@@ -125,7 +126,8 @@
 								Text="界面中自动刷新内容"/>
                     </StackPanel>
 
-                    <toolkit:ToggleSwitch Grid.Column="1" IsChecked="True" Style="{StaticResource MyToggleSwitchStyle}"/>
+                    <toolkit:ToggleSwitch x:Name="ToggleSwitch_AutoRefresh"  Grid.Column="1" Style="{StaticResource MyToggleSwitchStyle}"
+                                          Checked="ToggleSwitch_AutoRefresh_Checked" Unchecked="ToggleSwitch_AutoRefresh_UnChecked"/>
                 </Grid>
 
                 <Button Margin="0,-16,0,0" Style="{StaticResource SettingsButtonStyle}" MouseEnter="SettingsButtonMouseEnter" MouseLeave="SettingsButtonMouseLeave"

@@ -13,13 +13,13 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
-    <Grid>
+    <Grid Margin="20,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="WeTongji Official Website"/>
+        <TextBlock Text="微同济官方主页" FontSize="22"  Margin="0,15"/>
 
         <phone:WebBrowser Grid.Row="1" Source="http://we.tongji.edu.cn"/>
     </Grid>

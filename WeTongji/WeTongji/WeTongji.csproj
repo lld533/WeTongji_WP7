@@ -382,6 +382,13 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="icons\appbar.like.rest.png" />
+    <Content Include="icons\appbar.participate.rest.png" />
+    <Content Include="icons\appbar.person.list.rest.png" />
+    <Content Include="icons\appbar.register.rest.png" />
+    <Content Include="icons\appbar.unfavourite.rest.png" />
+    <Content Include="icons\appbar.unlike.rest.png" />
+    <Content Include="icons\appbar.unparticipate.rest.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />

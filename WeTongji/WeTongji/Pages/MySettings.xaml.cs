@@ -20,6 +20,7 @@ using WeTongji.Api;
 using System.Threading;
 using WeTongji.Pages;
 using WeTongji.Utility;
+using WeTongji.Business;
 
 namespace WeTongji
 {
@@ -32,6 +33,10 @@ namespace WeTongji
 
         private void SettingsPageLoaded(Object sender, RoutedEventArgs e)
         {
+            ToggleSwitch_AutoRefresh.IsChecked = Global.Instance.Settings.AutoRefresh;
+            ToggleSwitch_HintOnExit.IsChecked = Global.Instance.Settings.HintOnExit;
+
+
             Run_Version.Text = AppVersion.Current;
 
             var thread = new Thread(new ThreadStart(ComputeImageCacheSize))
@@ -209,6 +214,30 @@ namespace WeTongji
             };
 
             thread.Start();
+        }
+
+        private void ToggleSwitch_HintOnExit_Checked(Object sender, RoutedEventArgs e)
+        {
+            Global.Instance.Settings.HintOnExit = true;
+            Global.Instance.SaveSettings();
+        }
+
+        private void ToggleSwitch_HintOnExit_UnChecked(Object sender, RoutedEventArgs e)
+        {
+            Global.Instance.Settings.HintOnExit = false;
+            Global.Instance.SaveSettings();
+        }
+
+        private void ToggleSwitch_AutoRefresh_Checked(Object sender, RoutedEventArgs e)
+        {
+            Global.Instance.Settings.AutoRefresh = true;
+            Global.Instance.SaveSettings();
+        }
+
+        private void ToggleSwitch_AutoRefresh_UnChecked(Object sender, RoutedEventArgs e)
+        {
+            Global.Instance.Settings.AutoRefresh = false;
+            Global.Instance.SaveSettings();
         }
     }
 }

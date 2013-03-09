@@ -31,6 +31,7 @@ using WeTongji.Api.Response;
 using WeTongji.Api;
 using WeTongji.Pages;
 using System.Threading;
+using WeTongji.Utility;
 
 
 namespace WeTongji
@@ -55,6 +56,20 @@ namespace WeTongji
         }
 
         #region [Overridden]
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnBackKeyPress(e);
+
+            if (Global.Instance.Settings.HintOnExit)
+            {
+                var result = MessageBox.Show("你确认要退出微同济吗？", "", MessageBoxButton.OKCancel);
+                if (MessageBoxResult.Cancel == result)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -99,7 +114,12 @@ namespace WeTongji
 
         private ApplicationBarIconButton Button_Login
         {
-            get { return this.ApplicationBar.Buttons[0] as ApplicationBarIconButton; }
+            get
+            {
+                if (this.ApplicationBar.Buttons.Count == 2)
+                    return this.ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+                return null;
+            }
         }
 
         private int RefreshCounter
@@ -287,7 +307,12 @@ namespace WeTongji
         /// <param name="e"></param>
         private void LogOn_Click(object sender, EventArgs e)
         {
-            Button_Login.IsEnabled = false;
+            try
+            {
+                Button_Login.IsEnabled = false;
+            }
+            catch { }
+
             this.TextBlock_Today.Text = DateTime.Now.Day.ToString();
             this.Focus();
 
@@ -332,11 +357,22 @@ namespace WeTongji
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         Border_SignedOut.Visibility = Visibility.Collapsed;
-                        Border_SignedIn.Visibility = Visibility.Visible;
                         TextBox_Id.Text = String.Empty;
                         PasswordBox_Password.Password = String.Empty;
 
-                        //...Todo @_@ Refresh app bar
+                        if ((this.ApplicationBar as ApplicationBar).Buttons.Count != 1)
+                        {
+                            (this.ApplicationBar as ApplicationBar).Buttons.Clear();
+
+                            ApplicationBarIconButton button;
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+                            button.Click += RefreshButton_Click;
+                            (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+
+                            var mi = new ApplicationBarMenuItem() { Text = "注销" };
+                            mi.Click += SignOut;
+                            this.ApplicationBar.MenuItems.Add(mi);
+                        }
                     });
 
 
@@ -428,7 +464,11 @@ namespace WeTongji
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        Button_Login.IsEnabled = true;
+                        try
+                        {
+                            Button_Login.IsEnabled = true;
+                        }
+                        catch { }
 
                         if (err is WTException)
                         {
@@ -476,6 +516,10 @@ namespace WeTongji
                             }
 
                             MessageBox.Show("登录失败，请重试");
+                        }
+                        else if (err is System.Net.WebException)
+                        {
+                            MessageBox.Show("登录失败，请检查Wifi或网络连接后重试");
                         }
                     });
                 };
@@ -1223,18 +1267,174 @@ namespace WeTongji
 
         private void UpdateLoginButton(object sender, TextChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(PasswordBox_Password.Password) && !String.IsNullOrEmpty(TextBox_Id.Text))
+            try
             {
-                Button_Login.IsEnabled = true;
+                if (!String.IsNullOrEmpty(PasswordBox_Password.Password) && !String.IsNullOrEmpty(TextBox_Id.Text))
+                {
+                    Button_Login.IsEnabled = true;
+                }
+                else
+                {
+                    Button_Login.IsEnabled = false;
+                }
             }
-            else
-            {
-                Button_Login.IsEnabled = false;
-            }
+            catch { }
         }
 
         private void Panorama_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
+            var p = sender as Panorama;
+
+            if (p.SelectedIndex == 0 && Border_SignedOut.Visibility == Visibility.Visible)
+            {
+                (this.ApplicationBar as ApplicationBar).Buttons.Clear();
+
+                ApplicationBarIconButton button;
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
+                UpdateLoginButton(null, null);
+                button.Click += LogOn_Click;
+                (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
+                button.Click += NavigateToSignUp;
+                (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+            }
+            else
+            {
+                if ((this.ApplicationBar as ApplicationBar).Buttons.Count != 1)
+                {
+                    (this.ApplicationBar as ApplicationBar).Buttons.Clear();
+
+                    ApplicationBarIconButton button;
+                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+                    button.Click += RefreshButton_Click;
+                    (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                }
+            }
+
+            if (e.AddedItems.Contains(Border_Activities))
+            {
+                Queue<Object> q = new Queue<Object>();
+
+                foreach (var item in this.ApplicationBar.MenuItems)
+                {
+                    q.Enqueue(item);
+                }
+
+                this.ApplicationBar.MenuItems.Clear();
+
+                ApplicationBarMenuItem mi;
+
+                mi = new ApplicationBarMenuItem() { Text = "最近活动" };
+                mi.Click += SortActivitiesCompareToNow;
+                this.ApplicationBar.MenuItems.Insert(0, mi);
+
+                mi = new ApplicationBarMenuItem() { Text = "最火活动" };
+                mi.Click += SortActivitiesByLikeNumber;
+                this.ApplicationBar.MenuItems.Insert(0, mi);
+
+
+                mi = new ApplicationBarMenuItem() { Text = "最新活动" };
+                mi.Click += SortActivitiesByCreationTime;
+                this.ApplicationBar.MenuItems.Insert(0, mi);
+
+                while (q.Count > 0)
+                {
+                    this.ApplicationBar.MenuItems.Add(q.Dequeue());
+                }
+            }
+            else if (e.RemovedItems.Contains(Border_Activities))
+            {
+                for (int i = 0; i < 3; ++i)
+                {
+                    this.ApplicationBar.MenuItems.RemoveAt(0);
+                }
+            }
+        }
+
+        private void SendFeedback(Object sender, EventArgs e)
+        {
+            var task = new Microsoft.Phone.Tasks.EmailComposeTask();
+            var version = AppVersion.Current;
+
+            task.Body = String.Format("我正在{0} {1}上使用微同济Windows Phone v{2}，", Microsoft.Phone.Info.DeviceStatus.DeviceManufacturer, Microsoft.Phone.Info.DeviceStatus.DeviceName, version);
+            task.Subject = String.Format("[用户反馈]微同济Windows Phone v{0}", version);
+            task.To = "we@tongji.edu.cn";
+            task.Show();
+        }
+
+        private void ShareToFriends(Object sender, EventArgs e)
+        {
+            var task = new Microsoft.Phone.Tasks.EmailComposeTask();
+            var version = AppVersion.Current;
+
+            task.Body = String.Format("我正在使用微同济-同济大学专属校园移动应用，帮助管理我的大学日程，推送校内校外的大小活动，不再错过任何一个精彩的活动，快点和我一起去下载(we.tongji.edu.cn)");
+            task.Subject = String.Format("推荐使用WeTongji(Windows Phone版)", version);
+            task.Show();
+        }
+
+        private void RefreshButton_Click(Object sender, EventArgs e)
+        {
+
+        }
+
+        private void SignOut(Object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("确定想要注销账号？", "账号注销", MessageBoxButton.OKCancel);
+            if (MessageBoxResult.OK == result)
+            {
+                var req = new UserLogOffRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                Action a = () => 
+                {
+                    Global.Instance.CleanSettings();
+                    this.Dispatcher.BeginInvoke(() => 
+                    {
+                        this.ApplicationBar.MenuItems.RemoveAt(this.ApplicationBar.MenuItems.Count - 1);
+
+                        Border_SignedIn.DataContext = Button_Alarm.DataContext = null;
+                        Border_SignedOut.Visibility = Visibility.Visible;
+
+                        //...Clear global data
+                    });
+                };
+
+                client.ExecuteCompleted += (obj, args) => { a.Invoke(); };
+                client.ExecuteFailed += (obj, args) => { a.Invoke(); };
+
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        /// <summary>
+        /// 最新, do not filter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortActivitiesByCreationTime(Object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 最火,filter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortActivitiesByLikeNumber(Object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 最近,filter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SortActivitiesCompareToNow(Object sender, EventArgs e)
+        {
+
         }
 
         #endregion

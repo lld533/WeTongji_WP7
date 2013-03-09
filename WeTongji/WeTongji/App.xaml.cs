@@ -66,6 +66,7 @@ namespace WeTongji
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
             //IsolatedStorageExplorer.Explorer.Start("localhost");
+            Global.Instance.LoadSettings();
 
         }
 

@@ -61,7 +61,7 @@ Second Step
 
                 <TextBlock Text="学号" Opacity="0.75" FontSize="20" Margin="0,-5,0,0"/>
                 <Grid Margin="0,7,0,0" HorizontalAlignment="Stretch" Height="48">
-                    <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="TelephoneNumber"
+                    <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Number"
                              TextChanged="UpdateSendButtonCore"/>
                     <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25" Text="请输入学号" IsHitTestVisible="False"
                            Visibility="{Binding Text, Converter={StaticResource TextLengthToVisibilityConverter}, ElementName=TextBox_Id}"/>

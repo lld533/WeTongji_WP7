@@ -12,6 +12,16 @@ namespace WeTongji.DataBase
         public String UID { get; set; }
 
         public Byte[] CryptPassword { get; set; }
+
+        public Boolean HintOnExit { get; set; }
+
+        public Boolean AutoRefresh { get; set; }
+
+        public WTSettings()
+        {
+            HintOnExit = true;
+            AutoRefresh = true;
+        }
     }
 
 
@@ -44,7 +54,10 @@ namespace WeTongji.DataBase
             {
                 settings = JsonConvert.DeserializeObject<WTSettings>(str);
             }
-            catch { }
+            catch 
+            {
+                settings = new WTSettings();
+            }
 
             return settings;
         }
