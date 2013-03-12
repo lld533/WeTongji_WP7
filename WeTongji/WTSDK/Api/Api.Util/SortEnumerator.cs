@@ -13,6 +13,8 @@ namespace WeTongji.Api.Util
 
         favorite,
 
-        schedule
+        schedule, 
+
+        begin
     }
 }

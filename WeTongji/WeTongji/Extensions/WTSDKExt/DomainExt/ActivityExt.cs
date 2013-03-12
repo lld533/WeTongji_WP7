@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WeTongji.DataBase;
 using WeTongji.Utility;
+using ImageTools;
 
 namespace WeTongji.Api.Domain
 {
@@ -130,8 +131,21 @@ namespace WeTongji.Api.Domain
 
                 var fileExt = Image.GetImageFileExtension();
 
-                return String.Format("{0}.{1}", ImageGuid, fileExt).GetImageSource();
+                var imgSrc = String.Format("{0}.{1}", ImageGuid, fileExt).GetImageSource();
+
+                if (imgSrc != null && imgSrc.PixelHeight < imgSrc.PixelWidth)
+                {
+                    var wb = new WriteableBitmap(imgSrc);
+                    var imgExt = wb.ToImage();
+                    imgSrc = ExtendedImage.Transform(imgExt, RotationType.Rotate90, FlippingType.None).ToBitmap();
+                }
+                return imgSrc;
             }
+        }
+
+        public Boolean IsValid
+        {
+            get { return this.Id != -1; }
         }
 
         #endregion
@@ -410,6 +424,12 @@ namespace WeTongji.Api.Domain
                 fileStream.Close();
             }
         }
+
+        public static ActivityExt InvalidActivityExt
+        {
+            get { return new ActivityExt() { Id = -1 }; }
+        }
+
         #endregion
     }
 }

@@ -96,7 +96,7 @@
 
                                         <!--Time-->
                                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                            <Image Source="Images/Common/time_icon.png" Stretch="None"/>
+                                            <Image Source="/Images/Common/time_icon.png" Stretch="None"/>
                                             <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
                                            Text="{Binding DisplayTime}"/>
                                         </StackPanel>
@@ -110,7 +110,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <!--Place-->
-                                            <Image Source="Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
+                                            <Image Source="/Images/Common/location_icon.png" Stretch="None" Margin="3,0,0,0"/>
                                             <TextBlock Grid.Column="1" FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="15,0,-3,0"
                                                             Text="{Binding Location}"/>
 

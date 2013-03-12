@@ -16,8 +16,8 @@ namespace WeTongji.Api.Request
             Expire = false;
 
             base.dict["Channel_Ids"] = String.Empty;
-            base.dict["Sort"] = @"'created_at' desc";
-            base.dict["Expire"] = "false";
+            base.dict["Sort"] = "`created_at` DESC";
+            base.dict["Expire"] = Expire ? "1" : "0";
         }
 
         #endregion
@@ -47,8 +47,8 @@ namespace WeTongji.Api.Request
             else
                 result.Remove("Channel_Ids");
 
-            result["Sort"] = String.Format("'{0}' {1}", SortEnumerator.ToString(), ((IsAsc) ? "asc" : "desc"));
-            result["Expire"] = JsonConvert.SerializeObject(Expire);
+            result["Sort"] = String.Format("`{0}` {1}", SortEnumerator.ToString(), ((IsAsc) ? "ASC" : "DESC"));
+            result["Expire"] = Expire ? "1" : "0";
 
             return result;
         }

@@ -64,7 +64,7 @@
                                 <ColumnDefinition Width="15"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Image Source="/Images/Common/location_icon.png" VerticalAlignment="Center" Height="19"/>
+                            <Image Source="/Images/Common/location_icon.png" VerticalAlignment="Top" Margin="0,5,0,0"  Height="19"/>
                             <TextBlock Grid.Column="2" TextWrapping="Wrap" Margin="0,0,0,3"
                                        Text="{Binding Location}"/>
                         </Grid>
@@ -127,7 +127,7 @@
 
             <controls:PivotItem Header="活动配图" Style="{StaticResource WTPivotItemStyle}">
                 <Grid>
-                    <Image x:Name="Illustration" Visibility="Collapsed" Stretch="UniformToFill" Source="{Binding ActivityImageBrush}"/>
+                    <Image x:Name="Illustration" Visibility="Collapsed" Stretch="Uniform" VerticalAlignment="Top"  Source="{Binding ActivityImageBrush}"/>
                     <TextBlock x:Name="NoIllustrationHint" Text="暂无图片信息" FontSize="22" Foreground="#FF999999"
                                Visibility="{Binding Visibility, ElementName=Illustration, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"/>
                 </Grid>

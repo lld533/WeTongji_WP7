@@ -45,14 +45,35 @@ namespace WeTongji
 
         private int refreshNewsCounter = 0;
 
+        private ActivitySortMethod activitySortMethod = ActivitySortMethod.kByCreationTime;
+
+        private Boolean hasLoadMoreActivities = false;
+
+        #endregion
+
+        #region
+
+        private Thread PersonThread;
+        private Thread ActivityThread;
+
         #endregion
 
         // Constructor
         public MainPage()
         {
-            InitializeComponent();
+            PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
+            {
+                IsBackground = true,
+                Name = "RefreshPeopleOfWeek"
+            };
 
-            RefreshNewsCompleted += RefreshCampusInfoImages;
+            ActivityThread = new Thread(new ThreadStart(RefreshExistingExpiredActivities))
+            {
+                IsBackground = true,
+                Name = "RefreshActivitiesForTheFirstTime"
+            };
+
+            InitializeComponent();
         }
 
         #region [Overridden]
@@ -74,7 +95,6 @@ namespace WeTongji
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ThemeManager.ToDarkTheme();
 
             if (e.NavigationMode == NavigationMode.New)
             {
@@ -92,7 +112,6 @@ namespace WeTongji
                     }
                     db.CreateDatabase();
 #endif
-                    RefreshAll();
                 }
 
                 if (!isResourceLoaded)
@@ -116,7 +135,7 @@ namespace WeTongji
         {
             get
             {
-                if (this.ApplicationBar.Buttons.Count == 2)
+                if (Panorama_Core.SelectedIndex == 0 && Border_SignedOut.Visibility == Visibility.Visible)
                     return this.ApplicationBar.Buttons[0] as ApplicationBarIconButton;
                 return null;
             }
@@ -166,17 +185,245 @@ namespace WeTongji
 
                 if (RefreshNewsCounter == 0)
                 {
-                    OnRefreshNewsCompleted();
                     --RefreshCounter;
                 }
             }
         }
 
-        #endregion
+        private UserExt UserSource
+        {
+            get { return Border_SignedIn.DataContext as UserExt; }
+            set { }
+        }
 
-        #region [Event Handlers]
+        private CalendarNode CalendarNodeSource
+        {
+            get { return Button_Alarm.DataContext as CalendarNode; }
+            set { }
+        }
 
-        private event EventHandler RefreshNewsCompleted;
+        private ObservableCollection<ActivityExt> ActivityListSource
+        {
+            get
+            {
+                if (null == ListBox_Activity.ItemsSource)
+                    return null;
+                return ListBox_Activity.ItemsSource as ObservableCollection<ActivityExt>;
+            }
+            set
+            {
+                ListBox_Activity.ItemsSource = value;
+
+                if (value != null && value.Count > 0)
+                {
+                    ListBox_Activity.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ListBox_Activity.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private ForStaffExt OfficialNoteSource
+        {
+            get
+            {
+                return Button_OfficialNotes.DataContext == null ? null : Button_OfficialNotes.DataContext as ForStaffExt;
+            }
+            set
+            {
+                Button_OfficialNotes.DataContext = value;
+
+                if (value != null)
+                {
+                    var imgUrls = value.GetImagesURL();
+                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    {
+                        var url = imgUrls.First();
+                        var client = new WTDownloadImageClient();
+                        client.DownloadImageCompleted += (o, e) =>
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                                   {
+                                       if (OfficialNoteSource != null)
+                                       {
+                                           OfficialNoteSource.SaveImage(e.ImageStream);
+
+                                           OfficialNoteSource.SendPropertyChanged("FirstImageBrush");
+
+                                       }
+                                   });
+                        };
+                        client.Execute(url);
+                    }
+                }
+            }
+        }
+
+        private ClubNewsExt ClubNewsSource
+        {
+            get
+            {
+                return Button_ClubNews.DataContext == null ? null : Button_ClubNews.DataContext as ClubNewsExt;
+            }
+            set
+            {
+                Button_ClubNews.DataContext = value;
+
+                if (value != null)
+                {
+                    var imgUrls = value.GetImagesURL();
+                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    {
+                        var url = imgUrls.First();
+                        var client = new WTDownloadImageClient();
+                        client.DownloadImageCompleted += (o, e) =>
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    if (ClubNewsSource != null)
+                                    {
+                                        ClubNewsSource.SaveImage(e.ImageStream);
+
+                                        ClubNewsSource.SendPropertyChanged("FirstImageBrush");
+                                    }
+                                });
+                        };
+                        client.Execute(url);
+                    }
+                }
+            }
+        }
+
+        private SchoolNewsExt TongjiNewsSource
+        {
+            get
+            {
+                return Button_TongjiNews.DataContext == null ? null : Button_TongjiNews.DataContext as SchoolNewsExt;
+            }
+            set
+            {
+                Button_TongjiNews.DataContext = value;
+
+                if (value != null)
+                {
+                    var imgUrls = value.GetImagesURL();
+                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    {
+                        var url = imgUrls.First();
+                        var client = new WTDownloadImageClient();
+
+                        client.DownloadImageCompleted += (o, e) =>
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                    {
+                                        if (TongjiNewsSource != null)
+                                        {
+                                            TongjiNewsSource.SaveImage(e.ImageStream);
+
+                                            TongjiNewsSource.SendPropertyChanged("FirstImageBrush");
+                                        }
+                                    });
+                            };
+
+                        client.Execute(url);
+                    }
+                }
+            }
+        }
+
+        private AroundExt AroundNewsSource
+        {
+            get
+            {
+                return Button_AroundNews.DataContext == null ? null : Button_AroundNews.DataContext as AroundExt;
+            }
+            set
+            {
+                Button_AroundNews.DataContext = value;
+
+                if (value != null && !value.IsTitleImageExists())
+                {
+                    var client = new WTDownloadImageClient();
+                    client.DownloadImageCompleted += (o, e) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                            {
+                                if (AroundNewsSource != null)
+                                {
+                                    AroundNewsSource.SaveImage(e.ImageStream);
+
+                                    AroundNewsSource.SendPropertyChanged("TitleImageBrush");
+                                }
+                            });
+                    };
+                    client.Execute(value.TitleImage);
+                }
+            }
+        }
+
+        private PersonExt PersonSource
+        {
+            get
+            {
+                return ScrollViewer_PeopleOfWeek.DataContext == null ? null : ScrollViewer_PeopleOfWeek.DataContext as PersonExt;
+            }
+            set
+            {
+                ScrollViewer_PeopleOfWeek.DataContext = value;
+
+                if (value != null)
+                {
+                    ScrollViewer_PeopleOfWeek.Visibility = Visibility.Visible;
+
+                    #region [Avatar]
+
+                    var avatarClient = new WTDownloadImageClient();
+                    avatarClient.DownloadImageCompleted += (o, e) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            if (PersonSource != null)
+                            {
+                                PersonSource.SaveAvatar(e.ImageStream);
+                                PersonSource.SendPropertyChanged("AvatarImageBrush");
+                            }
+                        });
+
+                    };
+                    avatarClient.Execute(value.Avatar);
+
+                    #endregion
+
+                    #region [First Image]
+
+                    var images = value.GetImages();
+                    if (images.Count > 0 && !value.ImageExists())
+                    {
+                        var client = new WTDownloadImageClient();
+                        client.DownloadImageCompleted += (o, e) =>
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                if (PersonSource != null)
+                                {
+                                    PersonSource.SaveImage(e.ImageStream);
+                                    PersonSource.SendPropertyChanged("FirstImageBrush");
+                                }
+                            });
+
+                        };
+                        client.Execute(images.First().Key);
+                    }
+                    #endregion
+                }
+                else
+                {
+                    ScrollViewer_PeopleOfWeek.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
 
         #endregion
 
@@ -203,10 +450,10 @@ namespace WeTongji
 
         void NavToPeopleOfWeek(object sender, RoutedEventArgs e)
         {
-            var p = PanoramaItem_PeopleOfWeek.DataContext as PersonExt;
+            var src = PersonSource;
 
-            if (p != null)
-                this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", p.Id), UriKind.RelativeOrAbsolute));
+            if (src != null)
+                this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
         }
 
         void NavToForgotPassword(Object sender, RoutedEventArgs e)
@@ -228,7 +475,8 @@ namespace WeTongji
 
             var a = lb.SelectedItem as ActivityExt;
             lb.SelectedIndex = -1;
-            this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + a.Id, UriKind.RelativeOrAbsolute));
+            if (a.IsValid)
+                this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + a.Id, UriKind.RelativeOrAbsolute));
         }
 
         private void NavToOfficialNotesList(Object sender, RoutedEventArgs e)
@@ -294,6 +542,11 @@ namespace WeTongji
         private void NavigateToAbout(Object sender, EventArgs e)
         {
             this.NavigationService.Navigate(new Uri("/Pages/About.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+        private void NavToPeopleOfWeekList(Object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/PeopleOfWeekList.xaml", UriKind.RelativeOrAbsolute));
         }
 
         #endregion
@@ -375,8 +628,8 @@ namespace WeTongji
                         }
                     });
 
-
-                    WeTongji.Business.Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
+                    Global.Instance.CurrentUserID = arg.Result.User.UID;
+                    Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
 
                     UserExt targetUser = null;
 
@@ -520,6 +773,11 @@ namespace WeTongji
                         else if (err is System.Net.WebException)
                         {
                             MessageBox.Show("登录失败，请检查Wifi或网络连接后重试");
+                            try
+                            {
+                                Button_Login.IsEnabled = true;
+                            }
+                            catch { }
                         }
                     });
                 };
@@ -529,258 +787,400 @@ namespace WeTongji
 
         #region [Refresh related functions]
 
-        private void RefreshAll()
-        {
-            refreshCounter = 0;
-
-            //RefreshActivityList();
-            //RefreshPeopleOfWeek();
-            //RefreshCampusInfo();
-        }
-
         #region [Activities]
 
-        private void RefreshActivityList()
+        private void GetAllUnexpiredActivities()
         {
-            WTDispatcher.Instance.Do(() =>
+            int unexpirePageId = -1;
+            Action updateUnExpireAction = null;
+
+            #region [Core action]
+
+            updateUnExpireAction = () =>
             {
                 ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
                 WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
+
+                Debug.WriteLine("[updateExpireAction Thread]" + Thread.CurrentThread.GetHashCode());
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                #region [Add additional parameter]
+
+                if (unexpirePageId > 0)
+                    req.SetAdditionalParameter(WTDefaultClient<ActivitiesGetResponse>.PAGE, unexpirePageId);
+
+                req.Expire = false;
+
+                #endregion
 
                 #region [Subscribe event handler]
 
                 #region [Execute completed]
                 client.ExecuteCompleted += (o, arg) =>
                 {
-                    using (var db = WTShareDataContext.ShareDB)
+                    int count = arg.Result.Activities.Count();
+                    ActivityExt[] responseActivities = new ActivityExt[count];
+
+                    for (int i = 0; i < count; ++i)
                     {
-                        int count = arg.Result.Activities.Count();
-                        for (int i = 0; i < count; ++i)
+                        using (var db = WTShareDataContext.ShareDB)
                         {
-                            var item = arg.Result.Activities.ElementAt(i);
+                            var item = arg.Result.Activities[i];
                             var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
 
                             //...There is no such item
                             if (itemInDB == null)
                             {
-                                var tmp = new ActivityExt();
-                                tmp.SetObject(item);
+                                itemInDB = new ActivityExt();
+                                itemInDB.SetObject(item);
 
-                                db.Activities.InsertOnSubmit(tmp);
+                                db.Activities.InsertOnSubmit(itemInDB);
                             }
                             else
+                            {
                                 itemInDB.SetObject(item);
+                            }
+
+                            responseActivities[i] = itemInDB;
+                            db.SubmitChanges();
                         }
 
-                        //...Todo @_@ Update NextPager;
-
-                        db.SubmitChanges();
+                        unexpirePageId = arg.Result.NextPager;
                     }
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            //...Todo @_@ Take SORTing into consideration
-                            var q = from ActivityExt a in db.Activities
-                                    orderby a.Id descending
-                                    select a;
-                            ListBox_Activity.ItemsSource = new ObservableCollection<ActivityExt>(q);
-                        }
-
+                        UpdateAcitivityList(responseActivities, arg.Result.NextPager > 0 ? true : false, false);
                     });
 
-                    --refreshCounter;
+                    if (arg.Result.NextPager > 0)
+                    {
+                        updateUnExpireAction();
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                        });
+                    }
                 };
                 #endregion
 
                 #region [Execute Failed]
                 client.ExecuteFailed += (o, arg) =>
                 {
-                    //...Do Nothing if failed
-                    Debug.WriteLine(arg.Error);
-
-                    --refreshCounter;
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
                 };
                 #endregion
 
                 #endregion
 
-                ++refreshCounter;
-                client.Execute(req);
+                if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+                else
+                    client.Execute(req);
+            };
+
+            #endregion
+
+            updateUnExpireAction();
+        }
+
+        private void RefreshExistingExpiredActivities()
+        {
+            Action updateExpireAction = null;
+
+            Global.Instance.ActivityPageId = -1;
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                var src = ActivityListSource;
+                if (src != null && src.Count > 0 && !src.Last().IsValid)
+                {
+                    src.RemoveAt(src.Count - 1);
+                }
             });
+
+            #region [Core action]
+            updateExpireAction = () =>
+            {
+                ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
+                WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                Debug.WriteLine("[updateExpireAction Thread]" + Thread.CurrentThread.GetHashCode());
+
+                #region [Add additional parameter]
+
+                if (Global.Instance.ActivityPageId > 0)
+                    req.SetAdditionalParameter(WTDefaultClient<ActivitiesGetResponse>.PAGE, Global.Instance.ActivityPageId);
+
+                req.Expire = true;
+
+                #endregion
+
+                #region [Subscribe event handler]
+
+                #region [Execute completed]
+                client.ExecuteCompleted += (o, arg) =>
+                {
+                    Boolean anyActivityExisting = false;
+                    int count = arg.Result.Activities.Count();
+                    ActivityExt[] responseActivities = new ActivityExt[count];
+
+                    for (int i = 0; i < count; ++i)
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            var item = arg.Result.Activities[i];
+                            var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                            //...There is no such item
+                            if (itemInDB == null)
+                            {
+                                itemInDB = new ActivityExt();
+                                itemInDB.SetObject(item);
+
+                                db.Activities.InsertOnSubmit(itemInDB);
+                            }
+                            else
+                            {
+                                itemInDB.SetObject(item);
+                                anyActivityExisting = true;
+                            }
+
+                            responseActivities[i] = itemInDB;
+                            db.SubmitChanges();
+                        }
+
+                        Global.Instance.ActivityPageId = arg.Result.NextPager;
+                    }
+
+
+                    if (arg.Result.NextPager > 0 && anyActivityExisting)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            UpdateAcitivityList(responseActivities, true, true);
+                        });
+
+                        updateExpireAction();
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+
+                            ProgressBarPopup.Instance.Close();
+                        });
+                    }
+                };
+                #endregion
+
+                #region [Execute Failed]
+                client.ExecuteFailed += (o, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+                #endregion
+
+                #endregion
+
+                if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+                else
+                    client.Execute(req);
+            };
+            #endregion
+
+            updateExpireAction();
+        }
+
+        private void LoadAnotherExpiredActivities()
+        {
+            if (Global.Instance.ActivityPageId == 0)
+                return;
+
+            ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
+            WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
+
+            Debug.WriteLine("[updateExpireAction Thread]" + Thread.CurrentThread.GetHashCode());
+
+            #region [Add additional parameter]
+
+            if (Global.Instance.ActivityPageId > 0)
+                req.SetAdditionalParameter(WTDefaultClient<ActivitiesGetResponse>.PAGE, Global.Instance.ActivityPageId);
+
+            req.IsAsc = false;
+            req.Expire = true;
+
+            #endregion
+
+            #region [Subscribe event handler]
+
+            #region [Execute completed]
+            client.ExecuteCompleted += (o, arg) =>
+            {
+                int count = arg.Result.Activities.Count();
+                ActivityExt[] responseActivities = new ActivityExt[count];
+
+                for (int i = 0; i < count; ++i)
+                {
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        var item = arg.Result.Activities[i];
+                        var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                        //...There is no such item
+                        if (itemInDB == null)
+                        {
+                            itemInDB = new ActivityExt();
+                            itemInDB.SetObject(item);
+
+                            db.Activities.InsertOnSubmit(itemInDB);
+                        }
+                        else
+                        {
+                            itemInDB.SetObject(item);
+                        }
+
+                        responseActivities[i] = itemInDB;
+                        db.SubmitChanges();
+                    }
+
+                    Global.Instance.ActivityPageId = arg.Result.NextPager;
+                }
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+                    ProgressBarPopup.Instance.Close();
+                });
+            };
+            #endregion
+
+            #region [Execute Failed]
+            client.ExecuteFailed += (o, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                });
+            };
+            #endregion
+
+            #endregion
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            else
+                client.Execute(req);
         }
 
         #endregion
 
         #region [People of Week]
+
+        /// <summary>
+        /// Try to get the latest Person from the server.
+        /// </summary>
         private void RefreshPeopleOfWeek()
         {
-            WTDispatcher.Instance.Do(() =>
+            PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
+            WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
+
+            this.Dispatcher.BeginInvoke(() =>
             {
-                PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
-                WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
+                ProgressBarPopup.Instance.Open();
+            });
 
-                //...Update Activities
-                client.ExecuteCompleted += (o, arg) =>
+            #region [Add handlers]
+
+            client.ExecuteCompleted += (o, arg) =>
+            {
+                int count = arg.Result.People.Count();
+
+                PersonExt[] people = new PersonExt[count];
+
+                #region [Update database]
+
+                for (int i = 0; i < count; ++i)
                 {
-                    PersonExt p = null;
-
+                    var item = arg.Result.People.ElementAt(i);
                     using (var db = WTShareDataContext.ShareDB)
                     {
-                        int count = arg.Result.People.Count();
+                        var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
 
-                        for (int i = 0; i < count; ++i)
+                        //...New data
+                        if (itemInDB == null)
                         {
-                            var item = arg.Result.People.ElementAt(i);
-                            var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
+                            itemInDB = new PersonExt();
+                            itemInDB.SetObject(item);
 
-                            //...There is no such item
-                            if (itemInDB == null)
-                            {
-                                var tmp = new PersonExt();
-                                tmp.SetObject(item);
-
-                                db.People.InsertOnSubmit(tmp);
-                            }
-                            //...Already in DB
-                            else
-                            {
-                                itemInDB.Favorite = item.Favorite;
-                                itemInDB.Like = item.Like;
-                                itemInDB.Read = item.Read;
-
-                                //...Todo @_@ Update CanFavorite, CanLike, etc.
-                                // if user signed in.
-                            }
+                            db.People.InsertOnSubmit(itemInDB);
+                        }
+                        //...Already in DB
+                        else
+                        {
+                            itemInDB.SetObject(item);
                         }
 
-                        //...Todo @_@ Update NextPager;
+                        people[i] = itemInDB;
 
                         db.SubmitChanges();
                     }
+                }
 
-                    using (var db = WTShareDataContext.ShareDB)
+                #endregion
+
+                Global.Instance.PersonPageId = arg.Result.NextPager;
+
+                var p = people.OrderBy((person) => person.NO).Last();
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (PersonSource == null || p.Id > PersonSource.Id)
                     {
-                        //...Query the latest person of week
-                        var q = from PersonExt person in db.People
-                                orderby person.NO descending
-                                select person;
-
-                        p = q.FirstOrDefault();
+                        PersonSource = p;
                     }
 
-                    if (p != null)
-                        UpdatePeopleOfWeekImages(p);
+                    ProgressBarPopup.Instance.Close();
+                });
+            };
 
+            client.ExecuteFailed += (o, arg) =>
+                {
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            //...Update UI
-                            if (p != null)
-                            {
-                                ScrollViewer_PeopleOfWeek.Visibility = Visibility.Visible;
-                                PanoramaItem_PeopleOfWeek.DataContext = p;
-                            }
-                        }
-                    });
-
-                    --RefreshCounter;
-                };
-
-                client.ExecuteFailed += (o, arg) =>
-                {
-                    //...Do Nothing if failed
-                    Debug.WriteLine(arg.Error);
-
-                    --RefreshCounter;
-                };
-
-                ++RefreshCounter;
-                client.Execute(req);
-            });
-        }
-
-        private void UpdatePeopleOfWeekImages(PersonExt person)
-        {
-            if (null == person)
-                throw new ArgumentNullException("person");
-
-            #region [Update Avatar]
-
-            if (!person.Avatar.EndsWith("missing.png")
-                && !String.IsNullOrEmpty(person.AvatarGuid)
-                && !person.AvatarExists())
-            {
-                var client = new WTDownloadImageClient();
-
-                client.DownloadImageStarted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download person avatar started: {0}", arg.Url);
-                    };
-
-                client.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download person avatar completed: {0}", arg.Url);
-
-                        person.SaveAvatar(arg.ImageStream);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            try
-                            {
-                                (PanoramaItem_PeopleOfWeek.DataContext as PersonExt).SendPropertyChanged("AvatarImageBrush");
-                            }
-                            catch { }
-                        });
-                    };
-
-                client.DownloadImageFailed += (obj, arg) =>
-                {
-                    Debug.WriteLine("Download person avatar FAILED: {0}\nErr:{1}", arg.Url, arg.Error);
-                };
-
-                client.Execute(person.Avatar);
-            }
-
-            #endregion
-
-            #region [Update First Image]
-
-            var images = person.GetImages();
-            if (images.Count > 0 && !person.ImageExists())
-            {
-                var kv = images.First();
-                var client = new WTDownloadImageClient();
-
-                client.DownloadImageStarted += (obj, arg) =>
-                {
-                    Debug.WriteLine("Download person's first image started: {0}", arg.Url);
-                };
-
-                client.DownloadImageCompleted += (obj, arg) =>
-                {
-                    Debug.WriteLine("Download person's first image completed: {0}", arg.Url);
-
-                    person.SaveImage(arg.ImageStream);
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        (PanoramaItem_PeopleOfWeek.DataContext as PersonExt).SendPropertyChanged("FirstImageBrush");
+                        ProgressBarPopup.Instance.Close();
                     });
                 };
 
-                client.DownloadImageFailed += (obj, arg) =>
-                {
-                    Debug.WriteLine("Download person's first image FAILED: {0}\nErr:{1}", arg.Url, arg.Error);
-                };
-
-                client.Execute(kv.Key);
-            }
-
             #endregion
+
+            client.Execute(req);
         }
+
         #endregion
 
         #region [Campus Info]
@@ -1048,199 +1448,6 @@ namespace WeTongji
             });
         }
 
-        private void RefreshCampusInfoImages(object sender, EventArgs e)
-        {
-            WTDispatcher.Instance.Do(() =>
-            {
-                SchoolNewsExt sn = null;
-                AroundExt an = null;
-                ForStaffExt fs = null;
-                ClubNewsExt cn = null;
-
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    var q = (from SchoolNewsExt news in db.SchoolNewsTable.ToArray()
-                             where !String.IsNullOrEmpty(news.ImageExtList)
-                             select news);
-                    sn = q.LastOrDefault();
-                }
-
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    var q = (from AroundExt news in db.AroundTable.ToArray()
-                             where !String.IsNullOrEmpty(news.ImageExtList)
-                             select news);
-                    an = q.LastOrDefault();
-                }
-
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    var q = (from ForStaffExt news in db.ForStaffTable.ToArray()
-                             where !String.IsNullOrEmpty(news.ImageExtList)
-                             select news);
-                    fs = q.LastOrDefault();
-                }
-
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    var q = (from ClubNewsExt news in db.ClubNewsTable.ToArray()
-                             where !String.IsNullOrEmpty(news.ImageExtList)
-                             select news);
-                    cn = q.LastOrDefault();
-                }
-
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    Button_TongjiNews.DataContext = sn;
-                    Button_AroundNews.DataContext = an;
-                    Button_OfficialNotes.DataContext = fs;
-                    Button_ClubNews.DataContext = cn;
-                });
-
-                #region [Download Images]
-
-                #region [School News]
-
-                if (sn != null && !sn.ImageExists())
-                {
-                    WTDownloadImageClient c = new WTDownloadImageClient();
-
-                    c.DownloadImageStarted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of school news started: {0}", arg.Url);
-                    };
-
-                    c.DownloadImageFailed += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of school news FAILED: {0}\nError: {1}", arg.Url, arg.Error);
-                    };
-
-                    c.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of school news completed: {0}", arg.Url);
-
-                        sn.SaveImage(arg.ImageStream);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            sn.SendPropertyChanged("FirstImageBrush");
-                        });
-                    };
-
-                    c.Execute(sn.GetImagesURL().First());
-                }
-                #endregion
-
-                #region [Around News]
-
-                if (an != null && !an.ImageExists())
-                {
-                    WTDownloadImageClient c = new WTDownloadImageClient();
-
-                    c.DownloadImageStarted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of around news started: {0}", arg.Url);
-                    };
-
-                    c.DownloadImageFailed += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of around news FAILED: {0}\nError: {1}", arg.Url, arg.Error);
-                    };
-
-                    c.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of around news completed: {0}", arg.Url);
-
-                        an.SaveImage(arg.ImageStream);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            an.SendPropertyChanged("FirstImageBrush");
-                        });
-                    };
-
-                    c.Execute(an.GetImagesURL().First());
-                }
-
-                #endregion
-
-                #region [Official Notes]
-
-                if (fs != null && !fs.ImageExists())
-                {
-                    WTDownloadImageClient c = new WTDownloadImageClient();
-
-                    c.DownloadImageStarted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of official note started: {0}", arg.Url);
-                    };
-
-                    c.DownloadImageFailed += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of official note FAILED: {0}\nError: {1}", arg.Url, arg.Error);
-                    };
-
-                    c.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of official note completed: {0}", arg.Url);
-
-                        fs.SaveImage(arg.ImageStream);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            fs.SendPropertyChanged("FirstImageBrush");
-                        });
-                    };
-
-                    c.Execute(fs.GetImagesURL().First());
-                }
-
-                #endregion
-
-                #region [Club News]
-
-                if (cn != null && !cn.ImageExists())
-                {
-                    WTDownloadImageClient c = new WTDownloadImageClient();
-
-                    c.DownloadImageStarted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of club news started: {0}", arg.Url);
-                    };
-
-                    c.DownloadImageFailed += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of club news FAILED: {0}\nError: {1}", arg.Url, arg.Error);
-                    };
-
-                    c.DownloadImageCompleted += (obj, arg) =>
-                    {
-                        Debug.WriteLine("Download 1st image of club news completed: {0}", arg.Url);
-
-                        cn.SaveImage(arg.ImageStream);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            cn.SendPropertyChanged("FirstImageBrush");
-                        });
-                    };
-
-                    c.Execute(cn.GetImagesURL().First());
-                }
-
-                #endregion
-
-                #endregion
-            });
-        }
-
-        private void OnRefreshNewsCompleted()
-        {
-            var handler = RefreshNewsCompleted;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
         #endregion
 
         #endregion
@@ -1285,6 +1492,7 @@ namespace WeTongji
         {
             var p = sender as Panorama;
 
+            #region [App bar]
             if (p.SelectedIndex == 0 && Border_SignedOut.Visibility == Visibility.Visible)
             {
                 (this.ApplicationBar as ApplicationBar).Buttons.Clear();
@@ -1312,6 +1520,46 @@ namespace WeTongji
                 }
             }
 
+            #region [People of Week]
+
+            if (e.AddedItems.Contains(Border_PeopleOfWeek))
+            {
+                this.ApplicationBar.Buttons.Clear();
+
+                var src = PersonSource;
+
+                if (src != null)
+                {
+                    ApplicationBarIconButton button;
+
+                    button = new ApplicationBarIconButton(
+                        new Uri(src.CanLike ? "/icons/appbar.like.rest.png" : "/icons/appbar.unlike.rest.png",
+                            UriKind.RelativeOrAbsolute))
+                        {
+                            Text = "喜欢"
+                        };
+                    this.ApplicationBar.Buttons.Add(button);
+
+                    button = new ApplicationBarIconButton(
+                        new Uri(src.CanFavorite ? "/icons/appbar.favs.rest.png" : "/icons/appbar.unfavourite.rest.png",
+                            UriKind.RelativeOrAbsolute))
+                        {
+                            Text = "收藏"
+                        };
+                    this.ApplicationBar.Buttons.Add(button);
+
+                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.person.list.rest.png", UriKind.RelativeOrAbsolute)) { Text = "查看历史" };
+                    button.Click += NavToPeopleOfWeekList;
+                    this.ApplicationBar.Buttons.Add(button);
+
+                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+                    button.Click += RefreshButton_Click;
+                    this.ApplicationBar.Buttons.Add(button);
+                }
+            }
+
+            #endregion
+
             if (e.AddedItems.Contains(Border_Activities))
             {
                 Queue<Object> q = new Queue<Object>();
@@ -1330,7 +1578,7 @@ namespace WeTongji
                 this.ApplicationBar.MenuItems.Insert(0, mi);
 
                 mi = new ApplicationBarMenuItem() { Text = "最火活动" };
-                mi.Click += SortActivitiesByLikeNumber;
+                mi.Click += SortActivitiesByScheduleNumber;
                 this.ApplicationBar.MenuItems.Insert(0, mi);
 
 
@@ -1350,6 +1598,78 @@ namespace WeTongji
                     this.ApplicationBar.MenuItems.RemoveAt(0);
                 }
             }
+            #endregion
+
+            #region [Refresh for the first time or Call AutoRefresh]
+
+            #region [Activities]
+
+            if (p.SelectedIndex == 1)
+            {
+                if ((ActivityThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
+                {
+                    ActivityThread.Start();
+
+                    var thread = new Thread(new ThreadStart(RefreshExistingExpiredActivities))
+                    {
+                        Name = "RefreshExistingExpiredActivities"
+                    };
+                    thread.Start();
+                }
+                else if (ActivityThread.ThreadState == ThreadState.Stopped && Global.Instance.Settings.AutoRefresh)
+                {
+                    ActivityThread = new Thread(new ThreadStart(LoadAnotherExpiredActivities))
+                    {
+                        IsBackground = true,
+                        Name = "LoadAnotherExpiredActivities"
+                    };
+
+                    ActivityThread.Start();
+                }
+            }
+
+            #endregion
+            #region [People of Week]
+
+            else if (p.SelectedIndex == 3)
+            {
+                //...Obliged to get the latest person for the first time since the App is launched
+                if (Global.Instance.PersonPageId == -1)
+                {
+                    if ((PersonThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
+                    {
+                        PersonThread.Start();
+                    }
+                    else if (PersonThread.ThreadState == ThreadState.Stopped)
+                    {
+                        PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
+                        {
+                            IsBackground = true,
+                            Name = "RefreshPeopleOfWeek_AutoRefresh"
+                        };
+
+                        PersonThread.Start();
+                    }
+                }
+                //...Auto refresh the latest person according to user's settings
+                else if (Global.Instance.Settings.AutoRefresh)
+                {
+                    if (PersonThread.ThreadState != ThreadState.Running)
+                    {
+                        PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
+                        {
+                            IsBackground = true,
+                            Name = "RefreshPeopleOfWeek_AutoRefresh"
+                        };
+
+                        PersonThread.Start();
+                    }
+                }
+            }
+
+            #endregion
+
+            #endregion
         }
 
         private void SendFeedback(Object sender, EventArgs e)
@@ -1386,15 +1706,35 @@ namespace WeTongji
                 var req = new UserLogOffRequest<WTResponse>();
                 var client = new WTDefaultClient<WTResponse>();
 
-                Action a = () => 
+                Action a = () =>
                 {
+                    Global.Instance.CurrentUserID = String.Empty;
                     Global.Instance.CleanSettings();
-                    this.Dispatcher.BeginInvoke(() => 
+                    this.Dispatcher.BeginInvoke(() =>
                     {
+                        #region [App bar]
+
                         this.ApplicationBar.MenuItems.RemoveAt(this.ApplicationBar.MenuItems.Count - 1);
+
+                        this.ApplicationBar.Buttons.Clear();
+                        ApplicationBarIconButton button;
+                        button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
+                        UpdateLoginButton(null, null);
+                        button.Click += LogOn_Click;
+                        (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+
+                        button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
+                        button.Click += NavigateToSignUp;
+                        (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+
+                        #endregion
+
+                        #region [Switch to Border_SignOut]
 
                         Border_SignedIn.DataContext = Button_Alarm.DataContext = null;
                         Border_SignedOut.Visibility = Visibility.Visible;
+
+                        #endregion
 
                         //...Clear global data
                     });
@@ -1407,6 +1747,181 @@ namespace WeTongji
             }
         }
 
+        #region [Activity]
+
+        private void ReloadActivities()
+        {
+            Thread thread = null;
+
+            switch (this.activitySortMethod)
+            {
+                case ActivitySortMethod.kByScheduleNumber:
+                    thread = new Thread(new ThreadStart(SortActivitiesByScheduleNumberCore))
+                    {
+                        IsBackground = true,
+                        Name = "SortActivitiesByScheduleNumberCore"
+                    };
+                    break;
+                case ActivitySortMethod.kByCreationTime:
+                    thread = new Thread(new ThreadStart(SortActivitiesByCreationTimeCore))
+                    {
+                        IsBackground = true,
+                        Name = "SortActivitiesByCreationTimeCore"
+                    };
+                    break;
+                case ActivitySortMethod.kCompareToNow:
+                    thread = new Thread(new ThreadStart(SortActivitiesCompareToNowCore))
+                    {
+                        IsBackground = true,
+                        Name = "SortActivitiesCompareToNowCore"
+                    };
+                    break;
+            }
+
+            thread.Start();
+        }
+
+        private void ResetListBoxActivityVerticalOffset()
+        {
+            var obj = ListBox_Activity as DependencyObject;
+            try
+            {
+                while (obj != null)
+                {
+                    if (obj is ScrollViewer)
+                    {
+                        (obj as ScrollViewer).ScrollToVerticalOffset(0);
+                        break;
+                    }
+                    else
+                    {
+                        obj = VisualTreeHelper.GetChild(obj, 0);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void Button_LoadMoreActivities_Click(Object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            btn.IsHitTestVisible = false;
+            btn.Content = "正在加载更多活动...";
+
+            var thread = new Thread(new ThreadStart(LoadAnotherExpiredActivities))
+            {
+                IsBackground = true,
+                Name = "Button_LoadMoreActivities_Click"
+            };
+
+            thread.Start();
+        }
+
+        /// <summary>
+        /// Insert activities to or update activities in ListBox_Activity's ItemsSource
+        /// </summary>
+        /// <param name="activities">a range of activities to be insert or update in UI</param>
+        /// <param name="willContinue">refresh will continue</param>
+        /// <param name="hasMore">"Load more" should be insert to the end of the List</param>
+        private void UpdateAcitivityList(IEnumerable<ActivityExt> activities, Boolean willContinue, Boolean hasMore)
+        {
+            var src = ActivityListSource;
+            if (src == null || src.Count == 0)
+            {
+                ActivityListSource = new ObservableCollection<ActivityExt>(activities);
+
+                if (!willContinue && hasMore)
+                {
+                    ActivityListSource.Add(ActivityExt.InvalidActivityExt);
+                    this.hasLoadMoreActivities = true;
+                }
+                else
+                {
+                    this.hasLoadMoreActivities = false;
+                }
+
+                ListBox_Activity.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                //...Remove "add more"
+                if (!src.Last().IsValid)
+                    src.RemoveAt(src.Count - 1);
+
+                #region [Update or Insert activities]
+                foreach (var a in activities)
+                {
+                    ActivityExt target = src.Where((item) => item.Id == a.Id).SingleOrDefault();
+                    if (target != null)
+                    {
+                        if (target.Schedule != a.Schedule)
+                        {
+                            target.Schedule = a.Schedule;
+                            target.SendPropertyChanged("Schedule");
+                        }
+                        if (target.Title != a.Title)
+                        {
+                            target.Title = a.Title;
+                            target.SendPropertyChanged("Title");
+                        }
+                        if (target.Location != a.Location)
+                        {
+                            target.Location = a.Location;
+                            target.SendPropertyChanged("Location");
+                        }
+                        if (target.Begin != a.Begin || target.End != a.End)
+                        {
+                            target.Begin = a.Begin;
+                            target.End = a.End;
+                            target.SendPropertyChanged("DisplayTime");
+                        }
+                    }
+                    else
+                    {
+                        switch (this.activitySortMethod)
+                        {
+                            case ActivitySortMethod.kByCreationTime:
+                                {
+                                    var count = src.Where((item) => item.CreatedAt > a.CreatedAt).Count();
+                                    src.Insert(count, a);
+                                }
+                                break;
+                            case ActivitySortMethod.kByScheduleNumber:
+                                {
+                                    if (a.Begin > DateTime.Now)
+                                    {
+                                        var count = src.Where((item) => item.Schedule > a.Schedule).Count();
+                                        src.Insert(count, a);
+                                    }
+                                }
+                                break;
+                            case ActivitySortMethod.kCompareToNow:
+                                {
+                                    if (a.Begin > DateTime.Now)
+                                    {
+                                        var count = src.Where((item) => item.Begin < a.Begin).Count();
+                                        src.Insert(count, a);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+                #endregion
+
+                if (!willContinue && hasMore)
+                {
+                    src.Add(ActivityExt.InvalidActivityExt);
+                    this.hasLoadMoreActivities = true;
+                }
+                else
+                {
+                    this.hasLoadMoreActivities = false;
+                }
+            }
+
+        }
+
         /// <summary>
         /// 最新, do not filter
         /// </summary>
@@ -1414,7 +1929,55 @@ namespace WeTongji
         /// <param name="e"></param>
         private void SortActivitiesByCreationTime(Object sender, EventArgs e)
         {
+            if (this.activitySortMethod != ActivitySortMethod.kByCreationTime)
+            {
+                var thread = new Thread(new ThreadStart(SortActivitiesByCreationTimeCore))
+                {
+                    IsBackground = true,
+                    Name = "SortActivitiesByCreationTimeCore"
+                };
 
+                thread.Start();
+            }
+            else
+            {
+                ResetListBoxActivityVerticalOffset();
+            }
+        }
+
+        private void SortActivitiesByCreationTimeCore()
+        {
+            ActivityExt[] activities = null;
+            ObservableCollection<ActivityExt> result = null;
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                activities = db.Activities.ToArray();
+            }
+
+            if (null != activities)
+            {
+                var q = from ActivityExt a in activities
+                        orderby a.CreatedAt descending
+                        select a;
+                result = new ObservableCollection<ActivityExt>(q);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    this.activitySortMethod = ActivitySortMethod.kByCreationTime;
+                    if (this.hasLoadMoreActivities)
+                        result.Add(ActivityExt.InvalidActivityExt);
+                    
+                    ActivityListSource = result;
+                    ResetListBoxActivityVerticalOffset();
+                    ProgressBarPopup.Instance.Close();
+                });
+            }
         }
 
         /// <summary>
@@ -1422,9 +1985,62 @@ namespace WeTongji
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SortActivitiesByLikeNumber(Object sender, EventArgs e)
+        private void SortActivitiesByScheduleNumber(Object sender, EventArgs e)
         {
+            if (this.activitySortMethod != ActivitySortMethod.kByScheduleNumber)
+            {
+                var thread = new Thread(new ThreadStart(SortActivitiesByScheduleNumberCore))
+                {
+                    IsBackground = true,
+                    Name = "SortActivitiesByLikeNumberCore"
+                };
 
+                thread.Start();
+            }
+            else
+            {
+                ResetListBoxActivityVerticalOffset();
+            }
+        }
+
+        private void SortActivitiesByScheduleNumberCore()
+        {
+            ActivityExt[] activities = null;
+            ObservableCollection<ActivityExt> result = null;
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                activities = db.Activities.ToArray();
+            }
+
+            if (null != activities)
+            {
+                var q = activities.Where((a) => a.Begin > DateTime.Now);
+
+                if (q.Count() == 0)
+                {
+                    q = activities.OrderByDescending((a) => a.Schedule).ThenByDescending((a) => a.CreatedAt);
+                }
+                else
+                {
+                    q = q.OrderByDescending((a) => a.Schedule).ThenByDescending((a) => a.CreatedAt);
+                }
+
+                result = new ObservableCollection<ActivityExt>(q);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    this.activitySortMethod = ActivitySortMethod.kByScheduleNumber;
+                    ActivityListSource = result;
+                    ResetListBoxActivityVerticalOffset();
+                    ProgressBarPopup.Instance.Close();
+                });
+            }
         }
 
         /// <summary>
@@ -1434,8 +2050,67 @@ namespace WeTongji
         /// <param name="e"></param>
         private void SortActivitiesCompareToNow(Object sender, EventArgs e)
         {
+            if (this.activitySortMethod != ActivitySortMethod.kCompareToNow)
+            {
+                var thread = new Thread(new ThreadStart(SortActivitiesCompareToNowCore))
+                {
+                    IsBackground = true,
+                    Name = "SortActivitiesCompareToNowCore"
+                };
 
+                thread.Start();
+            }
+            else
+            {
+                ResetListBoxActivityVerticalOffset();
+            }
         }
+
+        private void SortActivitiesCompareToNowCore()
+        {
+            ActivityExt[] activities = null;
+            ObservableCollection<ActivityExt> result = null;
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                activities = db.Activities.ToArray();
+            }
+
+            if (null != activities)
+            {
+                var q = activities.Where((a) => a.Begin > DateTime.Now);
+
+                if (q.Count() == 0)
+                {
+                    q = activities.OrderByDescending((a) => a.Begin);
+                    if (q.Count() > 5)
+                    {
+                        q = q.Take(5);
+                    }
+                }
+                else
+                {
+                    q = q.OrderBy((a) => a.Begin);
+                }
+
+                result = new ObservableCollection<ActivityExt>(q);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    this.activitySortMethod = ActivitySortMethod.kCompareToNow;
+                    ActivityListSource = result;
+                    ResetListBoxActivityVerticalOffset();
+                    ProgressBarPopup.Instance.Close();
+                });
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -1451,6 +2126,8 @@ namespace WeTongji
             ForStaffExt fsSrc = null;
             ClubNewsExt cnSrc = null;
 
+            Debug.WriteLine("Load data from db started.");
+
             //...Activity
             using (var db = WTShareDataContext.ShareDB)
             {
@@ -1462,8 +2139,7 @@ namespace WeTongji
 
             if (activityArr != null)
             {
-                //...Todo @_@ Take SORTing into consideration
-                activitySrc = new ObservableCollection<ActivityExt>(activityArr.Reverse());
+                activitySrc = new ObservableCollection<ActivityExt>(activityArr.OrderByDescending((a) => a.CreatedAt));
             }
 
 
@@ -1533,20 +2209,20 @@ namespace WeTongji
             {
                 if (activitySrc != null && activitySrc.Count() > 0)
                 {
-                    ListBox_Activity.ItemsSource = activitySrc;
+                    ActivityListSource = activitySrc;
                     ListBox_Activity.Visibility = Visibility.Visible;
                 }
 
                 if (personSrc != null)
                 {
                     ScrollViewer_PeopleOfWeek.Visibility = Visibility.Visible;
-                    PanoramaItem_PeopleOfWeek.DataContext = personSrc;
+                    PersonSource = personSrc;
                 }
 
-                Button_TongjiNews.DataContext = snSrc;
-                Button_AroundNews.DataContext = anSrc;
-                Button_OfficialNotes.DataContext = fsSrc;
-                Button_ClubNews.DataContext = cnSrc;
+                TongjiNewsSource = snSrc;
+                AroundNewsSource = anSrc;
+                OfficialNoteSource = fsSrc;
+                ClubNewsSource = cnSrc;
             });
         }
 
@@ -2346,6 +3022,17 @@ namespace WeTongji
         }
 
         #endregion
+
+        #endregion
+
+        #region [Enum]
+
+        public enum ActivitySortMethod
+        {
+            kByCreationTime,
+            kByScheduleNumber,
+            kCompareToNow
+        }
 
         #endregion
     }

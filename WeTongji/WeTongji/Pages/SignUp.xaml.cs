@@ -30,16 +30,6 @@ namespace WeTongji
 
         #endregion
 
-        #region [Overridden]
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            ThemeManager.ToDarkTheme();
-        }
-
-        #endregion
-
         #region [Properties]
 
         private ApplicationBarIconButton Button_Send
@@ -67,7 +57,8 @@ namespace WeTongji
                 this.Dispatcher.BeginInvoke(() =>
                 {
                     MessageBox.Show("请登录", "注册成功", MessageBoxButton.OK);
-                    this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.RelativeOrAbsolute));
+                    this.NavigationService.RemoveBackEntry();
+                    this.NavigationService.GoBack();
                 });
             };
 
@@ -82,7 +73,8 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.AlreadyRegistered:
                                     MessageBox.Show("账号已经注册,请登录");
-                                    this.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.RelativeOrAbsolute));
+                                    this.NavigationService.RemoveBackEntry();
+                                    this.NavigationService.GoBack();
                                     return;
                                 case Api.Util.Status.NoAccount:
                                     MessageBox.Show("您输入的账号不存在，请检查后重试");
@@ -161,6 +153,26 @@ namespace WeTongji
             {
                 Button_Send.IsEnabled = false;
             }
+        }
+
+        private void CoreGotFocus(Object sender, RoutedEventArgs e)
+        {
+            var visualElment = sender as UIElement;
+            var parentToScrollTo = VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(visualElment)) as UIElement;
+            var verticalOffset = parentToScrollTo.TransformToVisual(StackPanel_Root).Transform(new Point()).Y;
+
+            this.Border_BottomPlaceHolder.Height = StackPanel_Root.RenderSize.Height - verticalOffset - parentToScrollTo.RenderSize.Height;
+
+            this.Border_BottomPlaceHolder.Visibility = Visibility.Visible;
+
+            ScrollViewer_Root.ScrollToVerticalOffset(Math.Min(verticalOffset, ScrollViewer_Root.ScrollableHeight));
+        }
+
+        private void CoreLostFocus(Object sender, RoutedEventArgs e)
+        {
+            this.Border_BottomPlaceHolder.Visibility = Visibility.Collapsed;
+
+            ScrollViewer_Root.ScrollToVerticalOffset(0);
         }
 
         #endregion

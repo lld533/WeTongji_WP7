@@ -165,11 +165,6 @@ namespace WeTongji
 
         #endregion
 
-        private void NavToHistory(Object sender, EventArgs e)
-        {
-            this.NavigationService.Navigate(new Uri("/Pages/PeopleOfWeekList.xaml", UriKind.RelativeOrAbsolute));
-        }
-
         private void IgnoreSelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
             var lb = sender as ListBox;

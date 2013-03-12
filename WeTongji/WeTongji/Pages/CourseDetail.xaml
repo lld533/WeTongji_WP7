@@ -102,7 +102,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/time_icon.png" Stretch="None"/>
+                                    <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/time_icon.png" Stretch="None"/>
 
                                     <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
 									Text="{Binding DisplayBeginTimeAndEndTime}" Margin="0,-4,0,-2"/>
@@ -116,7 +116,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Image HorizontalAlignment="Center" Height="20" Source="Images/Common/location_icon.png" Stretch="None"/>
+                                    <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/location_icon.png" Stretch="None"/>
 
                                     <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
 									Text="{Binding Location}" Margin="0,-3,0,-2"/>

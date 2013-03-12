@@ -329,7 +329,6 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             ListBox_Activity.ItemsSource = src;
-                            ListBox_Activity.Visibility = Visibility.Visible;
                         });
                     }
                 }
@@ -379,7 +378,7 @@ namespace WeTongji
                 }
             }
 
-            if (ListBox_CampusInfo != null)
+            if (ListBox_CampusInfo.ItemsSource != null)
             {
                 campusInfo = ListBox_CampusInfo.ItemsSource as ObservableCollection<ICampusInfo>;
 

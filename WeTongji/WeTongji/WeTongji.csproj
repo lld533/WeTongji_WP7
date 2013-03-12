@@ -49,6 +49,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DH.Scrypt">
+      <HintPath>..\..\..\..\..\Desktop\DH.Scrypt.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZLib.Phone">
       <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ICSharpCode.SharpZLib.Phone.dll</HintPath>
     </Reference>
@@ -243,9 +246,6 @@
     <Compile Include="Pages\ViewOfficialWebsite.xaml.cs">
       <DependentUpon>ViewOfficialWebsite.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TestSDKPage.xaml.cs">
-      <DependentUpon>TestSDKPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utility\AppVersion.cs" />
     <Compile Include="Utility\DateTimeToChineseDate.cs" />
     <Compile Include="Utility\DescriptionToInlineCollection.cs" />
@@ -350,10 +350,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TestSDKPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -382,20 +378,19 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="icons\appbar.like.rest.png" />
     <Content Include="icons\appbar.participate.rest.png" />
     <Content Include="icons\appbar.person.list.rest.png" />
     <Content Include="icons\appbar.register.rest.png" />
     <Content Include="icons\appbar.unfavourite.rest.png" />
     <Content Include="icons\appbar.unlike.rest.png" />
     <Content Include="icons\appbar.unparticipate.rest.png" />
+    <Content Include="icons\appbar.like.rest.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
     <Resource Include="Images\Common\favourite_icon.png" />
     <Resource Include="Pages\favourite_icon.png" />
-    <Resource Include="PanoramaBackground.png" />
     <Resource Include="Images\AppSquare\activities_icon.png" />
     <Resource Include="Images\AppSquare\favorite_icon.png" />
     <Resource Include="Images\AppSquare\guide_book_icon.png" />

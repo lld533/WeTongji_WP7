@@ -21,7 +21,7 @@ namespace WeTongji.Utility
             return url.Split('.').Last().Split('?').First().ToLower();
         }
 
-        public static ImageSource GetImageSource(this String fileName)
+        public static BitmapSource GetImageSource(this String fileName)
         {
             var store = IsolatedStorageFile.GetUserStoreForApplication();
 

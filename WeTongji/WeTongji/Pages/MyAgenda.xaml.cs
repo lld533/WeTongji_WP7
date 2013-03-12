@@ -21,8 +21,6 @@ namespace WeTongji
 {
     public partial class MyAgenda : PhoneApplicationPage
     {
-        private int highlightIdx = -1;
-
         public MyAgenda()
         {
             InitializeComponent();

@@ -43,14 +43,42 @@ namespace WeTongji.Business
 
         public String Session { get; private set; }
 
+        /// <summary>
+        /// The UID of the user signed in. If no user signed in, this
+        /// value equals null.
+        /// </summary>
+        public String CurrentUserID { get; set; }
+
+        public int PersonPageId { get; set; }
+
+        public int ActivityPageId { get; set; }
+
+        public int FavoritePageId { get; set; }
+
+        public int OfficialNotePageId { get; set; }
+
+        public int ClubNewsPageId { get; set; }
+
+        public int TongjiNewsPageId { get; set; }
+
+        public int AroundNewsPageId { get; set; }
+
         #endregion
 
         #region [Constructor]
 
-        private Global()
+        public Global()
         {
             Settings = new WTSettings();
             objectToLock = new Object();
+
+            PersonPageId = -1;
+            ActivityPageId = -1;
+            FavoritePageId = -1;
+            OfficialNotePageId = -1;
+            ClubNewsPageId = -1;
+            TongjiNewsPageId = -1;
+            AroundNewsPageId = -1;
         }
 
         #endregion
@@ -114,6 +142,5 @@ namespace WeTongji.Business
         }
 
         #endregion
-
     }
 }

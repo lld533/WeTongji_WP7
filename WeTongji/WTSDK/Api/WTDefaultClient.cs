@@ -359,14 +359,15 @@ namespace WeTongji.Api
                 throw new ArgumentNullException("dict");
 
             StringBuilder sb = new StringBuilder();
-            var sort = dict.OrderBy(pair => pair.Key);
+            var sort = dict.OrderBy(pair => pair.Key, new StringComparer()).ToArray();
             foreach (var pair in sort)
             {
                 sb.AppendFormat("{0}={1}&", pair.Key, HttpUtility.UrlEncode(pair.Value));
             }
-            sb.Remove(sb.Length - 1, 1);
 
-            return WeTongji.Api.Util.MD5Core.GetHashString(sb.ToString()).ToLower();
+            var strToMd5 = sb.ToString().Substring(0, sb.Length - 1);
+
+            return WeTongji.Api.Util.MD5Core.GetHashString(strToMd5).ToLower();
         }
 
         private String Dictionary2Url(IDictionary<String, String> dict)
@@ -381,6 +382,27 @@ namespace WeTongji.Api
             }
             sb.Remove(sb.Length - 1, 1);
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region [String Comparer]
+
+        public class StringComparer : IComparer<String>
+        {
+            public int Compare(String str1, String str2)
+            {
+                if (str1 == str2)
+                    return 0;
+
+                var length = str1.Length < str2.Length ? str1.Length : str2.Length;
+
+                for (int i = 0; i < length; ++i)
+                    if (str1[i] != str2[i])
+                        return (int)(str1[i] - str2[i]);
+
+                return (str1.Length < str2.Length) ? -1 : 1;
+            }
         }
 
         #endregion

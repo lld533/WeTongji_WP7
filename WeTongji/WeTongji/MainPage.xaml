@@ -101,6 +101,61 @@
             <Setter Property="FontSize" Value="24"/>
         </Style>
 
+
+        <Style x:Key="ScrollViewerWithLoadButtonStyle" TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ScrollStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="00:00:00.5"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Scrolling">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="HorizontalScrollBar"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="NotScrolling"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}"/>
+                                <ScrollBar x:Name="VerticalScrollBar" HorizontalAlignment="Right" Height="Auto" IsHitTestVisible="False" IsTabStop="False" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Opacity="0" Orientation="Vertical" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{TemplateBinding VerticalOffset}" ViewportSize="{TemplateBinding ViewportHeight}" VerticalAlignment="Stretch" Width="5"/>
+                                <ScrollBar x:Name="HorizontalScrollBar" HorizontalAlignment="Stretch" Height="5" IsHitTestVisible="False" IsTabStop="False" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Opacity="0" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{TemplateBinding HorizontalOffset}" ViewportSize="{TemplateBinding ViewportWidth}" VerticalAlignment="Bottom" Width="Auto"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ActivityListBoxStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <ScrollViewer x:Name="ScrollViewer" Style="{StaticResource ScrollViewerWithLoadButtonStyle}">
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
@@ -310,12 +365,13 @@
             <Border x:Name="Border_Activities">
                 <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
-                        <ListBox x:Name="ListBox_Activity" Visibility="Collapsed"  BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                         SelectionChanged="ListBox_Activity_SelectionChanged">
+                        <ListBox x:Name="ListBox_Activity" Visibility="Collapsed" Style="{StaticResource ActivityListBoxStyle}"
+                                SelectionChanged="ListBox_Activity_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Width="{Binding ActualWidth, ElementName=Border_PanoramaItemReferenceWidth}" Margin="0,0,0,47">
-                                        <StackPanel>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_PanoramaItemReferenceWidth}">
+                                        <StackPanel x:Name="StackPanel_Core" Margin="0,0,0,47"
+                                            Visibility="{Binding IsValid, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <!--Title-->
                                             <TextBlock TextTrimming="WordEllipsis" FontSize="24" Margin="0,-6,0,0" Foreground="{StaticResource ActivityThemeBrush}"
                                                         Text="{Binding Title}"/>
@@ -348,6 +404,9 @@
 
                                             </Grid>
                                         </StackPanel>
+                                        <Button Visibility="{Binding Visibility, ElementName=StackPanel_Core, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                                Content="加载更多活动" FontSize="22"  BorderThickness="0" Margin="0,-30,0,10"
+                                                Click="Button_LoadMoreActivities_Click"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -402,8 +461,40 @@
                             <Button x:Name="Button_TongjiNews"  Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToTongjiNewsList"/>
 
-                            <Button x:Name="Button_AroundNews"  Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Click="NavToAroundNewsList"/>
+                            <Button x:Name="Button_AroundNews"  Content="周边推荐"
+                                    Click="NavToAroundNewsList">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Height" Value="140"/>
+                                        <Setter Property="Margin" Value="0,0,0,20"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Grid>
+                                                        <VisualStateManager.VisualStateGroups>
+                                                            <VisualStateGroup x:Name="CommonStates">
+                                                                <VisualState x:Name="Normal"/>
+                                                                <VisualState x:Name="Disabled"/>
+                                                                <VisualState x:Name="MouseOver"/>
+                                                            </VisualStateGroup>
+                                                            <VisualStateGroup x:Name="FocusStates">
+                                                                <VisualState x:Name="Focused"/>
+                                                            </VisualStateGroup>
+                                                        </VisualStateManager.VisualStateGroups>
+
+                                                        <Rectangle Fill="Gray"/>
+                                                        <Image Stretch="UniformToFill" Source="{Binding TitleImageBrush}"/>
+                                                        <Border Width="130" VerticalAlignment="Top" Opacity="0.5" Margin="0,12,12,0" Height="40" HorizontalAlignment="Right" Background="Black">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="FontSize" Value="24"/>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -413,7 +504,7 @@
             <!--
 每周人物
                 -->
-            <Border>
+            <Border x:Name="Border_PeopleOfWeek">
                 <controls:PanoramaItem x:Name="PanoramaItem_PeopleOfWeek"  Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
                         <ScrollViewer x:Name="ScrollViewer_PeopleOfWeek" Visibility="Collapsed" VerticalScrollBarVisibility="Hidden">
@@ -499,7 +590,7 @@
                 <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
                 <shell:ApplicationBarIconButton IconUri="/icons/appbar.register.rest.png" Text="注册" Click="NavigateToSignUp"/>
             </shell:ApplicationBar.Buttons>
-            
+
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="设置" Click="NavigateToSettings"/>
                 <shell:ApplicationBarMenuItem Text="关于" Click="NavigateToAbout"/>
