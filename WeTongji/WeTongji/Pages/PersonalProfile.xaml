@@ -349,7 +349,12 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.edit.rest.png" Text="编辑" Click="EditPersonalProfile"/>
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton IconUri="/icons/appbar.edit.rest.png" Text="编辑" Click="EditPersonalProfile"/>
+            </shell:ApplicationBar.Buttons>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="修改密码" Click="NavToUpdatePassword"/>
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 

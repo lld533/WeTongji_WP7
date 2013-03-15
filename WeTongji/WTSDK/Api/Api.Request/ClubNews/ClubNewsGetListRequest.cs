@@ -12,7 +12,7 @@ namespace WeTongji.Api.Request
             SortEnumerator = Util.SortEnumerator.created_at;
             IsAsc = false;
 
-            base.dict["Sort"] = @"'creawted_at' desc";
+            base.dict["Sort"] = @"`creawted_at` desc";
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace WeTongji.Api.Request
 
         public override IDictionary<String, String> GetParameters()
         {
-            base.dict["Sort"] = String.Format("'{0}' {1}", SortEnumerator.ToString(), (IsAsc ? "asc" : "desc"));
+            base.dict["Sort"] = String.Format("`{0}` {1}", SortEnumerator.ToString(), (IsAsc ? "asc" : "desc"));
             
             return base.dict;
         }

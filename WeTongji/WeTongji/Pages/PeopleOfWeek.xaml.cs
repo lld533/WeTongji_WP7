@@ -173,5 +173,15 @@ namespace WeTongji
                 return;
             lb.SelectedIndex = -1;
         }
+
+        private void TapToViewSourceImage(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            var img = sender as Image;
+            var imgExt = img.DataContext as ImageExt;
+            ImageViewer.CoreImageName = imgExt.Id;
+            ImageViewer.CoreImageSource = img.Source as System.Windows.Media.Imaging.BitmapSource;
+            ImageViewer.CoreImageUri = imgExt.Url;
+            this.NavigationService.Navigate(new Uri("/Pages/ImageViewer.xaml", UriKind.RelativeOrAbsolute));
+        }
     }
 }

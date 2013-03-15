@@ -30,41 +30,45 @@ namespace WeTongji
         {
             base.OnNavigatedTo(e);
 
-            if (e.NavigationMode == NavigationMode.New)
+            //...Create AppButton_Today if it has not been created yet.
+            if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
             {
-                //...Create AppButton_Today if it has not been created yet.
-                if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
+                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton(
+                    new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute))
                 {
-                    var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton(
-                        new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                            UriKind.RelativeOrAbsolute))
-                    {
-                        Text = "今日",
-                        IsEnabled = false
-                    };
-                    appBtn.Click += AppButton_Today_Clicked;
-                    this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
-                    this.ApplicationBar.Buttons.Add(appBtn);
-                }
-                //...Refresh the icon AppButton_Today if it has already been created.
-                else
-                {
-                    var btn = this.ApplicationBar.Buttons[0] as Microsoft.Phone.Shell.ApplicationBarIconButton;
-                    btn.IconUri = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                            UriKind.RelativeOrAbsolute);
-                    btn.IsEnabled = false;
-                }
-
-
-                var thread = new Thread(new ThreadStart(LoadData))
-                {
-                    IsBackground = true,
-                    Name = "LoadData"
+                    Text = "今日",
+                    IsEnabled = false
                 };
-
-                ProgressBarPopup.Instance.Open();
-                thread.Start();
+                appBtn.Click += AppButton_Today_Clicked;
+                this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
+                this.ApplicationBar.Buttons.Add(appBtn);
             }
+            //...Refresh the icon AppButton_Today if it has already been created.
+            else
+            {
+                var btn = this.ApplicationBar.Buttons[0] as Microsoft.Phone.Shell.ApplicationBarIconButton;
+                btn.IconUri = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute);
+                btn.IsEnabled = false;
+            }
+
+            Global.Instance.AgendaSourceStateChanged += this.AgendaSourceStateChangedHandler;
+
+            var thread = new Thread(new ThreadStart(TempLoadData)) { IsBackground = true };
+            thread.Start();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            Global.Instance.AgendaSourceStateChanged -= this.AgendaSourceStateChangedHandler;
+        }
+
+        private void TempLoadData()
+        {
+            AgendaSourceStateChangedHandler(Global.Instance, EventArgs.Empty);
         }
 
         private void AppButton_Today_Clicked(Object sender, EventArgs e)
@@ -73,7 +77,7 @@ namespace WeTongji
             {
                 try
                 {
-                    var src = LongListSelector_Core.ItemsSource as List<Group<CalendarNode>>;
+                    var src = LongListSelector_Core.ItemsSource as List<CalendarGroup<CalendarNode>>;
                     var group = src.Where((g) => g.Key == DateTime.Now.Date).SingleOrDefault();
                     if (group != null)
                     {
@@ -82,6 +86,99 @@ namespace WeTongji
                 }
                 catch { }
             }
+        }
+
+        private void AgendaSourceStateChangedHandler(Object sender, EventArgs e)
+        {
+            var global = sender as Global;
+
+            switch (global.CurrentAgendaSourceState)
+            {
+                case SourceState.Done:
+                    {
+                        var nodeToScrollTo = global.AgendaSource.GetNextCalendarNode();
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            #region [LongListSelector has no source]
+
+                            if (LongListSelector_Core.ItemsSource == null)
+                            {
+                                TextBlock_Loading.Visibility = Visibility.Collapsed;
+                                LongListSelector_Core.ItemsSource = global.AgendaSource;
+
+                                LongListSelector_Core.UpdateLayout();
+                                LongListSelector_Core.ScrollTo(nodeToScrollTo);
+                                LongListSelector_Core.UpdateLayout();
+
+                                DependencyObject obj = LongListSelector_Core;
+                                while (!(obj is VirtualizingStackPanel))
+                                {
+                                    obj = VisualTreeHelper.GetChild(obj, 0);
+                                }
+
+                                int count = VisualTreeHelper.GetChildrenCount(obj);
+
+                                for (int i = 0; i < count; ++i)
+                                {
+                                    var tmp = VisualTreeHelper.GetChild(obj, i);
+
+                                    var source = (tmp as Control).DataContext as LongListSelectorItem;
+                                    if (source.Item == nodeToScrollTo)
+                                    {
+                                        obj = tmp;
+
+                                        //...Get the layout root of the item
+                                        while (!(obj is ContentPresenter))
+                                        {
+                                            obj = VisualTreeHelper.GetChild(obj, 0);
+                                        }
+
+                                        var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
+                                        Storyboard sb = null;
+                                        if (nodeToScrollTo.IsNoArrangementNode)
+                                            sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
+                                        else
+                                            sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
+                                        sb.Begin();
+                                        break;
+                                    }
+                                }
+                            }
+                            #endregion
+                            #region [LongListSelector has source]
+                            else
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    LongListSelector_Core.ItemsSource = global.AgendaSource;
+                                });
+                            }
+                            #endregion
+
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        });
+                    }
+                    break;
+                case SourceState.NotSet:
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            LongListSelector_Core.ItemsSource = null;
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+                        });
+                    }
+                    break;
+                case SourceState.Setting:
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            TextBlock_Loading.Visibility = Visibility.Visible;
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+                        });
+                    }
+                    break;
+            }
+
         }
 
         private void LoadData()
@@ -154,7 +251,7 @@ namespace WeTongji
                 var calendarNodeByDay = (from CalendarNode node in list
                                          group node by node.BeginTime.Date into n
                                          orderby n.Key
-                                         select new Group<CalendarNode>(n.Key, n)).ToList();
+                                         select new CalendarGroup<CalendarNode>(n.Key, n)).ToList();
 
                 CalendarNode nodeToScrollTo = null;
                 var today = calendarNodeByDay.Where((node) => node.Key == DateTime.Now.Date).SingleOrDefault();
@@ -163,7 +260,7 @@ namespace WeTongji
                 if (today == null)
                 {
                     int idx = calendarNodeByDay.Where((node) => node.Key < DateTime.Now).Count();
-                    calendarNodeByDay.Insert(idx, new Group<CalendarNode>(DateTime.Now.Date, new CalendarNode[] { CalendarNode.NoArrangementNode }));
+                    calendarNodeByDay.Insert(idx, new CalendarGroup<CalendarNode>(DateTime.Now.Date, new CalendarNode[] { CalendarNode.NoArrangementNode }));
                     nodeToScrollTo = calendarNodeByDay.ElementAt(idx).Items.First();
                 }
                 else
@@ -260,57 +357,5 @@ namespace WeTongji
                         return;
                 }
         }
-
-
-        #region [Class]
-
-        public class Group<T> : IEnumerable<T> where T : CalendarNode
-        {
-            public Group(DateTime key, IEnumerable<T> items)
-            {
-                this.Key = key;
-                this.Items = items.OrderBy((T) => T).ToList<T>();
-            }
-
-            public override bool Equals(object obj)
-            {
-                Group<T> that = obj as Group<T>;
-
-                return (that != null) && (this.Key.Equals(that.Key));
-            }
-
-            public DateTime Key
-            {
-                get;
-                set;
-            }
-
-            public IList<T> Items
-            {
-                get;
-                set;
-            }
-
-            #region IEnumerable<T> Members
-
-            public IEnumerator<T> GetEnumerator()
-            {
-                return this.Items.GetEnumerator();
-            }
-
-            #endregion
-
-            #region IEnumerable Members
-
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                return this.Items.GetEnumerator();
-            }
-
-            #endregion
-        }
-
-
-        #endregion
     }
 }

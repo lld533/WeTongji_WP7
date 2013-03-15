@@ -41,38 +41,35 @@ namespace WeTongji
         #region [Fields]
         private static Boolean isResourceLoaded = false;
 
-        private int refreshCounter = 0;
-
-        private int refreshNewsCounter = 0;
-
         private ActivitySortMethod activitySortMethod = ActivitySortMethod.kByCreationTime;
 
         private Boolean hasLoadMoreActivities = false;
 
+        private SourceState PersonSourceState = SourceState.NotSet;
+
+        private SourceState TongjiNewsSourceState = SourceState.NotSet;
+
+        private SourceState AroundNewsSourceState = SourceState.NotSet;
+
+        private SourceState ClubNewsSourceState = SourceState.NotSet;
+
+        private SourceState OfficialNoteSourceState = SourceState.NotSet;
+
         #endregion
 
-        #region
+        #region [Threads]
 
+#if false
         private Thread PersonThread;
         private Thread ActivityThread;
+        private Thread CampusInfoThread;
+#endif
 
         #endregion
 
         // Constructor
         public MainPage()
         {
-            PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
-            {
-                IsBackground = true,
-                Name = "RefreshPeopleOfWeek"
-            };
-
-            ActivityThread = new Thread(new ThreadStart(RefreshExistingExpiredActivities))
-            {
-                IsBackground = true,
-                Name = "RefreshActivitiesForTheFirstTime"
-            };
-
             InitializeComponent();
         }
 
@@ -141,65 +138,45 @@ namespace WeTongji
             }
         }
 
-        private int RefreshCounter
-        {
-            get { return refreshCounter; }
-            set
-            {
-                if (value != refreshCounter)
-                {
-                    refreshCounter = value;
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        if (refreshCounter == 0)
-                        {
-                            ProgressBarPopup.Instance.Close();
-                        }
-                        else
-                        {
-                            ProgressBarPopup.Instance.Open();
-                        }
-                    });
-                }
-            }
-        }
-
-        private int RefreshNewsCounter
+        private UserExt UserSource
         {
             get
             {
-                return refreshNewsCounter;
+                return Border_SignedIn.DataContext == null ? null : Border_SignedIn.DataContext as UserExt;
             }
             set
             {
-                if (value < 0 || value == RefreshNewsCounter)
-                    return;
+                Border_SignedIn.DataContext = value;
 
-                if (0 == RefreshNewsCounter)
+                if (value != null)
                 {
-                    ++RefreshCounter;
+                    if (!value.Avatar.EndsWith("missing.png") && !value.AvatarImageExists())
+                    {
+                        var client = new WTDownloadImageClient();
+
+                        client.DownloadImageCompleted += (obj, arg) =>
+                        {
+                            value.SaveAvatarImage(arg.ImageStream);
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                value.SendPropertyChanged("AvatarImageBrush");
+                            });
+                        };
+
+                        client.Execute(value.Avatar);
+                    }
+
+                    var sb = this.Resources["AvatarAnimation"] as Storyboard;
+                    if (sb.GetCurrentState() == ClockState.Stopped)
+                        sb.Begin();
                 }
-
-                refreshNewsCounter = value;
-
-                if (RefreshNewsCounter == 0)
+                else
                 {
-                    --RefreshCounter;
+                    var sb = this.Resources["AvatarAnimation"] as Storyboard;
+                    if (sb.GetCurrentState() == ClockState.Active)
+                        sb.Stop();
                 }
             }
-        }
-
-        private UserExt UserSource
-        {
-            get { return Border_SignedIn.DataContext as UserExt; }
-            set { }
-        }
-
-        private CalendarNode CalendarNodeSource
-        {
-            get { return Button_Alarm.DataContext as CalendarNode; }
-            set { }
         }
 
         private ObservableCollection<ActivityExt> ActivityListSource
@@ -229,33 +206,41 @@ namespace WeTongji
         {
             get
             {
-                return Button_OfficialNotes.DataContext == null ? null : Button_OfficialNotes.DataContext as ForStaffExt;
+                return Grid_OfficialNote.DataContext == null ? null : Grid_OfficialNote.DataContext as ForStaffExt;
             }
             set
             {
-                Button_OfficialNotes.DataContext = value;
+                Grid_OfficialNote.DataContext = value;
 
                 if (value != null)
                 {
                     var imgUrls = value.GetImagesURL();
-                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    if (imgUrls != null && imgUrls.Count() > 0)
                     {
-                        var url = imgUrls.First();
-                        var client = new WTDownloadImageClient();
-                        client.DownloadImageCompleted += (o, e) =>
+                        if (!value.ImageExists())
                         {
-                            this.Dispatcher.BeginInvoke(() =>
-                                   {
-                                       if (OfficialNoteSource != null)
+                            var url = imgUrls.First();
+                            var client = new WTDownloadImageClient();
+                            client.DownloadImageCompleted += (o, e) =>
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
                                        {
-                                           OfficialNoteSource.SaveImage(e.ImageStream);
+                                           if (OfficialNoteSource != null)
+                                           {
+                                               OfficialNoteSource.SaveImage(e.ImageStream);
 
-                                           OfficialNoteSource.SendPropertyChanged("FirstImageBrush");
+                                               OfficialNoteSource.SendPropertyChanged("FirstImageBrush");
 
-                                       }
-                                   });
-                        };
-                        client.Execute(url);
+                                               var sb = this.Resources["OfficialNoteImageAnimation"] as Storyboard;
+                                               if (sb.GetCurrentState() != ClockState.Active)
+                                                   sb.Begin();
+                                           }
+                                       });
+                            };
+                            client.Execute(url);
+                        }
+                        else
+                            (this.Resources["OfficialNoteImageAnimation"] as Storyboard).Begin();
                     }
                 }
             }
@@ -265,32 +250,41 @@ namespace WeTongji
         {
             get
             {
-                return Button_ClubNews.DataContext == null ? null : Button_ClubNews.DataContext as ClubNewsExt;
+                return Grid_ClubNews.DataContext == null ? null : Grid_ClubNews.DataContext as ClubNewsExt;
             }
             set
             {
-                Button_ClubNews.DataContext = value;
+                Grid_ClubNews.DataContext = value;
 
                 if (value != null)
                 {
                     var imgUrls = value.GetImagesURL();
-                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    if (imgUrls != null && imgUrls.Count() > 0)
                     {
-                        var url = imgUrls.First();
-                        var client = new WTDownloadImageClient();
-                        client.DownloadImageCompleted += (o, e) =>
+                        if (!value.ImageExists())
                         {
-                            this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    if (ClubNewsSource != null)
+                            var url = imgUrls.First();
+                            var client = new WTDownloadImageClient();
+                            client.DownloadImageCompleted += (o, e) =>
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
                                     {
-                                        ClubNewsSource.SaveImage(e.ImageStream);
+                                        if (ClubNewsSource != null)
+                                        {
+                                            ClubNewsSource.SaveImage(e.ImageStream);
 
-                                        ClubNewsSource.SendPropertyChanged("FirstImageBrush");
-                                    }
-                                });
-                        };
-                        client.Execute(url);
+                                            ClubNewsSource.SendPropertyChanged("FirstImageBrush");
+
+                                            var sb = this.Resources["ClubNewsImageAnimation"] as Storyboard;
+                                            if (sb.GetCurrentState() != ClockState.Active)
+                                                sb.Begin();
+                                        }
+                                    });
+                            };
+                            client.Execute(url);
+                        }
+                        else
+                            (this.Resources["ClubNewsImageAnimation"] as Storyboard).Begin();
                     }
                 }
             }
@@ -300,34 +294,45 @@ namespace WeTongji
         {
             get
             {
-                return Button_TongjiNews.DataContext == null ? null : Button_TongjiNews.DataContext as SchoolNewsExt;
+                return Grid_TongjiNews.DataContext == null ? null : Grid_TongjiNews.DataContext as SchoolNewsExt;
             }
             set
             {
-                Button_TongjiNews.DataContext = value;
+                Grid_TongjiNews.DataContext = value;
 
                 if (value != null)
                 {
                     var imgUrls = value.GetImagesURL();
-                    if (imgUrls != null && imgUrls.Count() > 0 && !value.ImageExists())
+                    if (imgUrls != null && imgUrls.Count() > 0)
                     {
-                        var url = imgUrls.First();
-                        var client = new WTDownloadImageClient();
+                        if (!value.ImageExists())
+                        {
+                            var url = imgUrls.First();
+                            var client = new WTDownloadImageClient();
 
-                        client.DownloadImageCompleted += (o, e) =>
-                            {
-                                this.Dispatcher.BeginInvoke(() =>
-                                    {
-                                        if (TongjiNewsSource != null)
+                            client.DownloadImageCompleted += (o, e) =>
+                                {
+                                    this.Dispatcher.BeginInvoke(() =>
                                         {
-                                            TongjiNewsSource.SaveImage(e.ImageStream);
+                                            if (TongjiNewsSource != null)
+                                            {
+                                                TongjiNewsSource.SaveImage(e.ImageStream);
 
-                                            TongjiNewsSource.SendPropertyChanged("FirstImageBrush");
-                                        }
-                                    });
-                            };
+                                                TongjiNewsSource.SendPropertyChanged("FirstImageBrush");
 
-                        client.Execute(url);
+                                                var sb = this.Resources["TongjiNewsImageAnimation"] as Storyboard;
+                                                if (sb.GetCurrentState() != ClockState.Active)
+                                                    sb.Begin();
+                                            }
+                                        });
+                                };
+
+                            client.Execute(url);
+                        }
+                        else
+                        {
+                            (this.Resources["TongjiNewsImageAnimation"] as Storyboard).Begin();
+                        }
                     }
                 }
             }
@@ -337,28 +342,37 @@ namespace WeTongji
         {
             get
             {
-                return Button_AroundNews.DataContext == null ? null : Button_AroundNews.DataContext as AroundExt;
+                return Grid_AroundNews.DataContext == null ? null : Grid_AroundNews.DataContext as AroundExt;
             }
             set
             {
-                Button_AroundNews.DataContext = value;
+                Grid_AroundNews.DataContext = value;
 
-                if (value != null && !value.IsTitleImageExists())
+                if (value != null)
                 {
-                    var client = new WTDownloadImageClient();
-                    client.DownloadImageCompleted += (o, e) =>
+                    if (!value.IsTitleImageExists())
                     {
-                        this.Dispatcher.BeginInvoke(() =>
-                            {
-                                if (AroundNewsSource != null)
+                        var client = new WTDownloadImageClient();
+                        client.DownloadImageCompleted += (o, e) =>
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
                                 {
-                                    AroundNewsSource.SaveImage(e.ImageStream);
+                                    if (AroundNewsSource != null)
+                                    {
+                                        AroundNewsSource.SaveTitleImage(e.ImageStream);
 
-                                    AroundNewsSource.SendPropertyChanged("TitleImageBrush");
-                                }
-                            });
-                    };
-                    client.Execute(value.TitleImage);
+                                        AroundNewsSource.SendPropertyChanged("TitleImageBrush");
+
+                                        var sb = this.Resources["AroundNewsImageAnimation"] as Storyboard;
+                                        if (sb.GetCurrentState() != ClockState.Active)
+                                            sb.Begin();
+                                    }
+                                });
+                        };
+                        client.Execute(value.TitleImage);
+                    }
+                    else
+                        (this.Resources["AroundNewsImageAnimation"] as Storyboard).Begin();
                 }
             }
         }
@@ -425,6 +439,74 @@ namespace WeTongji
             }
         }
 
+        private CalendarNode AlarmClockSource
+        {
+            get
+            {
+                return Button_Alarm.DataContext == null ? null : Button_Alarm.DataContext as CalendarNode;
+            }
+            set
+            {
+                Button_Alarm.DataContext = value;
+
+                if (value == null)
+                {
+                    (this.Resources["ResetAlarmClockPointersAnimation"] as Storyboard).Begin();
+                }
+                else
+                {
+                    TextBlock_NoArrangement.Visibility = value.IsNoArrangementNode ? Visibility.Visible : Visibility.Collapsed;
+
+                    var visibleAnimation = this.Resources["VisibleAlarmClockPointersAnimation"] as Storyboard;
+                    var setAnimation = this.Resources["SetAlarmClockAnimation"] as Storyboard;
+
+                    setAnimation.Stop();
+
+                    if (HourPointer.Opacity == 0)
+                    {
+                        //...Hour pointer
+                        double hptr = value.IsNoArrangementNode ? DateTime.Now.GetHourPointerRotationDegree() : value.BeginTime.GetHourPointerRotationDegree();
+                        hptr = hptr > 0 ? hptr : hptr + 360;
+
+                        //...Minute pointer
+                        double mptr = value.IsNoArrangementNode ? DateTime.Now.GetMinutePointerRotationDegree() : value.BeginTime.GetMinutePointerRotationDegree();
+                        mptr = mptr > 0 ? mptr : mptr + 360;
+
+                        (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = 0;
+                        (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[1].Value = hptr;
+                        (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = 0;
+                        (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[1].Value = mptr;
+                    }
+                    else
+                    {
+                        //...Round start rotation degree
+                        double hptr_start = (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value;
+                        double mptr_start = (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value;
+                        (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = hptr_start > 180 ? (hptr_start - 360) : ((hptr_start < -180) ? (hptr_start + 360) : hptr_start);
+                        (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = mptr_start > 180 ? (mptr_start - 360) : ((mptr_start < -180) ? (mptr_start + 360) : mptr_start);
+
+                        //...Hour pointer
+                        double hptr = value.IsNoArrangementNode ? DateTime.Now.GetHourPointerRotationDegree() : value.BeginTime.GetHourPointerRotationDegree();
+                        hptr = hptr > 0 ? hptr : hptr + 360;
+                        hptr = hptr >= hptr_start ? hptr : hptr + 360;
+
+                        //...Minute pointer
+                        double mptr = value.IsNoArrangementNode ? DateTime.Now.GetMinutePointerRotationDegree() : value.BeginTime.GetMinutePointerRotationDegree();
+                        mptr = mptr > 0 ? mptr : mptr + 360;
+                        mptr = mptr >= mptr_start ? mptr : mptr + 360;
+
+                        (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = hptr_start;
+                        (setAnimation.Children[0] as DoubleAnimationUsingKeyFrames).KeyFrames[1].Value = hptr;
+                        (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[0].Value = mptr_start;
+                        (setAnimation.Children[1] as DoubleAnimationUsingKeyFrames).KeyFrames[1].Value = mptr;
+                    }
+
+                    visibleAnimation.Begin();
+                    setAnimation.Begin();
+                }
+            }
+        }
+
         #endregion
 
         #region [Functions]
@@ -479,25 +561,25 @@ namespace WeTongji
                 this.NavigationService.Navigate(new Uri("/Pages/Activity.xaml?q=" + a.Id, UriKind.RelativeOrAbsolute));
         }
 
-        private void NavToOfficialNotesList(Object sender, RoutedEventArgs e)
+        private void NavToOfficialNotesList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
             var ctrl = sender as Control;
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=2", UriKind.RelativeOrAbsolute));
         }
 
-        private void NavToClubNewsList(Object sender, RoutedEventArgs e)
+        private void NavToClubNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
             var ctrl = sender as Control;
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=3", UriKind.RelativeOrAbsolute));
         }
 
-        private void NavToTongjiNewsList(Object sender, RoutedEventArgs e)
+        private void NavToTongjiNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
             var ctrl = sender as Control;
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=0", UriKind.RelativeOrAbsolute));
         }
 
-        private void NavToAroundNewsList(Object sender, RoutedEventArgs e)
+        private void NavToAroundNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
             var ctrl = sender as Control;
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=1", UriKind.RelativeOrAbsolute));
@@ -520,12 +602,26 @@ namespace WeTongji
         /// <param name="e"></param>
         private void ViewAlarmItem(Object sender, RoutedEventArgs e)
         {
-            // Todo @_@ Check the type of the alarm item and get the destination page
-            // In the demo, just navigate to CourseDetail page, i.e., activity is neglected.
-
-            if (TextBlock_NoArrangement.Visibility == Visibility.Collapsed)
+            if (AlarmClockSource == null || AlarmClockSource.IsNoArrangementNode)
             {
-                this.NavigationService.Navigate(new Uri("/Pages/CourseDetail.xaml", UriKind.RelativeOrAbsolute));
+                this.NavigationService.Navigate(new Uri("/Pages/MyAgenda.xaml", UriKind.RelativeOrAbsolute));
+            }
+            else
+            {
+                var src = AlarmClockSource;
+                switch (src.NodeType)
+                {
+                    case CalendarNodeType.kActivity:
+                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/Activity.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        break;
+                    case CalendarNodeType.kExam:
+                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        break;
+                    case CalendarNodeType.kObligedCourse:
+                    case CalendarNodeType.kOptionalCourse:
+                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}&d={1}", src.Id, src.BeginTime), UriKind.RelativeOrAbsolute));
+                        break;
+                }
             }
         }
 
@@ -630,6 +726,7 @@ namespace WeTongji
 
                     Global.Instance.CurrentUserID = arg.Result.User.UID;
                     Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
+                    Global.Instance.StartSettingAgendaSource();
 
                     UserExt targetUser = null;
 
@@ -665,40 +762,9 @@ namespace WeTongji
                     {
                         using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
                         {
-                            Button_Favorite.DataContext = Button_PersonalProfile.DataContext = targetUser = db.UserInfo.SingleOrDefault();
+                            UserSource = db.UserInfo.SingleOrDefault();
                         }
                     });
-
-                    #endregion
-
-                    #region [Update Avatar]
-
-                    if (targetUser != null && !targetUser.Avatar.EndsWith("missing.png") && !targetUser.AvatarImageExists())
-                    {
-                        var img_client = new WTDownloadImageClient();
-
-                        img_client.DownloadImageStarted += (s, args) =>
-                            {
-                                Debug.WriteLine("Download user's avatar started: {0}", args.Url);
-                            };
-                        img_client.DownloadImageFailed += (s, args) =>
-                            {
-                                Debug.WriteLine("Download user's avatar failed: {0}\nError:{1}", args.Url, args.Error);
-                            };
-                        img_client.DownloadImageCompleted += (s, args) =>
-                            {
-                                Debug.WriteLine("Download user's avatar completed: {0}", args.Url);
-
-                                targetUser.SaveAvatarImage(args.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    targetUser.SendPropertyChanged("AvatarImageBrush");
-                                });
-                            };
-
-                        img_client.Execute(targetUser.Avatar);
-                    }
 
                     #endregion
 
@@ -899,14 +965,13 @@ namespace WeTongji
             Action updateExpireAction = null;
 
             Global.Instance.ActivityPageId = -1;
-            this.Dispatcher.BeginInvoke(() =>
+            Global.Instance.CurrentActivitySourceState = SourceState.Setting;
+
+            var src = ActivityListSource;
+            if (src != null && src.Count > 0 && !src.Last().IsValid)
             {
-                var src = ActivityListSource;
-                if (src != null && src.Count > 0 && !src.Last().IsValid)
-                {
-                    src.RemoveAt(src.Count - 1);
-                }
-            });
+                src.RemoveAt(src.Count - 1);
+            }
 
             #region [Core action]
             updateExpireAction = () =>
@@ -972,7 +1037,12 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            UpdateAcitivityList(responseActivities, true, true);
+                            if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
+                            {
+                                UpdateAcitivityList(responseActivities, true, true);
+                            }
+                            else
+                                ProgressBarPopup.Instance.Close();
                         });
 
                         updateExpireAction();
@@ -981,8 +1051,12 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+                            if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
+                            {
+                                UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+                            }
 
+                            Global.Instance.CurrentActivitySourceState = SourceState.Done;
                             ProgressBarPopup.Instance.Close();
                         });
                     }
@@ -994,6 +1068,7 @@ namespace WeTongji
                 {
                     this.Dispatcher.BeginInvoke(() =>
                     {
+                        Global.Instance.CurrentActivitySourceState = SourceState.NotSet;
                         ProgressBarPopup.Instance.Close();
                     });
                 };
@@ -1018,8 +1093,6 @@ namespace WeTongji
 
             ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
             WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
-
-            Debug.WriteLine("[updateExpireAction Thread]" + Thread.CurrentThread.GetHashCode());
 
             #region [Add additional parameter]
 
@@ -1068,7 +1141,10 @@ namespace WeTongji
 
                 this.Dispatcher.BeginInvoke(() =>
                 {
-                    UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+                    if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
+                    {
+                        UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
+                    }
                     ProgressBarPopup.Instance.Close();
                 });
             };
@@ -1109,10 +1185,7 @@ namespace WeTongji
             PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
             WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
 
-            this.Dispatcher.BeginInvoke(() =>
-            {
-                ProgressBarPopup.Instance.Open();
-            });
+            ProgressBarPopup.Instance.Open();
 
             #region [Add handlers]
 
@@ -1120,13 +1193,13 @@ namespace WeTongji
             {
                 int count = arg.Result.People.Count();
 
-                PersonExt[] people = new PersonExt[count];
+                PersonExt p = null;
 
                 #region [Update database]
 
                 for (int i = 0; i < count; ++i)
                 {
-                    var item = arg.Result.People.ElementAt(i);
+                    var item = arg.Result.People[i];
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
@@ -1145,7 +1218,23 @@ namespace WeTongji
                             itemInDB.SetObject(item);
                         }
 
-                        people[i] = itemInDB;
+                        if (p == null)
+                        {
+                            p = itemInDB;
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                if (p != null)
+                                {
+                                    if (PersonSource == null || p.Id > PersonSource.Id)
+                                    {
+                                        PersonSource = p;
+                                    }
+                                }
+
+                                PersonSourceState = SourceState.Done;
+                                ProgressBarPopup.Instance.Close();
+                            });
+                        }
 
                         db.SubmitChanges();
                     }
@@ -1154,30 +1243,21 @@ namespace WeTongji
                 #endregion
 
                 Global.Instance.PersonPageId = arg.Result.NextPager;
-
-                var p = people.OrderBy((person) => person.NO).Last();
-
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    if (PersonSource == null || p.Id > PersonSource.Id)
-                    {
-                        PersonSource = p;
-                    }
-
-                    ProgressBarPopup.Instance.Close();
-                });
             };
 
             client.ExecuteFailed += (o, arg) =>
                 {
                     this.Dispatcher.BeginInvoke(() =>
                     {
+                        PersonSourceState = SourceState.NotSet;
                         ProgressBarPopup.Instance.Close();
                     });
                 };
 
             #endregion
 
+
+            PersonSourceState = SourceState.Setting;
             client.Execute(req);
         }
 
@@ -1185,267 +1265,256 @@ namespace WeTongji
 
         #region [Campus Info]
 
-        private void RefreshCampusInfo()
+        private void RefreshSchoolNews()
         {
-            WTDispatcher.Instance.Do(() =>
+            var req = new SchoolNewsGetListRequest<SchoolNewsGetListResponse>();
+            var client = new WTDefaultClient<SchoolNewsGetListResponse>();
+
+            #region [Subscribe event handlers]
+
+            client.ExecuteCompleted += (o, e) =>
             {
-                #region [School News]
+                SchoolNewsExt latest = null;
+
+                foreach (var item in e.Result.SchoolNews)
                 {
-                    var req = new SchoolNewsGetListRequest<SchoolNewsGetListResponse>();
-                    var client = new WTDefaultClient<SchoolNewsGetListResponse>();
-
-                    #region [Subscribe event handlers]
-
-                    client.ExecuteCompleted += (o, e) =>
-                        {
-                            using (var db = WTShareDataContext.ShareDB)
-                            {
-                                foreach (var item in e.Result.SchoolNews)
-                                {
-                                    SchoolNewsExt itemInDB = null;
-
-                                    if (db.SchoolNewsTable != null && db.SchoolNewsTable.Count() > 0)
-                                        db.SchoolNewsTable.Where((news) => news.Id == item.Id).SingleOrDefault();
-
-                                    //...the item is not saved
-                                    if (itemInDB == null)
-                                    {
-                                        var tmp = new SchoolNewsExt();
-                                        tmp.SetObject(item);
-                                        db.SchoolNewsTable.InsertOnSubmit(tmp);
-                                    }
-                                    //...update info if the item is kept in database
-                                    else
-                                    {
-                                        itemInDB.SetObject(item);
-                                    }
-                                }
-
-                                db.SubmitChanges();
-                            }
-
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                --RefreshNewsCounter;
-                            });
-                        };
-
-                    client.ExecuteFailed += (o, e) =>
-                        {
-                            Debug.WriteLine("Fail to refresh school news.\nError:{0}", e.Error);
-
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                --RefreshNewsCounter;
-                            });
-                        };
-
-                    #endregion
-
-                    this.Dispatcher.BeginInvoke(() =>
+                    using (var db = WTShareDataContext.ShareDB)
                     {
-                        ++RefreshNewsCounter;
-                    });
-                    client.Execute(req);
-                }
+                        SchoolNewsExt itemInDB = db.SchoolNewsTable.Where((news) => news.Id == item.Id).SingleOrDefault();
 
-                #endregion
-
-                #region [Around News]
-
-                {
-                    var req = new AroundsGetRequest<AroundsGetResponse>();
-                    var client = new WTDefaultClient<AroundsGetResponse>();
-
-                    #region [Subscribe event handlers]
-
-                    client.ExecuteCompleted += (o, e) =>
-                    {
-                        using (var db = WTShareDataContext.ShareDB)
+                        //...the item is not saved
+                        if (itemInDB == null)
                         {
-                            foreach (var item in e.Result.Arounds)
-                            {
-                                AroundExt itemInDB = null;
-
-                                var table = db.GetTable<AroundExt>();
-
-                                if (table != null && table.Count() > 0)
-                                    table.Where((news) => news.Id == item.Id).SingleOrDefault();
-
-                                //...the item is not saved
-                                if (itemInDB == null)
-                                {
-                                    var tmp = new AroundExt();
-                                    tmp.SetObject(item);
-                                    table.InsertOnSubmit(tmp);
-                                }
-                                //...update info if the item is kept in database
-                                else
-                                {
-                                    itemInDB.SetObject(item);
-                                }
-                            }
-
-                            db.SubmitChanges();
+                            itemInDB = new SchoolNewsExt();
+                            itemInDB.SetObject(item);
+                            db.SchoolNewsTable.InsertOnSubmit(itemInDB);
+                        }
+                        //...update info if the item is kept in database
+                        else
+                        {
+                            itemInDB.SetObject(item);
                         }
 
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
+                        if (latest == null)
+                            latest = itemInDB;
 
-                    client.ExecuteFailed += (o, e) =>
-                    {
-                        Debug.WriteLine("Fail to refresh around news.\nError:{0}", e.Error);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
-
-                    #endregion
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ++RefreshNewsCounter;
-                    });
-                    client.Execute(req);
+                        db.SubmitChanges();
+                    }
                 }
 
-                #endregion
-
-                #region [Official Notes]
-
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    var req = new ForStaffsGetRequest<ForStaffsGetResponse>();
-                    var client = new WTDefaultClient<ForStaffsGetResponse>();
-
-                    #region [Subscribe event handlers]
-
-                    client.ExecuteCompleted += (o, e) =>
+                    if (latest != null)
                     {
-                        using (var db = WTShareDataContext.ShareDB)
+                        if (TongjiNewsSource == null || TongjiNewsSource.CreatedAt < latest.CreatedAt)
+                            TongjiNewsSource = latest;
+                    }
+
+                    TongjiNewsSourceState = SourceState.Done;
+                });
+            };
+
+            client.ExecuteFailed += (o, e) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    TongjiNewsSourceState = SourceState.NotSet;
+                });
+            };
+
+            #endregion
+
+            TongjiNewsSourceState = SourceState.Setting;
+            client.Execute(req);
+        }
+
+        private void RefreshAroundNews()
+        {
+            var req = new AroundsGetRequest<AroundsGetResponse>();
+            var client = new WTDefaultClient<AroundsGetResponse>();
+
+            #region [Subscribe event handlers]
+
+            client.ExecuteCompleted += (o, e) =>
+            {
+                AroundExt latest = null;
+
+                foreach (var item in e.Result.Arounds)
+                {
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        AroundExt itemInDB = db.AroundTable.Where((news) => news.Id == item.Id).SingleOrDefault();
+
+                        //...the item is not saved
+                        if (itemInDB == null)
                         {
-                            foreach (var item in e.Result.ForStaffs)
-                            {
-                                ForStaffExt itemInDB = null;
-
-                                var table = db.GetTable<ForStaffExt>();
-
-                                if (table != null && table.Count() > 0)
-                                    table.Where((news) => news.Id == item.Id).SingleOrDefault();
-
-                                //...the item is not saved
-                                if (itemInDB == null)
-                                {
-                                    var tmp = new ForStaffExt();
-                                    tmp.SetObject(item);
-                                    table.InsertOnSubmit(tmp);
-                                }
-                                //...update info if the item is kept in database
-                                else
-                                {
-                                    itemInDB.SetObject(item);
-                                }
-                            }
-
-                            db.SubmitChanges();
+                            itemInDB = new AroundExt();
+                            itemInDB.SetObject(item);
+                            db.AroundTable.InsertOnSubmit(itemInDB);
+                        }
+                        //...update info if the item is kept in database
+                        else
+                        {
+                            itemInDB.SetObject(item);
                         }
 
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
+                        if (latest == null)
+                            latest = itemInDB;
 
-                    client.ExecuteFailed += (o, e) =>
-                    {
-                        Debug.WriteLine("Fail to refresh official note.\nError:{0}", e.Error);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
-
-                    #endregion
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ++RefreshNewsCounter;
-                    });
-                    client.Execute(req);
+                        db.SubmitChanges();
+                    }
                 }
 
-                #endregion
-
-                #region [Club News]
-
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    var req = new ClubNewsGetListRequest<ClubNewsGetListResponse>();
-                    var client = new WTDefaultClient<ClubNewsGetListResponse>();
-
-                    #region [Subscribe event handlers]
-
-                    client.ExecuteCompleted += (o, e) =>
+                    if (latest != null)
                     {
-                        using (var db = WTShareDataContext.ShareDB)
+                        if (AroundNewsSource == null || AroundNewsSource.CreatedAt < latest.CreatedAt)
+                            AroundNewsSource = latest;
+                    }
+
+                    AroundNewsSourceState = SourceState.Done;
+                });
+
+            };
+
+            client.ExecuteFailed += (o, e) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    AroundNewsSourceState = SourceState.NotSet;
+                });
+            };
+
+            #endregion
+
+            AroundNewsSourceState = SourceState.Setting;
+            client.Execute(req);
+
+        }
+
+        private void RefreshOfficialNotes()
+        {
+            var req = new ForStaffsGetRequest<ForStaffsGetResponse>();
+            var client = new WTDefaultClient<ForStaffsGetResponse>();
+
+            #region [Subscribe event handlers]
+
+            client.ExecuteCompleted += (o, e) =>
+            {
+                ForStaffExt latest = null;
+
+                foreach (var item in e.Result.ForStaffs)
+                {
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        ForStaffExt itemInDB = db.ForStaffTable.Where((news) => news.Id == item.Id).SingleOrDefault();
+
+                        //...the item is not saved
+                        if (itemInDB == null)
                         {
-                            foreach (var item in e.Result.ClubNews)
-                            {
-                                AroundExt itemInDB = null;
+                            itemInDB = new ForStaffExt();
+                            itemInDB.SetObject(item);
+                            db.ForStaffTable.InsertOnSubmit(itemInDB);
+                        }
+                        //...update info if the item is kept in database
+                        else
+                        {
+                            itemInDB.SetObject(item);
+                        }
+                        db.SubmitChanges();
 
-                                var table = db.GetTable<ClubNewsExt>();
+                        if (latest == null)
+                            latest = itemInDB;
+                    }
+                }
 
-                                if (table != null && table.Count() > 0)
-                                    table.Where((news) => news.Id == item.Id).SingleOrDefault();
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (latest != null)
+                    {
+                        if (OfficialNoteSource == null || OfficialNoteSource.CreatedAt < latest.CreatedAt)
+                            OfficialNoteSource = latest;
+                    }
+                    OfficialNoteSourceState = SourceState.Done;
+                });
+            };
 
-                                //...the item is not saved
-                                if (itemInDB == null)
-                                {
-                                    var tmp = new ClubNewsExt();
-                                    tmp.SetObject(item);
-                                    table.InsertOnSubmit(tmp);
-                                }
-                                //...update info if the item is kept in database
-                                else
-                                {
-                                    itemInDB.SetObject(item);
-                                }
-                            }
+            client.ExecuteFailed += (o, e) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    OfficialNoteSourceState = SourceState.NotSet;
+                });
+            };
 
-                            db.SubmitChanges();
+            #endregion
+
+            OfficialNoteSourceState = SourceState.Setting;
+            client.Execute(req);
+        }
+
+        private void RefreshClubNews()
+        {
+            var req = new ClubNewsGetListRequest<ClubNewsGetListResponse>();
+            var client = new WTDefaultClient<ClubNewsGetListResponse>();
+
+            #region [Subscribe event handlers]
+
+            client.ExecuteCompleted += (o, e) =>
+            {
+                ClubNewsExt latest = null;
+
+                foreach (var item in e.Result.ClubNews)
+                {
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        ClubNewsExt itemInDB = db.ClubNewsTable.Where((news) => news.Id == item.Id).SingleOrDefault();
+
+                        //...the item is not saved
+                        if (itemInDB == null)
+                        {
+                            itemInDB = new ClubNewsExt();
+                            itemInDB.SetObject(item);
+                            db.ClubNewsTable.InsertOnSubmit(itemInDB);
+                        }
+                        //...update info if the item is kept in database
+                        else
+                        {
+                            itemInDB.SetObject(item);
                         }
 
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
+                        if (latest == null)
+                            latest = itemInDB;
 
-                    client.ExecuteFailed += (o, e) =>
-                    {
-                        Debug.WriteLine("Fail to refresh club news.\nError:{0}", e.Error);
-
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            --RefreshNewsCounter;
-                        });
-                    };
-
-                    #endregion
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ++RefreshNewsCounter;
-                    });
-                    client.Execute(req);
+                        db.SubmitChanges();
+                    }
                 }
 
-                #endregion
-            });
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (latest != null)
+                    {
+                        if (ClubNewsSource == null || ClubNewsSource.CreatedAt < latest.CreatedAt)
+                            ClubNewsSource = latest;
+                    }
+
+                    ClubNewsSourceState = SourceState.Done;
+                });
+            };
+
+            client.ExecuteFailed += (o, e) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ClubNewsSourceState = SourceState.NotSet;
+                });
+            };
+
+            #endregion
+
+            ClubNewsSourceState = SourceState.Setting;
+            client.Execute(req);
         }
 
         #endregion
@@ -1606,68 +1675,41 @@ namespace WeTongji
 
             if (p.SelectedIndex == 1)
             {
-                if ((ActivityThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
+                if (Global.Instance.ActivityPageId == -1 && Global.Instance.CurrentActivitySourceState == SourceState.NotSet)
                 {
-                    ActivityThread.Start();
-
-                    var thread = new Thread(new ThreadStart(RefreshExistingExpiredActivities))
-                    {
-                        Name = "RefreshExistingExpiredActivities"
-                    };
-                    thread.Start();
-                }
-                else if (ActivityThread.ThreadState == ThreadState.Stopped && Global.Instance.Settings.AutoRefresh)
-                {
-                    ActivityThread = new Thread(new ThreadStart(LoadAnotherExpiredActivities))
-                    {
-                        IsBackground = true,
-                        Name = "LoadAnotherExpiredActivities"
-                    };
-
-                    ActivityThread.Start();
+                    RefreshExistingExpiredActivities();
                 }
             }
 
             #endregion
+
+            #region [Campus Info]
+
+            else if (p.SelectedIndex == 2)
+            {
+                if (TongjiNewsSourceState == SourceState.NotSet)
+                    RefreshSchoolNews();
+                if (AroundNewsSourceState == SourceState.NotSet)
+                    RefreshAroundNews();
+                if (ClubNewsSourceState == SourceState.NotSet)
+                    RefreshClubNews();
+                if (OfficialNoteSourceState == SourceState.NotSet)
+                    RefreshOfficialNotes();
+            }
+
+            #endregion
+
             #region [People of Week]
 
             else if (p.SelectedIndex == 3)
             {
-                //...Obliged to get the latest person for the first time since the App is launched
-                if (Global.Instance.PersonPageId == -1)
-                {
-                    if ((PersonThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
-                    {
-                        PersonThread.Start();
-                    }
-                    else if (PersonThread.ThreadState == ThreadState.Stopped)
-                    {
-                        PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
-                        {
-                            IsBackground = true,
-                            Name = "RefreshPeopleOfWeek_AutoRefresh"
-                        };
-
-                        PersonThread.Start();
-                    }
-                }
-                //...Auto refresh the latest person according to user's settings
-                else if (Global.Instance.Settings.AutoRefresh)
-                {
-                    if (PersonThread.ThreadState != ThreadState.Running)
-                    {
-                        PersonThread = new Thread(new ThreadStart(RefreshPeopleOfWeek))
-                        {
-                            IsBackground = true,
-                            Name = "RefreshPeopleOfWeek_AutoRefresh"
-                        };
-
-                        PersonThread.Start();
-                    }
-                }
+                if (PersonSourceState == SourceState.NotSet)
+                    RefreshPeopleOfWeek();
             }
 
             #endregion
+
+
 
             #endregion
         }
@@ -1695,7 +1737,38 @@ namespace WeTongji
 
         private void RefreshButton_Click(Object sender, EventArgs e)
         {
+            var cur = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage");
+            var peak = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationPeakMemoryUsage");
+            String strCur, strPeak;
 
+
+            if (cur > 1 << 20)
+            {
+                strCur = String.Format("{0} MB", ((float)cur / (float)(1 << 20)).ToString("0.00"));
+            }
+            else if (cur > 1 << 10)
+            {
+                strCur = String.Format("{0} KB", ((float)cur / (float)(1 << 10)).ToString("0.00"));
+            }
+            else
+            {
+                strCur = String.Format("{0} B", cur);
+            }
+
+            if (peak > 1 << 20)
+            {
+                strPeak = String.Format("{0} MB", ((float)peak / (float)(1 << 20)).ToString("0.00"));
+            }
+            else if (peak > 1 << 10)
+            {
+                strPeak = String.Format("{0} KB", ((float)peak / (float)(1 << 10)).ToString("0.00"));
+            }
+            else
+            {
+                strPeak = String.Format("{0} B", peak);
+            }
+
+            MessageBox.Show(String.Format("Cur Mem: {0}, Peak Mem: {1}", strCur, strPeak));
         }
 
         private void SignOut(Object sender, EventArgs e)
@@ -1714,29 +1787,34 @@ namespace WeTongji
                     {
                         #region [App bar]
 
-                        this.ApplicationBar.MenuItems.RemoveAt(this.ApplicationBar.MenuItems.Count - 1);
+                        if (Panorama_Core.SelectedIndex == 0)
+                        {
+                            this.ApplicationBar.MenuItems.RemoveAt(this.ApplicationBar.MenuItems.Count - 1);
 
-                        this.ApplicationBar.Buttons.Clear();
-                        ApplicationBarIconButton button;
-                        button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
-                        UpdateLoginButton(null, null);
-                        button.Click += LogOn_Click;
-                        (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                            this.ApplicationBar.Buttons.Clear();
+                            ApplicationBarIconButton button;
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
+                            UpdateLoginButton(null, null);
+                            button.Click += LogOn_Click;
+                            (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
 
-                        button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
-                        button.Click += NavigateToSignUp;
-                        (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
+                            button.Click += NavigateToSignUp;
+                            (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                        }
 
                         #endregion
 
                         #region [Switch to Border_SignOut]
 
-                        Border_SignedIn.DataContext = Button_Alarm.DataContext = null;
+                        UserSource = null;
+                        AlarmClockSource = null;
                         Border_SignedOut.Visibility = Visibility.Visible;
 
                         #endregion
 
                         //...Clear global data
+                        Global.Instance.CleanAgendaSource();
                     });
                 };
 
@@ -1920,6 +1998,7 @@ namespace WeTongji
                 }
             }
 
+            ListBox_Activity.UpdateLayout();
         }
 
         /// <summary>
@@ -1972,7 +2051,7 @@ namespace WeTongji
                     this.activitySortMethod = ActivitySortMethod.kByCreationTime;
                     if (this.hasLoadMoreActivities)
                         result.Add(ActivityExt.InvalidActivityExt);
-                    
+
                     ActivityListSource = result;
                     ResetListBoxActivityVerticalOffset();
                     ProgressBarPopup.Instance.Close();
@@ -2112,6 +2191,451 @@ namespace WeTongji
 
         #endregion
 
+        #region [Campus Info]
+
+        private void UpdateCampusInfo()
+        {
+            Action updateSchoolNewsAction = null;
+            Action updateAroundNewsAction = null;
+            Action updateClubNewsAction = null;
+            Action updateOfficialNoteAction = null;
+
+            Global.Instance.OfficialNotePageId = -1;
+            Global.Instance.AroundNewsPageId = -1;
+            Global.Instance.ClubNewsPageId = -1;
+
+            #region [School News]
+            updateSchoolNewsAction = () =>
+                {
+                    var req = new SchoolNewsGetListRequest<SchoolNewsGetListResponse>();
+                    var client = new WTDefaultClient<SchoolNewsGetListResponse>();
+
+                    #region [Add parameters]
+
+                    req.IsAsc = false;
+                    if (Global.Instance.TongjiNewsPageId > 0)
+                        req.SetAdditionalParameter(WTDefaultClient<SchoolNewsGetListResponse>.PAGE, Global.Instance.TongjiNewsPageId);
+
+                    #endregion
+
+                    #region [Register Event handlers]
+
+                    client.ExecuteCompleted += (obj, arg) =>
+                        {
+                            int count = arg.Result.SchoolNews.Count();
+                            SchoolNewsExt[] snExtArr = new SchoolNewsExt[count];
+                            int illustratedNewsId = -1;
+
+                            for (int i = 0; i < count; ++i)
+                            {
+                                using (var db = WTShareDataContext.ShareDB)
+                                {
+                                    SchoolNewsExt itemInDB = db.SchoolNewsTable.Where((news) => news.Id == arg.Result.SchoolNews[i].Id).SingleOrDefault();
+
+                                    //...Create
+                                    if (itemInDB == null)
+                                    {
+                                        itemInDB = new SchoolNewsExt();
+                                        itemInDB.SetObject(arg.Result.SchoolNews[i]);
+
+                                        db.SchoolNewsTable.InsertOnSubmit(itemInDB);
+                                    }
+                                    //...Update
+                                    else
+                                    {
+                                        itemInDB.SetObject(arg.Result.SchoolNews[i]);
+                                    }
+
+                                    snExtArr[i] = itemInDB;
+
+                                    db.SubmitChanges();
+                                }
+                            }
+
+                            Global.Instance.TongjiNewsPageId = arg.Result.NextPager;
+
+                            var sn = arg.Result.SchoolNews.Where((news) => news.Images != null && news.Images.Count() > 0).OrderByDescending((news) => news.CreatedAt).FirstOrDefault();
+
+                            if (sn != null)
+                            {
+                                for (int i = 0; i < count; ++i)
+                                    if (arg.Result.SchoolNews[i] == sn)
+                                    {
+                                        illustratedNewsId = i;
+                                        break;
+                                    }
+                            }
+
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                ProgressBarPopup.Instance.Close();
+                            });
+
+                            //...This page of school news has no images.
+                            if (illustratedNewsId == -1 && arg.Result.NextPager > 0)
+                            {
+                                updateSchoolNewsAction();
+                            }
+                            else
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    var src = TongjiNewsSource;
+                                    if (src == null)
+                                    {
+                                        TongjiNewsSource = snExtArr[illustratedNewsId];
+                                    }
+                                    else if (src.CreatedAt < snExtArr[illustratedNewsId].CreatedAt)
+                                    {
+                                        TongjiNewsSource = snExtArr[illustratedNewsId];
+                                    }
+                                });
+                            }
+                        };
+
+                    client.ExecuteFailed += (obj, arg) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                        });
+                    };
+
+                    #endregion
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Open();
+                    });
+
+                    if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                        client.Execute(req);
+                    else
+                        client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+                };
+            #endregion
+
+            #region [Around News]
+
+            updateAroundNewsAction = () =>
+            {
+                var req = new AroundsGetRequest<AroundsGetResponse>();
+                var client = new WTDefaultClient<AroundsGetResponse>();
+
+                #region [Register Event handlers]
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    int count = arg.Result.Arounds.Count();
+                    AroundExt[] anExtArr = new AroundExt[count];
+                    AroundExt lastCreatedAt = null;
+
+                    for (int i = 0; i < count; ++i)
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            AroundExt itemInDB = db.AroundTable.Where((news) => news.Id == arg.Result.Arounds[i].Id).SingleOrDefault();
+
+                            //...Create
+                            if (itemInDB == null)
+                            {
+                                itemInDB = new AroundExt();
+                                itemInDB.SetObject(arg.Result.Arounds[i]);
+
+                                db.AroundTable.InsertOnSubmit(itemInDB);
+                            }
+                            //...Update
+                            else
+                            {
+                                itemInDB.SetObject(arg.Result.Arounds[i]);
+                            }
+
+                            anExtArr[i] = itemInDB;
+
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    Global.Instance.AroundNewsPageId = arg.Result.NextPager;
+
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                    lastCreatedAt = anExtArr.OrderBy((news) => news.CreatedAt).Last();
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var src = AroundNewsSource;
+
+                        if (src == null)
+                            AroundNewsSource = lastCreatedAt;
+                        else if (AroundNewsSource.CreatedAt < lastCreatedAt.CreatedAt)
+                        {
+                            AroundNewsSource = lastCreatedAt;
+                        }
+                    });
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                #endregion
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    client.Execute(req);
+                else
+                    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            };
+
+            #endregion
+
+            #region [Club News]
+
+            updateClubNewsAction = () =>
+            {
+                var req = new ClubNewsGetListRequest<ClubNewsGetListResponse>();
+                var client = new WTDefaultClient<ClubNewsGetListResponse>();
+
+                #region [Add parameters]
+
+                req.IsAsc = false;
+                if (Global.Instance.TongjiNewsPageId > 0)
+                    req.SetAdditionalParameter(WTDefaultClient<ClubNewsGetListResponse>.PAGE, Global.Instance.ClubNewsPageId);
+
+                #endregion
+
+                #region [Register Event handlers]
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    int count = arg.Result.ClubNews.Count();
+                    ClubNewsExt[] cnExtArr = new ClubNewsExt[count];
+                    int illustratedNewsId = -1;
+
+                    for (int i = 0; i < count; ++i)
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            ClubNewsExt itemInDB = db.ClubNewsTable.Where((news) => news.Id == arg.Result.ClubNews[i].Id).SingleOrDefault();
+
+                            //...Create
+                            if (itemInDB == null)
+                            {
+                                itemInDB = new ClubNewsExt();
+                                itemInDB.SetObject(arg.Result.ClubNews[i]);
+
+                                db.ClubNewsTable.InsertOnSubmit(itemInDB);
+                            }
+                            //...Update
+                            else
+                            {
+                                itemInDB.SetObject(arg.Result.ClubNews[i]);
+                            }
+
+                            cnExtArr[i] = itemInDB;
+
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    Global.Instance.ClubNewsPageId = arg.Result.NextPager;
+
+                    var sn = arg.Result.ClubNews.Where((news) => news.Images != null && news.Images.Count() > 0).OrderByDescending((news) => news.CreatedAt).FirstOrDefault();
+
+                    if (sn != null)
+                    {
+                        for (int i = 0; i < count; ++i)
+                            if (arg.Result.ClubNews[i] == sn)
+                            {
+                                illustratedNewsId = i;
+                                break;
+                            }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                    //...This page of school news has no images.
+                    if (illustratedNewsId == -1 && arg.Result.NextPager > 0)
+                    {
+                        updateClubNewsAction();
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var src = ClubNewsSource;
+                            if (src == null)
+                            {
+                                ClubNewsSource = cnExtArr[illustratedNewsId];
+                            }
+                            else if (src.CreatedAt < cnExtArr[illustratedNewsId].CreatedAt)
+                            {
+                                ClubNewsSource = cnExtArr[illustratedNewsId];
+                            }
+                        });
+                    }
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                #endregion
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    client.Execute(req);
+                else
+                    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            };
+
+            #endregion
+
+            #region [Official Notes]
+
+            updateOfficialNoteAction = () =>
+            {
+                var req = new ForStaffsGetRequest<ForStaffsGetResponse>();
+                var client = new WTDefaultClient<ForStaffsGetResponse>();
+
+                #region [Add parameters]
+
+                req.IsAsc = false;
+                if (Global.Instance.OfficialNotePageId > 0)
+                    req.SetAdditionalParameter(WTDefaultClient<ForStaffsGetResponse>.PAGE, Global.Instance.OfficialNotePageId);
+
+                #endregion
+
+                #region [Register Event handlers]
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    int count = arg.Result.ForStaffs.Count();
+                    ForStaffExt[] fsExtArr = new ForStaffExt[count];
+                    int illustratedNewsId = -1;
+
+                    for (int i = 0; i < count; ++i)
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            ForStaffExt itemInDB = db.ForStaffTable.Where((news) => news.Id == arg.Result.ForStaffs[i].Id).SingleOrDefault();
+
+                            //...Create
+                            if (itemInDB == null)
+                            {
+                                itemInDB = new ForStaffExt();
+                                itemInDB.SetObject(arg.Result.ForStaffs[i]);
+
+                                db.ForStaffTable.InsertOnSubmit(itemInDB);
+                            }
+                            //...Update
+                            else
+                            {
+                                itemInDB.SetObject(arg.Result.ForStaffs[i]);
+                            }
+
+                            fsExtArr[i] = itemInDB;
+
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    Global.Instance.OfficialNotePageId = arg.Result.NextPager;
+
+                    var fs = arg.Result.ForStaffs.Where((news) => news.Images != null && news.Images.Count() > 0).OrderByDescending((news) => news.CreatedAt).FirstOrDefault();
+
+                    if (fs != null)
+                    {
+                        for (int i = 0; i < count; ++i)
+                            if (arg.Result.ForStaffs[i] == fs)
+                            {
+                                illustratedNewsId = i;
+                                break;
+                            }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                    //...This page of school news has no images.
+                    if (illustratedNewsId == -1 && arg.Result.NextPager > 0)
+                    {
+                        updateOfficialNoteAction();
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var src = OfficialNoteSource;
+                            if (src == null)
+                            {
+                                OfficialNoteSource = fsExtArr[illustratedNewsId];
+                            }
+                            else if (src.CreatedAt < fsExtArr[illustratedNewsId].CreatedAt)
+                            {
+                                OfficialNoteSource = fsExtArr[illustratedNewsId];
+                            }
+                        });
+                    }
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                #endregion
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
+
+                if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    client.Execute(req);
+                else
+                    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            };
+
+            #endregion
+
+            updateSchoolNewsAction();
+            updateAroundNewsAction();
+            updateClubNewsAction();
+            updateOfficialNoteAction();
+        }
+
+        #endregion
+
         #endregion
 
         #region [Data Operatings]
@@ -2128,7 +2652,7 @@ namespace WeTongji
 
             Debug.WriteLine("Load data from db started.");
 
-            //...Activity
+            #region [Activity]
             using (var db = WTShareDataContext.ShareDB)
             {
                 if (db.Activities.Count() > 0)
@@ -2139,11 +2663,21 @@ namespace WeTongji
 
             if (activityArr != null)
             {
-                activitySrc = new ObservableCollection<ActivityExt>(activityArr.OrderByDescending((a) => a.CreatedAt));
+                IEnumerable<ActivityExt> src = activityArr.OrderByDescending((a) => a.CreatedAt);
+
+                //...Only take the latest 5 news in database to accelerate refreshing ListBox_Activities process
+                if (src.Count() > 5)
+                    src = src.Take(5);
+                activitySrc = new ObservableCollection<ActivityExt>(src);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ActivityListSource = activitySrc;
+                });
             }
+            #endregion
 
-
-            //...PeopleOfWeek
+            #region [PeopleOfWeek]
             PersonExt[] personArr = null;
             using (var db = WTShareDataContext.ShareDB)
             {
@@ -2151,34 +2685,20 @@ namespace WeTongji
             }
 
             if (null != personArr)
-                personSrc = personArr.LastOrDefault();
-
-            //Campus Info
             {
+                personSrc = personArr.OrderBy((person) => person.Id).Last();
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    SchoolNewsExt[] sn = null;
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        sn = db.SchoolNewsTable.ToArray();
-                    }
+                    PersonSource = personSrc;
+                });
+            }
+            #endregion
 
-                    if (sn != null)
-                        //Button_TongjiNews.DataContext = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                        snSrc = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                }
+            #region [Campus Info]
 
-                {
-                    AroundExt[] an = null;
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        an = db.AroundTable.ToArray();
-                    }
-
-                    if (an != null)
-                        //Button_AroundNews.DataContext = an.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                        anSrc = an.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                }
-
+            //...Load Campus info order by the corresponding UI Buttons
+            {
+                #region [Official Note]
                 {
                     ForStaffExt[] fs = null;
                     using (var db = WTShareDataContext.ShareDB)
@@ -2187,10 +2707,17 @@ namespace WeTongji
                     }
 
                     if (fs != null)
-                        //Button_OfficialNotes.DataContext = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                        fsSrc = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                    {
+                        fsSrc = fs.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).OrderBy((news) => news.CreatedAt).Last();
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            OfficialNoteSource = fsSrc;
+                        });
+                    }
                 }
+                #endregion
 
+                #region [Club News]
                 {
                     ClubNewsExt[] cn = null;
                     using (var db = WTShareDataContext.ShareDB)
@@ -2199,31 +2726,56 @@ namespace WeTongji
                     }
 
                     if (cn != null)
-                        //Button_ClubNews.DataContext = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
-                        cnSrc = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).LastOrDefault();
+                    {
+                        cnSrc = cn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).OrderBy((news) => news.CreatedAt).Last();
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ClubNewsSource = cnSrc;
+                        });
+                    }
                 }
+                #endregion
 
+                #region [Tongji News]
+                {
+                    SchoolNewsExt[] sn = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        sn = db.SchoolNewsTable.ToArray();
+                    }
+
+                    if (sn != null)
+                    {
+                        snSrc = sn.Where((news) => !String.IsNullOrEmpty(news.ImageExtList)).OrderBy((news) => news.CreatedAt).Last();
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            TongjiNewsSource = snSrc;
+                        });
+                    }
+                }
+                #endregion
+
+                #region [Around News]
+                {
+                    AroundExt[] an = null;
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        an = db.AroundTable.ToArray();
+                    }
+
+                    if (an != null)
+                    {
+                        anSrc = an.OrderBy((news) => news.CreatedAt).Last();
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            AroundNewsSource = anSrc;
+                        });
+                    }
+                }
+                #endregion
             }
 
-            this.Dispatcher.BeginInvoke(() =>
-            {
-                if (activitySrc != null && activitySrc.Count() > 0)
-                {
-                    ActivityListSource = activitySrc;
-                    ListBox_Activity.Visibility = Visibility.Visible;
-                }
-
-                if (personSrc != null)
-                {
-                    ScrollViewer_PeopleOfWeek.Visibility = Visibility.Visible;
-                    PersonSource = personSrc;
-                }
-
-                TongjiNewsSource = snSrc;
-                AroundNewsSource = anSrc;
-                OfficialNoteSource = fsSrc;
-                ClubNewsSource = cnSrc;
-            });
+            #endregion
         }
 
         /// <summary>
@@ -2916,107 +3468,82 @@ namespace WeTongji
             Debug.WriteLine("Compute calendar");
 
             List<CalendarNode> list = new List<CalendarNode>();
+            CourseExt[] courses = null;
+            ExamExt[] exams = null;
+            Semester[] semesters = null;
+            String serializedActivityIdArr = String.Empty;
 
-            #region [Compute courses and exams]
+            #region [Collect source]
 
-            Semester[] allSemesters = null;
-            Semester currentSemester = null;
             using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
             {
-                allSemesters = db.Semesters.ToArray();
+                courses = db.Courses.ToArray();
+                exams = db.Exams.ToArray();
+                semesters = db.Semesters.ToArray();
+                var activity = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
+                if (activity != null)
+                    serializedActivityIdArr = activity.Value;
             }
 
-            if (allSemesters != null)
+            if (courses != null && semesters != null)
             {
-                foreach (var s in allSemesters)
+                foreach (var c in courses)
                 {
-                    if (s.SchoolYearStartAt <= DateTime.Now && s.SchoolYearEndAt >= DateTime.Now)
+                    var s = semesters.Where((semester) => semester.Id == c.SemesterGuid).SingleOrDefault();
+                    if (s != null)
                     {
-                        currentSemester = s;
-                        break;
-                    }
-                }
-
-                if (currentSemester != null)
-                {
-                    CourseExt[] courses = null;
-                    ExamExt[] exams = null;
-
-                    using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
-                    {
-                        courses = db.Courses.Where((c) => c.SemesterGuid == currentSemester.Id).ToArray();
-                        exams = db.Exams.Where((e) => e.SemesterGuid == currentSemester.Id).ToArray();
-                    }
-
-                    foreach (var c in courses)
-                    {
-                        var node = c.GetCalendarNode(currentSemester, DateTime.Now);
-                        if (node != null)
-                            list.Add(node);
-                    }
-
-                    foreach (var e in exams)
-                    {
-                        if (e.Begin.Date == DateTime.Now.Date)
-                            list.Add(e.GetCalendarNode());
+                        list.AddRange(c.GetCalendarNodes(s));
                     }
                 }
             }
 
-            #endregion
-
-            #region [Compute Favorite activities]
-
-            FavoriteObject fo = null;
-            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+            if (exams != null)
             {
-                fo = db.Favorites.Where((o) => o.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
+                foreach (var e in exams)
+                {
+                    list.Add(e.GetCalendarNode());
+                }
             }
 
-            if (fo != null && !String.IsNullOrEmpty(fo.Value))
+            if (!String.IsNullOrEmpty(serializedActivityIdArr))
             {
-                var strIdxArr = fo.Value.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                int count = strIdxArr.Count();
-                int[] intIdxArr = new int[count];
+                var strIdArr = serializedActivityIdArr.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                int count = strIdArr.Count();
+                int id;
+                ActivityExt activity;
 
                 for (int i = 0; i < count; ++i)
                 {
-                    Int32.TryParse(strIdxArr[i], out intIdxArr[i]);
-                }
-
-                foreach (var idx in intIdxArr)
-                {
-                    using (var db = WTShareDataContext.ShareDB)
+                    if (Int32.TryParse(strIdArr[i], out id))
                     {
-                        var activity = db.Activities.Where((a) => a.Id == idx).SingleOrDefault();
-                        if (activity != null && activity.Begin.Date == DateTime.Now.Date)
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            activity = db.Activities.Where((a) => a.Id == id).SingleOrDefault();
+                        }
+
+                        if (activity != null)
                         {
                             list.Add(activity.GetCalendarNode());
                         }
                     }
+
                 }
             }
 
             #endregion
 
-            var q = from node in list
-                    where node > DateTime.Now
-                    orderby node.Self ascending
-                    select node;
+            var calendarNodesByDayList = (from CalendarNode node in list
+                                          group node by node.BeginTime.Date into n
+                                          orderby n.Key
+                                          select new CalendarGroup<CalendarNode>(n.Key, n)).ToList();
 
-            var selectedCalendarNode = q.FirstOrDefault();
+            CalendarNode targetNode = calendarNodesByDayList.GetNextCalendarNode();
+
+            Global.Instance.SetAgendaSource(calendarNodesByDayList);
 
             this.Dispatcher.BeginInvoke(() =>
             {
-                if (selectedCalendarNode != null)
-                {
-                    Button_Alarm.DataContext = selectedCalendarNode;
-                    TextBlock_NoArrangement.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    TextBlock_NoArrangement.Visibility = Visibility.Visible;
-                }
+                AlarmClockSource = targetNode;
             });
 
         }

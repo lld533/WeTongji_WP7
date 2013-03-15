@@ -94,6 +94,7 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\MvvmLight.4.1.23.0\lib\sl4-windowsphone71\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\WTSDK\Properties\Newtonsoft.Json.dll</HintPath>
@@ -120,6 +121,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\WTSDKExt\Supplemental\CalendarGroup.cs" />
+    <Compile Include="Pages\UpdatePassword.xaml.cs">
+      <DependentUpon>UpdatePassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ImageViewer.xaml.cs">
+      <DependentUpon>ImageViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converter\DateTimeToAgendaDateStringConverter.cs" />
     <Compile Include="Pages\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
@@ -247,6 +255,7 @@
       <DependentUpon>ViewOfficialWebsite.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\AppVersion.cs" />
+    <Compile Include="Utility\DateTimeToAlarmPointerRotationDegree.cs" />
     <Compile Include="Utility\DateTimeToChineseDate.cs" />
     <Compile Include="Utility\DescriptionToInlineCollection.cs" />
     <Compile Include="Utility\ImagePathToImageSource.cs" />
@@ -262,6 +271,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="Pages\UpdatePassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\ImageViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -370,6 +387,7 @@
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="WeTongji_2013_03_13_19_09_15.sap" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">
@@ -381,6 +399,7 @@
     <Content Include="icons\appbar.participate.rest.png" />
     <Content Include="icons\appbar.person.list.rest.png" />
     <Content Include="icons\appbar.register.rest.png" />
+    <Content Include="icons\appbar.share.rest.png" />
     <Content Include="icons\appbar.unfavourite.rest.png" />
     <Content Include="icons\appbar.unlike.rest.png" />
     <Content Include="icons\appbar.unparticipate.rest.png" />

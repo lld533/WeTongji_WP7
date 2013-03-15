@@ -34,7 +34,6 @@ namespace WeTongji.Business
         /// Lock this object when saving settings
         /// </summary>
         private Object objectToLock;
-
         #endregion
 
         #region [Properties]
@@ -63,6 +62,22 @@ namespace WeTongji.Business
 
         public int AroundNewsPageId { get; set; }
 
+        public List<CalendarGroup<CalendarNode>> AgendaSource
+        {
+            get;
+            private set;
+        }
+
+        public SourceState CurrentAgendaSourceState { get; set; }
+        public SourceState CurrentPeopleOfWeekSourceState { get; set; }
+        public SourceState CurrentActivitySourceState { get; set; }
+
+        #endregion
+
+        #region [Event handlers]
+
+        public event EventHandler AgendaSourceStateChanged;
+
         #endregion
 
         #region [Constructor]
@@ -84,6 +99,8 @@ namespace WeTongji.Business
         #endregion
 
         #region [Functions]
+
+        #region [public]
 
         public void LoadSettings()
         {
@@ -141,6 +158,54 @@ namespace WeTongji.Business
             SaveSettings();
         }
 
+        public void CleanAgendaSource()
+        {
+            if (AgendaSource != null)
+            {
+                AgendaSource.Clear();
+            }
+
+            CurrentAgendaSourceState = SourceState.NotSet;
+            OnAgendaSourceStateChanged();
+        }
+
+        public void SetAgendaSource(List<CalendarGroup<CalendarNode>> src)
+        {
+            if (src == null)
+                throw new ArgumentNullException("src");
+
+            AgendaSource = src;
+
+            var previousState = CurrentAgendaSourceState;
+
+            CurrentAgendaSourceState = SourceState.Done;
+            OnAgendaSourceStateChanged();
+        }
+
+        public void StartSettingAgendaSource()
+        {
+            CurrentAgendaSourceState = SourceState.Setting;
+            OnAgendaSourceStateChanged();
+        }
+
         #endregion
+
+        #region [Private]
+        private void OnAgendaSourceStateChanged()
+        {
+            var handler = AgendaSourceStateChanged;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+        #endregion
+
+        #endregion
+    }
+
+    public enum SourceState
+    {
+        NotSet,
+        Setting,
+        Done
     }
 }

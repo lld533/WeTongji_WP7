@@ -200,6 +200,11 @@ namespace WeTongji
             this.NavigationService.Navigate(new Uri("/Pages/EditPersonalProfile.xaml", UriKind.RelativeOrAbsolute));
         }
 
+        private void NavToUpdatePassword(Object sender, EventArgs e)
+        {
+            this.NavigationService.Navigate(new Uri("/Pages/UpdatePassword.xaml", UriKind.RelativeOrAbsolute));
+        }
+
         #endregion
 
         #region [Visual]

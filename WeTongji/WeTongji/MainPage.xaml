@@ -5,6 +5,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:WeTongji"
@@ -156,6 +157,148 @@
             </Setter>
         </Style>
 
+        <Storyboard x:Name="AvatarAnimation" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="AvatarStackPanel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:3" Value="-35"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="-35"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="AlarmAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="AlarmLeftEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)" Storyboard.TargetName="AlarmLeftEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="AlarmLeftEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="AlarmRightEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)" Storyboard.TargetName="AlarmRightEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="AlarmRightEar">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="-2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="SetAlarmClockAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="HourPointer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="120"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="MinutePointer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="180"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Name="VisibleAlarmClockPointersAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HourPointer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="MinutePointer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Name="ResetAlarmClockPointersAnimation">
+            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="HourPointer"/>
+            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="MinutePointer"/>
+            <DoubleAnimation Duration="0" To="0"  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="HourPointer"/>
+            <DoubleAnimation Duration="0" To="0"  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="MinutePointer"/>
+        </Storyboard>
+
+        <Storyboard x:Key="AroundNewsImageAnimation" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="Image_AroundNews">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="-100">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseInOut" Exponent="5"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="TongjiNewsImageAnimation" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="Image_TongjiNews">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="-25">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseInOut" Exponent="5"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="ClubNewsImageAnimation" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="Image_ClubNews">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="-25">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseInOut" Exponent="5"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="OfficialNoteImageAnimation" RepeatBehavior="Forever" AutoReverse="True">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="Image_OfficialNote">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="-100">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseInOut" Exponent="5"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
@@ -204,127 +347,121 @@
                 </Border>
                 <!--Signed in-->
                 <Border x:Name="Border_SignedIn" Visibility="{Binding Visibility, ElementName=Border_SignedOut, Converter={StaticResource TurnOverVisibilityConverter}}"
-                        VerticalAlignment="Top">
+			            VerticalAlignment="Top">
                     <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <Grid>
-                                <Grid.RowDefinitions>
+                            <StackPanel>
 
-                                    <!--Avatar & Favorites-->
-                                    <RowDefinition Height="141"/>
-                                    <RowDefinition Height="13"/>
-
-                                    <!--Alarm-->
-                                    <RowDefinition Height="141"/>
-                                    <RowDefinition Height="13"/>
-
-                                    <!--Agendar-->
-                                    <RowDefinition Height="141"/>
-                                </Grid.RowDefinitions>
-
-                                <!--Avatar & Favorites-->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="141"/>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="141"/>
-                                    </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
 
                                     <!---Avatar-->
                                     <Button x:Name="Button_PersonalProfile"  Style="{StaticResource NoBorderButtonStyle}" Click="ViewPersonalProfile">
-                                        <Button.Content>
+                                        <StackPanel x:Name="AvatarStackPanel" Margin="0" RenderTransformOrigin="0.5,0.5">
+                                            <StackPanel.RenderTransform>
+                                                <CompositeTransform/>
+                                            </StackPanel.RenderTransform>
+
+                                            <Border Background="#FF1BA1E2"
+										Width="141" Height="35">
+                                                <!--Name-->
+                                                <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
+											HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+
+                                            <!--Avatar-->
                                             <Grid Width="141" Height="141">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="35"/>
-                                                    <RowDefinition Height="141"/>
-                                                </Grid.RowDefinitions>
-
-                                                <Border Background="#FF1BA1E2">
-                                                    <!--Name-->
-                                                    <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
-                                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-
-                                                <!--Avatar-->
-                                                <Grid Grid.Row="1">
-                                                    <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
-                                                    <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
-                                                </Grid>
-
-
+                                                <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                                                <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
                                             </Grid>
-                                        </Button.Content>
+                                        </StackPanel>
                                     </Button>
 
                                     <!--Favorites-->
-                                    <Button x:Name="Button_Favorite"  Style="{StaticResource NoBorderButtonStyle}" Grid.Column="2"
-                                        Click="ViewMyFavorite">
-                                        <Button.Content>
-                                            <Grid Background="#FF1BA1E2" Width="141" Height="141">
-                                                <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
-                                                      Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
+                                    <Button x:Name="Button_Favorite"  Style="{StaticResource NoBorderButtonStyle}"
+								Click="ViewMyFavorite" Margin="20,0,0,0" VerticalAlignment="Top">
+                                        <Grid Background="#FF1BA1E2" Width="141" Height="141">
+                                            <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
+										Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
 
-                                                <!--Count of Favorites-->
-                                                <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding FavoritesCount}" FontSize="40"/>
+                                            <!--Count of Favorites-->
+                                            <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding FavoritesCount}" FontSize="40"/>
 
-                                                <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
-                                            </Grid>
-                                        </Button.Content>
+                                            <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
+                                        </Grid>
                                     </Button>
-                                </Grid>
+                                </StackPanel>
+                                <Border BorderBrush="Black" Height="35" Margin="0,-35,0,0" VerticalAlignment="Top" Background="{StaticResource PhoneBackgroundBrush}"/>
 
                                 <!--Alarm-->
-                                <Button x:Name="Button_Alarm" Style="{StaticResource NoBorderButtonStyle}" Grid.Row="2" HorizontalAlignment="Left" 
-                                        Click="ViewAlarmItem">
-                                    <Button.Content>
-                                        <Grid Background="#FF1BA1E2" Width="302" Height="141">
-                                            <!--Icon-->
-                                            <Grid Width="60" Height="67" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,14,0,0">
-                                                <Ellipse x:Name="AlarmBody" Height="35" Stroke="White" StrokeThickness="4" Width="35"/>
-                                                <Path x:Name="AlarmRightEar" Data="M68.312,349.25 C73.9379,351.313 79.1882,354.938 81.7498,361.312 C84.8121,361.062 86.2507,351.688 81.313,348.064 C78.3756,345.314 71.34,345.34 68.312,349.25 z" Height="16.176" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Width="17.23" Fill="White" Margin="28,-31,0,0"/>
-                                                <Path x:Name="VerticalLine" Data="M62.345,352.576 L62.3541,344.93" Fill="White" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Opacity="0.995" Margin="29.344,5.531,28.562,46.417" StrokeThickness="2"/>
-                                                <Ellipse x:Name="AlarmRing" Fill="White" Height="5" Stroke="White" Width="5" Margin="28,2,27,53"/>
-                                                <Path x:Name="AlarmLeftEar" Data="M42.956,358.275 C47.5894,353.212 50.5528,351.333 56.8763,349.865 C55.672,348.597 54.4516,348.184 52.5292,347.624 C50.4293,347.355 48.3295,347.292 46.4367,347.707 C44.8248,347.925 42.163,349.264 41.0441,350.612 C40.8617,350.83 40.0188,351.691 40.0188,354.243 C40.1075,356.629 42.2069,358.095 42.956,358.275 z" Stretch="Fill" Stroke="White" UseLayoutRounding="False" StrokeThickness="0" Fill="White" Margin="8,9.738,34.188,40.896"/>
-                                                <Path x:Name="AlarmLeftFoot" Data="M48.625,380.042 L44.125,387.25 L47.75,389.333 L51.5833,383 z" Height="9.291" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="7.458" Fill="White" Margin="-28,31,0,0"/>
-                                                <Path x:Name="AlarmRightFoot" Data="M73.4167,382.833 L77.4164,389.208 L80.2492,387.583 L76.3328,380.083 z" Fill="White" Height="9.125" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="6.833" Margin="0,31,-30,0"/>
-                                                <Path x:Name="MinutePointer" Data="M61.5595,364.479 L61.5382,371.063" Height="9.584" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Width="3.021" Margin="-1,-3,0,0" RenderTransformOrigin="0.5,0.85"/>
-                                                <Path x:Name="HourPointer" Data="M66.9609,371.098 L60.9707,371.098" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Margin="28.125,33.813,22.969,30.156" RenderTransformOrigin="0.155,0.5"/>
-                                            </Grid>
-                                            <TextBlock Text="提醒" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"/>
-
-                                            <!--Core Item-->
-                                            <Grid VerticalAlignment="Top" Margin="0,20,17,0">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="0.382*"/>
-                                                    <ColumnDefinition Width="0.618*"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <!--Time-->
-                                                <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
-                                                <!--Title-->
-                                                <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
-											               TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
-											               Text="{Binding Title}"/>
-                                            </Grid>
-
-                                            <!--No Arrangement case-->
-                                            <TextBlock x:Name="TextBlock_NoArrangement" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Collapsed"
-                                                       HorizontalAlignment="Right" VerticalAlignment="Top">
-                                            <Run Text="今天"/>
-                                            <LineBreak/>
-                                            <Run Text="没有安排"/>
-                                            </TextBlock>
+                                <Button x:Name="Button_Alarm" Style="{StaticResource NoBorderButtonStyle}" HorizontalAlignment="Left" 
+							Click="ViewAlarmItem" Margin="0,-22,0,0">
+                                    <Grid Background="#FF1BA1E2" Width="302" Height="141">
+                                        <!--Icon-->
+                                        <Grid Width="60" Height="67" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,14,0,0">
+                                            <Ellipse x:Name="AlarmBody" Height="35" Stroke="White" StrokeThickness="4" Width="35"/>
+                                            <Path x:Name="AlarmRightEar" Data="M68.312,349.25 C73.9379,351.313 79.1882,354.938 81.7498,361.312 C84.8121,361.062 86.2507,351.688 81.313,348.064 C78.3756,345.314 71.34,345.34 68.312,349.25 z" Height="16.176" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Width="17.23" Fill="White" Margin="28,-31,0,0"  RenderTransformOrigin="0.5,0.5">
+                                                <Path.RenderTransform>
+                                                    <CompositeTransform/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Path x:Name="VerticalLine" Data="M62.345,352.576 L62.3541,344.93" Fill="White" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Opacity="0.995" Margin="29.344,5.531,28.562,46.417" StrokeThickness="2"/>
+                                            <Ellipse x:Name="AlarmRing" Fill="White" Height="5" Stroke="White" Width="5" Margin="28,2,27,53"/>
+                                            <Path x:Name="AlarmLeftEar" Data="M42.956,358.275 C47.5894,353.212 50.5528,351.333 56.8763,349.865 C55.672,348.597 54.4516,348.184 52.5292,347.624 C50.4293,347.355 48.3295,347.292 46.4367,347.707 C44.8248,347.925 42.163,349.264 41.0441,350.612 C40.8617,350.83 40.0188,351.691 40.0188,354.243 C40.1075,356.629 42.2069,358.095 42.956,358.275 z" Stretch="Fill" Stroke="White" UseLayoutRounding="False" StrokeThickness="0" Fill="White" Margin="8,9.738,34.188,40.896" RenderTransformOrigin="0.5,0.5">
+                                                <Path.RenderTransform>
+                                                    <CompositeTransform/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Path x:Name="AlarmLeftFoot" Data="M48.625,380.042 L44.125,387.25 L47.75,389.333 L51.5833,383 z" Height="9.291" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="7.458" Fill="White" Margin="-28,31,0,0"/>
+                                            <Path x:Name="AlarmRightFoot" Data="M73.4167,382.833 L77.4164,389.208 L80.2492,387.583 L76.3328,380.083 z" Fill="White" Height="9.125" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" Width="6.833" Margin="0,31,-30,0"/>
+                                            <Path x:Name="HourPointer" Data="M61.013,366.952 L61.013,371.098" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Margin="28.989,27.839,27.969,32.015" RenderTransformOrigin="0.5,0.8"
+                                                  Opacity="0">
+                                                <Path.RenderTransform>
+                                                    <CompositeTransform/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Path x:Name="MinutePointer" Data="M61.5595,364.479 L61.5595,371.063" Height="9.584" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" UseLayoutRounding="False" Width="3.021" Margin="28.989,25.632,27.989,31.783" RenderTransformOrigin="0.5,0.85"
+                                                  Opacity="0">
+                                                <Path.RenderTransform>
+                                                    <CompositeTransform/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                            <Ellipse HorizontalAlignment="Center" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" VerticalAlignment="Center" Width="2" Height="2" Margin="-1,-2,0,0"/>
                                         </Grid>
-                                    </Button.Content>
+                                        <TextBlock Text="提醒" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"/>
+
+                                        <!--Core Item-->
+                                        <Grid VerticalAlignment="Top" Margin="0,20,17,0"
+                                              Visibility="{Binding Visibility, ElementName=TextBlock_NoArrangement, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.382*"/>
+                                                <ColumnDefinition Width="0.618*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!--Time-->
+                                            <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
+                                            <!--Title-->
+                                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
+										            TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
+										            Text="{Binding Title}"/>
+                                        </Grid>
+
+                                        <!--No Arrangement case-->
+                                        <TextBlock x:Name="TextBlock_NoArrangement" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Visible"
+									        HorizontalAlignment="Right" VerticalAlignment="Top">
+									        <Run Text="今天"/>
+									        <LineBreak/>
+									        <Run Text="没有安排"/>
+                                        </TextBlock>
+                                    </Grid>
                                 </Button>
 
                                 <!--Agendar-->
-                                <Grid Grid.Row="4">
+                                <Grid Margin="0,13,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="141"/>
                                         <ColumnDefinition Width="20"/>
@@ -332,28 +469,26 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button Style="{StaticResource NoBorderButtonStyle}"
-                                        Click="ViewMyAgenda">
-                                        <Button.Content>
-                                            <Grid Background="#FF1BA1E2" Width="141" Height="141">
-                                                <!--Icon-->
-                                                <Grid Width="41" Height="44" Margin="0,-13,0,0">
-                                                    <Path x:Name="LeftEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" StrokeThickness="5" Margin="6.383,-2.989,28.445,37.578"/>
-                                                    <Path x:Name="RightEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeThickness="5" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" Margin="29.008,-2.989,6.258,37.578"/>
-                                                    <Path x:Name="CalendarBody" Data="M45.4299,579.254 L45.7714,550.888 L48.4267,550.888 C48.416,551.837 48.5324,553.095 49.0639,553.813 C49.5491,554.579 50.1209,554.939 51.3236,555.604 C53.0311,556.255 54.1758,556.413 55.9132,555.793 C56.9822,555.291 58.3229,554.332 58.9919,552.78 C59.2123,552.016 59.2537,551.228 59.2584,550.416 L67.1757,550.401 C67.2928,551.873 67.7099,553.131 68.3083,554.094 C68.937,554.897 69.5686,555.517 70.7787,555.895 C71.9521,556.17 72.8522,556.367 74.4801,555.895 C75.3859,555.438 75.9489,555.109 76.6426,554.227 C77.2461,553.413 77.6803,551.908 77.6375,550.697 L80.8743,550.726 L80.607,578.944 C80.6477,580.439 79.061,581.998 77.8009,581.942 L48.8008,581.825 C47.9395,581.924 45.3805,581.111 45.4299,579.254 z" Stretch="Fill" Stroke="White" StrokeThickness="3" StrokeLineJoin="Round" UseLayoutRounding="False" Margin="-2.063,1.74,-2.062,2.069"/>
-                                                    <Path x:Name="Brow" Data="M45.8151,554.178 L46.1558,557.656 L80.2089,557.656 L80.2089,551.125 L79.2185,551.125 C78.0085,554.137 75.8139,555.862 72.5008,556.125 C69.1564,555.211 66.8804,553.368 65.783,550.5 L59.282,550.5 C58.5448,553.225 56.6965,554.827 54.1276,555.703 L47.7508,554.229 C46.7212,551.52 46.0764,551.506 45.8151,554.178 z" Stretch="Fill" StrokeThickness="0" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Margin="0.583,1.757,0.438,30.422"/>
-                                                    <!--@_@-->
-                                                    <!--This DAY-->
-                                                    <TextBlock x:Name="TextBlock_Today" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
-                                                </Grid>
-
-                                                <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
+								Click="ViewMyAgenda">
+                                        <Grid Background="#FF1BA1E2" Width="141" Height="141">
+                                            <!--Icon-->
+                                            <Grid Width="41" Height="44" Margin="0,-13,0,0">
+                                                <Path x:Name="LeftEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" StrokeThickness="5" Margin="6.383,-2.989,28.445,37.578"/>
+                                                <Path x:Name="RightEar" Data="M50.187,545.281 L50.1875,550.667 C51.9959,552.87 53.7374,552.776 55.4212,550.703 L55.3953,545.271 C53.7421,543.499 52.0069,543.483 50.187,545.281 z" Stretch="Fill" StrokeThickness="5" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Stroke="White" Margin="29.008,-2.989,6.258,37.578"/>
+                                                <Path x:Name="CalendarBody" Data="M45.4299,579.254 L45.7714,550.888 L48.4267,550.888 C48.416,551.837 48.5324,553.095 49.0639,553.813 C49.5491,554.579 50.1209,554.939 51.3236,555.604 C53.0311,556.255 54.1758,556.413 55.9132,555.793 C56.9822,555.291 58.3229,554.332 58.9919,552.78 C59.2123,552.016 59.2537,551.228 59.2584,550.416 L67.1757,550.401 C67.2928,551.873 67.7099,553.131 68.3083,554.094 C68.937,554.897 69.5686,555.517 70.7787,555.895 C71.9521,556.17 72.8522,556.367 74.4801,555.895 C75.3859,555.438 75.9489,555.109 76.6426,554.227 C77.2461,553.413 77.6803,551.908 77.6375,550.697 L80.8743,550.726 L80.607,578.944 C80.6477,580.439 79.061,581.998 77.8009,581.942 L48.8008,581.825 C47.9395,581.924 45.3805,581.111 45.4299,579.254 z" Stretch="Fill" Stroke="White" StrokeThickness="3" StrokeLineJoin="Round" UseLayoutRounding="False" Margin="-2.063,1.74,-2.062,2.069"/>
+                                                <Path x:Name="Brow" Data="M45.8151,554.178 L46.1558,557.656 L80.2089,557.656 L80.2089,551.125 L79.2185,551.125 C78.0085,554.137 75.8139,555.862 72.5008,556.125 C69.1564,555.211 66.8804,553.368 65.783,550.5 L59.282,550.5 C58.5448,553.225 56.6965,554.827 54.1276,555.703 L47.7508,554.229 C46.7212,551.52 46.0764,551.506 45.8151,554.178 z" Stretch="Fill" StrokeThickness="0" StrokeLineJoin="Round" UseLayoutRounding="False" Fill="White" Margin="0.583,1.757,0.438,30.422"/>
+                                                <!--@_@-->
+                                                <!--This DAY-->
+                                                <TextBlock x:Name="TextBlock_Today" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
                                             </Grid>
-                                        </Button.Content>
+
+                                            <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
+                                        </Grid>
                                     </Button>
 
                                 </Grid>
 
-                            </Grid>
+                            </StackPanel>
 
                         </ScrollViewer>
                     </controls:PanoramaItem>
@@ -452,7 +587,7 @@
             </Grid>-->
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                         <StackPanel>
-                            <Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
+                            <!--<Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToOfficialNotesList"/>
 
                             <Button x:Name="Button_ClubNews"  Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
@@ -494,7 +629,91 @@
                                         <Setter Property="FontSize" Value="24"/>
                                     </Style>
                                 </Button.Style>
-                            </Button>
+                            </Button>-->
+
+                            <Grid Height="660">
+
+                                <Grid x:Name="Grid_OfficialNote" VerticalAlignment="Top" Height="240">
+
+                                    <Rectangle Fill="Gray"/>
+
+                                    <Image x:Name="Image_OfficialNote" Source="{Binding FirstImageBrush}" Stretch="UniformToFill">
+                                        <Image.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Image.RenderTransform>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener Tap="NavToOfficialNotesList"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </Image>
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
+                                        <TextBlock Text="校务通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <Grid x:Name="Grid_ClubNews" VerticalAlignment="Top" Margin="0,165,0,0" Canvas.ZIndex="3" Height="165">
+
+                                    <Rectangle Fill="Gray"/>
+
+                                    <Image x:Name="Image_ClubNews" VerticalAlignment="Bottom"  Source="{Binding FirstImageBrush}" Stretch="UniformToFill">
+                                        <Image.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Image.RenderTransform>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener Tap="NavToClubNewsList"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </Image>
+
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
+                                        <TextBlock Text="社团通告" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <Grid x:Name="Grid_TongjiNews" Canvas.ZIndex="2" Margin="0,165,0,0" Height="165">
+
+                                    <Rectangle Fill="Gray"/>
+                                    
+                                    <Image x:Name="Image_TongjiNews" VerticalAlignment="Top"  Source="{Binding FirstImageBrush}" Stretch="UniformToFill">
+                                        <Image.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Image.RenderTransform>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener Tap="NavToTongjiNewsList"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </Image>
+
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
+                                        <TextBlock Text="同济动态" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <Grid x:Name="Grid_AroundNews" Canvas.ZIndex="3" Height="240" Margin="0,495,0,0">
+
+                                    <Rectangle Fill="Gray"/>
+                                    
+                                    <Image x:Name="Image_AroundNews" VerticalAlignment="Bottom" Source="{Binding TitleImageBrush}" Stretch="UniformToFill">
+                                        <Image.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Image.RenderTransform>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener Tap="NavToAroundNewsList"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </Image>
+
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
+                                        <TextBlock Text="周边推荐" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Top" Height="25" Margin="0,140,0,0"/>
+                                <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" Margin="0,305,0,0" VerticalAlignment="Top" Height="25"/>
+                                <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Top" Margin="0,470,0,0" Height="25"/>
+                                <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Bottom" Height="25"/>
+
+                            </Grid>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -532,8 +751,8 @@
                                 </Grid>
 
                                 <!--Large Image-->
-                                <Image Stretch="UniformToFill" Margin="0,23,0,0"
-                                   Source="{Binding FirstImageBrush}"/>
+                                <Image Stretch="UniformToFill" Margin="0,23,0,0" MaxHeight="240"
+										Source="{Binding FirstImageBrush}"/>
 
                                 <Grid Margin="0,20,0,0">
                                     <Grid.ColumnDefinitions>
@@ -557,6 +776,7 @@
                                 <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,12,0,0"
 							        Click="NavToPeopleOfWeek"/>
 
+								<Border Height="20"/>
 
                             </StackPanel>
                         </ScrollViewer>
