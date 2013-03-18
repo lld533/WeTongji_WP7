@@ -65,7 +65,6 @@
         <shell:ApplicationBar>
             <shell:ApplicationBar.Buttons>
                 <shell:ApplicationBarIconButton IconUri="/icons/appbar.save.rest.png" Text="保存" Click="SaveImage_Button_Click"/>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.share.rest.png" Text="分享" Click="ShareImage_Button_Click"/>
             </shell:ApplicationBar.Buttons>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

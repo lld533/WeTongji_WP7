@@ -81,315 +81,351 @@
                          Title="校园资讯">
             <controls:PivotItem Header="同济动态">
                 <Grid>
-                    <ListBox x:Name="ListBox_TongjiNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                     SelectionChanged="Listbox_TongjiNews_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
-                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
-                                    <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="190"/>
-                                        </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoTongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <ListBox x:Name="ListBox_TongjiNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                             SelectionChanged="Listbox_TongjiNews_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                        <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                              Visibility="{Binding Visibility, ElementName=Button_LoadMore, Converter={StaticResource TurnOverVisibilityConverter}}">
 
-                                        <Grid>
-                                            <Grid Margin="21,12,21,14">
-                                                <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+                                            <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="190"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid>
+                                                    <Grid Margin="21,12,21,14">
+                                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
 										                Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                                <Grid VerticalAlignment="Bottom">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="6"/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
+                                                        <Grid VerticalAlignment="Bottom">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="6"/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
 
-                                                    <!--Creation time-->
-                                                    <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+                                                            <!--Creation time-->
+                                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
-                                                    <!--News source-->
-                                                    <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+                                                            <!--News source-->
+                                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
 											                Text="{Binding Source}"/>
+                                                        </Grid>
+                                                    </Grid>
                                                 </Grid>
+                                                <!--@_@-->
+                                                <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                                <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
+
                                             </Grid>
-                                        </Grid>
-                                        <!--@_@-->
-                                        <Rectangle Grid.Column="1" Fill="BurlyWood"/>
-                                        <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
+                                            <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="36"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="20"/>
+                                                </Grid.ColumnDefinitions>
 
-                                    </Grid>
-                                    <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition Width="150"/>
-                                            <ColumnDefinition Width="36"/>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="20"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!--News summary-->
-                                        <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
+                                                <!--News summary-->
+                                                <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
 											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
-                                        <Grid Grid.Column="3" Margin="0,9,0,17">
-                                            <!--Title-->
-                                            <TextBlock VerticalAlignment="Top" Foreground="Black"
+                                                <Grid Grid.Column="3" Margin="0,9,0,17">
+                                                    <!--Title-->
+                                                    <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
 											Text="{Binding Title}" MaxHeight="80"/>
 
 
-                                            <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="6"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
+                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="6"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
 
-                                                <!--Creation time-->
-                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+                                                        <!--Creation time-->
+                                                        <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
-                                                <!--News source-->
-                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+                                                        <!--News source-->
+                                                        <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
 														Text="{Binding Source}"/>
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;同济动态&quot;" FontSize="22" 
+                                                Visibility="{Binding IsInvalidSchoolNews, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                     </Grid>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    
-                    <TextBlock Text="暂无&quot;同济动态&quot;信息" Foreground="#FF999999" FontSize="22"
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <TextBlock Text="正在加载&quot;同济动态&quot;" Foreground="#FF999999" FontSize="22"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                Visibility="{Binding Visibility, ElementName=ListBox_TongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                    </Grid>
+                    <TextBlock x:Name="TextBlock_NoTongjiNews"  Text="暂无&quot;同济动态&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="Collapsed"/>
                 </Grid>
 
             </controls:PivotItem>
             <controls:PivotItem Header="周边推荐">
                 <Grid>
-                    <ListBox x:Name="ListBox_NearBy" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                     SelectionChanged="ListBox_NearBy_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
-                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="190"/>
-                                </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoAroundNews, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <ListBox x:Name="ListBox_NearBy" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                                 SelectionChanged="ListBox_NearBy_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                        <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                              Visibility="{Binding Visibility, ElementName=Button_LoadMore, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="190"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <!--Title image-->
-                                <Rectangle Grid.Column="1" Fill="LightGoldenrodYellow"/>
-                                <Image Grid.Column="1"  Stretch="UniformToFill"
+                                            <!--Title image-->
+                                            <Rectangle Grid.Column="1" Fill="LightGoldenrodYellow"/>
+                                            <Image Grid.Column="1"  Stretch="UniformToFill"
                                        Source="{Binding TitleImageBrush}"/>
 
-                                <Grid Grid.Column="1" HorizontalAlignment="Right" Height="64" VerticalAlignment="Top" Width="111" Visibility="{Binding HasTicket, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Path Data="M0,0 L62,0 L111,29 L111,64 z" Fill="#FFF07817" Opacity="0.9"/>
-                                    <TextBlock Text="票" RenderTransformOrigin="0.5,0.5">
-                                        <TextBlock.RenderTransform>
-                                            <CompositeTransform Rotation="30" TranslateX="40" TranslateY="26"/>
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
-                                </Grid>
+                                            <Grid Grid.Column="1" HorizontalAlignment="Right" Height="64" VerticalAlignment="Top" Width="111" Visibility="{Binding HasTicket, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Path Data="M0,0 L62,0 L111,29 L111,64 z" Fill="#FFF07817" Opacity="0.9"/>
+                                                <TextBlock Text="票" RenderTransformOrigin="0.5,0.5">
+                                                    <TextBlock.RenderTransform>
+                                                        <CompositeTransform Rotation="30" TranslateX="40" TranslateY="26"/>
+                                                    </TextBlock.RenderTransform>
+                                                </TextBlock>
+                                            </Grid>
 
-                                <Grid Margin="21,12">
-                                    <TextBlock FontSize="26" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" MaxHeight="104" TextTrimming="WordEllipsis"
+                                            <Grid Margin="21,12">
+                                                <TextBlock FontSize="26" Foreground="Black" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" MaxHeight="104" TextTrimming="WordEllipsis"
 												Text="{Binding Title}"/>
 
-                                    <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis" VerticalAlignment="Bottom" FontSize="18"
+                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis" VerticalAlignment="Bottom" FontSize="18"
                                            Text="{Binding Summary}"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                            </Grid>
+                                        </Grid>
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;周边推荐&quot;" FontSize="22"
+                                                Visibility="{Binding IsInvalidAround, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
-                    <TextBlock Text="暂无&quot;周边推荐&quot;信息" Foreground="#FF999999" FontSize="22"
+                        <TextBlock Text="正在加载&quot;周边推荐&quot;" Foreground="#FF999999" FontSize="22"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                Visibility="{Binding Visibility, ElementName=ListBox_NearBy, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                    </Grid>
+                    <TextBlock x:Name="TextBlock_NoAroundNews"  Text="暂无&quot;周边推荐&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="Collapsed"/>
                 </Grid>
-                
             </controls:PivotItem>
             <controls:PivotItem Header="校务通知">
                 <Grid>
-                    <ListBox x:Name="ListBox_OfficialNotes" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                     SelectionChanged="Listbox_OfficialNotes_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
-                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="190"/>
-                                    </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoOfficialNote, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <ListBox x:Name="ListBox_OfficialNotes" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                             SelectionChanged="Listbox_OfficialNotes_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                        <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                              Visibility="{Binding Visibility, ElementName=Button_LoadMore, Converter={StaticResource TurnOverVisibilityConverter}}">
 
-                                    <Grid>
-                                        <Grid Margin="21,12,21,14">
-                                            <!--Title-->
-                                            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+                                            <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="190"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid>
+                                                    <Grid Margin="21,12,21,14">
+                                                        <!--Title-->
+                                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
 										            Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                            <Grid VerticalAlignment="Bottom">
+                                                        <Grid VerticalAlignment="Bottom">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="6"/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!--Creation time-->
+                                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                            <!--Source-->
+                                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+											                Text="{Binding Source}"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+
+                                                <!--First Image-->
+                                                <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                                <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
+
+                                            </Grid>
+                                            <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="6"/>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="36"/>
                                                     <ColumnDefinition/>
+                                                    <ColumnDefinition Width="20"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <!--Creation time-->
-                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
-
-                                                <!--Source-->
-                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											                Text="{Binding Source}"/>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-
-                                    <!--First Image-->
-                                    <Rectangle Grid.Column="1" Fill="BurlyWood"/>
-                                    <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
-
-                                </Grid>
-                                <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="36"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="20"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!--Summary-->
-                                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
+                                                <!--Summary-->
+                                                <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
 											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
-                                    <Grid Grid.Column="3" Margin="0,9,0,17">
-                                        <!--Title-->
-                                        <TextBlock VerticalAlignment="Top" Foreground="Black"
+                                                <Grid Grid.Column="3" Margin="0,9,0,17">
+                                                    <!--Title-->
+                                                    <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
 											Text="{Binding Title}" MaxHeight="80"/>
 
 
-                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="6"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
 
-                                            <!--Creation time-->
-                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+                                                        <!--Creation time-->
+                                                        <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
-                                            <!--News source-->
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+                                                        <!--News source-->
+                                                        <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
 														Text="{Binding Source}"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;校务通知&quot;" FontSize="22"
+                                                Visibility="{Binding IsInvalidForStaff, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                     </Grid>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
-                    <TextBlock Text="暂无&quot;校务通知&quot;信息" Foreground="#FF999999" FontSize="22"
+                        <TextBlock Text="正在加载&quot;校务通知&quot;" Foreground="#FF999999" FontSize="22"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                Visibility="{Binding Visibility, ElementName=ListBox_OfficialNotes, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                    </Grid>
+                    <TextBlock x:Name="TextBlock_NoOfficialNote"  Text="暂无&quot;团体通知&quot;信息" Foreground="#FF999999" FontSize="22"
+                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Visibility="Collapsed"/>
                 </Grid>
-                
+
             </controls:PivotItem>
-            <controls:PivotItem Header="社团通告">
+            <controls:PivotItem Header="团体通知">
                 <Grid>
-                    <ListBox x:Name="ListBox_SocietyNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                     SelectionChanged="ListBox_SocietyNews_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
-                                  Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
-                                <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="190"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid>
-                                        <Grid Margin="21,12,21,14">
-                                            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										                Text="{Binding Title}" FontSize="26" Foreground="Black"/>
-
-                                            <Grid VerticalAlignment="Bottom">
+                    <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoClubNews, Converter={StaticResource TurnOverVisibilityConverter}}">
+                        <ListBox x:Name="ListBox_SocietyNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                            SelectionChanged="ListBox_SocietyNews_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
+                                        <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
+                                              Visibility="{Binding Visibility, ElementName=Button_LoadMore, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                            <Grid Name="IllustratedTemplate" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="6"/>
-                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="190"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <!--Created at-->
-                                                <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+                                                <Grid>
+                                                    <Grid Margin="21,12,21,14">
+                                                        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
+										                Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
-                                                <!--News source-->
-                                                <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+                                                        <Grid VerticalAlignment="Bottom">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="6"/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!--Created at-->
+                                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+
+                                                            <!--News source-->
+                                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
 											    Text="{Binding Source}"/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+
+                                                <!--First Image-->
+                                                <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                                <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
+
                                             </Grid>
-                                        </Grid>
-                                    </Grid>
+                                            <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="36"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="20"/>
+                                                </Grid.ColumnDefinitions>
 
-                                    <!--First Image-->
-                                    <Rectangle Grid.Column="1" Fill="BurlyWood"/>
-                                    <Image Grid.Column="1" Source="{Binding FirstImageBrush}"  Stretch="UniformToFill"/>
-
-                                </Grid>
-                                <Grid Name="NonIllustratedTemplate" Visibility="{Binding Visibility, ElementName=IllustratedTemplate, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="36"/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="20"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!--Summary-->
-                                    <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
+                                                <!--Summary-->
+                                                <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis"
 											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
-                                    <Grid Grid.Column="3" Margin="0,9,0,17">
-                                        <!--Title-->
-                                        <TextBlock VerticalAlignment="Top" Foreground="Black"
+                                                <Grid Grid.Column="3" Margin="0,9,0,17">
+                                                    <!--Title-->
+                                                    <TextBlock VerticalAlignment="Top" Foreground="Black"
 											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
 											Text="{Binding Title}" MaxHeight="80"/>
 
 
-                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="6"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="6"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
 
-                                            <!--Created at-->
-                                            <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
+                                                        <!--Created at-->
+                                                        <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
-                                            <!--News source-->
-                                            <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
+                                                        <!--News source-->
+                                                        <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
 														Text="{Binding Source}"/>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
                                         </Grid>
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;团体通知&quot;" FontSize="22"
+                                                Visibility="{Binding IsInvalidClubNews, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                     </Grid>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
-                    <TextBlock Text="暂无&quot;社团通告&quot;信息" Foreground="#FF999999" FontSize="22"
+                        <TextBlock Text="正在加载&quot;团体通知&quot;" Foreground="#FF999999" FontSize="22"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Visibility="{Binding Visibility, ElementName=ListBox_SocietyNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                    </Grid>
+                    <TextBlock x:Name="TextBlock_NoClubNews"  Text="暂无&quot;团体通知&quot;信息" Foreground="#FF999999" FontSize="22"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Visibility="{Binding Visibility, ElementName=ListBox_SocietyNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                               Visibility="Collapsed"/>
                 </Grid>
-                
             </controls:PivotItem>
         </controls:Pivot>
 

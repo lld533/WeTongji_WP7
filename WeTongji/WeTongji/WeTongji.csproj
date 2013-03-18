@@ -121,6 +121,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converter\ReversedTextLengthToVisibilityConverter.cs" />
     <Compile Include="Extensions\WTSDKExt\Supplemental\CalendarGroup.cs" />
     <Compile Include="Pages\UpdatePassword.xaml.cs">
       <DependentUpon>UpdatePassword.xaml</DependentUpon>
@@ -133,7 +134,6 @@
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
     <Compile Include="Business\Global.cs" />
-    <Compile Include="Business\WTDispatcher.cs" />
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Converter\NumberToChineseNumberStringConverter.cs" />
     <Compile Include="Converter\ReversedBoolToVisibilityConverter.cs" />
@@ -387,7 +387,6 @@
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="WeTongji_2013_03_13_19_09_15.sap" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">
@@ -399,7 +398,6 @@
     <Content Include="icons\appbar.participate.rest.png" />
     <Content Include="icons\appbar.person.list.rest.png" />
     <Content Include="icons\appbar.register.rest.png" />
-    <Content Include="icons\appbar.share.rest.png" />
     <Content Include="icons\appbar.unfavourite.rest.png" />
     <Content Include="icons\appbar.unlike.rest.png" />
     <Content Include="icons\appbar.unparticipate.rest.png" />

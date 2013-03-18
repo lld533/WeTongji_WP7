@@ -19,233 +19,247 @@ using WeTongji.Api.Domain;
 using WeTongji.Business;
 using WeTongji.Api;
 using System.Diagnostics;
+using WeTongji.Utility;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace WeTongji
 {
     public partial class CampusInfo : PhoneApplicationPage
     {
-        private int loadDataCounter = 0;
-
-        private int LoadDataCounter
+        private ObservableCollection<SchoolNewsExt> SchoolNewsSource
         {
-            get { return loadDataCounter; }
+            get
+            {
+                return ListBox_TongjiNews.ItemsSource == null
+                    ? null
+                    : ListBox_TongjiNews.ItemsSource as ObservableCollection<SchoolNewsExt>;
+            }
             set
             {
-                if (value == loadDataCounter)
-                    return;
+                if (value == null || value.Count == 0)
+                {
+                    ListBox_TongjiNews.ItemsSource = null;
+                    TextBlock_NoTongjiNews.Visibility = Visibility.Visible;
 
-                loadDataCounter = value;
-
-                if (loadDataCounter > 0)
-                    ProgressBarPopup.Instance.Open();
+                    SchoolNewsSource.CollectionChanged -= SchoolNewsSourceChanged;
+                }
                 else
                 {
-                    OnLoadDataCompleted();
-                    ProgressBarPopup.Instance.Close();
+                    if (SchoolNewsSource != null)
+                        SchoolNewsSource.CollectionChanged -= SchoolNewsSourceChanged;
+
+                    ObservableCollection<SchoolNewsExt> tmp = null;
+                    ListBox_TongjiNews.ItemsSource = tmp = new ObservableCollection<SchoolNewsExt>();
+
+                    tmp.CollectionChanged += SchoolNewsSourceChanged;
+                    foreach (var item in value)
+                        tmp.Add(item);
+
+                    ListBox_TongjiNews.Visibility = Visibility.Visible;
+                    TextBlock_NoTongjiNews.Visibility = Visibility.Collapsed;
                 }
             }
         }
 
-        private event EventHandler LoadDataCompleted;
+        private ObservableCollection<AroundExt> AroundNewsSource
+        {
+            get
+            {
+                return ListBox_NearBy.ItemsSource == null
+                    ? null
+                    : ListBox_NearBy.ItemsSource as ObservableCollection<AroundExt>;
+            }
+            set
+            {
+                if (value == null || value.Count == 0)
+                {
+                    ListBox_NearBy.ItemsSource = null;
+                    TextBlock_NoAroundNews.Visibility = Visibility.Visible;
+
+                    AroundNewsSource.CollectionChanged -= AroundNewsSourceChanged;
+                }
+                else
+                {
+                    if (AroundNewsSource != null)
+                        AroundNewsSource.CollectionChanged -= AroundNewsSourceChanged;
+
+                    ObservableCollection<AroundExt> tmp = null;
+                    ListBox_NearBy.ItemsSource = tmp = new ObservableCollection<AroundExt>();
+
+                    tmp.CollectionChanged += AroundNewsSourceChanged;
+                    foreach (var item in value)
+                        tmp.Add(item);
+
+                    ListBox_NearBy.Visibility = Visibility.Visible;
+                    TextBlock_NoAroundNews.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private ObservableCollection<ForStaffExt> OfficialNotesSource
+        {
+            get
+            {
+                return ListBox_OfficialNotes.ItemsSource == null
+                    ? null
+                    : ListBox_OfficialNotes.ItemsSource as ObservableCollection<ForStaffExt>;
+            }
+            set
+            {
+                if (value == null || value.Count == 0)
+                {
+                    ListBox_OfficialNotes.ItemsSource = null;
+                    TextBlock_NoOfficialNote.Visibility = Visibility.Visible;
+
+                    OfficialNotesSource.CollectionChanged -= OfficalNoteSourceChanged;
+                }
+                else
+                {
+                    if (OfficialNotesSource != null)
+                        OfficialNotesSource.CollectionChanged -= OfficalNoteSourceChanged;
+
+                    ObservableCollection<ForStaffExt> tmp = null;
+                    ListBox_OfficialNotes.ItemsSource = tmp = new ObservableCollection<ForStaffExt>();
+
+                    tmp.CollectionChanged += OfficalNoteSourceChanged;
+                    foreach (var item in value)
+                        tmp.Add(item);
+
+                    ListBox_OfficialNotes.Visibility = Visibility.Visible;
+                    TextBlock_NoOfficialNote.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private ObservableCollection<ClubNewsExt> ClubNewsSource
+        {
+            get
+            {
+                return ListBox_SocietyNews.ItemsSource == null
+                    ? null
+                    : ListBox_SocietyNews.ItemsSource as ObservableCollection<ClubNewsExt>;
+            }
+            set
+            {
+                if (value == null || value.Count == 0)
+                {
+                    ListBox_SocietyNews.ItemsSource = null;
+                    TextBlock_NoClubNews.Visibility = Visibility.Visible;
+
+                    ClubNewsSource.CollectionChanged -= ClubNewsSourceChanged;
+                }
+                else
+                {
+                    if (ClubNewsSource != null)
+                        ClubNewsSource.CollectionChanged -= ClubNewsSourceChanged;
+
+                    ObservableCollection<ClubNewsExt> tmp = null;
+                    ListBox_SocietyNews.ItemsSource = tmp = new ObservableCollection<ClubNewsExt>();
+
+                    tmp.CollectionChanged += ClubNewsSourceChanged;
+                    foreach (var item in value)
+                        tmp.Add(item);
+
+
+                    ListBox_SocietyNews.Visibility = Visibility.Visible;
+                    TextBlock_NoClubNews.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
 
         public CampusInfo()
         {
-            LoadDataCompleted += LoadUnstoredImages;
             InitializeComponent();
         }
 
-        private void OnLoadDataCompleted()
+        private void SchoolNewsSourceChanged(Object sender, NotifyCollectionChangedEventArgs e)
         {
-            var handler = LoadDataCompleted;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
+            foreach (var item in e.NewItems)
+            {
+                var sn = item as SchoolNewsExt;
+
+                if (!sn.IsInvalidSchoolNews && !String.IsNullOrEmpty(sn.ImageExtList) && !sn.ImageExists())
+                {
+                    var client = new WTDownloadImageClient();
+
+                    client.DownloadImageCompleted += (obj, arg) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            sn.SendPropertyChanged("FirstImageBrush");
+                        });
+                    };
+
+                    client.Execute(sn.GetImagesURL().First(), sn.ImageExtList.GetImageFilesNames().First());
+                }
+            }
         }
-
-        private void LoadUnstoredImages(object sender, EventArgs e)
+        private void AroundNewsSourceChanged(Object sender, NotifyCollectionChangedEventArgs e)
         {
-            #region [Tongji News]
-
-            if (ListBox_TongjiNews.ItemsSource != null)
+            foreach (var item in e.NewItems)
             {
-                var src = ListBox_TongjiNews.ItemsSource as IEnumerable<SchoolNewsExt>;
+                var an = item as AroundExt;
 
-                for (int i = 0; i < src.Count(); ++i)
+                if (!an.IsInvalidAround && !String.IsNullOrEmpty(an.TitleImage) && !an.IsTitleImageExists())
                 {
-                    var news = src.ElementAt(i);
+                    var client = new WTDownloadImageClient();
 
-                    if (!String.IsNullOrEmpty(news.ImageExtList) && !news.ImageExists())
+                    client.DownloadImageCompleted += (obj, arg) =>
                     {
-                        WTDispatcher.Instance.Do(() =>
+                        this.Dispatcher.BeginInvoke(() =>
                         {
-                            var client = new WTDownloadImageClient();
-
-                            client.DownloadImageStarted += (obj, arg) =>
-                                {
-                                    Debug.WriteLine("Download 1st image of school news[{0}] started: {1}", news.Id, arg.Url);
-                                };
-
-                            client.DownloadImageFailed += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of school news[{0}] FAILED: {1}\nError:{2}", news.Id, arg.Url, arg.Error);
-                            };
-
-                            client.DownloadImageCompleted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of school news[{0}] completed: {1}", news.Id, arg.Url);
-
-                                news.SaveImage(arg.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    news.SendPropertyChanged("FirstImageBrush");
-                                });
-                            };
-
-                            client.Execute(news.GetImagesURL().First());
+                            an.SendPropertyChanged("TitleImageBrush");
                         });
-                    }
+                    };
+
+                    client.Execute(an.TitleImage, an.TitleImageGuid + "." + an.TitleImage.GetImageFileExtension());
                 }
             }
-
-            #endregion
-
-            #region [Society News]
-
-            if (ListBox_SocietyNews.ItemsSource != null)
+        }
+        private void OfficalNoteSourceChanged(Object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var item in e.NewItems)
             {
-                var src = ListBox_SocietyNews.ItemsSource as IEnumerable<ClubNewsExt>;
+                var fs = item as ForStaffExt;
 
-                for (int i = 0; i < src.Count(); ++i)
+                if (!fs.IsInvalidForStaff && !String.IsNullOrEmpty(fs.ImageExtList) && !fs.ImageExists())
                 {
-                    var news = src.ElementAt(i);
+                    var client = new WTDownloadImageClient();
 
-                    if (!String.IsNullOrEmpty(news.ImageExtList) && !news.ImageExists())
+                    client.DownloadImageCompleted += (obj, arg) =>
                     {
-                        WTDispatcher.Instance.Do(() =>
+                        this.Dispatcher.BeginInvoke(() =>
                         {
-                            var client = new WTDownloadImageClient();
-
-                            client.DownloadImageStarted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of club news[{0}] started: {1}", news.Id, arg.Url);
-                            };
-
-                            client.DownloadImageFailed += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of club news[{0}] FAILED: {1}\nError:{2}", news.Id, arg.Url, arg.Error);
-                            };
-
-                            client.DownloadImageCompleted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of club news[{0}] completed: {1}", news.Id, arg.Url);
-
-                                news.SaveImage(arg.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    news.SendPropertyChanged("FirstImageBrush");
-                                });
-                            };
-
-                            client.Execute(news.GetImagesURL().First());
+                            fs.SendPropertyChanged("FirstImageBrush");
                         });
-                    }
+                    };
+
+                    client.Execute(fs.GetImagesURL().First(), fs.ImageExtList.GetImageFilesNames().First());
                 }
             }
-
-            #endregion
-
-            #region [Official Notes]
-
-            if (ListBox_OfficialNotes.ItemsSource != null)
+        }
+        private void ClubNewsSourceChanged(Object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var item in e.NewItems)
             {
-                var src = ListBox_OfficialNotes.ItemsSource as IEnumerable<ForStaffExt>;
+                var cn = item as ClubNewsExt;
 
-                for (int i = 0; i < src.Count(); ++i)
+                if (!cn.IsInvalidClubNews && !String.IsNullOrEmpty(cn.ImageExtList) && !cn.ImageExists())
                 {
-                    var news = src.ElementAt(i);
+                    var client = new WTDownloadImageClient();
 
-                    if (!String.IsNullOrEmpty(news.ImageExtList) && !news.ImageExists())
+                    client.DownloadImageCompleted += (obj, arg) =>
                     {
-                        WTDispatcher.Instance.Do(() =>
+                        this.Dispatcher.BeginInvoke(() =>
                         {
-                            var client = new WTDownloadImageClient();
-
-                            client.DownloadImageStarted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of official note[{0}] started: {1}", news.Id, arg.Url);
-                            };
-
-                            client.DownloadImageFailed += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of official note[{0}] FAILED: {1}\nError:{2}", news.Id, arg.Url, arg.Error);
-                            };
-
-                            client.DownloadImageCompleted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download 1st image of official note[{0}] completed: {1}", news.Id, arg.Url);
-
-                                news.SaveImage(arg.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    news.SendPropertyChanged("FirstImageBrush");
-                                });
-                            };
-
-                            client.Execute(news.GetImagesURL().First());
+                            cn.SendPropertyChanged("FirstImageBrush");
                         });
-                    }
+                    };
+
+                    client.Execute(cn.GetImagesURL().First(), cn.ImageExtList.GetImageFilesNames().First());
                 }
             }
-
-            #endregion
-
-            #region [Nearby News]
-
-            if (ListBox_NearBy.ItemsSource != null)
-            {
-                var src = ListBox_NearBy.ItemsSource as IEnumerable<AroundExt>;
-
-                for (int i = 0; i < src.Count(); ++i)
-                {
-                    var news = src.ElementAt(i);
-
-                    if (!news.IsTitleImageExists())
-                    {
-                        WTDispatcher.Instance.Do(() =>
-                        {
-                            var client = new WTDownloadImageClient();
-
-                            client.DownloadImageStarted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download title image of nearby news[{0}] started: {1}", news.Id, arg.Url);
-                            };
-
-                            client.DownloadImageFailed += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download title image of nearby news[{0}] FAILED: {1}\nError:{2}", news.Id, arg.Url, arg.Error);
-                            };
-
-                            client.DownloadImageCompleted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download title image of nearby news[{0}] completed: {1}", news.Id, arg.Url);
-
-                                news.SaveTitleImage(arg.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    news.SendPropertyChanged("TitleImageBrush");
-                                });
-                            };
-
-                            client.Execute(news.TitleImage);
-                        });
-                    }
-                }
-            }
-
-            #endregion
         }
 
         #region [Overridden]
@@ -271,175 +285,158 @@ namespace WeTongji
                 Int32 idx = 0;
                 Int32.TryParse(q, out idx);
                 idx = Math.Max(idx, 0);
-                idx = idx > (Int32)CampusInfoType.SocietyNews ? 0 : idx;
+                idx = idx > Pivot_Core.Items.Count ? 0 : idx;
 
                 Pivot_Core.SelectedIndex = idx;
 
-                if (ListBox_TongjiNews.ItemsSource != null)
-                    ListBox_TongjiNews.Visibility = Visibility.Visible;
-
-                if (ListBox_NearBy.ItemsSource != null)
-                    ListBox_NearBy.Visibility = Visibility.Visible;
-
-                if (ListBox_OfficialNotes.ItemsSource != null)
-                    ListBox_OfficialNotes.Visibility = Visibility.Visible;
-
-                if (ListBox_SocietyNews.ItemsSource != null)
-                    ListBox_SocietyNews.Visibility = Visibility.Visible;
-
-                #region [Load actions]
-
-                LoadDataCounter = 4;
-
-                var actions = new Action[] 
-                    { 
-                        ()=>
-                        {
-                            WTDispatcher.Instance.Do(() => 
-                            {
-                                SchoolNewsExt[] schoolnews = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    schoolnews = db.SchoolNewsTable.ToArray();
-                                }
-                                var src = schoolnews.Reverse();
-                                int count = src.Count();
-
-                                this.Dispatcher.BeginInvoke(() => 
-                                {
-                                    --LoadDataCounter;
-
-                                    if (ListBox_TongjiNews.ItemsSource == null)
-                                    {
-                                        ListBox_TongjiNews.ItemsSource = src;
-                                    }
-                                    else if ((ListBox_TongjiNews.ItemsSource as IEnumerable<SchoolNewsExt>).Count() != count)
-                                    {
-                                        ListBox_TongjiNews.ItemsSource = src;
-                                    }
-                                    else
-                                        return;
-
-                                    if (count > 0)
-                                        ListBox_TongjiNews.Visibility = Visibility.Visible;
-                                });
-                            });
-                        },
-  
-                        ()=>
-                        {
-                            WTDispatcher.Instance.Do(() =>
-                            {
-                                AroundExt[] an = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    an = db.AroundTable.ToArray();
-                                }
-                                var src = an.Reverse();
-                                int count = src.Count();
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    --LoadDataCounter;
-
-                                    if (ListBox_NearBy.ItemsSource == null)
-                                    {
-                                        ListBox_NearBy.ItemsSource = src;
-                                    }
-                                    else if ((ListBox_NearBy.ItemsSource as IEnumerable<AroundExt>).Count() != count)
-                                    {
-                                        ListBox_NearBy.ItemsSource = src;
-                                    }
-                                    else
-                                        return;
-
-                                    if (count > 0)
-                                        ListBox_NearBy.Visibility = Visibility.Visible;
-                                });
-                            });
-                        },
-
-                        ()=>
-                        {
-                            WTDispatcher.Instance.Do(() =>
-                            {
-                                ForStaffExt[] fs = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    fs = db.ForStaffTable.ToArray();
-                                }
-                                var src = fs.Reverse();
-                                int count = src.Count();
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    --LoadDataCounter;
-
-                                    if (ListBox_OfficialNotes.ItemsSource == null)
-                                    {
-                                        ListBox_OfficialNotes.ItemsSource = src;
-                                    }
-                                    else if ((ListBox_OfficialNotes.ItemsSource as IEnumerable<ForStaffExt>).Count() != count)
-                                    {
-                                        ListBox_OfficialNotes.ItemsSource = src;
-                                    }
-                                    else
-                                        return;
-
-                                    if (count > 0)
-                                        ListBox_OfficialNotes.Visibility = Visibility.Visible;
-                                });
-                            });
-                        },
-
-                        ()=>
-                        {
-                            WTDispatcher.Instance.Do(() =>
-                            {
-                                ClubNewsExt[] sn = null;
-                                using (var db = WTShareDataContext.ShareDB)
-                                {
-                                    sn = db.ClubNewsTable.ToArray();
-                                }
-                                var src = sn.Reverse();
-                                int count = src.Count();
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    --LoadDataCounter;
-
-                                    if (ListBox_SocietyNews.ItemsSource == null)
-                                    {
-                                        ListBox_SocietyNews.ItemsSource = src;
-                                    }
-                                    else if ((ListBox_SocietyNews.ItemsSource as IEnumerable<ClubNewsExt>).Count() != count)
-                                    {
-                                        ListBox_SocietyNews.ItemsSource = src;
-                                    }
-                                    else
-                                        return;
-
-                                    if (count > 0)
-                                        ListBox_SocietyNews.Visibility = Visibility.Visible;
-                                });
-                            });
-                        }
-                    };
-
-                #endregion
-
-                int startIndex = Math.Max(0, Pivot_Core.SelectedIndex);
-
-                for (int i = startIndex; i < 4; ++i)
-                {
-                    actions[i]();
-                }
-
-                for (int i = 0; i < startIndex; ++i)
-                {
-                    actions[i]();
-                }
+                var thread = new System.Threading.Thread(new System.Threading.ThreadStart(LoadData));
+                thread.Start();
             }
+        }
+
+        private void LoadData()
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            #region [School News]
+            SchoolNewsExt[] snArr = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                snArr = db.SchoolNewsTable.ToArray();
+            }
+            if (snArr != null && snArr.Count() > 0)
+            {
+                var src = snArr.OrderByDescending((news) => news.CreatedAt);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (src.Count() > 5)
+                    {
+                        var tmp = new ObservableCollection<SchoolNewsExt>(src.Take(5));
+                        tmp.Add(SchoolNewsExt.InvalidSchoolNews());
+                        SchoolNewsSource = tmp;
+                    }
+                    else
+                    {
+                        SchoolNewsSource = new ObservableCollection<SchoolNewsExt>(src);
+                    }
+                });
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    SchoolNewsSource = null;
+                });
+            }
+            #endregion
+
+            #region [Around News]
+            AroundExt[] anArr = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                anArr = db.AroundTable.ToArray();
+            }
+            if (anArr != null && anArr.Count() > 0)
+            {
+                var src = anArr.OrderByDescending((news) => news.CreatedAt);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (anArr.Count() > 5)
+                    {
+                        var tmp = new ObservableCollection<AroundExt>(src.Take(5));
+                        tmp.Add(AroundExt.InvalidAround());
+                        AroundNewsSource = tmp;
+                    }
+                    else
+                    {
+                        AroundNewsSource = new ObservableCollection<AroundExt>(src);
+                    }
+                });
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    AroundNewsSource = null;
+                });
+            }
+            #endregion
+
+            #region [Official Notes]
+            ForStaffExt[] fsArr = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                fsArr = db.ForStaffTable.ToArray();
+            }
+            if (fsArr != null && fsArr.Count() > 0)
+            {
+                var src = fsArr.OrderByDescending((news) => news.CreatedAt);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (fsArr.Count() > 5)
+                    {
+                        var tmp = new ObservableCollection<ForStaffExt>(src.Take(5));
+                        tmp.Add(ForStaffExt.InvalidForStaff());
+                        OfficialNotesSource = tmp;
+                    }
+                    else
+                    {
+                        OfficialNotesSource = new ObservableCollection<ForStaffExt>(src);
+                    }
+                });
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    OfficialNotesSource = null;
+                });
+            }
+            #endregion
+
+            #region [Club News]
+            ClubNewsExt[] cnArr = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                cnArr = db.ClubNewsTable.ToArray();
+            }
+            if (cnArr != null && cnArr.Count() > 0)
+            {
+                var src = cnArr.OrderByDescending((news) => news.CreatedAt);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    if (cnArr.Count() > 5)
+                    {
+                        var tmp = new ObservableCollection<ClubNewsExt>(src.Take(5));
+                        tmp.Add(ClubNewsExt.InvalidClubNews());
+                        ClubNewsSource = tmp;
+                    }
+                    else
+                    {
+                        ClubNewsSource = new ObservableCollection<ClubNewsExt>(src);
+                    }
+                });
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ClubNewsSource = null;
+                });
+            }
+            #endregion
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Close();
+            });
         }
 
         #endregion
@@ -492,28 +489,6 @@ namespace WeTongji
             var item = lb.SelectedItem as ClubNewsExt;
             lb.SelectedIndex = -1;
             this.NavigationService.Navigate(new Uri("/Pages/SocietyNews.xaml?q=" + item.Id, UriKind.RelativeOrAbsolute));
-        }
-
-        #endregion
-
-        #region [Class]
-
-        public class TestSource
-        {
-            public Boolean IsRecommended { get; set; }
-            public Boolean HasPic { get; set; }
-        }
-
-        #endregion
-
-        #region [Enum]
-
-        private enum CampusInfoType : int
-        {
-            TongjiNews,
-            NearBy,
-            OfficialNote,
-            SocietyNews
         }
 
         #endregion

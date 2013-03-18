@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.IO.IsolatedStorage;
+using WeTongji.Pages;
 
 namespace WeTongji
 {
@@ -41,15 +42,6 @@ namespace WeTongji
         /// The bitmap image source to show.
         /// </summary>
         public static BitmapSource CoreImageSource
-        {
-            private get;
-            set;
-        }
-
-        /// <summary>
-        /// The bitmap image uri to share
-        /// </summary>
-        public static String CoreImageUri
         {
             private get;
             set;
@@ -110,25 +102,24 @@ namespace WeTongji
 
         private void SaveImage_Button_Click(Object sender, EventArgs e)
         {
-            MediaLibrary ml = new MediaLibrary();
-            var wb = new WriteableBitmap(CoreImageSource);
-
-            using (var stream = new MemoryStream())
+            try
             {
-                wb.SaveJpeg(stream, wb.PixelWidth, wb.PixelHeight, 0, 100);
-                stream.Seek(0, SeekOrigin.Begin);
-                ml.SavePicture(CoreImageName, stream);
+                MediaLibrary ml = new MediaLibrary();
+                var wb = new WriteableBitmap(CoreImageSource);
+
+                using (var stream = new MemoryStream())
+                {
+                    wb.SaveJpeg(stream, wb.PixelWidth, wb.PixelHeight, 0, 100);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    ml.SavePicture(CoreImageName, stream);
+
+                    MessageBox.Show("恭喜，图片保存成功！", "提示", MessageBoxButton.OK);
+                }
             }
-        }
-
-        private void ShareImage_Button_Click(Object sender, EventArgs e)
-        {
-            var task = new Microsoft.Phone.Tasks.ShareLinkTask();
-            task.LinkUri = new Uri(CoreImageUri);
-            task.Title = "[微同济]图片分享";
-            task.Message = "我想与您分享一张我在微同济中浏览时发现的图片";
-
-            task.Show();
+            catch
+            {
+                MessageBox.Show("保存图片失败", "提示", MessageBoxButton.OK);
+            }
         }
 
         private void GoBack(Object sender, EventArgs e)
@@ -187,8 +178,15 @@ namespace WeTongji
         {
             base.OnNavigatedTo(e);
 
-            image.Source = CoreImageSource;
-            ResetImageTransform();
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                image.Source = CoreImageSource;
+                ResetImageTransform();
+            }
+            else
+            {
+                CoreImageSource = image.Source as BitmapSource;
+            }
         }
 
         protected override void OnOrientationChanged(OrientationChangedEventArgs e)

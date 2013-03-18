@@ -39,7 +39,7 @@ namespace WeTongji.Api
             var handler = ExecuteCompleted;
             if (handler != null)
             {
-                handler(new object(), new WTExecuteCompletedEventArgs<T>(request, response));
+                handler(this, new WTExecuteCompletedEventArgs<T>(request, response));
             }
         }
 
@@ -48,7 +48,7 @@ namespace WeTongji.Api
             var handler = ExecuteFailed;
             if (handler != null)
             {
-                handler(new object(), new WTExecuteFailedEventArgs<T>(req, err));
+                handler(this, new WTExecuteFailedEventArgs<T>(req, err));
             }
         }
 
@@ -83,7 +83,7 @@ namespace WeTongji.Api
             var dict = new Dictionary<String, String>(request.GetParameters());
             dict[METHOD] = request.GetApiName();
             dict[DEVICE] = "WP7";
-            dict[VERSION] = "2.0";
+            dict[VERSION] = "1.0";
             dict[HASH] = ComputeHash(dict);
 
             #endregion
@@ -170,7 +170,7 @@ namespace WeTongji.Api
             var dict = new Dictionary<String, String>(request.GetParameters());
             dict[METHOD] = request.GetApiName();
             dict[DEVICE] = "WP7";
-            dict[VERSION] = "2.0";
+            dict[VERSION] = "1.0";
             dict[SESSION] = session;
             dict[UID] = uid;
             dict[HASH] = ComputeHash(dict);
@@ -228,8 +228,8 @@ namespace WeTongji.Api
 
             var dict = new Dictionary<String, String>(request.GetParameters());
             dict[METHOD] = request.GetApiName();
-            dict[DEVICE] = "iphone";
-            dict[VERSION] = "2.0";
+            dict[DEVICE] = "WP7";
+            dict[VERSION] = "1.0";
             dict[SESSION] = session;
             dict[UID] = uid;
             dict[HASH] = ComputeHash(dict);

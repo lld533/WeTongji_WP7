@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using WeTongji.Business;
 using WeTongji.Api;
 using System.Diagnostics;
+using WeTongji.Utility;
 
 namespace WeTongji
 {
@@ -36,22 +37,19 @@ namespace WeTongji
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                WTDispatcher.Instance.Do(() =>
+                PersonExt[] people = null;
+
+                using (var db = WTShareDataContext.ShareDB)
                 {
-                    PersonExt[] people = null;
+                    var q = from PersonExt p in db.People
+                            orderby p.Id descending
+                            select p;
+                    people = q.ToArray();
+                }
 
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        var q = from PersonExt p in db.People
-                                orderby p.Id descending
-                                select p;
-                        people = q.ToArray();
-                    }
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ListBox_Core.ItemsSource = people;
-                    });
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ListBox_Core.ItemsSource = people;
                 });
             }
 
@@ -62,40 +60,37 @@ namespace WeTongji
             {
                 var src = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
 
-                WTDispatcher.Instance.Do(() =>
+                // Any person in db has not been loaded.
+                bool flag = false;
+
+                PersonExt[] people = null;
+                using (var db = WTShareDataContext.ShareDB)
                 {
-                    // Any person in db has not been loaded.
-                    bool flag = false;
-
-                    PersonExt[] people = null;
-                    using (var db = WTShareDataContext.ShareDB)
+                    if (src != null && src.Count() > 0)
                     {
-                        if (src != null && src.Count() > 0)
+                        people = db.People.ToArray();
+                    }
+                }
+
+                if (people != null)
+                    flag = (from PersonExt p in people
+                            where src.Where((person) => person.Id == p.Id).SingleOrDefault() == null
+                            select p).Count() > 0;
+
+                //...Reload data if there is at least one person not inserted to the ListBox.
+                if (flag)
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
                         {
-                            people = db.People.ToArray();
+                            var q = from PersonExt p in db.People
+                                    orderby p.Id descending
+                                    select p;
+                            ListBox_Core.ItemsSource = q.ToArray();
                         }
-                    }
-
-                    if (people != null)
-                        flag = (from PersonExt p in people
-                                where src.Where((person) => person.Id == p.Id).SingleOrDefault() == null
-                                select p).Count() > 0;
-
-                    //...Reload data if there is at least one person not inserted to the ListBox.
-                    if (flag)
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            using (var db = WTShareDataContext.ShareDB)
-                            {
-                                var q = from PersonExt p in db.People
-                                        orderby p.Id descending
-                                        select p;
-                                ListBox_Core.ItemsSource = q.ToArray();
-                            }
-                        });
-                    }
-                });
+                    });
+                }
             }
 
             #endregion
@@ -105,47 +100,42 @@ namespace WeTongji
 
         private void DownloadUnStoredAvatars()
         {
-            WTDispatcher.Instance.Do(() =>
+            var people = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
+            if (people != null)
             {
-                var people = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
-                if (people != null)
+                int count = people.Count();
+                for (int i = 0; i < count; ++i)
                 {
-                    int count = people.Count();
-                    for (int i = 0; i < count; ++i)
+                    var p = people.ElementAt(i);
+
+                    if (!p.Avatar.EndsWith("missing.png") && !p.AvatarExists())
                     {
-                        var p = people.ElementAt(i);
+                        var client = new WTDownloadImageClient();
 
-                        if (!p.Avatar.EndsWith("missing.png") && !p.AvatarExists())
+                        client.DownloadImageStarted += (obj, arg) =>
                         {
-                            var client = new WTDownloadImageClient();
+                            Debug.WriteLine("Download person's avatar started: {0}", arg.Url);
+                        };
 
-                            client.DownloadImageStarted += (obj, arg) =>
+                        client.DownloadImageFailed += (obj, arg) =>
+                        {
+                            Debug.WriteLine("Download person's avatar FAILED: {0}\nErr: {1}", arg.Url, arg.Error);
+                        };
+
+                        client.DownloadImageCompleted += (obj, arg) =>
+                        {
+                            Debug.WriteLine("Download person's avatar completed: {0}", arg.Url);
+
+                            this.Dispatcher.BeginInvoke(() =>
                             {
-                                Debug.WriteLine("Download person's avatar started: {0}", arg.Url);
-                            };
+                                p.SendPropertyChanged("AvatarImageBrush");
+                            });
+                        };
 
-                            client.DownloadImageFailed += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download person's avatar FAILED: {0}\nErr: {1}", arg.Url, arg.Error);
-                            };
-
-                            client.DownloadImageCompleted += (obj, arg) =>
-                            {
-                                Debug.WriteLine("Download person's avatar completed: {0}", arg.Url);
-
-                                p.SaveAvatar(arg.ImageStream);
-
-                                this.Dispatcher.BeginInvoke(() =>
-                                {
-                                    p.SendPropertyChanged("AvatarImageBrush");
-                                });
-                            };
-
-                            client.Execute(p.Avatar);
-                        }
+                        client.Execute(p.Avatar, p.AvatarGuid + "." + p.Avatar.GetImageFileExtension());
                     }
                 }
-            });
+            }
         }
 
         private void ListBox_Core_SelectionChanged(Object sender, SelectionChangedEventArgs e)

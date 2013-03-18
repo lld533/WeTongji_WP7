@@ -84,8 +84,6 @@ namespace WeTongji
                 }
             }
 
-            WTDispatcher.Instance.Do(() =>
-            {
                 int imagesDownloading = 0;
 
                 if (!a.OrganizerAvatar.EndsWith("missing.png") && !a.AvatarExists())
@@ -117,7 +115,6 @@ namespace WeTongji
 
                             this.Dispatcher.BeginInvoke(() =>
                             {
-                                a.SaveAvatar(arg.ImageStream);
                                 (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
 
                                 --imagesDownloading;
@@ -125,7 +122,7 @@ namespace WeTongji
                                     ProgressBarPopup.Instance.Close();
                             });
                         };
-                    client.Execute(a.OrganizerAvatar);
+                    client.Execute(a.OrganizerAvatar, a.OrganizerAvatarGuid + "." + a.OrganizerAvatar.GetImageFileExtension());
                 }
 
                 //...Current activity is illustrated.
@@ -170,10 +167,6 @@ namespace WeTongji
                         };
                         client.DownloadImageCompleted += (obj, arg) =>
                         {
-                            System.Diagnostics.Debug.WriteLine("download image completed: {0}", arg.Url);
-
-                            a.SaveImage(arg.ImageStream);
-
                             this.Dispatcher.BeginInvoke(() =>
                             {
                                 (this.DataContext as ActivityExt).SendPropertyChanged("ActivityImageBrush");
@@ -184,7 +177,7 @@ namespace WeTongji
                                     ProgressBarPopup.Instance.Close();
                             });
                         };
-                        client.Execute(a.Image);
+                        client.Execute(a.Image, a.ImageGuid + "." + a.Image.GetImageFileExtension());
                     }
 
                     #endregion
@@ -193,7 +186,6 @@ namespace WeTongji
                 {
                     //...Do nothing.
                 }
-            });
         }
 
         #endregion

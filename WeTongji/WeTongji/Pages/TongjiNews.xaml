@@ -7,20 +7,102 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Converter="clr-namespace:WeTongji.Converter"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    
+
     <phone:PhoneApplicationPage.Resources>
         <Style x:Key="DescriptionTextBlockStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="23"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
 
+        <Storyboard x:Key="IncreaseLikeNumberAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Like_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Like_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="18"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Like_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Like_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="18"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="DecreaseLikeNumberAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Like_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Like_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-18"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Like_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Like_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-18"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="IncreaseFavoriteNumberAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Favorite_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Favorite_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Favorite_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Favorite_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="DecreaseFavoriteNumberAnimation">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Favorite_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Favorite_Illustrated">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="TextBlock_Favorite_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="TextBlock_Favorite_NoIllustration">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-12"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
         <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
 
     <ScrollViewer Margin="20,0" VerticalScrollBarVisibility="Hidden">
@@ -44,7 +126,7 @@
             </Grid>
 
             <Grid x:Name="NoIllustrationGrid" Visibility="Collapsed">
-                <!--Like and Read-->
+                <!--Like and Favorite-->
                 <Grid Margin="0,22,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
@@ -56,22 +138,29 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!--Like-->
                     <Grid>
                         <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
                         <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                     </Grid>
-                    <TextBlock Grid.Column="2" FontSize="22" VerticalAlignment="Center"
-    							Text="{Binding Like}" />
+                    <TextBlock x:Name="TextBlock_Like_NoIllustration"  Grid.Column="2" FontSize="22" VerticalAlignment="Center"
+    							Text="{Binding Like}">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
 
+                    <!--Favorite-->
                     <Grid Grid.Column="4">
                         <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
-                        <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
-    								Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
-                        <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
-                        <Ellipse Width="5" Height="5"  Fill="White"/>
+                        <Path Data="M17.8752,16.0417 C18.3136,13.5979 18.6566,11.9707 20.0002,9.8333 C21.1848,11.9274 21.8936,14.0459 22.1677,16.147 C24.7069,15.81 27.5324,16.0325 29.3763,16.5011 C27.9863,18.6603 26.0461,19.706 23.6674,21.2087 C24.9117,23.6366 25.6177,26.1097 25.8342,28.624 C24.4351,28.367 22.5198,27.0915 19.9588,24.5414 C17.4534,27.1555 16.483,27.6123 14.2923,28.707 C14.5588,26.1425 15.3314,23.58 16.3751,21.2087 C14.1869,19.8743 12.1049,18.3897 10.6666,16.4162 C13.0567,15.9188 15.4873,15.8026 17.8752,16.0417 z" HorizontalAlignment="Left" Height="18.877" Margin="10.667,9.831,0,0" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="18.708" Fill="White"/>
                     </Grid>
-                    <TextBlock Grid.Column="6" FontSize="22" VerticalAlignment="Center"
-    							Text="{Binding Read}"/>
+                    <TextBlock x:Name="TextBlock_Favorite_NoIllustration" Grid.Column="6" FontSize="22" VerticalAlignment="Center"
+    							Text="{Binding Favorite}">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
                 </Grid>
 
             </Grid>
@@ -85,9 +174,13 @@
                 </Grid.ColumnDefinitions>
 
                 <!--First Image-->
-                <Image Source="{Binding FirstImageBrush}" Stretch="UniformToFill"/>
+                <Image Source="{Binding FirstImageBrush}" Stretch="UniformToFill">
+                    <toolkit:GestureService.GestureListener>
+                        <toolkit:GestureListener Tap="ViewFirstImage"/>
+                    </toolkit:GestureService.GestureListener>
+                </Image>
 
-                <!--Like and Read-->
+                <!--Like and Favorite-->
                 <Grid Grid.Column="2" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
@@ -100,34 +193,54 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
+                    <!--Like-->
                     <Grid>
                         <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
                         <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                     </Grid>
-                    <TextBlock Grid.Column="2" Text="{Binding Like}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="TextBlock_Like_Illustrated" Grid.Column="2" Text="{Binding Like}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
 
+                    <!--Favorite-->
                     <Grid Grid.Row="2">
                         <Ellipse Width="40" Height="40" Fill="#FFFFCD01"/>
-                        <Path Width="27" Height="15.52" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="White"
-										Data="M0,7.76 C9.16888,-2.5 18.4,-2.5 27,7.76 C18.4,18.1648 9.16888,18.4 0,7.76 z"  UseLayoutRounding="False"/>
-                        <Ellipse Width="9" Height="9"  Fill="#FFFFCD01"/>
-                        <Ellipse Width="5" Height="5"  Fill="White"/>
+                        <Path Data="M17.8752,16.0417 C18.3136,13.5979 18.6566,11.9707 20.0002,9.8333 C21.1848,11.9274 21.8936,14.0459 22.1677,16.147 C24.7069,15.81 27.5324,16.0325 29.3763,16.5011 C27.9863,18.6603 26.0461,19.706 23.6674,21.2087 C24.9117,23.6366 25.6177,26.1097 25.8342,28.624 C24.4351,28.367 22.5198,27.0915 19.9588,24.5414 C17.4534,27.1555 16.483,27.6123 14.2923,28.707 C14.5588,26.1425 15.3314,23.58 16.3751,21.2087 C14.1869,19.8743 12.1049,18.3897 10.6666,16.4162 C13.0567,15.9188 15.4873,15.8026 17.8752,16.0417 z" HorizontalAlignment="Left" Height="18.877" Margin="10.667,9.831,0,0" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Top" Width="18.708" Fill="White"/>
                     </Grid>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Read}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="TextBlock_Favorite_Illustrated"  Grid.Row="2" Grid.Column="2" Text="{Binding Favorite}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
                 </Grid>
 
             </Grid>
 
             <!--Context-->
-            <StackPanel x:Name="StackPanel_Description" Margin="0,23,0,0"/>
+            <StackPanel x:Name="StackPanel_Description" Margin="0,23,0,20"/>
 
             <!--The rest images(Except the first one)-->
-            <ListBox x:Name="ListBox_Pic" Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}"
+            <ListBox x:Name="ListBox_Pic"
                      ScrollViewer.VerticalScrollBarVisibility="Disabled">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}">
-                            <Image Source="{Binding ImageBrush}" HorizontalAlignment="Left" Stretch="UniformToFill"  Margin="0,0,0,24"/>
+                        <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}" Margin="0,0,0,24">
+                            <TextBlock Text="正在加载图片..." FontSize="22" Foreground="#FF999999"
+                                       Visibility="{Binding Visibility, ElementName=Button_ReloadImage, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+
+                            <Button x:Name="Button_ReloadImage" BorderThickness="0" Content="(图片加载失败，请点击重试)" FontSize="22" HorizontalAlignment="Left"
+                                    Foreground="#FF999999"
+                                    Style="{StaticResource NoBorderButtonStyle}"
+                                    Visibility="Collapsed"
+                                    Click="Button_ReloadImage_Click"/>
+
+                            <Image Source="{Binding ImageBrush}" HorizontalAlignment="Left" Stretch="UniformToFill">
+                                <toolkit:GestureService.GestureListener>
+                                    <toolkit:GestureListener Tap="ViewOriginalImage"/>
+                                </toolkit:GestureService.GestureListener>
+                            </Image>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -137,8 +250,8 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="喜欢"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.like.rest.png" Text="喜欢" IsEnabled="False"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏" IsEnabled="False"/>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 

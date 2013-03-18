@@ -226,6 +226,11 @@ namespace WeTongji.Api.Domain
             }
         }
 
+        public String CampusInfoImageFileName
+        {
+            get { return ImageExtList.GetImageFilesNames().First() + "." + CampusInfoImageUrl.GetImageFileExtension(); }
+        }
+
         public Boolean CampusInfoImageExists { get { return ImageExists(); } }
 
         public void SaveCampusInfoImage(Stream stream)
@@ -310,20 +315,22 @@ namespace WeTongji.Api.Domain
         {
             var result = new ObservableCollection<ImageExt>();
 
-            var imgList = ImageExtList.Split(';');
-
-            using (var db = WTShareDataContext.ShareDB)
+            if (!String.IsNullOrEmpty(ImageExtList))
             {
-                foreach (var img in imgList)
-                {
-                    var guid = img.Split(':').First().Trim('\"');
-                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+                var imgList = ImageExtList.Split(';');
 
-                    if (target != null)
-                        result.Add(target);
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var img in imgList)
+                    {
+                        var guid = img.Split(':').First().Trim('\"');
+                        var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                        if (target != null)
+                            result.Add(target);
+                    }
                 }
             }
-
             return result;
         }
 
@@ -331,21 +338,29 @@ namespace WeTongji.Api.Domain
         {
             var Images = new List<String>();
 
-            var imgList = ImageExtList.Split(';');
-
-            using (var db = WTShareDataContext.ShareDB)
+            if (!String.IsNullOrEmpty(ImageExtList))
             {
-                foreach (var img in imgList)
-                {
-                    var guid = img.Split(':').First().Trim('\"');
-                    var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+                var imgList = ImageExtList.Split(';');
 
-                    if (target != null)
-                        Images.Add(target.Url);
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    foreach (var img in imgList)
+                    {
+                        var guid = img.Split(':').First().Trim('\"');
+                        var target = db.Images.Where((dbImg) => dbImg.Id == guid).SingleOrDefault();
+
+                        if (target != null)
+                            Images.Add(target.Url);
+                    }
                 }
             }
 
             return Images;
+        }
+
+        public static SchoolNewsExt InvalidSchoolNews()
+        {
+            return new SchoolNewsExt() { Id = int.MinValue };
         }
 
         #endregion
@@ -414,6 +429,11 @@ namespace WeTongji.Api.Domain
             {
                 return CreatedAt.ToString("yyyy/MM/dd hh:mm");
             }
+        }
+
+        public Boolean IsInvalidSchoolNews
+        {
+            get { return Id == int.MinValue; }
         }
 
         #endregion

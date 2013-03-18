@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using WeTongji.Pages;
 using System.Threading;
 using WeTongji.Api;
+using WeTongji.Utility;
 
 namespace WeTongji
 {
@@ -363,15 +364,13 @@ namespace WeTongji
 
                             client.DownloadImageCompleted += (o, e) =>
                                 {
-                                    p.SaveAvatar(e.ImageStream);
-
                                     this.Dispatcher.BeginInvoke(() =>
                                     {
                                         p.SendPropertyChanged("AvatarImageBrush");
                                     });
                                 };
 
-                            client.Execute(p.Avatar);
+                            client.Execute(p.Avatar, p.AvatarGuid + "." + p.Avatar.GetImageFileExtension());
                         }
                     }
                     catch { }
@@ -393,8 +392,6 @@ namespace WeTongji
 
                             client.DownloadImageCompleted += (o, e) =>
                             {
-                                ci.SaveCampusInfoImage(e.ImageStream);
-
                                 this.Dispatcher.BeginInvoke(() =>
                                 {
                                     if (ci is SchoolNewsExt)
@@ -416,7 +413,7 @@ namespace WeTongji
                                 });
                             };
 
-                            client.Execute(ci.CampusInfoImageUrl);
+                            client.Execute(ci.CampusInfoImageUrl, ci.CampusInfoImageFileName);
                         }
                     }
                     catch { }

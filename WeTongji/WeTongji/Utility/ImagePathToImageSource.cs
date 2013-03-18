@@ -77,5 +77,25 @@ namespace WeTongji.Utility
                 }
             }
         }
+
+        public static IEnumerable<String> GetImageFilesNames(this String imageExtList)
+        {
+            if (!String.IsNullOrEmpty(imageExtList))
+            {
+                var images = imageExtList.Split(';');
+                int count = images.Count();
+                String[] result = new String[count];
+
+                for (int i = 0; i < count; ++i)
+                {
+                    var parts = images[i].Split(':');
+                    result[i] = String.Format("{0}.{1}", parts[0].Trim('\"'), parts[1].Trim('\"'));
+                }
+
+                return result;
+            }
+            else
+                return new String[0];
+        }
     }
 }

@@ -353,6 +353,9 @@
                         <ScrollViewer VerticalScrollBarVisibility="Hidden">
                             <StackPanel>
 
+                                <Border Width="141" Height="40" Margin="0,-40,0,0" Background="{StaticResource PhoneBackgroundBrush}"
+                                        HorizontalAlignment="Left"  Canvas.ZIndex="1"/>
+
                                 <StackPanel Orientation="Horizontal">
 
                                     <!---Avatar-->
@@ -363,7 +366,7 @@
                                             </StackPanel.RenderTransform>
 
                                             <Border Background="#FF1BA1E2"
-										Width="141" Height="35">
+										            Width="141" Height="35">
                                                 <!--Name-->
                                                 <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
 											HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -576,7 +579,7 @@
                                     Grid.Row="2" 
                                     DataContext="0"
                                     Click="NavToCampusInfo"/>
-                <Button Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
+                <Button Content="团体通知" Style="{StaticResource CampusInfoButtonStyle}"
                                     Grid.Column="2"
                                     DataContext="3"
                                     Click="NavToCampusInfo"/>
@@ -590,7 +593,7 @@
                             <!--<Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToOfficialNotesList"/>
 
-                            <Button x:Name="Button_ClubNews"  Content="社团通告" Style="{StaticResource CampusInfoButtonStyle}"
+                            <Button x:Name="Button_ClubNews"  Content="团体通知" Style="{StaticResource CampusInfoButtonStyle}"
                                     Click="NavToClubNewsList"/>
 
                             <Button x:Name="Button_TongjiNews"  Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
@@ -646,7 +649,8 @@
                                         </toolkit:GestureService.GestureListener>
                                     </Image>
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="校务通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                        <TextBlock Text="校务通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
+                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
                                     </Border>
 
                                 </Grid>
@@ -665,7 +669,8 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="社团通告" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                        <TextBlock Text="团体通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
+                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
                                     </Border>
 
                                 </Grid>
@@ -684,12 +689,13 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="同济动态" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                        <TextBlock Text="同济动态" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
+                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
                                     </Border>
 
                                 </Grid>
 
-                                <Grid x:Name="Grid_AroundNews" Canvas.ZIndex="3" Height="240" Margin="0,495,0,0">
+                                <Grid x:Name="Grid_AroundNews" Canvas.ZIndex="3" Height="240" VerticalAlignment="Top"  Margin="0,495,0,0">
 
                                     <Rectangle Fill="Gray"/>
                                     
@@ -703,11 +709,14 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="周边推荐" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
+                                        <TextBlock Text="周边推荐" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
+                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
                                     </Border>
 
                                 </Grid>
 
+                                <!--Masks-->
+                                <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Top" Height="100" Margin="0,-100,0,0"/>
                                 <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Top" Height="25" Margin="0,140,0,0"/>
                                 <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" Margin="0,305,0,0" VerticalAlignment="Top" Height="25"/>
                                 <Border Background="{StaticResource PhoneBackgroundBrush}" Canvas.ZIndex="4" VerticalAlignment="Top" Margin="0,470,0,0" Height="25"/>

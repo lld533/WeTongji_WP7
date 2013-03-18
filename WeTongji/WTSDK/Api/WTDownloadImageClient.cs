@@ -7,6 +7,7 @@ using WeTongji.Api;
 using WeTongji.Api.Domain;
 using WeTongji.Api.Response;
 using System.Net;
+using System.IO.IsolatedStorage;
 
 namespace WeTongji.Api
 {
@@ -23,11 +24,11 @@ namespace WeTongji.Api
                 handler(this, new WTDownloadImageStartedEventArgs(url));
         }
 
-        private void OnDownloadImageCompleted(String url, Stream stream)
+        private void OnDownloadImageCompleted(String url, String fileName)
         {
             var handler = DownloadImageCompleted;
             if (handler != null)
-                handler(this, new WTDownloadImageCompletedEventArgs(url, stream));
+                handler(this, new WTDownloadImageCompletedEventArgs(url,fileName));
         }
 
         private void OnDownloadImageFailed(String url, Exception err)
@@ -37,7 +38,7 @@ namespace WeTongji.Api
                 handler(this, new WTDownloadImageFailedEventArgs(url, err));
         }
 
-        public void Execute(String url)
+        public void Execute(String url, String fileName)
         {
             try
             {
@@ -50,16 +51,20 @@ namespace WeTongji.Api
                     {
                         var res = req.EndGetResponse(args);
 
-                        var stream = new MemoryStream();
+                        var rs = res.GetResponseStream();
 
-                        using (var rs = res.GetResponseStream())
+                        var store = IsolatedStorageFile.GetUserStoreForApplication();
+
+                        using (var fs = store.OpenFile(fileName, FileMode.OpenOrCreate, FileAccess.Write))
                         {
-                            rs.CopyTo(stream);
+                            rs.CopyTo(fs);
+                            fs.Flush();
+                            fs.Close();
                         }
 
                         res.Close();
 
-                        OnDownloadImageCompleted(url, stream);
+                        OnDownloadImageCompleted(url, fileName);
                     }
                     catch (System.Exception ex)
                     {
@@ -89,12 +94,12 @@ namespace WeTongji.Api
     public class WTDownloadImageCompletedEventArgs : EventArgs
     {
         public String Url { get; private set; }
-        public Stream ImageStream { get; private set; }
+        public String FileName { get; private set; }
 
-        public WTDownloadImageCompletedEventArgs(String url, Stream img)
+        public WTDownloadImageCompletedEventArgs(String url, String fileName)
         {
             Url = url;
-            ImageStream = img;
+            FileName = fileName;
         }
     }
 

@@ -14,6 +14,7 @@ namespace WeTongji.Api.Domain
         String Source { get;}
         String Summary { get; }
         String DisplayCreationTime { get; }
+        String CampusInfoImageFileName { get; }
         Boolean IsIllustrated { get; }
         Boolean CampusInfoImageExists { get; }
         DateTime CreatedAt { get; }

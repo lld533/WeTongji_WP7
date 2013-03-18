@@ -19,6 +19,7 @@ using System.Windows.Data;
 using System.Reflection;
 using WeTongji.Api.Request;
 using WeTongji.Api.Response;
+using WeTongji.Utility;
 
 namespace WeTongji
 {
@@ -155,33 +156,17 @@ namespace WeTongji
 
             #region [Register download event handlers]
 
-
-            client.DownloadImageStarted += (o, e) =>
-            {
-                Debug.WriteLine("download avatar image started. user: {0}", user.DisplayName);
-            };
-
-            client.DownloadImageFailed += (o, e) =>
-            {
-                Debug.WriteLine("download avatar image failed. user: {0}\nError:\n{1}", user.DisplayName, e.Error);
-            };
-
             client.DownloadImageCompleted += (o, e) =>
             {
-                Debug.WriteLine("download avatar image completed. user: {0}", user.DisplayName);
-
-                user.SaveAvatarImage(e.ImageStream);
-
                 this.Dispatcher.BeginInvoke(() =>
                 {
-                    ProgressBarPopup.Instance.Close();
                     user.SendPropertyChanged("AvatarImageBrush");
                 });
             };
 
             #endregion
 
-            client.Execute(user.Avatar);
+            client.Execute(user.Avatar, user.AvatarGuid + "." + user.Avatar.GetImageFileExtension());
         }
 
         #endregion
