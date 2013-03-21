@@ -18,6 +18,10 @@ using System.IO.IsolatedStorage;
 using WeTongji.Pages;
 using WeTongji.Business;
 using WeTongji.Utility;
+using Microsoft.Phone.Shell;
+using WeTongji.Api.Request;
+using WeTongji.Api.Response;
+using System.Threading;
 
 namespace WeTongji
 {
@@ -33,104 +37,132 @@ namespace WeTongji
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            ThemeManager.ToDarkTheme();
 
-            var path = e.Uri.ToString();
-            path = path.TrimStart("/Pages/Activity.xaml".ToCharArray());
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                var path = e.Uri.ToString();
 
-            ActivityExt a = null;
+                var thread = new Thread(new ParameterizedThreadStart(LoadData));
 
-            if (String.IsNullOrEmpty(path))
+                thread.Start(e.Uri.ToString());
+            }
+        }
+
+        #endregion
+
+        #region [Init]
+
+        private void LoadData(object param)
+        {
+            ActivityExt activity = null;
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
+            #region [Get Official Note in Database]
+
+            var uri = ((String)param).TrimStart("/Pages/Activity.xaml?q=".ToCharArray());
+
+            if (String.IsNullOrEmpty(uri))
             {
                 using (var db = WTShareDataContext.ShareDB)
                 {
-                    a = db.Activities.FirstOrDefault();
-
-                    if (a == null)
-                        //...Todo @_@ Friendly MsgBox
-                        throw new ArgumentNullException("No activity found in database.");
+                    activity = db.Activities.LastOrDefault();
                 }
             }
             else
             {
-                path = path.Trim("?q=".ToCharArray());
-
                 int id;
-
-                if (!int.TryParse(path, out id))
-                    //...Todo @_@ Friendly MsgBox
-                    throw new ArgumentOutOfRangeException("Invalid query string");
-
-                using (var db = WTShareDataContext.ShareDB)
+                if (Int32.TryParse(uri, out id))
                 {
-                    a = db.Activities.Where((act) => act.Id == id).SingleOrDefault();
-
-                    if (a == null)
-                        //...Todo @_@ Friendly MsgBox
-                        throw new ArgumentOutOfRangeException(String.Format("Cannot find activity[Id={0}] in database.", id));
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        activity = db.Activities.Where((a) => a.Id == id).SingleOrDefault();
+                    }
                 }
             }
 
-            if (a != null)
+            #endregion
+
+            if (activity != null)
             {
-                this.DataContext = a;
-                var tbs = a.Description.GetInlineCollection();
-                int count = tbs.Count();
-                for (int i = 0; i < count; ++i)
+                #region [Binding]
+
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    var tb = tbs.ElementAt(i);
-                    tb.Style = this.Resources["DescriptionTextBlockStyle"] as Style;
-                    StackPanel_Description.Children.Add(tb);
+                    var tbs = activity.Description.GetInlineCollection();
+                    this.DataContext = activity;
+
+                    #region [Set description]
+
+                    StackPanel_Description.Children.Clear();
+
+                    var number = tbs.Count();
+                    for (int i = 0; i < number; ++i)
+                    {
+                        var tb = tbs.ElementAt(i);
+                        tb.Style = this.Resources["DescriptionTextBlockStyle"] as Style;
+                        StackPanel_Description.Children.Add(tb);
+                    }
+
+                    #endregion
+                });
+
+                #endregion
+
+                #region [App bar buttons]
+
+                if (!String.IsNullOrEmpty(Global.Instance.Settings.UID))
+                {
+                    using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                    {
+                        var favObj = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
+
+                        if (favObj.Contains(activity.Id))
+                        {
+                            activity.CanFavorite = false;
+                        }
+                    }
                 }
-            }
+                else
+                {
+                    activity.CanLike = true;
+                    activity.CanFavorite = true;
+                    activity.CanSchedule = true;
+                }
 
-                int imagesDownloading = 0;
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    InitAppBarButtons();
+                });
 
-                if (!a.OrganizerAvatar.EndsWith("missing.png") && !a.AvatarExists())
+                #endregion
+
+                #region [Handle Images]
+
+                //...Avatar
+                if (!activity.OrganizerAvatar.EndsWith("missing.png") && !activity.AvatarExists())
                 {
                     WTDownloadImageClient client = new WTDownloadImageClient();
-                    client.DownloadImageStarted += (obj, arg) =>
-                        {
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                ++imagesDownloading;
-                                ProgressBarPopup.Instance.Open();
-                            });
-                            System.Diagnostics.Debug.WriteLine("download avatar started: {0}", arg.Url);
-                        };
-                    client.DownloadImageFailed += (obj, arg) =>
-                        {
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                --imagesDownloading;
-                                if (0 == imagesDownloading)
-                                    ProgressBarPopup.Instance.Close();
-                            });
 
-                            System.Diagnostics.Debug.WriteLine("download avatar failed: {0}\nError: {1}", arg.Url, arg.Error);
-                        };
                     client.DownloadImageCompleted += (obj, arg) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
                         {
-                            System.Diagnostics.Debug.WriteLine("download completed: {0}", arg.Url);
-
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
-
-                                --imagesDownloading;
-                                if (0 == imagesDownloading)
-                                    ProgressBarPopup.Instance.Close();
-                            });
-                        };
-                    client.Execute(a.OrganizerAvatar, a.OrganizerAvatarGuid + "." + a.OrganizerAvatar.GetImageFileExtension());
+                            (this.DataContext as ActivityExt).SendPropertyChanged("OrganizerAvatarImageBrush");
+                        });
+                    };
+                    client.Execute(activity.OrganizerAvatar, activity.OrganizerAvatarGuid + "." + activity.OrganizerAvatar.GetImageFileExtension());
                 }
 
                 //...Current activity is illustrated.
-                if (!a.Image.EndsWith("missing.png"))
+                if (!activity.Image.EndsWith("missing.png"))
                 {
                     #region [Illustration is in isolated storage folder]
 
-                    if (a.ImageExists())
+                    if (activity.ImageExists())
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
@@ -144,40 +176,16 @@ namespace WeTongji
                     else
                     {
                         WTDownloadImageClient client = new WTDownloadImageClient();
-                        client.DownloadImageStarted += (obj, arg) =>
-                        {
-                            System.Diagnostics.Debug.WriteLine("download image started: {0}", arg.Url);
 
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                ++imagesDownloading;
-                                ProgressBarPopup.Instance.Open();
-                            });
-                        };
-                        client.DownloadImageFailed += (obj, arg) =>
-                        {
-                            System.Diagnostics.Debug.WriteLine("download image failed: {0}\nError: {1}", arg.Url, arg.Error);
-
-                            this.Dispatcher.BeginInvoke(() =>
-                            {
-                                --imagesDownloading;
-                                if (0 == imagesDownloading)
-                                    ProgressBarPopup.Instance.Close();
-                            });
-                        };
                         client.DownloadImageCompleted += (obj, arg) =>
                         {
                             this.Dispatcher.BeginInvoke(() =>
                             {
                                 (this.DataContext as ActivityExt).SendPropertyChanged("ActivityImageBrush");
                                 Illustration.Visibility = Visibility.Visible;
-
-                                --imagesDownloading;
-                                if (0 == imagesDownloading)
-                                    ProgressBarPopup.Instance.Close();
                             });
                         };
-                        client.Execute(a.Image, a.ImageGuid + "." + a.Image.GetImageFileExtension());
+                        client.Execute(activity.Image, activity.ImageGuid + "." + activity.Image.GetImageFileExtension());
                     }
 
                     #endregion
@@ -186,7 +194,713 @@ namespace WeTongji
                 {
                     //...Do nothing.
                 }
+
+                #endregion
+            }
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Close();
+            });
         }
+
+        private void InitAppBarButtons()
+        {
+            var activity = this.DataContext as ActivityExt;
+
+            if (activity == null)
+                return;
+
+            if (activity.CanLike)
+            {
+                var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+
+                btn.IsEnabled = true;
+                btn.Click += Button_Like_Clicked;
+                btn.Click -= Button_Unlike_Clicked;
+            }
+            else
+            {
+                var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+
+                btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
+                btn.Text = "取消喜欢";
+                btn.IsEnabled = true;
+                btn.Click -= Button_Like_Clicked;
+                btn.Click += Button_Unlike_Clicked;
+            }
+
+            if (activity.CanFavorite)
+            {
+                var btn = ApplicationBar.Buttons[1] as ApplicationBarIconButton;
+
+                btn.IsEnabled = true;
+                btn.Click += Button_Favorite_Clicked;
+                btn.Click -= Button_Unfavorite_Clicked;
+            }
+            else
+            {
+                var btn = ApplicationBar.Buttons[1] as ApplicationBarIconButton;
+
+                btn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
+                btn.Text = "取消收藏";
+                btn.IsEnabled = true;
+                btn.Click -= Button_Favorite_Clicked;
+                btn.Click += Button_Unfavorite_Clicked;
+            }
+
+            if (activity.CanSchedule)
+            {
+                var btn = ApplicationBar.Buttons[2] as ApplicationBarIconButton;
+
+                btn.IsEnabled = true;
+                btn.Click += Button_Schedule_Clicked;
+                btn.Click -= Button_UnSchedule_Clicked;
+            }
+            else
+            {
+                var btn = ApplicationBar.Buttons[2] as ApplicationBarIconButton;
+
+                btn.IconUri = new Uri("/icons/appbar.unparticipate.rest.png", UriKind.RelativeOrAbsolute);
+                btn.Text = "取消参与";
+                btn.IsEnabled = true;
+                btn.Click -= Button_Schedule_Clicked;
+                btn.Click += Button_UnSchedule_Clicked;
+            }
+
+        }
+
+        #endregion
+
+        #region [Visual]
+
+        #region [App bar]
+
+        private void Button_Like_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+            }
+            else
+            {
+                (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+
+                var req = new ActivityLikeRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                        if (itemInDB != null)
+                        {
+                            itemInDB.CanLike = false;
+                            ++itemInDB.Like;
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+
+                        btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
+                        btn.Text = "取消喜欢";
+                        btn.IsEnabled = true;
+                        btn.Click -= Button_Like_Clicked;
+                        btn.Click += Button_Unlike_Clicked;
+
+                        var activity = this.DataContext as ActivityExt;
+
+                        if (itemInDB != null)
+                        {
+                            activity.CanLike = false;
+                            activity.Like = itemInDB.Like;
+                            activity.SendPropertyChanged("Like");
+
+                            (this.Resources["IncreaseLikeNumberAnimation"] as Storyboard).Begin();
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                    if (arg.Error is System.Net.WebException)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi或网络链接后重试", "提示", MessageBoxButton.OK);
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        });
+                    }
+                    else if (arg.Error is WTException)
+                    {
+                        var err = arg.Error as WTException;
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            switch (err.StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        });
+                    }
+                    else
+                    {
+                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                    }
+                };
+
+
+                ProgressBarPopup.Instance.Open();
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void Button_Unlike_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+            }
+            else
+            {
+                (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+
+                var req = new ActivityUnLikeRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                        if (itemInDB != null)
+                        {
+                            itemInDB.CanLike = true;
+                            --itemInDB.Like;
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+
+                        btn.IconUri = new Uri("/icons/appbar.like.rest.png", UriKind.RelativeOrAbsolute);
+                        btn.Text = "喜欢";
+                        btn.IsEnabled = true;
+                        btn.Click += Button_Like_Clicked;
+                        btn.Click -= Button_Unlike_Clicked;
+
+                        var activity = this.DataContext as ActivityExt;
+
+                        if (itemInDB != null)
+                        {
+                            activity.Like = itemInDB.Like;
+                            activity.CanLike = true;
+
+                            activity.SendPropertyChanged("Like");
+
+                            (this.Resources["DecreaseLikeNumberAnimation"] as Storyboard).Begin();
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                    if (arg.Error is System.Net.WebException)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi或网络链接后重试", "提示", MessageBoxButton.OK);
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        });
+                    }
+                    else if (arg.Error is WTException)
+                    {
+                        var err = arg.Error as WTException;
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            switch (err.StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        });
+                    }
+                    else
+                    {
+                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                    }
+                };
+
+                ProgressBarPopup.Instance.Open();
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void Button_Favorite_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                return;
+            }
+            else
+            {
+                var req = new ActivityFavoriteRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                            if (itemInDB != null)
+                            {
+                                itemInDB.CanFavorite = false;
+                                ++itemInDB.Favorite;
+                            }
+
+                            db.SubmitChanges();
+                        }
+
+                        using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                        {
+                            var fav = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
+
+                            fav.Add(req.Id);
+
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
+                        favBtn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
+                        favBtn.Text = "取消收藏";
+                        favBtn.Click -= Button_Favorite_Clicked;
+                        favBtn.Click += Button_Unfavorite_Clicked;
+                        favBtn.IsEnabled = true;
+
+                        var activity = this.DataContext as ActivityExt;
+
+                        if (itemInDB != null)
+                        {
+                            activity.Favorite = itemInDB.Favorite;
+                            activity.CanFavorite = false;
+                            activity.SendPropertyChanged("Favorite");
+
+                            (this.Resources["IncreaseFavoriteNumberAnimation"] as Storyboard).Begin();
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                        (this.ApplicationBar.Buttons[1] as ApplicationBarIconButton).IsEnabled = true;
+
+                        if (arg.Error is System.Net.WebException)
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                        }
+                        else if (arg.Error is WTException)
+                        {
+                            switch ((arg.Error as WTException).StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        }
+                    });
+                };
+
+                ProgressBarPopup.Instance.Open();
+                (this.ApplicationBar.Buttons[1] as ApplicationBarIconButton).IsEnabled = false;
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void Button_Unfavorite_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                return;
+            }
+            else
+            {
+                var req = new ActivityUnFavoriteRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                            if (itemInDB != null)
+                            {
+                                itemInDB.Favorite = Math.Max(0, itemInDB.Favorite - 1);
+                                itemInDB.CanFavorite = true;
+                            }
+
+                            db.SubmitChanges();
+                        }
+
+                        using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                        {
+                            var fav = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
+
+                            fav.Remove(req.Id);
+
+                            db.SubmitChanges();
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
+                        favBtn.IconUri = new Uri("/icons/appbar.favs.rest.png", UriKind.RelativeOrAbsolute);
+                        favBtn.Text = "收藏";
+                        favBtn.Click += Button_Favorite_Clicked;
+                        favBtn.Click -= Button_Unfavorite_Clicked;
+                        favBtn.IsEnabled = true;
+
+                        var activity = this.DataContext as ActivityExt;
+                        if (itemInDB != null)
+                        {
+                            activity.Favorite = itemInDB.Favorite;
+                            activity.CanFavorite = true;
+                            activity.SendPropertyChanged("Favorite");
+
+                            (this.Resources["DecreaseFavoriteNumberAnimation"] as Storyboard).Begin();
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                        (this.ApplicationBar.Buttons[1] as ApplicationBarIconButton).IsEnabled = true;
+
+                        if (arg.Error is System.Net.WebException)
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                        }
+                        else if (arg.Error is WTException)
+                        {
+                            switch ((arg.Error as WTException).StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        }
+                    });
+                };
+
+                ProgressBarPopup.Instance.Open();
+                (this.ApplicationBar.Buttons[1] as ApplicationBarIconButton).IsEnabled = false;
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void Button_Schedule_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                return;
+            }
+            else
+            {
+                var req = new ActivityScheduleRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                            if (itemInDB != null)
+                            {
+                                ++itemInDB.Schedule;
+                                itemInDB.CanSchedule = false;
+                            }
+
+                            db.SubmitChanges();
+                        }
+
+                        //...Update AgendaSource
+                        if (itemInDB != null)
+                        {
+                            var g = Global.Instance.AgendaSource.Where((group) => group.Key == itemInDB.Begin.Date).SingleOrDefault();
+                            
+                            //...The date of the activity exists in Agenda
+                            if (g != null)
+                            {
+                                var targetNode = g.Where((node) => node == itemInDB.GetCalendarNode()).SingleOrDefault();
+                                if (targetNode == null)
+                                {
+                                    int idx = g.Items.Where((node) => node.BeginTime < itemInDB.Begin).Count();
+                                    g.Items.Insert(idx, itemInDB.GetCalendarNode());
+                                }
+                            }
+                            //...The date of the activity does not exist in Agenda
+                            else
+                            {
+                                int idx = Global.Instance.AgendaSource.Where((group) => group.Key < itemInDB.Begin.Date).Count();
+                                Global.Instance.AgendaSource.Insert(idx, new CalendarGroup<CalendarNode>(itemInDB.Begin.Date, new CalendarNode[] { itemInDB.GetCalendarNode() }));
+                            }
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var favBtn = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
+                        favBtn.IconUri = new Uri("/icons/appbar.unparticipate.rest.png", UriKind.RelativeOrAbsolute);
+                        favBtn.Text = "取消参与";
+                        favBtn.Click -= Button_Schedule_Clicked;
+                        favBtn.Click += Button_UnSchedule_Clicked;
+                        favBtn.IsEnabled = true;
+
+                        var activity = this.DataContext as ActivityExt;
+                        if (itemInDB != null)
+                        {
+                            activity.Schedule = itemInDB.Schedule;
+                            activity.CanSchedule = false;
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                        (this.ApplicationBar.Buttons[2] as ApplicationBarIconButton).IsEnabled = true;
+
+                        if (arg.Error is System.Net.WebException)
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                        }
+                        else if (arg.Error is WTException)
+                        {
+                            switch ((arg.Error as WTException).StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        }
+                    });
+                };
+
+                ProgressBarPopup.Instance.Open();
+                (this.ApplicationBar.Buttons[2] as ApplicationBarIconButton).IsEnabled = false;
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void Button_UnSchedule_Clicked(Object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                return;
+            }
+            else
+            {
+                var req = new ActivityUnScheduleRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                req.Id = (this.DataContext as ActivityExt).Id;
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    ActivityExt itemInDB = null;
+
+                    if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    {
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            itemInDB = db.Activities.Where((a) => a.Id == req.Id).SingleOrDefault();
+
+                            if (itemInDB != null)
+                            {
+                                itemInDB.Schedule = Math.Max(0, itemInDB.Schedule - 1);
+                                itemInDB.CanSchedule = true;
+                            }
+
+                            db.SubmitChanges();
+                        }
+
+                        //...Update AgendaSource
+                        if (itemInDB != null)
+                        {
+                            var g = Global.Instance.AgendaSource.Where((group) => group.Key == itemInDB.Begin.Date).SingleOrDefault();
+                            if (g != null)
+                            {
+                                var nodeToRemove = g.Where((node) => node == itemInDB.GetCalendarNode()).SingleOrDefault();
+                                g.Items.Remove(nodeToRemove);
+
+                                if (g.Count() == 0)
+                                {
+                                    Global.Instance.AgendaSource.Remove(g);
+                                }
+                            }
+                        }
+                    }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var favBtn = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
+                        favBtn.IconUri = new Uri("/icons/appbar.participate.rest.png", UriKind.RelativeOrAbsolute);
+                        favBtn.Text = "参与";
+                        favBtn.Click += Button_Schedule_Clicked;
+                        favBtn.Click -= Button_UnSchedule_Clicked;
+                        favBtn.IsEnabled = true;
+
+                        var activity = this.DataContext as ActivityExt;
+                        if (itemInDB != null)
+                        {
+                            activity.Schedule = itemInDB.Schedule;
+                            activity.CanSchedule = true;
+                        }
+
+                        ProgressBarPopup.Instance.Close();
+                    });
+
+                };
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                        (this.ApplicationBar.Buttons[2] as ApplicationBarIconButton).IsEnabled = true;
+
+                        if (arg.Error is System.Net.WebException)
+                        {
+                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                        }
+                        else if (arg.Error is WTException)
+                        {
+                            switch ((arg.Error as WTException).StatusCode.Id)
+                            {
+                                case Api.Util.Status.NoAuth:
+                                    {
+                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                    }
+                                    break;
+                                //...Todo @_@ Check other status code.
+                            }
+                        }
+                    });
+                };
+
+                ProgressBarPopup.Instance.Open();
+                (this.ApplicationBar.Buttons[2] as ApplicationBarIconButton).IsEnabled = false;
+                client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        #endregion
+
+        #region [Tap and View image]
+
+        private void ViewActivityImage(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            var img = sender as Image;
+            var activity = this.DataContext as ActivityExt;
+            ImageViewer.CoreImageName = activity.ImageGuid + "." + activity.Image.GetImageFileExtension();
+            ImageViewer.CoreImageSource = img.Source as System.Windows.Media.Imaging.BitmapSource;
+            this.NavigationService.Navigate(new Uri("/Pages/ImageViewer.xaml", UriKind.RelativeOrAbsolute));
+        }
+        #endregion
 
         #endregion
     }

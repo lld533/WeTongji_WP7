@@ -314,14 +314,14 @@ namespace WeTongji.Api.Domain
             get
             {
                 if (AvatarGuid.EndsWith("missing.png"))
-                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                    return new BitmapImage(new Uri("/Images/default_avatar_profile.png", UriKind.RelativeOrAbsolute));
 
                 var fileExt = Avatar.GetImageFileExtension();
 
                 var imgSrc = String.Format("{0}.{1}", AvatarGuid, fileExt).GetImageSource();
 
                 if (imgSrc == null)
-                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                    return new BitmapImage(new Uri("/Images/default_avatar_profile.png", UriKind.RelativeOrAbsolute));
                 else
                     return imgSrc;
             }

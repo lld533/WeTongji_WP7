@@ -374,7 +374,7 @@
 
                                             <!--Avatar-->
                                             <Grid Width="141" Height="141">
-                                                <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                                                <Image Stretch="UniformToFill" Source="/Images/default_avatar_profile.png"/>
                                                 <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
                                             </Grid>
                                         </StackPanel>
@@ -449,7 +449,7 @@
                                             <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
                                             <!--Title-->
                                             <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
-										            TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100"
+										            TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100" TextAlignment="Right"
 										            Text="{Binding Title}"/>
                                         </Grid>
 
@@ -504,7 +504,8 @@
                 <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
                         <ListBox x:Name="ListBox_Activity" Visibility="Collapsed" Style="{StaticResource ActivityListBoxStyle}"
-                                SelectionChanged="ListBox_Activity_SelectionChanged">
+                                 MouseMove="ListBox_Activity_MouseMove"
+                                 SelectionChanged="ListBox_Activity_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Width="{Binding ActualWidth, ElementName=Border_PanoramaItemReferenceWidth}">
@@ -747,7 +748,7 @@
 
                                     <!--Avatar-->
                                     <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
-                                       Source="/Images/missing.png"/>
+                                       Source="/Images/default_avatar_org.png"/>
                                     <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
                                        Source="{Binding AvatarImageBrush}"/>
 

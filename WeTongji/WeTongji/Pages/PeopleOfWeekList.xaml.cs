@@ -14,6 +14,10 @@ using WeTongji.Business;
 using WeTongji.Api;
 using System.Diagnostics;
 using WeTongji.Utility;
+using WeTongji.Pages;
+using WeTongji.Api.Request;
+using WeTongji.Api.Response;
+using System.Threading;
 
 namespace WeTongji
 {
@@ -22,6 +26,29 @@ namespace WeTongji
         public PeopleOfWeekList()
         {
             InitializeComponent();
+        }
+
+        private ObservableCollection<PersonExt> PeopleSource
+        {
+            get
+            {
+                if (ListBox_Core.ItemsSource == null)
+                    return null;
+                return ListBox_Core.ItemsSource as ObservableCollection<PersonExt>;
+            }
+            set
+            {
+                if (value == null || value.Count == 0)
+                {
+                    TextBlock_NoSource.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ListBox_Core.ItemsSource = value;
+                    TextBlock_NoSource.Visibility = Visibility.Collapsed;
+                    ListBox_Core.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         /// <summary>
@@ -33,99 +60,54 @@ namespace WeTongji
         {
             base.OnNavigatedTo(e);
 
-            #region [First time]
-
             if (e.NavigationMode == NavigationMode.New)
             {
-                PersonExt[] people = null;
-
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    var q = from PersonExt p in db.People
-                            orderby p.Id descending
-                            select p;
-                    people = q.ToArray();
-                }
-
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    ListBox_Core.ItemsSource = people;
-                });
+                var thread = new Thread(new ThreadStart(LoadData));
+                thread.Start();
             }
-
-            #endregion
-            #region [Otherwise]
-
-            else
-            {
-                var src = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
-
-                // Any person in db has not been loaded.
-                bool flag = false;
-
-                PersonExt[] people = null;
-                using (var db = WTShareDataContext.ShareDB)
-                {
-                    if (src != null && src.Count() > 0)
-                    {
-                        people = db.People.ToArray();
-                    }
-                }
-
-                if (people != null)
-                    flag = (from PersonExt p in people
-                            where src.Where((person) => person.Id == p.Id).SingleOrDefault() == null
-                            select p).Count() > 0;
-
-                //...Reload data if there is at least one person not inserted to the ListBox.
-                if (flag)
-                {
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            var q = from PersonExt p in db.People
-                                    orderby p.Id descending
-                                    select p;
-                            ListBox_Core.ItemsSource = q.ToArray();
-                        }
-                    });
-                }
-            }
-
-            #endregion
 
             DownloadUnStoredAvatars();
         }
 
+        private void LoadData()
+        {
+            PersonExt[] dbSource = null;
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                dbSource = db.People.ToArray();
+            }
+
+            var source = new ObservableCollection<PersonExt>(dbSource.OrderByDescending((person) => person.Id));
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                PeopleSource = source;
+                ProgressBarPopup.Instance.Close();
+                DownloadUnStoredAvatars();
+
+                if (Global.Instance.CurrentPeopleOfWeekSourceState != SourceState.Done)
+                {
+                    GetAllPeopleFromServer(Global.Instance.PersonPageId);
+                }
+            });
+        }
+
         private void DownloadUnStoredAvatars()
         {
-            var people = ListBox_Core.ItemsSource as IEnumerable<PersonExt>;
+            var people = ListBox_Core.ItemsSource as PersonExt[];
             if (people != null)
             {
                 int count = people.Count();
                 for (int i = 0; i < count; ++i)
                 {
-                    var p = people.ElementAt(i);
+                    var p = people[i];
 
                     if (!p.Avatar.EndsWith("missing.png") && !p.AvatarExists())
                     {
                         var client = new WTDownloadImageClient();
 
-                        client.DownloadImageStarted += (obj, arg) =>
-                        {
-                            Debug.WriteLine("Download person's avatar started: {0}", arg.Url);
-                        };
-
-                        client.DownloadImageFailed += (obj, arg) =>
-                        {
-                            Debug.WriteLine("Download person's avatar FAILED: {0}\nErr: {1}", arg.Url, arg.Error);
-                        };
-
                         client.DownloadImageCompleted += (obj, arg) =>
                         {
-                            Debug.WriteLine("Download person's avatar completed: {0}", arg.Url);
-
                             this.Dispatcher.BeginInvoke(() =>
                             {
                                 p.SendPropertyChanged("AvatarImageBrush");
@@ -149,6 +131,234 @@ namespace WeTongji
             lb.SelectedIndex = -1;
             if (p != null)
                 this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", p.Id), UriKind.RelativeOrAbsolute));
+        }
+
+        private void GetAllPeopleFromServer(int pageId = 0)
+        {
+            if (this.NavigationService.CurrentSource.ToString() != "/Pages/PeopleOfWeekList.xaml")
+                return;
+
+            var req = new PeopleGetRequest<PeopleGetResponse>();
+            var client = new WTDefaultClient<PeopleGetResponse>();
+            var uid = Global.Instance.CurrentUserID;
+
+            if (pageId > 0)
+                req.SetAdditionalParameter(WTDefaultClient<PeopleGetResponse>.PAGE, pageId);
+
+
+            client.ExecuteCompleted += (obj, arg) =>
+                {
+                    if (Global.Instance.CurrentUserID != uid)
+                    {
+                        Global.Instance.CurrentPeopleOfWeekSourceState = SourceState.NotSet;
+                        Global.Instance.PersonPageId = 0;
+                        return;
+                    }
+
+                    int count = arg.Result.People.Count();
+                    PersonExt[] arr = new PersonExt[count];
+
+                    for (int i = 0; i < count; ++i)
+                        using (var db = WTShareDataContext.ShareDB)
+                        {
+                            var item = arg.Result.People[i];
+                            var target = db.People.Where((person) => person.Id == item.Id).SingleOrDefault();
+
+                            if (target == null)
+                            {
+                                target = new PersonExt();
+                                target.SetObject(item);
+
+                                db.People.InsertOnSubmit(target);
+                            }
+                            else
+                            {
+                                target.SetObject(item);
+                            }
+
+                            arr[i] = target;
+
+                            db.SubmitChanges();
+                        }
+
+                    Global.Instance.PersonPageId = arg.Result.NextPager;
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+
+                        InsertMorePeople(arr);
+
+                        if (arg.Result.NextPager > 0)
+                        {
+                            GetAllPeopleFromServer(arg.Result.NextPager);
+                        }
+                        else
+                        {
+                            Global.Instance.CurrentPeopleOfWeekSourceState = SourceState.Done;
+                        }
+                    });
+                };
+
+            client.ExecuteFailed += (obj, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                    Global.Instance.CurrentPeopleOfWeekSourceState = SourceState.NotSet;
+                });
+            };
+
+            Global.Instance.CurrentPeopleOfWeekSourceState = SourceState.Setting;
+            ProgressBarPopup.Instance.Open();
+            if (String.IsNullOrEmpty(uid))
+                client.Execute(req);
+            else
+                client.Execute(req, Global.Instance.Session, uid);
+        }
+
+        private void InsertMorePeople(IEnumerable<PersonExt> people)
+        {
+            if (this.NavigationService.CurrentSource.ToString() != "/Pages/PeopleOfWeekList.xaml")
+                return;
+
+            var src = PeopleSource;
+
+            if (src == null)
+            {
+                PeopleSource = new ObservableCollection<PersonExt>(people.OrderByDescending((person) => person.Id));
+                DownloadUnStoredAvatars();
+            }
+            else
+            {
+                foreach (var p in people)
+                {
+                    var target = src.Where((person) => person.Id == p.Id).SingleOrDefault();
+
+                    if (target == null)
+                    {
+                        var idx = src.Where((person) => person.Id > p.Id).Count();
+                        src.Insert(idx, p);
+
+                        if (!p.Avatar.EndsWith("missing.png") && !p.AvatarExists())
+                        {
+                            var client = new WTDownloadImageClient();
+                            client.DownloadImageCompleted += (obj, arg) =>
+                                {
+                                    this.Dispatcher.BeginInvoke(() =>
+                                    {
+                                        p.SendPropertyChanged("AvatarImageBrush");
+                                    });
+                                };
+
+                            client.Execute(p.Avatar, p.AvatarGuid + "." + p.Avatar.GetImageFileExtension());
+                        }
+                    }
+                    else
+                    {
+                        if (p.Name != target.Name)
+                        {
+                            target.Name = p.Name;
+                            target.SendPropertyChanged("Name");
+                        }
+                        if (p.JobTitle != target.JobTitle)
+                        {
+                            target.JobTitle = p.JobTitle;
+                            target.SendPropertyChanged("JobTitle");
+                        }
+                        if (p.NO != target.NO)
+                        {
+                            target.NO = p.NO;
+                            target.SendPropertyChanged("NO");
+                        }
+                    }
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Try to get the latest Person from the server.
+        /// </summary>
+        private void RefreshPeopleOfWeek(int pageId = 0)
+        {
+            PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
+            WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
+
+            if (pageId > 0)
+                req.SetAdditionalParameter(WTDefaultClient<PeopleGetResponse>.PAGE, pageId);
+
+            #region [Add handlers]
+
+            client.ExecuteCompleted += (o, arg) =>
+            {
+                int count = arg.Result.People.Count();
+                PersonExt[] arr = new PersonExt[count];
+
+                //...flag points out whether we should go on sending request
+                bool flag = true;
+
+                #region [Update database]
+
+                for (int i = 0; i < count; ++i)
+                {
+                    var item = arg.Result.People[i];
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
+
+                        //...New data
+                        if (itemInDB == null)
+                        {
+                            itemInDB = new PersonExt();
+                            itemInDB.SetObject(item);
+
+                            db.People.InsertOnSubmit(itemInDB);
+                        }
+                        //...Already in DB
+                        else
+                        {
+                            itemInDB.SetObject(item);
+                            flag = false;
+                        }
+
+                        arr[i] = itemInDB;
+
+                        db.SubmitChanges();
+                    }
+                }
+
+                this.Dispatcher.BeginInvoke(() => 
+                {
+                    ProgressBarPopup.Instance.Close();
+                    InsertMorePeople(arr);
+
+                    if (flag && arg.Result.NextPager > 0)
+                        RefreshPeopleOfWeek(arg.Result.NextPager);
+                });
+
+                #endregion
+
+                Global.Instance.PersonPageId = arg.Result.NextPager;
+            };
+
+            client.ExecuteFailed += (o, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                });
+            };
+
+            #endregion
+
+            ProgressBarPopup.Instance.Open();
+            client.Execute(req);
+        }
+
+        private void Refresh_Button_Clicked(Object sender, EventArgs e)
+        {
+            RefreshPeopleOfWeek();
         }
     }
 }

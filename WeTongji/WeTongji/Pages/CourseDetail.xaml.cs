@@ -49,6 +49,13 @@ namespace WeTongji
                     Name = "LoadData"
                 };
 
+                var strs = strTrimmed.Split("&".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                if(strs.Count()==1)
+                {
+                    Pivot_Core.SelectedIndex = 1;
+                }
+
                 ProgressBarPopup.Instance.Open();
                 thread.Start(strTrimmed);
             }
@@ -64,10 +71,24 @@ namespace WeTongji
                 this.date = date.Date;
             }
 
+            public CourseNode(ExamExt exam)
+            {
+                this.NO = exam.NO;
+                this.Point = exam.Point;
+                this.Required = exam.Required;
+                this.Teacher = exam.Teacher;
+                this.Hours = exam.Hours;
+                this.UID = exam.UID;
+                this.SemesterGuid = exam.SemesterGuid;
+            }
+
             public String DisplayBeginTimeAndEndTime
             {
                 get
                 {
+                    if (date == DateTime.MinValue)
+                        return String.Empty;
+
                     var sb = new StringBuilder(date.ToString("yyyy/MM/dd(周"));
                     switch (date.DayOfWeek)
                     {
@@ -165,7 +186,7 @@ namespace WeTongji
                             var nodes = courses.First().GetCalendarNodes(semester);
                             this.Dispatcher.BeginInvoke(() => 
                             {
-                                this.PivotItem_Course.DataContext = new CourseNode(courses.First(), nodes.First().BeginTime);
+                                this.PivotItem_Course.DataContext = new CourseNode(courses.First(), DateTime.MinValue);
                                 TextBlock_QueryCourse.Visibility = Visibility.Collapsed;
                                 ProgressBarPopup.Instance.Close();
                             });

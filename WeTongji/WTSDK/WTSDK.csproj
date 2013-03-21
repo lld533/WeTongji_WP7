@@ -78,6 +78,9 @@
     <Compile Include="Api\Api.Request\Around\AroundReadRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnLikeRequest.cs" />
+    <Compile Include="Api\Api.Request\User\UserProfileRequest.cs" />
+    <Compile Include="Api\Api.Request\User\UserUpdateProfileRequest.cs" />
+    <Compile Include="Api\Api.Response\User\UserProfileResponse.cs" />
     <Compile Include="Api\WTDownloadImageClient.cs" />
     <Compile Include="Api\Api.Request\Person\PersonFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Person\PeopleGetRequest.cs" />

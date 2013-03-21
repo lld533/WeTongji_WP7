@@ -64,6 +64,8 @@ namespace WeTongji.Api
 
                         res.Close();
 
+                        store.Dispose();
+
                         OnDownloadImageCompleted(url, fileName);
                     }
                     catch (System.Exception ex)

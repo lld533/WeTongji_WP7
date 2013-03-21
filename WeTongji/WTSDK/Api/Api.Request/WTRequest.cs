@@ -33,7 +33,7 @@ namespace WeTongji.Api.Request
                 throw new ArgumentNullException("value");
             }
 
-            dict[key] = JsonConvert.SerializeObject(value);
+            dict[key] = value.ToString();
         }
         
         /// <summary>

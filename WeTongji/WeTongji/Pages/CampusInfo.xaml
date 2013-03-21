@@ -78,12 +78,14 @@
         <Border Margin="18,0" x:Name="Border_ItemWidthReference" IsHitTestVisible="False"/>
 
         <controls:Pivot x:Name="Pivot_Core" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WTPivotStyle}" ItemContainerStyle="{StaticResource WTPivotItemStyle}"
-                         Title="校园资讯">
+                         Title="校园资讯"
+                        SelectionChanged="Pivot_Core_SelectionChanged">
             <controls:PivotItem Header="同济动态">
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoTongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_TongjiNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                             SelectionChanged="Listbox_TongjiNews_SelectionChanged">
+                                 MouseMove="ListBox_TongjiNews_MouseMove"
+                                 SelectionChanged="Listbox_TongjiNews_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
@@ -161,7 +163,8 @@
                                             </Grid>
                                         </Grid>
                                         <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;同济动态&quot;" FontSize="22" 
-                                                Visibility="{Binding IsInvalidSchoolNews, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                Visibility="{Binding IsInvalidSchoolNews, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Click="Button_LoadMoreTongjiNews_Click"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -181,6 +184,7 @@
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoAroundNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_NearBy" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+                                 MouseMove="ListBox_AroundNews_MouseMove"
                                  SelectionChanged="ListBox_NearBy_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -215,7 +219,8 @@
                                             </Grid>
                                         </Grid>
                                         <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;周边推荐&quot;" FontSize="22"
-                                                Visibility="{Binding IsInvalidAround, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                Visibility="{Binding IsInvalidAround, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Click="Button_LoadMoreAroundNews_Click"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -234,7 +239,8 @@
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoOfficialNote, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_OfficialNotes" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                             SelectionChanged="Listbox_OfficialNotes_SelectionChanged">
+                                 MouseMove="ListBox_OfficialNotes_MouseMove"
+                                 SelectionChanged="Listbox_OfficialNotes_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
@@ -314,7 +320,8 @@
                                             </Grid>
                                         </Grid>
                                         <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;校务通知&quot;" FontSize="22"
-                                                Visibility="{Binding IsInvalidForStaff, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                Visibility="{Binding IsInvalidForStaff, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Click="Button_LoadMoreOfficialNotes_Click"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -334,7 +341,8 @@
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoClubNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_SocietyNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-                            SelectionChanged="ListBox_SocietyNews_SelectionChanged">
+                                 MouseMove="ListBox_ClubNews_MouseMove"
+                                 SelectionChanged="ListBox_SocietyNews_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Width="{Binding ActualWidth, ElementName=Border_ItemWidthReference}">
@@ -412,7 +420,8 @@
                                             </Grid>
                                         </Grid>
                                         <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;团体通知&quot;" FontSize="22"
-                                                Visibility="{Binding IsInvalidClubNews, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                Visibility="{Binding IsInvalidClubNews, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Click="Button_LoadMoreClubNews_Click"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -431,5 +440,12 @@
 
     </Grid>
 
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton Text="刷新" Click="Refresh_Button_Clicked" IconUri="/icons/appbar.refresh.rest.png"/>
+            </shell:ApplicationBar.Buttons>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

@@ -13,8 +13,8 @@ namespace WeTongji.Api.Request
             Begin = DateTime.MinValue;
             End = DateTime.MinValue;
 
-            base.dict["Begin"] = Begin.ToString();
-            base.dict["End"] = End.ToString();
+            base.dict["Begin"] = Begin.ToString("yyyy/MM/dd");
+            base.dict["End"] = End.ToString("yyyy/MM/dd");
         }
 
         #endregion
@@ -35,8 +35,8 @@ namespace WeTongji.Api.Request
 
         public override IDictionary<String, String> GetParameters()
         {
-            base.dict["Begin"] = Begin.ToString();
-            base.dict["End"] = End.ToString();
+            base.dict["Begin"] = Begin.ToString("yyyy/MM/dd");
+            base.dict["End"] = End.ToString("yyyy/MM/dd");
             return base.dict;
         }
 

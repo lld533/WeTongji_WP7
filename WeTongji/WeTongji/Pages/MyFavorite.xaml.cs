@@ -37,13 +37,9 @@ namespace WeTongji
         {
             base.OnNavigatedTo(e);
 
-            if (e.NavigationMode == NavigationMode.New)
+            if (e.NavigationMode == NavigationMode.New || e.NavigationMode == NavigationMode.Back)
             {
-                var thread = new Thread(new ThreadStart(LoadDataFromDatabase))
-                {
-                    IsBackground = true,
-                    Name = "LoadDataFromDatabase"
-                };
+                var thread = new Thread(new ThreadStart(LoadDataFromDatabase));
 
                 ProgressBarPopup.Instance.Open();
                 thread.Start();
@@ -253,6 +249,14 @@ namespace WeTongji
                         ListBox_CampusInfo.Visibility = Visibility.Visible;
                     });
                 }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ListBox_CampusInfo.ItemsSource = null;
+                        ListBox_CampusInfo.Visibility = Visibility.Collapsed;
+                    });
+                }
                 #endregion
 
                 #region [People Of week]
@@ -288,10 +292,34 @@ namespace WeTongji
 
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            ListBox_PeopleOfWeek.ItemsSource = src;
-                            ListBox_PeopleOfWeek.Visibility = Visibility.Visible;
+                            if (src.Count > 0)
+                            {
+                                ListBox_PeopleOfWeek.ItemsSource = src;
+                                ListBox_PeopleOfWeek.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                ListBox_PeopleOfWeek.ItemsSource = null;
+                                ListBox_PeopleOfWeek.Visibility = Visibility.Collapsed;
+                            }
                         });
                     }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ListBox_PeopleOfWeek.ItemsSource = null;
+                            ListBox_PeopleOfWeek.Visibility = Visibility.Collapsed;
+                        });
+                    }
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ListBox_PeopleOfWeek.ItemsSource = null;
+                        ListBox_PeopleOfWeek.Visibility = Visibility.Collapsed;
+                    });
                 }
 
                 #endregion
@@ -326,12 +354,36 @@ namespace WeTongji
                                 select a;
 
                         var src = new ObservableCollection<ActivityExt>(q);
-
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            ListBox_Activity.ItemsSource = src;
+                            if (src.Count > 0)
+                            {
+                                ListBox_Activity.Visibility = Visibility.Visible;
+                                ListBox_Activity.ItemsSource = src;
+                            }
+                            else
+                            {
+                                ListBox_Activity.ItemsSource = null;
+                                ListBox_Activity.Visibility = Visibility.Collapsed;
+                            }
                         });
                     }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ListBox_Activity.ItemsSource = null;
+                            ListBox_Activity.Visibility = Visibility.Collapsed;
+                        });
+                    }
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ListBox_Activity.ItemsSource = null;
+                        ListBox_Activity.Visibility = Visibility.Collapsed;
+                    });
                 }
 
                 #endregion

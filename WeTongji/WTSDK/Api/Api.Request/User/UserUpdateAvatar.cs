@@ -1,23 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace WeTongji.Api.Request
 {
-    public class UserUpdateAvatar<T> : WTRequest<T>, IWTUploadRequest<T> where T : WeTongji.Api.WTResponse
+    public class UserUpdateAvatarRequest<T> : WTRequest<T>, IWTUploadRequest<T> where T : WeTongji.Api.WTResponse
     {
         #region [Constructor]
 
-        public UserUpdateAvatar()
+        public UserUpdateAvatarRequest()
         {
-            base.dict["Image"] = String.Empty;
         }
 
         #endregion
 
         #region [Property]
-
-        public String JpegPhotoName { get; set; }
 
         public Stream JpegPhotoStream { get; set; }
 
@@ -27,11 +25,7 @@ namespace WeTongji.Api.Request
 
         public override IDictionary<String, String> GetParameters()
         {
-            Dictionary<String, String> dict = new Dictionary<String, String>(base.dict);
-
-            dict["Image"] = JpegPhotoName;
-
-            return dict;
+            return base.dict;
         }
 
         public override String GetApiName()
@@ -41,22 +35,17 @@ namespace WeTongji.Api.Request
 
         public override void Validate()
         {
-            if (String.IsNullOrEmpty(JpegPhotoName))
-            {
-                throw new ArgumentNullException("JpegPhotoName");
-            }
-
-            var photoName = JpegPhotoName.ToLower();
-            if (!photoName.EndsWith("jpg") && !photoName.EndsWith("jpeg"))
-            {
-                throw new ArgumentOutOfRangeException("JpegPhotoName", "Expect a JPEG file.");
-            }
-
             if (JpegPhotoStream == null)
-                throw new ArgumentNullException("JpegPhotoStream");
-            if (!(JpegPhotoStream.CanRead && JpegPhotoStream.CanSeek))
             {
-                throw new ArgumentOutOfRangeException("JpegPhotoStream", "Can not read or seek stream.");
+                throw new ArgumentNullException("JpegPhotoStream");
+            }
+            else if (!JpegPhotoStream.CanRead)
+            {
+                throw new NotSupportedException("JpegPhotoStream should be able to read.");
+            }
+            else if (!JpegPhotoStream.CanSeek)
+            {
+                throw new NotSupportedException("JpegPhotoStream should be able to seek.");
             }
         }
 
@@ -66,7 +55,16 @@ namespace WeTongji.Api.Request
 
         public System.IO.Stream GetRequestStream()
         {
-            return JpegPhotoStream;
+            JpegPhotoStream.Seek(0, SeekOrigin.Begin);
+            var stream = new System.IO.MemoryStream();
+
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
+            sw.Write("Image={");
+            sw.Flush();
+            JpegPhotoStream.CopyTo(stream);
+            sw.Write("}");
+            sw.Flush();
+            return stream;
         }
 
         public String GetContentType()

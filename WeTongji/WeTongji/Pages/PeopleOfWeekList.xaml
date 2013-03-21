@@ -19,58 +19,73 @@
         <Converter:StringIsIntToVisibilityConverter x:Key="StringIsIntToVisibilityConverter"/>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
-    
+
     <Grid Margin="20,0,20,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <TextBlock Text="所有每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,16,0,15" FontSize="22"/>
 
-        <!--List-->
-        <ListBox x:Name="ListBox_Core"  BorderThickness="0" BorderBrush="{x:Null}"
-                 SelectionChanged="ListBox_Core_SelectionChanged" Grid.Row="1"
+        <Grid Grid.Row="1">
+            <TextBlock x:Name="TextBlock_NoSource" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="22" Foreground="#FF999999"/>
+            <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoSource, Converter={StaticResource TurnOverVisibilityConverter}}">
+                <TextBlock Text="正在加载所有每周人物，请稍后..." FontSize="22" Foreground="#FF999999" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Visibility="{Binding Visibility, ElementName=ListBox_Core, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                <!--List-->
+                <ListBox x:Name="ListBox_Core"  BorderThickness="0" BorderBrush="{x:Null}"
+                 SelectionChanged="ListBox_Core_SelectionChanged"
 				 ScrollViewer.VerticalScrollBarVisibility="Hidden">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="0,0,0,25">
-                        <!--Title-->
-                        <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,25">
+                                <!--Title-->
+                                <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
                                    Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
-                            <Run Text="第"/>
-                            <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
-                            <Run Text="期"/>
-                        </TextBlock>
-                        <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
+                                        <Run Text="第"/>
+                                        <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
+                                        <Run Text="期"/>
+                                </TextBlock>
+                                <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
                                    Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
                                    Text="{Binding NO}"/>
 
-                        <!--Avatar & Name-->
-                        <Grid Height="60"  Margin="0,17,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
+                                <!--Avatar & Name-->
+                                <Grid Height="60"  Margin="0,17,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="14"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
 
-                            <!--@_@-->
-                            <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
-                            <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
+                                    <!--@_@-->
+                                    <Image Stretch="UniformToFill" Source="/Images/default_avatar_org.png"/>
+                                    <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
 
-                            <Grid Grid.Column="2" Margin="0,4">
-                                <TextBlock Text="{Binding Name}" 
+                                    <Grid Grid.Column="2" Margin="0,4">
+                                        <TextBlock Text="{Binding Name}" 
                                            TextTrimming="WordEllipsis" VerticalAlignment="Top" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,-7,0,0" FontSize="23"/>
-                                <TextBlock Text="{Binding JobTitle}"
+                                        <TextBlock Text="{Binding JobTitle}"
                                            TextTrimming="WordEllipsis" VerticalAlignment="Bottom" Foreground="{StaticResource PhoneForegroundBrush}" FontSize="18" Margin="0,0,0,-4"/>
-                            </Grid>
+                                    </Grid>
 
-                        </Grid>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                                </Grid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
 
     </Grid>
+    
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton Text="刷新" Click="Refresh_Button_Clicked" IconUri="/icons/appbar.refresh.rest.png"/>
+            </shell:ApplicationBar.Buttons>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

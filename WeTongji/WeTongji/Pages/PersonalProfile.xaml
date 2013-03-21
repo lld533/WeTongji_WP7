@@ -198,7 +198,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!--Avatar-->
-                            <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                            <Image Stretch="Fill" Source="/Images/default_avatar_profile.png"/>
                             <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
 
                             <Grid Grid.Column="2">

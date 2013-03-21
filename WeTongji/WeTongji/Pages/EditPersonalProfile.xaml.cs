@@ -16,12 +16,16 @@ using System.Reflection;
 using WeTongji.Api.Request;
 using WeTongji.Api;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace WeTongji
 {
     public partial class EditPersonalProfile : PhoneApplicationPage
     {
         private UserExt copy = null;
+        private Boolean isAvatarChanged = false;
+        private Boolean isProfileChanged = false;
 
         public EditPersonalProfile()
         {
@@ -39,7 +43,7 @@ namespace WeTongji
                     thread.Start();
                 };
         }
-        
+
         /// <summary>
         /// Select all text if the text of is not empty
         /// </summary>
@@ -77,16 +81,18 @@ namespace WeTongji
             var propertyInfo = typeof(UserExt).GetProperty(bindingExpression.ParentBinding.Path.Path);
 
             propertyInfo.SetValue(user, txtbx.Text, null);
+
+            isProfileChanged = true;
         }
 
         private void SaveButtonClicked(object sender, EventArgs e)
         {
             this.Focus();
 
-            var newValue = this.DataContext as UserExt;
+            UserExt current = this.DataContext as UserExt;
 
-            if (newValue.Phone == copy.Phone && newValue.Email == copy.Email
-                && newValue.QQ == copy.QQ && newValue.SinaWeibo == copy.SinaWeibo)
+            if (!isAvatarChanged && current.Phone == copy.Phone && current.Email == copy.Email
+                && current.QQ == copy.QQ && current.SinaWeibo == copy.SinaWeibo)
             {
                 this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
             }
@@ -101,8 +107,52 @@ namespace WeTongji
                     Name = "SaveData"
                 };
 
+                var newValue = new DataWrapper();
+
+                if (isProfileChanged)
+                    newValue.User = current;
+
+                var req = new UserUpdateAvatarRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                var wb = new WriteableBitmap(this.Image_Avatar.Source as BitmapSource);
+
+                MemoryStream stream = new MemoryStream();
+                wb.SaveJpeg(stream, wb.PixelWidth, wb.PixelHeight, 0, 100);
+                req.JpegPhotoStream = stream;
+
+                client.ExecuteFailed += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+
+                        MessageBox.Show("更新头像失败，请重试", "提示", MessageBoxButton.OK);
+                    });
+                };
+
+                client.ExecuteCompleted += (obj, arg) =>
+                {
+                    //...Get current user
+                };
+
+                client.Post(req, Global.Instance.Session, Global.Instance.Settings.UID);
+
                 ProgressBarPopup.Instance.Open();
                 thread.Start(newValue);
+            }
+        }
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnBackKeyPress(e);
+
+            if (isAvatarChanged || isProfileChanged)
+            {
+                var result = MessageBox.Show("资料已修改，是否放弃修改并返回？", "提示", MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.Cancel)
+                    e.Cancel = true;
             }
         }
 
@@ -130,48 +180,89 @@ namespace WeTongji
         /// <param name="param">new user's value, typeof(UserExt)</param>
         private void SaveData(Object param)
         {
-            var req = new UserUpdateRequest<WTResponse>();
-            var client = new WTDefaultClient<WTResponse>();
+            var data = param as UserExt;
 
-            Debug.WriteLine((param as UserExt).Avatar);
-            req.User = (param as UserExt).GetObject() as User;
+            #region [Basic info]
 
-            client.ExecuteFailed += (o, e) =>
+            if (data != null)
+            {
+                var req = new UserUpdateRequest<WTResponse>();
+                var client = new WTDefaultClient<WTResponse>();
+
+                req.User = data.GetObject() as User;
+
+                client.ExecuteFailed += (o, e) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+
+                            MessageBox.Show("保存资料失败，请重试", "提示", MessageBoxButton.OK);
+                        });
+                    };
+
+                client.ExecuteCompleted += (o, e) =>
+                    {
+                        using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                        {
+                            var userExt = db.UserInfo.SingleOrDefault();
+                            var user = req.User;
+
+                            userExt.Email = user.Email;
+                            userExt.Phone = user.Phone;
+                            userExt.QQ = user.QQ;
+                            userExt.SinaWeibo = user.SinaWeibo;
+
+                            db.SubmitChanges();
+                        }
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+
+                            this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
+                        });
+                    };
+
+                client.Post(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+            #endregion
+        }
+
+        private void UpdateAvatar(Object sender, RoutedEventArgs e)
+        {
+            var task = new Microsoft.Phone.Tasks.PhotoChooserTask();
+            task.PixelHeight = 256;
+            task.PixelWidth = 256;
+            task.ShowCamera = true;
+
+            task.Completed += (obj, arg) =>
+            {
+                switch (arg.TaskResult)
                 {
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ProgressBarPopup.Instance.Close();
-                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                    case Microsoft.Phone.Tasks.TaskResult.OK:
+                        {
+                            var img = new BitmapImage();
+                            img.SetSource(arg.ChosenPhoto);
+                            Image_Avatar.Source = img;
+                            isAvatarChanged = true;
+                        }
+                        break;
+                    case Microsoft.Phone.Tasks.TaskResult.None:
+                    case Microsoft.Phone.Tasks.TaskResult.Cancel:
+                        break;
+                }
+            };
 
-                        MessageBox.Show("保存资料失败，请重试");
-                    });
-                };
+            task.Show();
+        }
 
-            client.ExecuteCompleted += (o, e) =>
-                {
-                    using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
-                    {
-                        var userExt = db.UserInfo.SingleOrDefault();
-                        var user = req.User;
-
-                        userExt.Email = user.Email;
-                        userExt.Phone = user.Phone;
-                        userExt.QQ = user.QQ;
-                        userExt.SinaWeibo = user.SinaWeibo;
-
-                        db.SubmitChanges();
-                    }
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        ProgressBarPopup.Instance.Close();
-                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
-
-                        this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
-                    });
-                };
-
-            client.Post(req, Global.Instance.Session, Global.Instance.Settings.UID);
+        public class DataWrapper
+        {
+            public UserExt User { get; set; }
+            public BitmapSource Avatar { get; set; }
         }
     }
 }

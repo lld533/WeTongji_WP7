@@ -12,7 +12,7 @@ namespace WeTongji.Api.Request
             SortEnumerator = Util.SortEnumerator.created_at;
             IsAsc = false;
 
-            base.dict["Sort"] = @"`creawted_at` desc";
+            base.dict["Sort"] = @"`created_at` desc";
         }
 
         #endregion

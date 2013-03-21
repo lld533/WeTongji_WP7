@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace WeTongji.Api.Request
 {
-    public class ActivityFavoriteRequest : WTRequest<WeTongji.Api.WTResponse>
+    public class ActivityFavoriteRequest<T> : WTRequest<T> where T : WeTongji.Api.WTResponse
     {
         public ActivityFavoriteRequest() 
         { 

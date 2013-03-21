@@ -18,11 +18,14 @@ namespace WeTongji.Utility
     {
         public static String GetImageFileExtension(this String url)
         {
-            return url.Split('.').Last().Split('?').First().ToLower();
+            return String.IsNullOrEmpty(url) ? String.Empty : url.Split('.').Last().Split('?').First().ToLower();
         }
 
         public static BitmapSource GetImageSource(this String fileName)
         {
+            if (String.IsNullOrEmpty(fileName))
+                return null;
+
             var store = IsolatedStorageFile.GetUserStoreForApplication();
 
             var fileExt = fileName.Split('.').Last();
@@ -37,7 +40,7 @@ namespace WeTongji.Utility
                 {
                     PngDecoder decoder = new PngDecoder();
                     var imgExt = new ExtendedImage();
-                    using (var stream = store.OpenFile(fileName, FileMode.Open))
+                    using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read))
                     {
                         decoder.Decode(imgExt, stream);
                         var wb = imgExt.ToBitmap();
@@ -48,7 +51,7 @@ namespace WeTongji.Utility
                 {
                     GifDecoder decoder = new GifDecoder();
                     var imgExt = new ExtendedImage();
-                    using (var stream = store.OpenFile(fileName, FileMode.Open))
+                    using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read))
                     {
                         decoder.Decode(imgExt, stream);
                         var wb = imgExt.ToBitmap();
@@ -59,7 +62,7 @@ namespace WeTongji.Utility
                 {
                     BmpDecoder decoder = new BmpDecoder();
                     var imgExt = new ExtendedImage();
-                    using (var stream = store.OpenFile(fileName, FileMode.Open))
+                    using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read))
                     {
                         decoder.Decode(imgExt, stream);
                         var wb = imgExt.ToBitmap();
@@ -68,7 +71,7 @@ namespace WeTongji.Utility
                 }
                 else
                 {
-                    using (var stream = store.OpenFile(fileName, FileMode.Open))
+                    using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read))
                     {
                         var bi = new BitmapImage();
                         bi.SetSource(stream);

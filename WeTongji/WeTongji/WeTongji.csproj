@@ -389,12 +389,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Background.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="icons\appbar.participate.rest.png" />
     <Content Include="icons\appbar.person.list.rest.png" />
     <Content Include="icons\appbar.register.rest.png" />
@@ -402,31 +396,17 @@
     <Content Include="icons\appbar.unlike.rest.png" />
     <Content Include="icons\appbar.unparticipate.rest.png" />
     <Content Include="icons\appbar.like.rest.png" />
+    <Content Include="Images\default_avatar_org.png" />
+    <Content Include="Images\default_avatar_profile.png" />
+    <Content Include="icon_173_173.png" />
+    <Content Include="icon_62_62.png" />
+    <Content Include="SplashScreenImage.jpg" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
     <Resource Include="Images\Common\favourite_icon.png" />
     <Resource Include="Pages\favourite_icon.png" />
-    <Resource Include="Images\AppSquare\activities_icon.png" />
-    <Resource Include="Images\AppSquare\favorite_icon.png" />
-    <Resource Include="Images\AppSquare\guide_book_icon.png" />
-    <Resource Include="Images\AppSquare\news_icon.png" />
-    <Resource Include="Images\AppSquare\schedule_icon.png" />
-    <Resource Include="Images\AppSquare\user_center_icon.png" />
-    <Resource Include="Images\FreshmanGuide\pic1.png" />
-    <Resource Include="Images\FreshmanGuide\pic10.png" />
-    <Resource Include="Images\FreshmanGuide\pic11.png" />
-    <Resource Include="Images\FreshmanGuide\pic2.png" />
-    <Resource Include="Images\FreshmanGuide\pic3.png" />
-    <Resource Include="Images\FreshmanGuide\pic4.png" />
-    <Resource Include="Images\FreshmanGuide\pic5.png" />
-    <Resource Include="Images\FreshmanGuide\pic6.png" />
-    <Resource Include="Images\FreshmanGuide\pic7.png" />
-    <Resource Include="Images\FreshmanGuide\pic8.png" />
-    <Resource Include="Images\FreshmanGuide\pic9.png" />
-    <Resource Include="Images\Features\wetongji_icon.png" />
-    <Resource Include="Images\UserCenter\default_avatar.jpg" />
     <Content Include="icons\appbar.cancel.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -441,7 +421,6 @@
     <Content Include="icons\appbar.save.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\Temp\header_background.jpg" />
     <Content Include="icons\days\10\10_1.png" />
     <Content Include="icons\days\10\10_10.png" />
     <Content Include="icons\days\10\10_11.png" />
@@ -811,10 +790,8 @@
     <Content Include="icons\DefaultBuildingIcon.png" />
     <Content Include="Images\Common\location_icon.png" />
     <Content Include="Images\Common\time_icon.png" />
-    <Content Include="Images\missing.png" />
     <Content Include="Pages\BaseMapTile.png" />
     <Content Include="Pages\missing.png" />
-    <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TileBrush\WTCustomControls.csproj">

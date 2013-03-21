@@ -8,9 +8,11 @@ namespace WeTongji.Api.Response
         {
             Exams = null;
             Activities = null;
+            CourseInstances = null;
         }
 
         public WeTongji.Api.Domain.Exam[] Exams { get; set; }
         public WeTongji.Api.Domain.Activity[] Activities { get; set; }
+        public WeTongji.Api.Domain.CourseInstance[] CourseInstances { get; set; }
     }
 }

@@ -28,6 +28,7 @@
     <phone:PhoneApplicationPage.Resources>
 
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+        <Converter:ReversedTextLengthToVisibilityConverter x:Key="ReversedTextLengthToVisibilityConverter"/>
 
         <Style x:Key="PivotHeaderItemStyle1" TargetType="controlsPrimitives:PivotHeaderItem">
             <Setter Property="FontSize" Value="40"/>
@@ -91,60 +92,62 @@
                                       Visibility="{Binding Visibility, ElementName=TextBlock_QueryCourse, Converter={StaticResource TurnOverVisibilityConverter}}">
                             <StackPanel Margin="20,0">
                                 <!--Course Name-->
-                                <TextBlock TextWrapping="Wrap" FontSize="45" Margin="0,0,0,-10"
-								Text="{Binding Name}"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="45" Margin="0,0,0,24"
+								           Text="{Binding Name}"/>
 
-                                <!--Time-->
-                                <Grid Margin="0,34,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="15"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
+                                <StackPanel Visibility="{Binding DisplayBeginTimeAndEndTime, Converter={StaticResource ReversedTextLengthToVisibilityConverter}}">
+                                    <!--Time-->
+                                    <Grid Margin="0,0,0,20">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="15"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/time_icon.png" Stretch="None"/>
+                                        <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/time_icon.png" Stretch="None"/>
 
-                                    <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+                                        <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
 									Text="{Binding DisplayBeginTimeAndEndTime}" Margin="0,-4,0,-2"/>
-                                </Grid>
+                                    </Grid>
 
-                                <!--Place-->
-                                <Grid Margin="0,20,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="20"/>
-                                        <ColumnDefinition Width="15"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
+                                    <!--Place-->
+                                    <Grid Margin="0,0,0,33">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="15"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/location_icon.png" Stretch="None"/>
+                                        <Image HorizontalAlignment="Center" Height="20" Source="/Images/Common/location_icon.png" Stretch="None"/>
 
-                                    <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
+                                        <TextBlock Grid.Column="2" TextTrimming="WordEllipsis" Foreground="#FF999999" FontSize="18" VerticalAlignment="Center"
 									Text="{Binding Location}" Margin="0,-3,0,-2"/>
-                                </Grid>
+                                    </Grid>
+                                </StackPanel>
 
                                 <!--Teacher-->
-                                <StackPanel Margin="0,33,0,0">
+                                <StackPanel Margin="0,0,0,15">
                                     <TextBlock Text="老师" FontSize="20"/>
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding Teacher}"/>
                                 </StackPanel>
 
                                 <!--Course Id-->
-                                <StackPanel Margin="0,15,0,0">
+                                <StackPanel Margin="0,0,0,15">
                                     <TextBlock Text="课号" FontSize="20"/>
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding NO}"/>
                                 </StackPanel>
 
                                 <!--Course Point-->
-                                <StackPanel Margin="0,15,0,0">
+                                <StackPanel Margin="0,0,0,15">
                                     <TextBlock Text="学分" FontSize="20"/>
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding Point}"/>
                                 </StackPanel>
 
                                 <!--Course Hours-->
-                                <StackPanel Margin="0,15,0,0">
+                                <StackPanel Margin="0,0,0,15">
                                     <TextBlock Text="学时" FontSize="20"/>
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding Hours}"/>

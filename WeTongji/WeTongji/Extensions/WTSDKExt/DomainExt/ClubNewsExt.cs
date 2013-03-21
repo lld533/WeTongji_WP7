@@ -459,14 +459,14 @@ namespace WeTongji.Api.Domain
             get
             {
                 if (OrganizerAvatar.EndsWith("missing.png"))
-                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                    return new BitmapImage(new Uri("/Images/default_avatar_org.png", UriKind.RelativeOrAbsolute));
 
                 var fileExt = OrganizerAvatar.GetImageFileExtension();
 
                 var imgSrc = String.Format("{0}.{1}", OrganizerAvatarGuid, fileExt).GetImageSource();
 
                 if (imgSrc == null)
-                    return new BitmapImage(new Uri("/Images/missing.png", UriKind.RelativeOrAbsolute));
+                    return new BitmapImage(new Uri("/Images/default_avatar_org.png", UriKind.RelativeOrAbsolute));
                 else
                     return imgSrc;
             }
@@ -503,6 +503,11 @@ namespace WeTongji.Api.Domain
         {
             get
             {
+                if (DateTime.Now < CreatedAt)
+                {
+                    return String.Format("刚刚更新");
+                }
+
                 var span = DateTime.Now - CreatedAt;
 
                 if (span < TimeSpan.FromHours(1))

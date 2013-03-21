@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace WeTongji.Api.Request
 {
-    public class ActivityLikeRequest : WTRequest<WeTongji.Api.WTResponse>
+    public class ActivityLikeRequest<T> : WTRequest<T> where T : WeTongji.Api.WTResponse
     {
-        public ActivityLikeRequest() 
-        { 
+        public ActivityLikeRequest()
+        {
             Id = -1;
             base.dict["Id"] = "-1";
         }
@@ -22,7 +22,7 @@ namespace WeTongji.Api.Request
         public override IDictionary<String, String> GetParameters()
         {
             base.dict["Id"] = JsonConvert.SerializeObject(Id);
-            
+
             return base.dict;
         }
 

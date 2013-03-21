@@ -13,7 +13,7 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    
+
     <phone:PhoneApplicationPage.Resources>
         <Converter:TextLengthToVisibilityConverter x:Key="TextLengthToVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
@@ -25,15 +25,33 @@
             <RowDefinition Height="15"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <!--Page title-->
         <TextBlock Grid.Row="1"  Text="编辑个人资料" FontSize="56" Margin="0,-13,0,-7"/>
 
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
 
+                <StackPanel>
+                    <TextBlock Text="头像" FontSize="22"  Margin="0,0,0,11"/>
+                    <Grid HorizontalAlignment="Left">
+                        <Rectangle Width="100" Height="100" Fill="Gray" Margin="-11,0,0,0"
+                                   Tap="UpdateAvatar"/>
+                        <Image x:Name="Image_Avatar"  IsHitTestVisible="False"  Width="100" Height="100" Margin="-11,0,0,0" Stretch="Fill"
+                               Source="{Binding AvatarImageBrush}"/>
+                        <Grid>
+                            <Ellipse Opacity="0.9" Width="46" Height="46" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-13,-13" Fill="#FF1BA0E1"
+                                     Tap="UpdateAvatar"/>
+                            <Path IsHitTestVisible="False" 
+                                  Data="M98.9317,79.4341 L89.9314,79.4341 C89.1652,79.4448 88.4497,80.2988 88.4448,80.9419 L88.4242,100.833 C88.4343,101.391 89.0667,101.84 89.731,101.862 L108.175,101.824 C109.206,101.769 109.776,101.366 109.796,100.609 L109.837,89.514" HorizontalAlignment="Left" Height="22.486" Margin="88.296,79.459,-9.741,-1.945" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Top" Width="21.445" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeThickness="2" Stroke="White"/>
+                            <Path IsHitTestVisible="False" 
+                                  Data="M128.602,210.779 L119.188,219.906 L118.281,224.188 L122.156,223.125 L131.87,213.76 z" HorizontalAlignment="Left" Height="13.311" Margin="97.553,78.43,-1.021,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Top" Width="13.468" Stroke="White" StrokeThickness="2"/>
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+
                 <!--Phone-->
-                <StackPanel Margin="0,30,0,0">
+                <StackPanel Margin="0,27,0,0">
                     <TextBlock Text="手机" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_Phone"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"
@@ -46,7 +64,7 @@
                 </StackPanel>
 
                 <!--QQ-->
-                <StackPanel Margin="0,30,0,0">
+                <StackPanel Margin="0,27,0,0">
                     <TextBlock Text="QQ" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_QQ"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"
@@ -59,7 +77,7 @@
                 </StackPanel>
 
                 <!--Email-->
-                <StackPanel Margin="0,30,0,0">
+                <StackPanel Margin="0,27,0,0">
                     <TextBlock Text="电子邮箱" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_Email"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="EmailUserName"
@@ -72,7 +90,7 @@
                 </StackPanel>
 
                 <!--Sina Micro Blog-->
-                <StackPanel Margin="0,30,0,0">
+                <StackPanel Margin="0,27">
                     <TextBlock Text="新浪微博" FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_SinaMicroBlog"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}"

@@ -242,7 +242,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!--@_@-->
-                                        <Image Stretch="UniformToFill" Source="/Images/missing.png"/>
+                                        <Image Stretch="UniformToFill" Source="/Images/default_avatar_org.png"/>
                                         <Image Stretch="UniformToFill" Source="{Binding AvatarImageBrush}"/>
 
                                         <Grid Grid.Column="2" Margin="0,4">

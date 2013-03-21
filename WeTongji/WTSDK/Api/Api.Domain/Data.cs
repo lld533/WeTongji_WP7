@@ -84,6 +84,20 @@ namespace WeTongji.Api.Domain
     }
     #endregion
 
+    #region [UserProfile]
+
+    public class UserProfile : WTObject
+    {
+        public Boolean CanBeFound { get; set; }
+        public Boolean AllowAddFriend { get; set; }
+        public Boolean PublicSchedule { get; set; }
+        public Boolean PublicScheduleToAll { get; set; }
+        public Boolean PublicInformation { get; set; }
+        public Boolean PublicInformationToAll { get; set; }
+    }
+
+    #endregion
+
     #region [Course]
 
     public class Course : WTObject
@@ -91,7 +105,7 @@ namespace WeTongji.Api.Domain
         public String NO { get; set; }
 
         public int Hours { get; set; }
-        
+
         public float Point { get; set; }
 
         public String Name { get; set; }
@@ -109,6 +123,24 @@ namespace WeTongji.Api.Domain
         public String Required { get; set; }
 
         public String Location { get; set; }
+    }
+
+    #endregion
+
+    #region [Course Instance]
+
+    public class CourseInstance : WTObject
+    {
+        public String NO { get; set; }
+        public String Name { get; set; }
+        public String Teacher { get; set; }
+        public String Hours { get; set; }
+        public String Location { get; set; }
+        public int SectionStart { get; set; }
+        public int SectionEnd { get; set; }
+        public float Point { get; set; }
+        public String Required { get; set; }
+        public DateTime Day { get; set; }
     }
 
     #endregion
@@ -234,7 +266,7 @@ namespace WeTongji.Api.Domain
     #endregion
 
     #region [Around]
-    public class Around : WTNews 
+    public class Around : WTNews
     {
         /// <summary>
         /// A string that contains the url info of a title image
@@ -274,7 +306,7 @@ namespace WeTongji.Api.Domain
         public String JobTitle { get; set; }
 
         public String Words { get; set; }
-         
+
         public String NO { get; set; }
 
         public String Avatar { get; set; }
@@ -284,11 +316,11 @@ namespace WeTongji.Api.Domain
         /// Key := Url
         /// Value := Description
         /// </summary>
-        public Dictionary<String,String> Images { get; set; }
+        public Dictionary<String, String> Images { get; set; }
 
         public String Description { get; set; }
 
-        public String Read { get; set; }
+        public int Read { get; set; }
 
         public int Like { get; set; }
 

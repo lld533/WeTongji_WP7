@@ -187,7 +187,7 @@ namespace WeTongji.Business
             CurrentAgendaSourceState = SourceState.Setting;
             OnAgendaSourceStateChanged();
         }
-
+        
         #endregion
 
         #region [Private]

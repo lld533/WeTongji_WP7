@@ -274,7 +274,14 @@ namespace WeTongji.Api.Domain
 
                 var fileName = String.Format("{0}.{1}", fileKV[0].Trim('\"'), fileKV[1].Trim('\"'));
 
-                return fileName.GetImageSource();
+                ImageSource result = null;
+                try
+                {
+                    result = fileName.GetImageSource();
+                }
+                catch { }
+
+                return result;
             }
         }
 
@@ -290,6 +297,11 @@ namespace WeTongji.Api.Domain
         {
             get
             {
+                if (DateTime.Now < CreatedAt)
+                {
+                    return String.Format("刚刚更新");
+                }
+
                 var span = DateTime.Now - CreatedAt;
 
                 if (span < TimeSpan.FromHours(1))

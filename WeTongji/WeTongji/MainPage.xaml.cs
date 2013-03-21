@@ -55,6 +55,13 @@ namespace WeTongji
 
         private SourceState OfficialNoteSourceState = SourceState.NotSet;
 
+        private Boolean isLoadingMoreActivities = false;
+
+        private Boolean isLikePersonButtonEnabled = false;
+        private Boolean isUnlikePersonButtonEnabled = false;
+        private Boolean isFavoritePersonButtonEnabled = false;
+        private Boolean isUnfavoritePersonButtonEnabled = false;
+
         #endregion
 
         #region [Threads]
@@ -122,6 +129,13 @@ namespace WeTongji
                     thread.Start();
                 }
             }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            ProgressBarPopup.Instance.Close();
         }
 
         #endregion
@@ -377,6 +391,8 @@ namespace WeTongji
             set
             {
                 ScrollViewer_PeopleOfWeek.DataContext = value;
+
+                isLikePersonButtonEnabled = isUnlikePersonButtonEnabled = isFavoritePersonButtonEnabled = isUnfavoritePersonButtonEnabled = true;
 
                 if (value != null)
                 {
@@ -757,7 +773,7 @@ namespace WeTongji
 
                     #region [download courses, favorites and schedule in order]
 
-                    DownloadCourses();
+                    DownloadCourses(arg.Result.Session, arg.Result.User.UID);
 
                     #endregion
                 };
@@ -963,6 +979,9 @@ namespace WeTongji
             #region [Core action]
             updateExpireAction = () =>
             {
+                if (this.NavigationService.CurrentSource.ToString() != "/Pages/MainPage.xaml")
+                    return;
+
                 ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
                 WTDefaultClient<ActivitiesGetResponse> client = new WTDefaultClient<ActivitiesGetResponse>();
 
@@ -970,8 +989,6 @@ namespace WeTongji
                 {
                     ProgressBarPopup.Instance.Open();
                 });
-
-                Debug.WriteLine("[updateExpireAction Thread]" + Thread.CurrentThread.GetHashCode());
 
                 #region [Add additional parameter]
 
@@ -1030,9 +1047,9 @@ namespace WeTongji
                             }
                             else
                                 ProgressBarPopup.Instance.Close();
-                        });
 
-                        updateExpireAction();
+                            updateExpireAction();
+                        });
                     }
                     else
                     {
@@ -1164,81 +1181,74 @@ namespace WeTongji
 
         #region [People of Week]
 
-        /// <summary>
-        /// Try to get the latest Person from the server.
-        /// </summary>
-        private void RefreshPeopleOfWeek()
+        private void GetLatestPerson()
         {
-            PeopleGetRequest<PeopleGetResponse> req = new PeopleGetRequest<PeopleGetResponse>();
-            WTDefaultClient<PeopleGetResponse> client = new WTDefaultClient<PeopleGetResponse>();
+            var req = new PersonGetLatestRequest<PersonGetLatestResponse>();
+            var client = new WTDefaultClient<PersonGetLatestResponse>();
 
-            ProgressBarPopup.Instance.Open();
+            var uid = Global.Instance.CurrentUserID;
 
-            #region [Add handlers]
-
-            client.ExecuteCompleted += (o, arg) =>
-            {
-                int count = arg.Result.People.Count();
-                PersonExt[] arr = new PersonExt[count];
-                PersonExt p = null;
-
-                #region [Update database]
-
-                for (int i = 0; i < count; ++i)
+            client.ExecuteCompleted += (obj, arg) =>
                 {
-                    var item = arg.Result.People[i];
+                    //...Try again if user changed
+                    if (uid != Global.Instance.CurrentUserID)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            GetLatestPerson();
+                        });
+                        return;
+                    }
+
+                    PersonExt target = null;
+
                     using (var db = WTShareDataContext.ShareDB)
                     {
-                        var itemInDB = db.People.Where((a) => a.Id == item.Id).FirstOrDefault();
+                        target = db.People.Where((p) => p.Id == arg.Result.Person.Id).SingleOrDefault();
 
-                        //...New data
-                        if (itemInDB == null)
+                        if (target == null)
                         {
-                            itemInDB = new PersonExt();
-                            itemInDB.SetObject(item);
-
-                            db.People.InsertOnSubmit(itemInDB);
+                            target = new PersonExt();
+                            target.SetObject(arg.Result.Person);
+                            db.People.InsertOnSubmit(target);
                         }
-                        //...Already in DB
                         else
                         {
-                            itemInDB.SetObject(item);
+                            target.SetObject(arg.Result.Person);
                         }
-
-                        arr[i] = itemInDB;
 
                         db.SubmitChanges();
                     }
-                }
-                try
-                {
-                    p = arr.OrderByDescending((person) => person.Id).FirstOrDefault();
-                }
-                catch { }
-                
-                if (p != null)
-                {
+
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        if (p != null)
+                        ProgressBarPopup.Instance.Close();
+                        PersonSourceState = SourceState.Done;
+
+                        var src = PersonSource;
+                        if (src == null || src.Id < target.Id)
                         {
-                            if (PersonSource == null || p.Id > PersonSource.Id)
+                            PersonSource = target;
+                        }
+                        else if (src.Id == target.Id)
+                        {
+                            if (src.Name != target.Name)
                             {
-                                PersonSource = p;
+                                src.SendPropertyChanged("Name");
+                            }
+                            if (src.JobTitle != target.JobTitle)
+                            {
+                                src.SendPropertyChanged("JobTitle");
+                            }
+                            if (src.Words != target.Words)
+                            {
+                                src.SendPropertyChanged("Words");
                             }
                         }
-
-                        PersonSourceState = SourceState.Done;
-                        ProgressBarPopup.Instance.Close();
                     });
-                }
+                };
 
-                #endregion
-
-                Global.Instance.PersonPageId = arg.Result.NextPager;
-            };
-
-            client.ExecuteFailed += (o, arg) =>
+            client.ExecuteFailed += (obj, arg) =>
                 {
                     this.Dispatcher.BeginInvoke(() =>
                     {
@@ -1247,10 +1257,17 @@ namespace WeTongji
                     });
                 };
 
-            #endregion
-
+            ProgressBarPopup.Instance.Open();
             PersonSourceState = SourceState.Setting;
-            client.Execute(req);
+
+            if (String.IsNullOrEmpty(uid))
+            {
+                client.Execute(req);
+            }
+            else
+            {
+                client.Execute(req, Global.Instance.Session, uid);
+            }
         }
 
         #endregion
@@ -1350,9 +1367,9 @@ namespace WeTongji
                 int count = e.Result.Arounds.Count();
                 AroundExt latest = null;
                 AroundExt[] arr = new AroundExt[count];
-                
 
-                for(int i=0;i<count;++i)
+
+                for (int i = 0; i < count; ++i)
                 {
                     var item = e.Result.Arounds[i];
 
@@ -1614,6 +1631,8 @@ namespace WeTongji
         {
             var p = sender as Panorama;
 
+            ProgressBarPopup.Instance.Close();
+
             #region [App bar]
             if (p.SelectedIndex == 0 && Border_SignedOut.Visibility == Visibility.Visible)
             {
@@ -1648,36 +1667,7 @@ namespace WeTongji
             {
                 this.ApplicationBar.Buttons.Clear();
 
-                var src = PersonSource;
-
-                if (src != null)
-                {
-                    ApplicationBarIconButton button;
-
-                    button = new ApplicationBarIconButton(
-                        new Uri(src.CanLike ? "/icons/appbar.like.rest.png" : "/icons/appbar.unlike.rest.png",
-                            UriKind.RelativeOrAbsolute))
-                        {
-                            Text = "喜欢"
-                        };
-                    this.ApplicationBar.Buttons.Add(button);
-
-                    button = new ApplicationBarIconButton(
-                        new Uri(src.CanFavorite ? "/icons/appbar.favs.rest.png" : "/icons/appbar.unfavourite.rest.png",
-                            UriKind.RelativeOrAbsolute))
-                        {
-                            Text = "收藏"
-                        };
-                    this.ApplicationBar.Buttons.Add(button);
-
-                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.person.list.rest.png", UriKind.RelativeOrAbsolute)) { Text = "查看历史" };
-                    button.Click += NavToPeopleOfWeekList;
-                    this.ApplicationBar.Buttons.Add(button);
-
-                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
-                    button.Click += RefreshButton_Click;
-                    this.ApplicationBar.Buttons.Add(button);
-                }
+                LoadPersonAppBarButtons();
             }
 
             #endregion
@@ -1757,7 +1747,7 @@ namespace WeTongji
             else if (p.SelectedIndex == 3)
             {
                 if (PersonSourceState == SourceState.NotSet)
-                    RefreshPeopleOfWeek();
+                    GetLatestPerson();
             }
 
             #endregion
@@ -1790,6 +1780,7 @@ namespace WeTongji
 
         private void RefreshButton_Click(Object sender, EventArgs e)
         {
+#if DEBUG
             var cur = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage");
             var peak = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationPeakMemoryUsage");
             String strCur, strPeak;
@@ -1822,6 +1813,71 @@ namespace WeTongji
             }
 
             MessageBox.Show(String.Format("Cur Mem: {0}, Peak Mem: {1}", strCur, strPeak));
+#else
+
+            if (Panorama_Core.SelectedIndex == 0)
+            {
+                var src = UserSource;
+                if (src != null)
+                {
+                    src.SendPropertyChanged("FavoritesCount");
+                    src.SendPropertyChanged("AvatarImageBrush");
+                }
+                if (Global.Instance.CurrentAgendaSourceState == SourceState.Done)
+                {
+                    var node = Global.Instance.AgendaSource.GetNextCalendarNode();
+                    AlarmClockSource = node;
+                }
+            }
+            else if (Panorama_Core.SelectedIndex == 1)
+            {
+                GetAllUnexpiredActivities();
+            }
+            else if (Panorama_Core.SelectedIndex == 2)
+            {
+                //...Reload Image
+                {
+                    var src = OfficialNoteSource;
+                    if (src != null)
+                        src.SendPropertyChanged("FirstImageBrush");
+                }
+                {
+                    var src = ClubNewsSource;
+                    if (src != null)
+                        src.SendPropertyChanged("FirstImageBrush");
+                }
+                {
+                    var src = TongjiNewsSource;
+                    if (src != null)
+                        src.SendPropertyChanged("FirstImageBrush");
+                }
+                {
+                    var src = AroundNewsSource;
+                    if (src != null)
+                        src.SendPropertyChanged("TitleImageBrush");
+                }
+
+                //...Get latest
+                RefreshOfficialNotes();
+                RefreshClubNews();
+                RefreshSchoolNews();
+                RefreshAroundNews();
+            }
+            else if (Panorama_Core.SelectedIndex == 3)
+            {
+                //...Reload Image
+                var src = PersonSource;
+                if (src != null)
+                {
+                    src.SendPropertyChanged("AvatarImageBrush");
+                    src.SendPropertyChanged("FirstImageBrush");
+                }
+
+                //...Get latest
+                GetLatestPerson();
+            }
+
+#endif
         }
 
         private void SignOut(Object sender, EventArgs e)
@@ -1875,6 +1931,127 @@ namespace WeTongji
                 client.ExecuteFailed += (obj, args) => { a.Invoke(); };
 
                 client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
+            }
+        }
+
+        private void LoadPersonAppBarButtons()
+        {
+            this.ApplicationBar.Buttons.Clear();
+
+            var src = PersonSource;
+
+            ApplicationBarIconButton button;
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.person.list.rest.png", UriKind.RelativeOrAbsolute)) { Text = "查看历史" };
+            button.Click += NavToPeopleOfWeekList;
+            this.ApplicationBar.Buttons.Add(button);
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+            button.Click += RefreshButton_Click;
+            this.ApplicationBar.Buttons.Add(button);
+        }
+
+        private void ListBox_Activity_MouseMove(Object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (this.activitySortMethod != ActivitySortMethod.kByCreationTime)
+                return;
+
+            var lb = sender as ListBox;
+            DependencyObject obj = lb;
+
+            while (!(obj is ScrollViewer) && obj != null)
+            {
+                obj = VisualTreeHelper.GetChild(obj, 0);
+            }
+
+            if (obj != null)
+            {
+                var sv = obj as ScrollViewer;
+
+                //...Scroll to the end
+                if (!isLoadingMoreActivities && Math.Abs(sv.ScrollableHeight - sv.VerticalOffset) <= 0.1)
+                {
+                    var src = ActivityListSource;
+                    if (src != null && src.Count > 0)
+                    {
+                        if (src.Last().IsValid)
+                        {
+                            var thread = new Thread(new ParameterizedThreadStart(LoadMoreActivities));
+
+                            thread.Start(src.Count);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadMoreActivities(Object param)
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+                isLoadingMoreActivities = true;
+            });
+
+            var count = (int)param;
+            ActivityExt[] arr = null;
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                arr = db.Activities.ToArray();
+            }
+
+            if (arr != null && arr.Count() > count)
+            {
+                var src = arr.OrderByDescending((activity) => activity.CreatedAt).Skip(count);
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                });
+
+                if (src.Count() > 10)
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        isLoadingMoreActivities = false;
+
+                        if (activitySortMethod == ActivitySortMethod.kByCreationTime)
+                        {
+                            var activitySource = ActivityListSource;
+                            bool hasMore = false;
+                            if (activitySource != null && !activitySource.Last().IsValid)
+                                hasMore = true;
+
+                            UpdateAcitivityList(src.Take(10), false, hasMore);
+                        }
+                    });
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        isLoadingMoreActivities = false;
+
+                        if (activitySortMethod == ActivitySortMethod.kByCreationTime)
+                        {
+                            var activitySource = ActivityListSource;
+                            bool hasMore = false;
+                            if (activitySource != null && !activitySource.Last().IsValid)
+                                hasMore = true;
+
+                            UpdateAcitivityList(src, false, hasMore);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                    isLoadingMoreActivities = false;
+                });
             }
         }
 
@@ -1956,6 +2133,9 @@ namespace WeTongji
         /// <param name="hasMore">"Load more" should be insert to the end of the List</param>
         private void UpdateAcitivityList(IEnumerable<ActivityExt> activities, Boolean willContinue, Boolean hasMore)
         {
+            if (this.NavigationService.CurrentSource.ToString() != "/MainPage.xaml")
+                return;
+
             var src = ActivityListSource;
             if (src == null || src.Count == 0)
             {
@@ -2408,7 +2588,7 @@ namespace WeTongji
         /// This function is called when timetable has been downloaded completely.
         /// </remarks>
         /// <param name="param">TimetableGetResponse</param>
-        private void OnDownloadCoursesCompleted(Object param)
+        private void OnDownloadCoursesCompleted(Object param, String session, String uid)
         {
             var result = param as TimeTableGetResponse;
 
@@ -2499,10 +2679,10 @@ namespace WeTongji
             }
             #endregion
 
-            DownloadFavorite();
+            DownloadFavorite(session, uid);
         }
 
-        private void OnDownloadFavoriteCompleted(Object param)
+        private void OnDownloadFavoriteCompleted(Object param, String session, String uid)
         {
             if (param == null)
                 throw new ArgumentNullException();
@@ -2870,14 +3050,14 @@ namespace WeTongji
                 }
             });
 
-            DownloadSchedule();
+            DownloadSchedule(session, uid);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="param">WTExecuteCompletedEventArgs[ScheduleGetResponse]</param>
-        private void OnDownloadScheduleCompleted(Object param)
+        private void OnDownloadScheduleCompleted(Object param, String uid)
         {
             if (param == null)
             {
@@ -2938,9 +3118,10 @@ namespace WeTongji
                     {
                         examExtArr[i] = new ExamExt();
                         examExtArr[i].SetObject(arg.Result.Exams.ElementAt(i));
+                        examExtArr[i].UID = uid;
                     }
 
-                    using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                    using (var db = new WTUserDataContext(uid))
                     {
                         allSemesters = db.Semesters.ToArray();
                     }
@@ -2956,12 +3137,27 @@ namespace WeTongji
                                 }
 
                                 ExamExt[] previousData = null;
-                                using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                                using (var db = new WTUserDataContext(uid))
                                 {
                                     previousData = db.Exams.Where((e) => e.SemesterGuid == s.Id).ToArray();
-                                    db.Exams.DeleteAllOnSubmit(previousData);
+                                }
 
-                                    db.SubmitChanges();
+                                if (previousData != null && previousData.Count() > 0)
+                                {
+                                    foreach (var exam in previousData)
+                                    {
+                                        using (var db = new WTUserDataContext(uid))
+                                        {
+                                            try
+                                            {
+                                                db.Exams.Attach(exam);
+                                            }
+                                            catch { }
+
+                                            db.Exams.DeleteOnSubmit(exam);
+                                            db.SubmitChanges();
+                                        }
+                                    }
                                 }
 
                                 targetSemester = s;
@@ -2972,10 +3168,9 @@ namespace WeTongji
 
                     if (targetSemester != null)
                     {
-
                         foreach (var e in examExtArr)
                         {
-                            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+                            using (var db = new WTUserDataContext(uid))
                             {
                                 db.Exams.InsertOnSubmit(e);
                                 db.SubmitChanges();
@@ -2990,7 +3185,7 @@ namespace WeTongji
             Debug.WriteLine("Download timetable completed.");
         }
 
-        private void DownloadCourses()
+        private void DownloadCourses(String session, String uid)
         {
             var tt_req = new TimeTableGetRequest<TimeTableGetResponse>();
             var tt_client = new WTDefaultClient<TimeTableGetResponse>();
@@ -3006,20 +3201,15 @@ namespace WeTongji
 
             tt_client.ExecuteCompleted += (s, args) =>
             {
-                var thread = new Thread(new ParameterizedThreadStart(OnDownloadCoursesCompleted))
-                {
-                    Name = "OnDownloadTimeTableCompleted",
-                    IsBackground = true
-                };
-                thread.Start(args.Result);
+                OnDownloadCoursesCompleted(args.Result, session, uid);
             };
 
             #endregion
 
-            tt_client.Execute(tt_req, Global.Instance.Session, Global.Instance.Settings.UID);
+            tt_client.Execute(tt_req, session, uid);
         }
 
-        private void DownloadFavorite()
+        private void DownloadFavorite(String session, String uid)
         {
             Debug.WriteLine("In download favorite.");
 
@@ -3036,23 +3226,17 @@ namespace WeTongji
 
             fav_client.ExecuteCompleted += (s, args) =>
             {
-                var thread = new Thread(new ParameterizedThreadStart(OnDownloadFavoriteCompleted))
-                {
-                    IsBackground = true,
-                    Name = "OnDownloadFavoriteCompleted"
-                };
-
-                thread.Start(args);
+                OnDownloadFavoriteCompleted(args, session, uid);
             };
 
             #endregion
 
-            fav_client.Execute(fav_req, Global.Instance.Session, Global.Instance.Settings.UID);
+            fav_client.Execute(fav_req, session, uid);
 
             //...Todo @_@ NextPager
         }
 
-        private void DownloadSchedule()
+        private void DownloadSchedule(String session, String uid)
         {
             Debug.WriteLine("In download schedule");
 
@@ -3061,6 +3245,20 @@ namespace WeTongji
 
             schedule_req.Begin = DateTime.Now.Date;
             schedule_req.End = DateTime.Now.Date + TimeSpan.FromDays(1);
+
+            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+            {
+                var semesters = db.Semesters.ToArray();
+
+                var s = semesters.Where((semester) => semester.SchoolYearStartAt <= DateTime.Now && semester.SchoolYearEndAt >= DateTime.Now).SingleOrDefault();
+
+
+                if (s != null)
+                {
+                    schedule_req.Begin = s.SchoolYearStartAt;
+                    schedule_req.End = s.SchoolYearEndAt;
+                }
+            }
 
             #region [Add handlers]
 
@@ -3073,14 +3271,14 @@ namespace WeTongji
             {
                 Debug.WriteLine("Get user's schedule completed.");
 
-                OnDownloadScheduleCompleted(args);
+                OnDownloadScheduleCompleted(args, uid);
 
                 ComputeCalendar();
             };
 
             #endregion
 
-            schedule_client.Execute(schedule_req, Global.Instance.Session, Global.Instance.Settings.UID);
+            schedule_client.Execute(schedule_req, session, uid);
         }
 
         private void ComputeCalendar()
