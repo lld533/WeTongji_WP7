@@ -291,7 +291,7 @@ namespace WeTongji
 
                     client.DownloadImageCompleted += (obj, arg) =>
                         {
-                            this.Dispatcher.BeginInvoke(() => 
+                            this.Dispatcher.BeginInvoke(() =>
                             {
                                 an.SendPropertyChanged("TitleImageBrush");
                             });
@@ -415,6 +415,12 @@ namespace WeTongji
 
             if (an == null)
                 return;
+
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                an.CanLike = true;
+                an.CanFavorite = true;
+            }
 
             if (an.CanLike)
             {
@@ -942,11 +948,13 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    AroundExt itemInDB = null;
+
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
                     {
                         using (var db = WTShareDataContext.ShareDB)
                         {
-                            var itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
+                            itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
 
                             if (itemInDB != null)
                             {
@@ -967,6 +975,10 @@ namespace WeTongji
 
                         RefreshCurrentNewsOnFavoriteButtonClicked(req.Id, true);
                     }
+
+                    //...Raise Global.FavoriteChanged
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
@@ -1030,11 +1042,13 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    AroundExt itemInDB = null;
+
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
                     {
                         using (var db = WTShareDataContext.ShareDB)
                         {
-                            var itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
+                            itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
 
                             if (itemInDB != null)
                             {
@@ -1055,6 +1069,10 @@ namespace WeTongji
 
                         RefreshCurrentNewsOnFavoriteButtonClicked(req.Id, false);
                     }
+
+                    //...Raise Global.FavoriteChanged
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
 
                     this.Dispatcher.BeginInvoke(() =>
                     {

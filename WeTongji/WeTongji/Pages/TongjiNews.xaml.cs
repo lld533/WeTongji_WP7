@@ -279,6 +279,13 @@ namespace WeTongji
             if (sn == null)
                 return;
 
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                sn.CanFavorite = true;
+                sn.CanLike = true;
+            }
+
+
             if (sn.CanLike)
             {
                 var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
@@ -805,11 +812,13 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    SchoolNewsExt itemInDB = null;
+
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
                     {
                         using (var db = WTShareDataContext.ShareDB)
                         {
-                            var itemInDB = db.SchoolNewsTable.Where((news) => news.Id == req.Id).SingleOrDefault();
+                            itemInDB = db.SchoolNewsTable.Where((news) => news.Id == req.Id).SingleOrDefault();
 
                             if (itemInDB != null)
                             {
@@ -830,6 +839,10 @@ namespace WeTongji
 
                         RefreshCurrentNewsOnFavoriteButtonClicked(req.Id, true);
                     }
+
+                    //...Raise Global Favorite changed
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
@@ -893,11 +906,13 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    SchoolNewsExt itemInDB = null;
+
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
                     {
                         using (var db = WTShareDataContext.ShareDB)
                         {
-                            var itemInDB = db.SchoolNewsTable.Where((news) => news.Id == req.Id).SingleOrDefault();
+                            itemInDB = db.SchoolNewsTable.Where((news) => news.Id == req.Id).SingleOrDefault();
 
                             if (itemInDB != null)
                             {
@@ -918,6 +933,10 @@ namespace WeTongji
 
                         RefreshCurrentNewsOnFavoriteButtonClicked(req.Id, false);
                     }
+
+                    //...Raise Global Favorite changed
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
 
                     this.Dispatcher.BeginInvoke(() =>
                     {

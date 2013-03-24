@@ -73,8 +73,18 @@ namespace WeTongji
 
         private void OnDragDelta(Object sender, DragDeltaGestureEventArgs e)
         {
-            transform.TranslateX += e.HorizontalChange;
-            transform.TranslateY += e.VerticalChange;
+            double targetX = transform.TranslateX + e.HorizontalChange;
+            double targetY = transform.TranslateY + e.VerticalChange;
+
+            var uielement = sender as UIElement;
+
+            double minX = -uielement.RenderSize.Width / 2;
+            double minY = -uielement.RenderSize.Height / 2;
+            double maxX = minX + this.RenderSize.Width;
+            double maxY = minY + this.RenderSize.Height;
+
+            transform.TranslateX = Math.Max(minX, Math.Min(maxX, targetX));
+            transform.TranslateY = Math.Max(minY, Math.Min(maxY, targetY));
         }
 
         private void OnDragCompleted(Object sender, DragCompletedGestureEventArgs e)

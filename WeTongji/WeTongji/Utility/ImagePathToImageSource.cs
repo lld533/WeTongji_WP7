@@ -74,7 +74,20 @@ namespace WeTongji.Utility
                     using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read))
                     {
                         var bi = new BitmapImage();
-                        bi.SetSource(stream);
+                        try
+                        {
+                            bi.SetSource(stream);
+                        }
+                        catch (Exception ex)
+                        {
+                            using (var memStream = new MemoryStream())
+                            {
+                                stream.Seek(0, SeekOrigin.Begin);
+                                stream.CopyTo(memStream);
+                                bi.SetSource(memStream);
+                            }
+                        }
+                        
                         return bi;
                     }
                 }

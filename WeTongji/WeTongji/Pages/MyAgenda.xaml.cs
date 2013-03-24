@@ -16,6 +16,9 @@ using System.Collections.ObjectModel;
 using WeTongji.Pages;
 using System.Threading;
 using System.Windows.Media.Animation;
+using System.Windows.Input;
+using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace WeTongji
 {
@@ -24,7 +27,60 @@ namespace WeTongji
         public MyAgenda()
         {
             InitializeComponent();
+
+            Global.Instance.AgendaSourceChanged += AgendaSourceStateChanged;
+            refresh_dt.Tick += Refresh_Tick;
+
+            VerticalScrollChanged += (o, e) =>
+            {
+                UpdateTopItem();
+            };
         }
+
+        private DispatcherTimer refresh_dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
+
+        private void AgendaSourceStateChanged(Object sender, EventArgs e)
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                var src = this.LongListSelector_Core.ItemsSource;
+                LongListSelector_Core.ItemsSource = null;
+                LongListSelector_Core.ItemsSource = src;
+
+                var node = Global.Instance.AgendaSource.GetNextCalendarNode();
+                HighlightCurrentNode(node);
+            });
+        }
+
+        private CalendarNode CurrentNode { get; set; }
+
+        private CalendarGroup<CalendarNode> TopItemSource
+        {
+            get
+            {
+                return TextBlock_TopItemDate.DataContext == null ? null : TextBlock_TopItemDate.DataContext as CalendarGroup<CalendarNode>;
+            }
+            set
+            {
+                var oldValue = TopItemSource;
+                TextBlock_TopItemDate.DataContext = value;
+
+                //...Visible previous calendar node
+                if (oldValue == null || oldValue.Key > value.Key)
+                {
+                    (this.Resources["VisiblePreviousCalendarNode"] as Storyboard).Begin();
+                }
+                //...Visible next calendar node
+                else if (oldValue.Key < value.Key)
+                {
+                    (this.Resources["VisibleNextCalendarNode"] as Storyboard).Begin();
+                }
+            }
+        }
+
+        private event EventHandler VerticalScrollChanged;
+
+        private Boolean registerVerticalScrollChanged = false;
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -97,50 +153,87 @@ namespace WeTongji
                 case SourceState.Done:
                     {
                         var nodeToScrollTo = global.AgendaSource.GetNextCalendarNode();
+
                         this.Dispatcher.BeginInvoke(() =>
                         {
+                            CurrentNode = nodeToScrollTo;
+
                             #region [LongListSelector has no source]
 
                             if (LongListSelector_Core.ItemsSource == null)
                             {
                                 TextBlock_Loading.Visibility = Visibility.Collapsed;
                                 LongListSelector_Core.ItemsSource = global.AgendaSource;
+                                {
+                                    LongListSelector_Core.UpdateLayout();
 
-                                LongListSelector_Core.UpdateLayout();
+                                    if (!registerVerticalScrollChanged)
+                                    {
+                                        DependencyObject depObj = LongListSelector_Core;
+
+                                        while (!(depObj is ScrollViewer))
+                                        {
+                                            Debug.WriteLine(depObj.GetType());
+                                            depObj = VisualTreeHelper.GetChild(depObj, 0);
+                                        }
+
+                                        this.SetBinding(DependencyProperty.RegisterAttached("VerticalOffset",
+
+                                            typeof(double),
+
+                                            this.GetType(),
+
+                                            new PropertyMetadata((obj, arg) =>
+                                            {
+
+                                                if (VerticalScrollChanged != null)
+
+                                                    VerticalScrollChanged(this, EventArgs.Empty);
+
+                                            })),
+
+                                        new Binding("VerticalOffset") { Source = depObj as ScrollViewer });
+
+                                        registerVerticalScrollChanged = true;
+                                    }
+                                }
+
                                 LongListSelector_Core.ScrollTo(nodeToScrollTo);
                                 LongListSelector_Core.UpdateLayout();
 
-                                DependencyObject obj = LongListSelector_Core;
-                                while (!(obj is VirtualizingStackPanel))
                                 {
-                                    obj = VisualTreeHelper.GetChild(obj, 0);
-                                }
-
-                                int count = VisualTreeHelper.GetChildrenCount(obj);
-
-                                for (int i = 0; i < count; ++i)
-                                {
-                                    var tmp = VisualTreeHelper.GetChild(obj, i);
-
-                                    var source = (tmp as Control).DataContext as LongListSelectorItem;
-                                    if (source.Item == nodeToScrollTo)
+                                    DependencyObject obj = LongListSelector_Core;
+                                    while (!(obj is VirtualizingStackPanel))
                                     {
-                                        obj = tmp;
+                                        obj = VisualTreeHelper.GetChild(obj, 0);
+                                    }
 
-                                        //...Get the layout root of the item
-                                        while (!(obj is ContentPresenter))
+                                    int count = VisualTreeHelper.GetChildrenCount(obj);
+
+                                    for (int i = 0; i < count; ++i)
+                                    {
+                                        var tmp = VisualTreeHelper.GetChild(obj, i);
+
+                                        var source = (tmp as Control).DataContext as LongListSelectorItem;
+                                        if (source.Item == nodeToScrollTo)
                                         {
-                                            obj = VisualTreeHelper.GetChild(obj, 0);
-                                        }
+                                            obj = tmp;
 
-                                        var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                                        Storyboard sb = null;
-                                        if (nodeToScrollTo.IsNoArrangementNode)
-                                            sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
-                                        else
-                                            sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
-                                        sb.Begin();
-                                        break;
+                                            //...Get the layout root of the item
+                                            while (!(obj is ContentPresenter))
+                                            {
+                                                obj = VisualTreeHelper.GetChild(obj, 0);
+                                            }
+
+                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
+                                            Storyboard sb = null;
+                                            if (nodeToScrollTo.IsNoArrangementNode)
+                                                sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
+                                            else
+                                                sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
+                                            sb.Begin();
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -156,6 +249,7 @@ namespace WeTongji
                             #endregion
 
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                            refresh_dt.Start();
                         });
                     }
                     break;
@@ -181,155 +275,99 @@ namespace WeTongji
 
         }
 
-        private void LoadData()
+        private void Refresh_Tick(Object sender, EventArgs e)
         {
-            Debug.WriteLine("LoadData started.");
+            if (CurrentNode == null)
+                return;
 
-            var list = new List<CalendarNode>();
-            CourseExt[] courses = null;
-            ExamExt[] exams = null;
-            Semester[] semesters = null;
-            String serializedActivityIdArr = String.Empty;
-
-            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+            Action core = () =>
             {
-                courses = db.Courses.ToArray();
-                exams = db.Exams.ToArray();
-                semesters = db.Semesters.ToArray();
-                var activity = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
-                if (activity != null)
-                    serializedActivityIdArr = activity.Value;
-            }
+                Storyboard appear, disappear;
+                appear = disappear = null;
 
-            if (courses != null && semesters != null)
-            {
-                foreach (var c in courses)
+                //...Get current node and begin disappear storyboard.
+                #region [Disappear]
                 {
-                    var s = semesters.Where((semester) => semester.Id == c.SemesterGuid).SingleOrDefault();
-                    if (s != null)
+                    DependencyObject obj = LongListSelector_Core;
+                    while (!(obj is VirtualizingStackPanel))
                     {
-                        list.AddRange(c.GetCalendarNodes(s));
+                        obj = VisualTreeHelper.GetChild(obj, 0);
                     }
-                }
-            }
 
-            if (exams != null)
-            {
-                foreach (var e in exams)
-                {
-                    list.Add(e.GetCalendarNode());
-                }
-            }
+                    int count = VisualTreeHelper.GetChildrenCount(obj);
 
-            if (!String.IsNullOrEmpty(serializedActivityIdArr))
-            {
-                var strIdArr = serializedActivityIdArr.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                int count = strIdArr.Count();
-                int id;
-                ActivityExt activity;
-
-                for (int i = 0; i < count; ++i)
-                {
-                    if (Int32.TryParse(strIdArr[i], out id))
+                    for (int i = 0; i < count; ++i)
                     {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            activity = db.Activities.Where((a) => a.Id == id).SingleOrDefault();
-                        }
+                        var tmp = VisualTreeHelper.GetChild(obj, i);
 
-                        if (activity != null)
+                        var source = (tmp as Control).DataContext as LongListSelectorItem;
+                        CalendarNode srcItem = source == null ? null : source.Item as CalendarNode;
+                        if (srcItem != null && CurrentNode.CompareTo(srcItem) == 0)
                         {
-                            list.Add(activity.GetCalendarNode());
+                            obj = tmp;
+
+                            //...Get the layout root of the item
+                            while (!(obj is ContentPresenter))
+                            {
+                                obj = VisualTreeHelper.GetChild(obj, 0);
+                            }
+
+                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
+                            if (CurrentNode.IsNoArrangementNode)
+                                disappear = itemLayoutRoot.Resources["LostHighlight_NoArrangement"] as Storyboard;
+                            else
+                                disappear = itemLayoutRoot.Resources["LostHighlight"] as Storyboard;
+                            break;
                         }
                     }
 
                 }
-            }
+                #endregion
 
-            if (list.Count > 0)
-            {
-                var calendarNodeByDay = (from CalendarNode node in list
-                                         group node by node.BeginTime.Date into n
-                                         orderby n.Key
-                                         select new CalendarGroup<CalendarNode>(n.Key, n)).ToList();
-
-                CalendarNode nodeToScrollTo = null;
-                var today = calendarNodeByDay.Where((node) => node.Key == DateTime.Now.Date).SingleOrDefault();
-
-                //...No arrangement today
-                if (today == null)
+                //...Get the next node and try to begin appear storyboard
+                #region [Appear]
                 {
-                    int idx = calendarNodeByDay.Where((node) => node.Key < DateTime.Now).Count();
-                    calendarNodeByDay.Insert(idx, new CalendarGroup<CalendarNode>(DateTime.Now.Date, new CalendarNode[] { CalendarNode.NoArrangementNode }));
-                    nodeToScrollTo = calendarNodeByDay.ElementAt(idx).Items.First();
-                }
-                else
-                {
-                    //...All arrangements today are expired
-                    if (today.Last().BeginTime < DateTime.Now)
+                    if (disappear != null)
                     {
-                        today.Items.Add(CalendarNode.NoArrangementNode);
-                        nodeToScrollTo = today.Items.Last();
+                        EventHandler handler = null;
+                        handler = (obj, arg) =>
+                        {
+                            try
+                            {
+                                CurrentNode = Global.Instance.AgendaSource.GetNextCalendarNode();
+                                AgendaSourceStateChanged(Global.Instance, EventArgs.Empty);
+                                HighlightCurrentNode(CurrentNode, true);
+                                disappear.Completed -= handler;
+                            }
+                            catch { }
+                        };
+
+                        disappear.Completed += handler;
+                        disappear.Begin();
                     }
                     else
                     {
-                        nodeToScrollTo = today.Items.Where((node) => node.BeginTime > DateTime.Now).SingleOrDefault();
+                        CurrentNode = Global.Instance.AgendaSource.GetNextCalendarNode();
+                        AgendaSourceStateChanged(Global.Instance, EventArgs.Empty);
+                        HighlightCurrentNode(CurrentNode, true);
                     }
                 }
+                #endregion
+            };
 
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    TextBlock_Loading.Visibility = Visibility.Collapsed;
-                    LongListSelector_Core.ItemsSource = calendarNodeByDay;
+            //...date changed
+            if (CurrentNode.IsNoArrangementNode && DateTime.Now.Date > CurrentNode.BeginTime.Date)
+            {
+                (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
+                    = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
 
-                    if (nodeToScrollTo != null)
-                    {
-                        LongListSelector_Core.UpdateLayout();
-                        LongListSelector_Core.ScrollTo(nodeToScrollTo);
-                        LongListSelector_Core.UpdateLayout();
-
-                        DependencyObject obj = LongListSelector_Core;
-                        while (!(obj is VirtualizingStackPanel))
-                        {
-                            obj = VisualTreeHelper.GetChild(obj, 0);
-                        }
-
-                        int count = VisualTreeHelper.GetChildrenCount(obj);
-
-                        for (int i = 0; i < count; ++i)
-                        {
-                            var tmp = VisualTreeHelper.GetChild(obj, i);
-
-                            var source = (tmp as Control).DataContext as LongListSelectorItem;
-                            if (source.Item == nodeToScrollTo)
-                            {
-                                obj = tmp;
-
-                                //...Get the layout root of the item
-                                while (!(obj is ContentPresenter))
-                                {
-                                    obj = VisualTreeHelper.GetChild(obj, 0);
-                                }
-
-                                var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                                Storyboard sb = null;
-                                if (nodeToScrollTo.IsNoArrangementNode)
-                                    sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
-                                else
-                                    sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
-                                sb.Begin();
-                                break;
-                            }
-                        }
-                    }
-
-
-                    (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
-
-                    ProgressBarPopup.Instance.Close();
-                });
+                core();
             }
-
+            //...Current node is expired
+            else if (!CurrentNode.IsNoArrangementNode && DateTime.Now > CurrentNode.BeginTime)
+            {
+                core();
+            }
         }
 
         private void LongListtSelector_SelectionChanged(Object sender, SelectionChangedEventArgs e)
@@ -356,6 +394,109 @@ namespace WeTongji
                         this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", item.Id), UriKind.RelativeOrAbsolute));
                         return;
                 }
+        }
+
+        private void UpdateTopItem()
+        {
+            DependencyObject depObj = LongListSelector_Core;
+
+            while (!(depObj is VirtualizingStackPanel))
+            {
+                depObj = VisualTreeHelper.GetChild(depObj, 0);
+            }
+
+            int count = VisualTreeHelper.GetChildrenCount(depObj);
+
+            for (int i = 0; i < count; ++i)
+            {
+                var curGroup = VisualTreeHelper.GetChild(depObj, i) as Control;
+
+                var pnt = curGroup.TransformToVisual(LongListSelector_Core).Transform(new Point());
+
+                if (pnt.Y < curGroup.RenderSize.Height  //...At top
+                    && pnt.Y >= 0   //...The node is fully visible
+                    )
+                {
+                    if (curGroup.DataContext != null)
+                    {
+                        var src = (curGroup.DataContext as LongListSelectorItem).Item;
+
+                        if (src is CalendarGroup<CalendarNode>)
+                        {
+                            TopItemSource = src as CalendarGroup<CalendarNode>;
+                        }
+                        else if (src is CalendarNode)
+                        {
+                            var groups = (LongListSelector_Core.ItemsSource as IEnumerable<CalendarGroup<CalendarNode>>);
+                            if (groups != null)
+                            {
+                                var group = groups.Where((g) => g.Key == (src as CalendarNode).BeginTime.Date).SingleOrDefault();
+                                if (group != null)
+                                {
+                                    TopItemSource = group;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //...Do nothing
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (CurrentNode != null)
+                HighlightCurrentNode(CurrentNode);
+        }
+
+        private void HighlightCurrentNode(CalendarNode targetSource, bool playTransition = false)
+        {
+            DependencyObject obj = LongListSelector_Core;
+            while (!(obj is VirtualizingStackPanel))
+            {
+                obj = VisualTreeHelper.GetChild(obj, 0);
+            }
+
+            int count = VisualTreeHelper.GetChildrenCount(obj);
+
+            for (int i = 0; i < count; ++i)
+            {
+                var tmp = VisualTreeHelper.GetChild(obj, i);
+
+                var source = (tmp as Control).DataContext as LongListSelectorItem;
+                CalendarNode srcItem = source == null ? null : source.Item as CalendarNode;
+                if (srcItem != null && targetSource.CompareTo(srcItem) == 0)
+                {
+                    obj = tmp;
+
+                    //...Get the layout root of the item
+                    while (!(obj is ContentPresenter))
+                    {
+                        obj = VisualTreeHelper.GetChild(obj, 0);
+                    }
+
+                    var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
+                    Storyboard sb = null;
+                    if (targetSource.IsNoArrangementNode)
+                    {
+                        if (playTransition)
+                            sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
+                        else
+                            sb = itemLayoutRoot.Resources["RefreshHighlight_NoArrangement"] as Storyboard;
+                    }
+                    else
+                    {
+                        if (playTransition)
+                            sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
+                        else
+                            sb = itemLayoutRoot.Resources["RefreshHighlight"] as Storyboard;
+                    }
+                    sb.Begin();
+                    break;
+                }
+            }
+
         }
     }
 }

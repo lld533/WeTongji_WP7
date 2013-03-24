@@ -22,6 +22,48 @@ namespace WeTongji.DataBase
             }
         }
 
+        public void ResetLikeFavoriteSchedule()
+        {
+            foreach (var p in People)
+            {
+                p.CanLike = true;
+                p.CanFavorite = true;
+            }
+
+            foreach (var a in Activities)
+            {
+                a.CanLike = true;
+                a.CanFavorite = true;
+                a.CanSchedule = true;
+            }
+
+            foreach (var sn in SchoolNewsTable)
+            {
+                sn.CanLike = true;
+                sn.CanFavorite = true;
+            }
+
+            foreach (var an in AroundTable)
+            {
+                an.CanLike = true;
+                an.CanFavorite = true;
+            }
+
+            foreach (var fs in ForStaffTable)
+            {
+                fs.CanLike = true;
+                fs.CanFavorite = true;
+            }
+
+            foreach (var cn in ClubNewsTable)
+            {
+                cn.CanLike = true;
+                cn.CanFavorite = true;
+            }
+
+            this.SubmitChanges();
+        }
+        
         #region [Tables]
 
         public Table<PersonExt> People;

@@ -309,6 +309,17 @@ namespace WeTongji.Api.Domain
             }
         }
 
+        /// <summary>
+        /// Used in MainPage.xaml, restrict 2 digits of FavoritesCount.
+        /// </summary>
+        public String DisplayFavoritesCount
+        {
+            get 
+            {
+                return Math.Min(FavoritesCount, 99).ToString();
+            }
+        }
+
         public ImageSource AvatarImageBrush
         {
             get

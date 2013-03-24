@@ -32,6 +32,8 @@ using WeTongji.Api;
 using WeTongji.Pages;
 using System.Threading;
 using WeTongji.Utility;
+using System.Windows.Threading;
+using Microsoft.Devices;
 
 
 namespace WeTongji
@@ -62,6 +64,8 @@ namespace WeTongji
         private Boolean isFavoritePersonButtonEnabled = false;
         private Boolean isUnfavoritePersonButtonEnabled = false;
 
+        private Boolean isCurrentCalendarNodeAlarmed = false;
+
         #endregion
 
         #region [Threads]
@@ -74,10 +78,179 @@ namespace WeTongji
 
         #endregion
 
+        #region [Alarm DispatcherTimer]
+
+        private DispatcherTimer alarmDispatcherTimer = new DispatcherTimer()
+        {
+            Interval = TimeSpan.FromSeconds(1),
+        };
+
+        #endregion
+
         // Constructor
         public MainPage()
         {
             InitializeComponent();
+
+            Global.Instance.ActivityScheduleChanged += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        var src = ActivityListSource;
+                        if (src != null)
+                        {
+                            var target = src.Where((a) => a.Id == arg.NewValue.Id).SingleOrDefault();
+                            if (target != null)
+                            {
+                                target.Schedule = arg.NewValue.Schedule;
+                                target.CanSchedule = arg.NewValue.CanSchedule;
+
+                                target.SendPropertyChanged("Schedule");
+                            }
+                        }
+                    });
+                };
+
+            Global.Instance.FavoriteChanged += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        try
+                        {
+                            UpdateFavoriteNumber(false);
+                        }
+                        catch { }
+                    });
+                };
+
+            Global.Instance.AgendaSourceChanged += (obj, arg) =>
+                {
+                    var node = Global.Instance.AgendaSource.GetNextCalendarNode();
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        if (AlarmClockSource != null && AlarmClockSource.CompareTo(node) == 0)
+                            return;
+                        else
+                            AlarmClockSource = node;
+                    });
+                };
+
+            alarmDispatcherTimer.Tick += (o, e) =>
+                {
+                    if (String.IsNullOrEmpty(Global.Instance.CurrentUserID) || AlarmClockSource == null || AlarmClockSource.IsNoArrangementNode)
+                        return;
+
+                    var src = AlarmClockSource;
+
+                    if (isCurrentCalendarNodeAlarmed)
+                    {
+                        if (DateTime.Now > src.BeginTime)
+                        {
+                            (this.Resources["AlarmAnimation"] as Storyboard).Stop();
+                            AlarmClockSource = Global.Instance.AgendaSource.GetNextCalendarNode();
+                        }
+                    }
+                    else
+                    {
+                        switch (src.NodeType)
+                        {
+                            //...30 min in advance
+                            case CalendarNodeType.kActivity:
+                                {
+                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(30))
+                                    {
+                                        isCurrentCalendarNodeAlarmed = true;
+                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
+
+                                        if (!App.IsObscured)
+                                        {
+                                            //...Vibrate
+                                            VibrateController.Default.Start(TimeSpan.FromSeconds(1));
+
+                                            //...MessageBox
+                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"活动即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                                                                                                                      src.Title,
+                                                                                                                                      (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
+                                                           "提示", MessageBoxButton.OK);
+                                        }
+                                        else
+                                        {
+                                            ShellToast toast = new ShellToast();
+                                            toast.NavigationUri = this.NavigationService.CurrentSource;
+                                            toast.Title = "提醒";
+                                            toast.Content = "\"" + src.Title + "\"活动即将开始，请注意安排时间~";
+                                            toast.Show();
+                                        }
+                                    }
+                                }
+                                break;
+                            //...1 hour in advance
+                            case CalendarNodeType.kExam:
+                                {
+                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromHours(1))
+                                    {
+                                        isCurrentCalendarNodeAlarmed = true;
+                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
+                                        if (!App.IsObscured)
+                                        {
+                                            //...Vibrate
+                                            VibrateController.Default.Start(TimeSpan.FromSeconds(1));
+
+                                            //...MessageBox
+                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"考试即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                                                                                                                     src.Title,
+                                                                                                                                      (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
+                                                                                                    "提示", MessageBoxButton.OK);
+                                        }
+                                        else
+                                        {
+                                            ShellToast toast = new ShellToast();
+                                            toast.NavigationUri = this.NavigationService.CurrentSource;
+                                            toast.Title = "提醒";
+                                            toast.Content = "\"" + src.Title + "\"考试即将开始，请注意安排时间~";
+                                            toast.Show();
+                                        }
+                                    }
+                                }
+                                break;
+                            //...10 min in advance
+                            case CalendarNodeType.kObligedCourse:
+                            case CalendarNodeType.kOptionalCourse:
+                                {
+                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(10))
+                                    {
+                                        isCurrentCalendarNodeAlarmed = true;
+                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
+                                        if (!App.IsLocked && !App.IsObscured)
+                                        {
+                                            //...Vibrate
+                                            VibrateController.Default.Start(TimeSpan.FromSeconds(1));
+
+                                            //...MessageBox
+                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"课程即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                                                                                                                   src.Title,
+                                                                                                                                   (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
+                                                        "提示", MessageBoxButton.OK);
+                                        }
+                                        else
+                                        {
+                                            ShellToast toast = new ShellToast();
+                                            toast.NavigationUri = this.NavigationService.CurrentSource;
+                                            toast.Title = "提醒";
+                                            toast.Content = "\"" + src.Title + "\"课程即将开始，请注意安排时间~";
+                                            toast.Show();
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                    }
+
+                };
         }
 
         #region [Overridden]
@@ -129,6 +302,11 @@ namespace WeTongji
                     thread.Start();
                 }
             }
+            else
+            {
+                if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+                    alarmDispatcherTimer.Start();
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -136,6 +314,7 @@ namespace WeTongji
             base.OnNavigatedFrom(e);
 
             ProgressBarPopup.Instance.Close();
+            alarmDispatcherTimer.Stop();
         }
 
         #endregion
@@ -160,6 +339,7 @@ namespace WeTongji
             }
             set
             {
+                var previousValue = UserSource;
                 Border_SignedIn.DataContext = value;
 
                 if (value != null)
@@ -189,6 +369,8 @@ namespace WeTongji
                     if (sb.GetCurrentState() == ClockState.Active)
                         sb.Stop();
                 }
+
+                UpdateFavoriteNumber(previousValue == null);
             }
         }
 
@@ -452,9 +634,11 @@ namespace WeTongji
             {
                 Button_Alarm.DataContext = value;
 
+                #region [Clock]
                 if (value == null)
                 {
                     (this.Resources["ResetAlarmClockPointersAnimation"] as Storyboard).Begin();
+                    alarmDispatcherTimer.Stop();
                 }
                 else
                 {
@@ -507,6 +691,21 @@ namespace WeTongji
                     visibleAnimation.Begin();
                     setAnimation.Begin();
                 }
+                #endregion
+
+                #region [DispatcherTimer]
+
+                isCurrentCalendarNodeAlarmed = false;
+
+                if (value == null || value.IsNoArrangementNode)
+                {
+                    alarmDispatcherTimer.Stop();
+                    (this.Resources["AlarmAnimation"] as Storyboard).Stop();
+                }
+                else if (!alarmDispatcherTimer.IsEnabled)
+                    alarmDispatcherTimer.Start();
+
+                #endregion
             }
         }
 
@@ -704,8 +903,6 @@ namespace WeTongji
 
             client.ExecuteCompleted += (obj, arg) =>
                 {
-                    Debug.WriteLine("User signed in. StuNo:{0}, UID:{1}, Session:{2}", no, arg.Result.User.UID, arg.Result.Session);
-
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         Border_SignedOut.Visibility = Visibility.Collapsed;
@@ -726,6 +923,11 @@ namespace WeTongji
                             this.ApplicationBar.MenuItems.Add(mi);
                         }
                     });
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        db.ResetLikeFavoriteSchedule();
+                    }
 
                     Global.Instance.CurrentUserID = arg.Result.User.UID;
                     Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
@@ -773,7 +975,11 @@ namespace WeTongji
 
                     #region [download courses, favorites and schedule in order]
 
+                    Global.Instance.ParticipatingActivitiesIdList.Clear();
+
                     DownloadCourses(arg.Result.Session, arg.Result.User.UID);
+
+                    DownloadFavorite(arg.Result.Session, arg.Result.User.UID);
 
                     #endregion
                 };
@@ -979,7 +1185,7 @@ namespace WeTongji
             #region [Core action]
             updateExpireAction = () =>
             {
-                if (this.NavigationService.CurrentSource.ToString() != "/Pages/MainPage.xaml")
+                if (this.NavigationService.CurrentSource.ToString() != "/MainPage.xaml")
                     return;
 
                 ActivitiesGetRequest<ActivitiesGetResponse> req = new ActivitiesGetRequest<ActivitiesGetResponse>();
@@ -1820,7 +2026,7 @@ namespace WeTongji
                 var src = UserSource;
                 if (src != null)
                 {
-                    src.SendPropertyChanged("FavoritesCount");
+                    UpdateFavoriteNumber(false);
                     src.SendPropertyChanged("AvatarImageBrush");
                 }
                 if (Global.Instance.CurrentAgendaSourceState == SourceState.Done)
@@ -2055,6 +2261,34 @@ namespace WeTongji
             }
         }
 
+        private void UpdateFavoriteNumber(bool setForTheFirstTime)
+        {
+            UserExt src = UserSource;
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID) || Border_SignedIn.Visibility == Visibility.Collapsed || src == null)
+            {
+                return;
+            }
+
+            if (setForTheFirstTime)
+            {
+                src.SendPropertyChanged("DisplayFavoritesCount");
+                (this.Resources["VisibleFavoriteNumber"] as Storyboard).Begin();
+            }
+            else
+            {
+                EventHandler handler = null;
+                handler = (o, e) =>
+                     {
+                         src.SendPropertyChanged("DisplayFavoritesCount");
+                         (this.Resources["TurnDownFavoriteNumber"] as Storyboard).Begin();
+                         (this.Resources["TurnUpFavoriteNumber"] as Storyboard).Completed -= handler;
+                     };
+
+                (this.Resources["TurnUpFavoriteNumber"] as Storyboard).Completed += handler;
+                (this.Resources["TurnUpFavoriteNumber"] as Storyboard).Begin();
+            }
+        }
+
         #region [Activity]
 
         private void ReloadActivities()
@@ -2134,7 +2368,9 @@ namespace WeTongji
         private void UpdateAcitivityList(IEnumerable<ActivityExt> activities, Boolean willContinue, Boolean hasMore)
         {
             if (this.NavigationService.CurrentSource.ToString() != "/MainPage.xaml")
+            {
                 return;
+            }
 
             var src = ActivityListSource;
             if (src == null || src.Count == 0)
@@ -2679,7 +2915,7 @@ namespace WeTongji
             }
             #endregion
 
-            DownloadFavorite(session, uid);
+            DownloadSchedule(session, uid);
         }
 
         private void OnDownloadFavoriteCompleted(Object param, String session, String uid)
@@ -2697,6 +2933,7 @@ namespace WeTongji
 
             {
                 sb.Clear();
+                List<ActivityExt> unstoredActivities = new List<ActivityExt>();
 
                 foreach (var a in args.Result.Activities)
                 {
@@ -2705,37 +2942,38 @@ namespace WeTongji
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         itemInShareDB = db.Activities.Where((ac) => ac.Id == a.Id).SingleOrDefault();
-                    }
 
-                    #region [Handle Share DB]
-
-                    //...Not stored in Share DB
-                    if (itemInShareDB == null)
-                    {
-                        itemInShareDB = new ActivityExt();
-                        itemInShareDB.SetObject(a);
-
-                        using (var db = WTShareDataContext.ShareDB)
+                        //...Not stored in Share DB
+                        if (itemInShareDB == null)
                         {
+                            itemInShareDB = new ActivityExt();
+                            itemInShareDB.SetObject(a);
+
+                            unstoredActivities.Add(itemInShareDB);
+
                             db.Activities.InsertOnSubmit(itemInShareDB);
-
-                            db.SubmitChanges();
                         }
-                    }
-                    //...Stored in share DB
-                    else
-                    {
-                        itemInShareDB.SetObject(a);
-                        using (var db = WTShareDataContext.ShareDB)
+                        //...Stored in share DB
+                        else
                         {
-                            db.Activities.Attach(itemInShareDB);
-
-                            db.SubmitChanges();
+                            itemInShareDB.CanFavorite = false;
                         }
+                        db.SubmitChanges();
                     }
-                    #endregion
 
                     sb.AppendFormat("{0}_", a.Id);
+                }
+
+                if (unstoredActivities.Count > 0)
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        Boolean hasMore = false;
+                        if (ActivityListSource != null && ActivityListSource.Count > 0 && !ActivityListSource.Last().IsValid)
+                            hasMore = true;
+
+                        UpdateAcitivityList(unstoredActivities, false, hasMore);
+                    });
                 }
 
                 using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
@@ -3038,19 +3276,11 @@ namespace WeTongji
 
             #endregion
 
-            Debug.WriteLine("Download favorite completed.");
-
             //...Update UI
             this.Dispatcher.BeginInvoke(() =>
             {
-                var dc = Button_Favorite.DataContext as UserExt;
-                if (dc != null)
-                {
-                    dc.SendPropertyChanged("FavoritesCount");
-                }
+                UpdateFavoriteNumber(false);
             });
-
-            DownloadSchedule(session, uid);
         }
 
         /// <summary>
@@ -3070,6 +3300,8 @@ namespace WeTongji
 
             #region [Store or update activities]
 
+            List<ActivityExt> unstoredActivities = new List<ActivityExt>();
+
             foreach (var a in arg.Result.Activities)
             {
                 ActivityExt itemInDB = null;
@@ -3083,23 +3315,28 @@ namespace WeTongji
                     var activityEx = new ActivityExt();
                     activityEx.SetObject(a);
 
+                    unstoredActivities.Add(itemInDB);
+
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         db.Activities.InsertOnSubmit(activityEx);
                         db.SubmitChanges();
                     }
                 }
-                else
-                {
-                    itemInDB.SetObject(a);
 
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        db.Activities.Attach(itemInDB);
-                        db.SubmitChanges();
-                    }
-                }
+                if (!Global.Instance.ParticipatingActivitiesIdList.Contains(a.Id))
+                    Global.Instance.ParticipatingActivitiesIdList.Add(a.Id);
             }
+
+            //....Insert new activities in UI
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                bool hasMore = false;
+                if (ActivityListSource != null && ActivityListSource.Count > 0 && !ActivityListSource.Last().IsValid)
+                    hasMore = true;
+
+                UpdateAcitivityList(unstoredActivities, false, hasMore);
+            });
 
             #endregion
 
@@ -3182,7 +3419,9 @@ namespace WeTongji
 
             #endregion
 
-            Debug.WriteLine("Download timetable completed.");
+            Debug.WriteLine("Download schedule completed.");
+
+            ComputeCalendar();
         }
 
         private void DownloadCourses(String session, String uid)
@@ -3209,37 +3448,36 @@ namespace WeTongji
             tt_client.Execute(tt_req, session, uid);
         }
 
-        private void DownloadFavorite(String session, String uid)
+        private void DownloadFavorite(String session, String uid, int pageId = 0)
         {
-            Debug.WriteLine("In download favorite.");
-
             var fav_req = new FavoriteGetRequest<FavoriteGetResponse>();
             var fav_client = new WTDefaultClient<FavoriteGetResponse>();
 
+            if (pageId > 0)
+                fav_req.SetAdditionalParameter(WTDefaultClient<FavoriteGetResponse>.PAGE, pageId);
 
             #region [Add handlers]
 
-            fav_client.ExecuteFailed += (s, args) =>
-            {
-                Debug.WriteLine("Fail to get user's favorite.\nError:{0}", args.Error);
-            };
-
             fav_client.ExecuteCompleted += (s, args) =>
             {
-                OnDownloadFavoriteCompleted(args, session, uid);
+                if (Global.Instance.CurrentUserID == uid)
+                {
+                    OnDownloadFavoriteCompleted(args, session, uid);
+
+                    if (args.Result.NextPager > 0)
+                    {
+                        DownloadFavorite(session, uid, args.Result.NextPager);
+                    }
+                }
             };
 
             #endregion
 
             fav_client.Execute(fav_req, session, uid);
-
-            //...Todo @_@ NextPager
         }
 
         private void DownloadSchedule(String session, String uid)
         {
-            Debug.WriteLine("In download schedule");
-
             var schedule_req = new ScheduleGetRequest<ScheduleGetResponse>();
             var schedule_client = new WTDefaultClient<ScheduleGetResponse>();
 
@@ -3252,11 +3490,32 @@ namespace WeTongji
 
                 var s = semesters.Where((semester) => semester.SchoolYearStartAt <= DateTime.Now && semester.SchoolYearEndAt >= DateTime.Now).SingleOrDefault();
 
-
                 if (s != null)
                 {
-                    schedule_req.Begin = s.SchoolYearStartAt;
-                    schedule_req.End = s.SchoolYearEndAt;
+                    if (s.SchoolYearStartAt < schedule_req.Begin)
+                    {
+                        schedule_req.Begin = s.SchoolYearStartAt;
+                    }
+                    if (s.SchoolYearEndAt > schedule_req.End)
+                    {
+                        schedule_req.End = s.SchoolYearEndAt;
+                    }
+                }
+            }
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                var activities = db.Activities.ToArray();
+
+                var latestActivity = activities.OrderByDescending((a) => a.CreatedAt).FirstOrDefault();
+
+                if (ActivityExt.FirstActivityCreatedAt < schedule_req.Begin)
+                {
+                    schedule_req.Begin = ActivityExt.FirstActivityCreatedAt;
+                }
+                if (latestActivity != null && latestActivity.End > schedule_req.End)
+                {
+                    schedule_req.End = latestActivity.End;
                 }
             }
 
@@ -3272,8 +3531,6 @@ namespace WeTongji
                 Debug.WriteLine("Get user's schedule completed.");
 
                 OnDownloadScheduleCompleted(args, uid);
-
-                ComputeCalendar();
             };
 
             #endregion
@@ -3283,13 +3540,10 @@ namespace WeTongji
 
         private void ComputeCalendar()
         {
-            Debug.WriteLine("Compute calendar");
-
             List<CalendarNode> list = new List<CalendarNode>();
             CourseExt[] courses = null;
             ExamExt[] exams = null;
             Semester[] semesters = null;
-            String serializedActivityIdArr = String.Empty;
 
             #region [Collect source]
 
@@ -3298,9 +3552,6 @@ namespace WeTongji
                 courses = db.Courses.ToArray();
                 exams = db.Exams.ToArray();
                 semesters = db.Semesters.ToArray();
-                var activity = db.Favorites.Where((fo) => fo.Id == (int)FavoriteIndex.kActivity).SingleOrDefault();
-                if (activity != null)
-                    serializedActivityIdArr = activity.Value;
             }
 
             if (courses != null && semesters != null)
@@ -3323,28 +3574,17 @@ namespace WeTongji
                 }
             }
 
-            if (!String.IsNullOrEmpty(serializedActivityIdArr))
+            for (int i = 0; i < Global.Instance.ParticipatingActivitiesIdList.Count; ++i)
             {
-                var strIdArr = serializedActivityIdArr.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                int count = strIdArr.Count();
-                int id;
-                ActivityExt activity;
-
-                for (int i = 0; i < count; ++i)
+                using (var db = WTShareDataContext.ShareDB)
                 {
-                    if (Int32.TryParse(strIdArr[i], out id))
+                    try
                     {
-                        using (var db = WTShareDataContext.ShareDB)
-                        {
-                            activity = db.Activities.Where((a) => a.Id == id).SingleOrDefault();
-                        }
-
+                        var activity = db.Activities.Where((a) => a.Id == Global.Instance.ParticipatingActivitiesIdList[i]).SingleOrDefault();
                         if (activity != null)
-                        {
                             list.Add(activity.GetCalendarNode());
-                        }
                     }
-
+                    catch { }
                 }
             }
 

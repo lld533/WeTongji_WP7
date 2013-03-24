@@ -72,11 +72,19 @@ namespace WeTongji.Business
         public SourceState CurrentPeopleOfWeekSourceState { get; set; }
         public SourceState CurrentActivitySourceState { get; set; }
 
+        public List<int> ParticipatingActivitiesIdList { get; set; }
+
         #endregion
 
         #region [Event handlers]
 
         public event EventHandler AgendaSourceStateChanged;
+
+        public event EventHandler AgendaSourceChanged;
+
+        public event EventHandler<ActivityScheduleChangedEventArgs> ActivityScheduleChanged;
+
+        public event EventHandler<FavoriteChangedEventArgs> FavoriteChanged;
 
         #endregion
 
@@ -94,6 +102,8 @@ namespace WeTongji.Business
             ClubNewsPageId = -1;
             TongjiNewsPageId = -1;
             AroundNewsPageId = -1;
+
+            ParticipatingActivitiesIdList = new List<int>();
         }
 
         #endregion
@@ -187,7 +197,34 @@ namespace WeTongji.Business
             CurrentAgendaSourceState = SourceState.Setting;
             OnAgendaSourceStateChanged();
         }
-        
+
+        public void RaiseActivityScheduleChanged(ActivityExt newValue)
+        {
+            var handler = ActivityScheduleChanged;
+            if (handler != null)
+            {
+                handler(this, new ActivityScheduleChangedEventArgs(newValue));
+            }
+        }
+
+        public void RaiseFavoriteChanged(IWTObjectExt item)
+        {
+            var handler = this.FavoriteChanged;
+            if (handler != null)
+            {
+                handler(this, new FavoriteChangedEventArgs(item));
+            }
+        }
+
+        public void RaiseAgendaSourceChanged()
+        {
+            var handler = AgendaSourceChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
         #endregion
 
         #region [Private]
@@ -207,5 +244,25 @@ namespace WeTongji.Business
         NotSet,
         Setting,
         Done
+    }
+
+    public class ActivityScheduleChangedEventArgs : EventArgs
+    {
+        public ActivityExt NewValue { get; private set; }
+
+        public ActivityScheduleChangedEventArgs(ActivityExt value)
+        {
+            NewValue = value;
+        }
+    }
+
+    public class FavoriteChangedEventArgs : EventArgs
+    {
+        public IWTObjectExt Item { get; private set; }
+
+        public FavoriteChangedEventArgs(IWTObjectExt item)
+        {
+            Item = item;
+        }
     }
 }

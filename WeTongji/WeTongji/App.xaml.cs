@@ -25,6 +25,10 @@ namespace WeTongji
         /// <returns>The root frame of the Phone Application.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
 
+        public static Boolean IsObscured { get; private set; }
+
+        public static Boolean IsLocked { get; private set; }
+
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
@@ -38,6 +42,7 @@ namespace WeTongji
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
 
             // Show graphics profiling information while debugging.
             if (System.Diagnostics.Debugger.IsAttached)
@@ -128,6 +133,9 @@ namespace WeTongji
             // Handle navigation failures
             RootFrame.NavigationFailed += RootFrame_NavigationFailed;
 
+            RootFrame.Obscured += RootFrame_Obscured;
+            RootFrame.Unobscured += RootFrame_Unobscured;
+
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;
         }
@@ -143,6 +151,18 @@ namespace WeTongji
 
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
+        }
+
+        private void RootFrame_Obscured(Object sender, ObscuredEventArgs e)
+        {
+            IsObscured = true;
+            IsLocked = e.IsLocked;
+        }
+
+        private void RootFrame_Unobscured(Object sender, EventArgs e)
+        {
+            IsObscured = false;
+            IsLocked = false;
         }
 
         #endregion

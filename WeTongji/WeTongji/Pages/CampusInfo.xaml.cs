@@ -618,7 +618,7 @@ namespace WeTongji
 
         private void InsertMoreTongjiNews(IEnumerable<SchoolNewsExt> arr)
         {
-            if (arr == null)
+            if (arr == null || this.NavigationService.CurrentSource.ToString() != "/Pages/CampusInfo.xaml")
                 return;
 
             var src = SchoolNewsSource;
@@ -735,7 +735,7 @@ namespace WeTongji
 
         private void InsertMoreAroundNews(IEnumerable<AroundExt> arr)
         {
-            if (arr == null)
+            if (arr == null || this.NavigationService.CurrentSource.ToString() != "/Pages/CampusInfo.xaml")
                 return;
 
             var src = AroundNewsSource;
@@ -852,7 +852,7 @@ namespace WeTongji
 
         private void InsertMoreOfficialNotes(IEnumerable<ForStaffExt> arr)
         {
-            if (arr == null)
+            if (arr == null || this.NavigationService.CurrentSource.ToString() != "/Pages/CampusInfo.xaml")
                 return;
 
             var src = OfficialNotesSource;
@@ -969,7 +969,7 @@ namespace WeTongji
 
         private void InsertMoreClubNews(IEnumerable<ClubNewsExt> arr)
         {
-            if (arr == null)
+            if (arr == null || this.NavigationService.CurrentSource.ToString() != "/Pages/CampusInfo.xaml")
                 return;
 
             var src = ClubNewsSource;

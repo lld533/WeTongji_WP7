@@ -60,6 +60,19 @@ namespace WeTongji.Api.Domain
     {
         public static CalendarNode GetNextCalendarNode(this List<CalendarGroup<CalendarNode>> list)
         {
+            //...Remove NoArrangement Node
+            for (int i = 0; i < list.Count; ++i)
+            {
+                var group = list[i];
+
+                if (group.Items.Count > 0 && group.Items.Last().IsNoArrangementNode)
+                {
+                    group.Items.RemoveAt(group.Items.Count - 1);
+                    break;
+                }
+            }
+
+
             CalendarNode result = null;
             var yesterday = (DateTime.Now - TimeSpan.FromDays(1)).Date;
             var today = DateTime.Now.Date;
@@ -70,7 +83,7 @@ namespace WeTongji.Api.Domain
             if (yesterdayGroup != null)
             {
                 var nodeToRemove = yesterdayGroup.Where((node) => node.IsNoArrangementNode).SingleOrDefault();
-                if(nodeToRemove !=null)
+                if (nodeToRemove != null)
                     yesterdayGroup.Items.Remove(nodeToRemove);
             }
 
@@ -105,6 +118,60 @@ namespace WeTongji.Api.Domain
             }
 
             return result;
+        }
+
+        public static void InsertCalendarNode(this List<CalendarGroup<CalendarNode>> list, CalendarNode node)
+        {
+            //...Refresh
+            list.GetNextCalendarNode();
+
+            var g = list.Where((group) => group.Key == node.BeginTime.Date).SingleOrDefault();
+
+            //...The date of the activity exists in Agenda
+            if (g != null)
+            {
+                //...Remove no arrangement node if there exists.
+                if (g.Count() > 0 && g.Last().IsNoArrangementNode)
+                {
+                    g.Items.RemoveAt(g.Count() - 1);
+                }
+
+                var targetNode = g.Where((n) => n == node).SingleOrDefault();
+                if (targetNode == null)
+                {
+                    int idx = g.Items.Where((n) => n.BeginTime < node.BeginTime).Count();
+                    g.Items.Insert(idx, node);
+                }
+            }
+            //...The date of the activity does not exist in Agenda
+            else
+            {
+                int idx = list.Where((group) => group.Key < node.BeginTime.Date).Count();
+                list.Insert(idx, new CalendarGroup<CalendarNode>(node.BeginTime.Date, new CalendarNode[] { node }));
+            }
+
+            list.GetNextCalendarNode();
+        }
+
+        public static void RemoveCalendarNode(this List<CalendarGroup<CalendarNode>> list, CalendarNode node)
+        {
+            var group = list.Where((g) => g.Key == node.BeginTime.Date).SingleOrDefault();
+
+            if (group != null)
+            {
+                var target = group.Where((n) => n.CompareTo(node) == 0).SingleOrDefault();
+
+                if (target != null)
+                    group.Items.Remove(target);
+
+                if (group.Count() == 0)
+                {
+                    if (group.Key != DateTime.Now.Date)
+                        list.Remove(group);
+                    else
+                        group.Items.Add(CalendarNode.NoArrangementNode);
+                }
+            }
         }
     }
 }

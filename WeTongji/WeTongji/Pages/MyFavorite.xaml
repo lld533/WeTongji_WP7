@@ -151,7 +151,7 @@
                                         <Grid>
                                             <Grid Margin="21,12,21,14">
                                                 <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="80"
-										Text="{Binding Title}" FontSize="26" Foreground="Black"/>
+										                   Text="{Binding Title}" FontSize="26" Foreground="Black"/>
 
                                                 <Grid VerticalAlignment="Bottom">
                                                     <Grid.ColumnDefinitions>
@@ -163,12 +163,12 @@
                                                     <TextBlock Text="{Binding DisplayCreationTime}" Foreground="#FF999999"/>
 
                                                     <TextBlock Grid.Column="2" Foreground="#FF999999" TextTrimming="WordEllipsis"
-											Text="{Binding Source}"/>
+											                   Text="{Binding Source}"/>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
 
-                                        <Rectangle Grid.Column="1" Fill="BurlyWood"/>
+                                        <Image Grid.Column="1" Source="/Images/CampusInfoFakeIllustration.png" Stretch="UniformToFill"/>
                                         <Image Grid.Column="1" Stretch="UniformToFill" Source="{Binding CampusInfoImageBrush}"/>
 
                                     </Grid>
@@ -182,13 +182,13 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
-											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
+											        TextWrapping="Wrap" TextTrimming="WordEllipsis"
+											        Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
                                         <Grid Grid.Column="3" Margin="0,9,0,17">
                                             <TextBlock VerticalAlignment="Top" Foreground="Black"
-											TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											Text="{Binding Title}" MaxHeight="80"/>
+											            TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
+											            Text="{Binding Title}" MaxHeight="80"/>
 
 
                                             <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -224,14 +224,14 @@
                                 <StackPanel Margin="0,0,0,25">
                                     <!--Title-->
                                     <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
-                                   Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
+                                               Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
                                         <Run Text="第"/>
                                         <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
                                         <Run Text="期"/>
                                     </TextBlock>
                                     <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
-                                   Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
-                                   Text="{Binding NO}"/>
+                                               Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                               Text="{Binding NO}"/>
 
                                     <!--Avatar & Name-->
                                     <Grid Height="60"  Margin="0,17,0,0">

@@ -164,8 +164,20 @@ namespace WeTongji.Api.Domain
             if (node == null)
                 throw new NotSupportedException("CalendarNode is expected.");
 
-            if (node.NodeType == this.NodeType && node.Id == this.Id)
+            if (IsNoArrangementNode ^ node.IsNoArrangementNode)
+                return -1;
+            else if (IsNoArrangementNode)
                 return 0;
+
+            if (node.NodeType == this.NodeType)
+            {
+                if (NodeType == CalendarNodeType.kActivity)
+                    return (int)Id - (int)node.Id;
+                else if (NodeType == CalendarNodeType.kExam)
+                    return ((String)Id == (String)node.Id) ? 0 : -1;
+                else
+                    return ((String)Id == (String)node.Id) && BeginTime == node.BeginTime ? 0 : -1;
+            }
             else if (this < node)
                 return -1;
             else

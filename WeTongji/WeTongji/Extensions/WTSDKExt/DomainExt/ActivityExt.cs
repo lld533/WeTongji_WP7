@@ -18,6 +18,12 @@ namespace WeTongji.Api.Domain
     [Table(Name = "Activity")]
     public class ActivityExt : IWTObjectExt, INotifyPropertyChanged
     {
+        #region
+
+        public static readonly DateTime FirstActivityCreatedAt = new DateTime(2012, 5, 26);
+
+        #endregion
+
         #region [Basic Properties]
 
         [Column(IsPrimaryKey = true)]

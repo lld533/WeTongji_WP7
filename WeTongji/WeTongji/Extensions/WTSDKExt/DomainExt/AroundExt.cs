@@ -365,6 +365,11 @@ namespace WeTongji.Api.Domain
         {
             get
             {
+                if (DateTime.Now < CreatedAt)
+                {
+                    return String.Format("刚刚更新");
+                }
+
                 var span = DateTime.Now - CreatedAt;
 
                 if (span < TimeSpan.FromHours(1))

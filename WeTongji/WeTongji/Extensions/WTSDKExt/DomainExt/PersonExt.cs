@@ -377,6 +377,7 @@ namespace WeTongji.Api.Domain
 
             #region [Save Avatar]
 
+            if(String.IsNullOrEmpty(AvatarGuid))
             {
                 var avatarImg = new ImageExt() { Id = Guid.NewGuid().ToString() };
                 using (var db = WTShareDataContext.ShareDB)

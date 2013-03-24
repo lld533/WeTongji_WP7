@@ -19,6 +19,7 @@
         <Converter:TextLengthToVisibilityConverter x:Key="TextLengthToVisibilityConverter"/>
         <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Converter:TurnOverVisibilityConverter x:Key="TurnOverVisibilityConverter"/>
+        <Converter:FavoriteNumberToVisibilityConverter x:Key="FavoriteNumberToVisibilityConverter"/>
 
         <DataTemplate x:Key="WT_PanoramaHeadTemplate">
             <Grid Margin="28,110,0,0">
@@ -157,7 +158,7 @@
             </Setter>
         </Style>
 
-        <Storyboard x:Name="AvatarAnimation" AutoReverse="True" RepeatBehavior="Forever">
+        <Storyboard x:Key="AvatarAnimation" AutoReverse="True" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" Storyboard.TargetName="AvatarStackPanel">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
@@ -165,7 +166,7 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:4" Value="-35"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Name="AlarmAnimation">
+        <Storyboard x:Key="AlarmAnimation" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="AlarmLeftEar">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-12"/>
@@ -237,7 +238,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <Storyboard x:Name="VisibleAlarmClockPointersAnimation">
+        <Storyboard x:Key="VisibleAlarmClockPointersAnimation">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HourPointer">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
@@ -248,7 +249,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <Storyboard x:Name="ResetAlarmClockPointersAnimation">
+        <Storyboard x:Key="ResetAlarmClockPointersAnimation">
             <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="HourPointer"/>
             <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="MinutePointer"/>
             <DoubleAnimation Duration="0" To="0"  Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="HourPointer"/>
@@ -296,6 +297,28 @@
                         <ExponentialEase EasingMode="EaseInOut" Exponent="5"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="VisibleFavoriteNumber">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)" Storyboard.TargetName="TextBlock_FavoriteNumber">
+                <EasingDoubleKeyFrame KeyTime="0" Value="8"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        
+        <Storyboard x:Key="TurnUpFavoriteNumber">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="TextBlock_FavoriteNumber">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="180"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="TurnDownFavoriteNumber">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="TextBlock_FavoriteNumber">
+                <EasingDoubleKeyFrame KeyTime="0" Value="180"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="360"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
@@ -382,13 +405,23 @@
 
                                     <!--Favorites-->
                                     <Button x:Name="Button_Favorite"  Style="{StaticResource NoBorderButtonStyle}"
-								Click="ViewMyFavorite" Margin="20,0,0,0" VerticalAlignment="Top">
+								            Click="ViewMyFavorite" Margin="20,0,0,0" VerticalAlignment="Top">
                                         <Grid Background="#FF1BA1E2" Width="141" Height="141">
                                             <Path Data="M212.639,224.182 L224.098,224.242 C226.319,215.861 227.352,211.172 228.629,211.272 C230.03,211.097 231.518,219.729 232.94,224.504 L244.147,224.498 C245.472,224.603 248.41,224.411 248.328,224.888 C248.634,225.414 239.325,232.459 235.178,234.927 C236.931,238.269 238.299,241.627 239.332,245 C239.561,246.446 240.298,249.931 239.906,250.176 C239.431,250.356 235.886,247.677 235.063,246.726 L228.448,240.366 C225.642,243.309 224.764,244.625 221.669,247.268 C220.718,248.102 217.094,250.471 216.897,250.356 C216.815,250.307 217.389,246.313 217.641,245.164 C218.794,240.915 219.502,238.427 221.624,235.087 C217.896,232.697 214.278,229.997 210.85,226.761 C209.849,225.874 208.629,224.805 208.766,224.395 C209.209,224.001 212.131,224.182 212.639,224.182 z" 
-										Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
+										          Fill="White" HorizontalAlignment="Left" Height="40.173" Margin="33,-19,0,0" Stretch="Fill" UseLayoutRounding="False" VerticalAlignment="Center" Width="40.673" StrokeThickness="3" Stroke="White"/>
 
                                             <!--Count of Favorites-->
-                                            <TextBlock Margin="86,-25,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding FavoritesCount}" FontSize="40"/>
+                                            <Grid Width="50" Height="50" Margin="0,-26,-70,0">
+                                                <TextBlock x:Name="TextBlock_FavoriteNumber" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DisplayFavoritesCount}" TextAlignment="Right" RenderTransformOrigin="0.5,0.5" FontSize="40"
+                                                       Visibility="{Binding DisplayFavoritesCount, Converter={StaticResource FavoriteNumberToVisibilityConverter}}">
+                                                    <TextBlock.RenderTransform>
+                                                        <CompositeTransform/>
+                                                    </TextBlock.RenderTransform>
+                                                    <TextBlock.Projection>
+                                                        <PlaneProjection/>
+                                                    </TextBlock.Projection>
+                                                </TextBlock>
+                                            </Grid>
 
                                             <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
                                         </Grid>
@@ -398,7 +431,7 @@
 
                                 <!--Alarm-->
                                 <Button x:Name="Button_Alarm" Style="{StaticResource NoBorderButtonStyle}" HorizontalAlignment="Left" 
-							Click="ViewAlarmItem" Margin="0,-22,0,0">
+							            Click="ViewAlarmItem" Margin="0,-22,0,0">
                                     <Grid Background="#FF1BA1E2" Width="302" Height="141">
                                         <!--Icon-->
                                         <Grid Width="60" Height="67" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,14,0,0">
@@ -472,7 +505,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <Button Style="{StaticResource NoBorderButtonStyle}"
-								Click="ViewMyAgenda">
+								            Click="ViewMyAgenda">
                                         <Grid Background="#FF1BA1E2" Width="141" Height="141">
                                             <!--Icon-->
                                             <Grid Width="41" Height="44" Margin="0,-13,0,0">

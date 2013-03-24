@@ -211,6 +211,17 @@ namespace WeTongji
             if (activity == null)
                 return;
 
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                activity.CanLike = true;
+                activity.CanFavorite = true;
+                activity.CanSchedule = true;
+            }
+            else
+            {
+                activity.CanSchedule = !Global.Instance.ParticipatingActivitiesIdList.Contains(activity.Id);
+            }
+
             if (activity.CanLike)
             {
                 var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
@@ -519,6 +530,10 @@ namespace WeTongji
                         }
                     }
 
+                    //...Raise favorite changed
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
+
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
@@ -619,6 +634,10 @@ namespace WeTongji
                         }
                     }
 
+                    //...Raise favorite changed
+                    if (itemInDB != null)
+                        Global.Instance.RaiseFavoriteChanged(itemInDB);
+
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
@@ -711,24 +730,14 @@ namespace WeTongji
                         //...Update AgendaSource
                         if (itemInDB != null)
                         {
-                            var g = Global.Instance.AgendaSource.Where((group) => group.Key == itemInDB.Begin.Date).SingleOrDefault();
-                            
-                            //...The date of the activity exists in Agenda
-                            if (g != null)
-                            {
-                                var targetNode = g.Where((node) => node == itemInDB.GetCalendarNode()).SingleOrDefault();
-                                if (targetNode == null)
-                                {
-                                    int idx = g.Items.Where((node) => node.BeginTime < itemInDB.Begin).Count();
-                                    g.Items.Insert(idx, itemInDB.GetCalendarNode());
-                                }
-                            }
-                            //...The date of the activity does not exist in Agenda
-                            else
-                            {
-                                int idx = Global.Instance.AgendaSource.Where((group) => group.Key < itemInDB.Begin.Date).Count();
-                                Global.Instance.AgendaSource.Insert(idx, new CalendarGroup<CalendarNode>(itemInDB.Begin.Date, new CalendarNode[] { itemInDB.GetCalendarNode() }));
-                            }
+                            Global.Instance.AgendaSource.InsertCalendarNode(itemInDB.GetCalendarNode());
+                            Global.Instance.RaiseAgendaSourceChanged();
+                        }
+
+                        if (!Global.Instance.ParticipatingActivitiesIdList.Contains(req.Id))
+                        {
+                            Global.Instance.ParticipatingActivitiesIdList.Add(req.Id);
+                            Global.Instance.RaiseActivityScheduleChanged(itemInDB);
                         }
                     }
 
@@ -821,16 +830,15 @@ namespace WeTongji
                         //...Update AgendaSource
                         if (itemInDB != null)
                         {
-                            var g = Global.Instance.AgendaSource.Where((group) => group.Key == itemInDB.Begin.Date).SingleOrDefault();
-                            if (g != null)
-                            {
-                                var nodeToRemove = g.Where((node) => node == itemInDB.GetCalendarNode()).SingleOrDefault();
-                                g.Items.Remove(nodeToRemove);
+                            //...Remove in global AgendaSource
+                            Global.Instance.AgendaSource.RemoveCalendarNode(itemInDB.GetCalendarNode());
+                            Global.Instance.RaiseAgendaSourceChanged();
 
-                                if (g.Count() == 0)
-                                {
-                                    Global.Instance.AgendaSource.Remove(g);
-                                }
+                            //...Participating List
+                            if (Global.Instance.ParticipatingActivitiesIdList.Contains(req.Id))
+                            {
+                                Global.Instance.ParticipatingActivitiesIdList.Remove(req.Id);
+                                Global.Instance.RaiseActivityScheduleChanged(itemInDB);
                             }
                         }
                     }
