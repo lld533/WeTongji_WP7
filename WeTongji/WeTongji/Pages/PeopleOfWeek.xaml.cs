@@ -255,6 +255,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
+                        WTToast.Instance.Show("操作成功");
                     });
                 };
 
@@ -270,8 +271,8 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("操作失败，请检查Wifi或网络链接后重试", "提示", MessageBoxButton.OK);
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                         });
                     }
                     else if (arg.Error is WTException)
@@ -353,6 +354,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
+                        WTToast.Instance.Show("操作成功");
                     });
                 };
 
@@ -368,7 +370,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("操作失败，请检查Wifi或网络链接后重试", "提示", MessageBoxButton.OK);
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
                         });
                     }
@@ -464,6 +466,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
+                        WTToast.Instance.Show("操作成功");
                     });
 
                 };
@@ -477,7 +480,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                         }
                         else if (arg.Error is WTException)
                         {
@@ -564,6 +567,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
+                        WTToast.Instance.Show("操作成功");
                     });
 
                 };
@@ -577,7 +581,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            MessageBox.Show("操作失败，请检查Wifi和网络链接后重试", "提示", MessageBoxButton.OK);
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                         }
                         else if (arg.Error is WTException)
                         {

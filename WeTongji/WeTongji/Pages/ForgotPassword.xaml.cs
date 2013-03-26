@@ -65,7 +65,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("重置密码失败，请检查Wifi或网络连接。", "提示", MessageBoxButton.OK);
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                             this.NavigationService.GoBack();
                         });
                     }

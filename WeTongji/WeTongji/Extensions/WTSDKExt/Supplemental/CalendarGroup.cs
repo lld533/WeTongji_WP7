@@ -37,6 +37,11 @@ namespace WeTongji.Api.Domain
             set;
         }
 
+        public Boolean IsToday
+        {
+            get { return Key == DateTime.Now.Date; }
+        }
+
         #region IEnumerable<T> Members
 
         public IEnumerator<T> GetEnumerator()
@@ -97,9 +102,10 @@ namespace WeTongji.Api.Domain
             }
             else
             {
-                if (todayGroup.Last().IsNoArrangementNode)
+                if (todayGroup.Count() == 0)
                 {
-                    result = todayGroup.Last();
+                    todayGroup.Items.Add(CalendarNode.NoArrangementNode);
+                    result = todayGroup.First();
                 }
                 else
                 {

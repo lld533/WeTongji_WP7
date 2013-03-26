@@ -595,78 +595,8 @@
                 -->
             <Border>
                 <controls:PanoramaItem Header="校园资讯" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
-                    <!--<Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="173"/>
-                    <RowDefinition Height="24"/>
-                    <RowDefinition Height="173"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="173"/>
-                    <ColumnDefinition Width="21"/>
-                    <ColumnDefinition Width="173"/>
-                </Grid.ColumnDefinitions>
-                <Button Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
-                                    DataContext="2"
-                                    Click="NavToCampusInfo"/>
-                <Button Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Grid.Row="2" 
-                                    DataContext="0"
-                                    Click="NavToCampusInfo"/>
-                <Button Content="团体通知" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Grid.Column="2"
-                                    DataContext="3"
-                                    Click="NavToCampusInfo"/>
-                <Button Content="周边推荐" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Grid.Column="2"  Grid.Row="2" 
-                                    DataContext="1"
-                                    Click="NavToCampusInfo"/>
-            </Grid>-->
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                         <StackPanel>
-                            <!--<Button x:Name="Button_OfficialNotes"  Content="校务通知" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Click="NavToOfficialNotesList"/>
-
-                            <Button x:Name="Button_ClubNews"  Content="团体通知" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Click="NavToClubNewsList"/>
-
-                            <Button x:Name="Button_TongjiNews"  Content="同济动态" Style="{StaticResource CampusInfoButtonStyle}"
-                                    Click="NavToTongjiNewsList"/>
-
-                            <Button x:Name="Button_AroundNews"  Content="周边推荐"
-                                    Click="NavToAroundNewsList">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Height" Value="140"/>
-                                        <Setter Property="Margin" Value="0,0,0,20"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Grid>
-                                                        <VisualStateManager.VisualStateGroups>
-                                                            <VisualStateGroup x:Name="CommonStates">
-                                                                <VisualState x:Name="Normal"/>
-                                                                <VisualState x:Name="Disabled"/>
-                                                                <VisualState x:Name="MouseOver"/>
-                                                            </VisualStateGroup>
-                                                            <VisualStateGroup x:Name="FocusStates">
-                                                                <VisualState x:Name="Focused"/>
-                                                            </VisualStateGroup>
-                                                        </VisualStateManager.VisualStateGroups>
-
-                                                        <Rectangle Fill="Gray"/>
-                                                        <Image Stretch="UniformToFill" Source="{Binding TitleImageBrush}"/>
-                                                        <Border Width="130" VerticalAlignment="Top" Opacity="0.5" Margin="0,12,12,0" Height="40" HorizontalAlignment="Right" Background="Black">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
-                                                        </Border>
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="FontSize" Value="24"/>
-                                    </Style>
-                                </Button.Style>
-                            </Button>-->
 
                             <Grid Height="660">
 
@@ -794,8 +724,43 @@
                                 </Grid>
 
                                 <!--Large Image-->
-                                <Image Stretch="UniformToFill" Margin="0,23,0,0" MaxHeight="240"
-										Source="{Binding FirstImageBrush}"/>
+                                <Image x:Name="PeopleOfWeekLargeImage" Stretch="UniformToFill" Margin="0,23,0,0" MaxHeight="240"
+									   Source="{Binding FirstImageBrush}"
+									   MouseLeftButtonDown="PeopleOfWeekLargeImage_MouseLeftButtonDown"
+									   MouseLeftButtonUp="PeopleOfWeekLargeImage_MouseLeftButtonUp"
+									   MouseLeave="PeopleOfWeekLargeImage_MouseLeave"
+									   MouseEnter="PeopleOfWeekLargeImage_MouseEnter">
+									<Image.Projection>
+										<PlaneProjection/>
+									</Image.Projection>
+									
+                                    <Image.Resources>
+                                        <Storyboard x:Key="TapTopRight">
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+
+                                        <Storyboard x:Key="TapTopLeft">
+                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+
+                                        <Storyboard x:Key="TapBottomRight">
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+
+                                        <Storyboard x:Key="TapBottomLeft">
+                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+                                    </Image.Resources>
+                                </Image>
 
                                 <Grid Margin="0,20,0,0">
                                     <Grid.ColumnDefinitions>

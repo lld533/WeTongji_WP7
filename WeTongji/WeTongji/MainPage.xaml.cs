@@ -965,10 +965,8 @@ namespace WeTongji
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
-                        {
-                            UserSource = db.UserInfo.SingleOrDefault();
-                        }
+                        UserSource = targetUser;
+                        WTToast.Instance.Show("恭喜，登录成功~");
                     });
 
                     #endregion
@@ -1605,7 +1603,14 @@ namespace WeTongji
                 var srcs = arr.Where((news) => !String.IsNullOrEmpty(news.TitleImage));
                 if (srcs != null && srcs.Count() > 0)
                 {
-                    latest = srcs.OrderByDescending((news) => news.CreatedAt).First();
+                    try
+                    {
+                        latest = (from AroundExt n in srcs
+                                  where String.IsNullOrEmpty(n.TitleImage) && !n.TitleImage.EndsWith("missing.png")
+                                  orderby n.CreatedAt descending
+                                  select n).First();
+                    }
+                    catch { }
                 }
 
                 if (latest != null)
@@ -2289,6 +2294,88 @@ namespace WeTongji
             }
         }
 
+        private void PeopleOfWeekLargeImage_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        {
+            var img = sender as Image;
+            var pnt = e.GetPosition(img);
+
+            //...Tap on the left side
+            if (pnt.X < img.RenderSize.Width / 2)
+            {
+                //...Tap on the left-top side
+                if (pnt.Y < img.RenderSize.Height / 2)
+                {
+                    (img.Resources["TapTopLeft"] as Storyboard).Begin();
+                }
+                //...Tap on the left-bottom side
+                else
+                {
+                    (img.Resources["TapBottomLeft"] as Storyboard).Begin();
+                }
+            }
+            //...Tap on the right side
+            else
+            {
+                //...Tap on the right-top side
+                if (pnt.Y < img.RenderSize.Height / 2)
+                {
+                    (img.Resources["TapTopRight"] as Storyboard).Begin();
+                }
+                //...Tap on the right-bottom side
+                else
+                {
+                    (img.Resources["TapBottomRight"] as Storyboard).Begin();
+                }
+            }
+        }
+
+        private void PeopleOfWeekLargeImage_MouseLeftButtonUp(Object sender, MouseButtonEventArgs e)
+        {
+            (sender as UIElement).Projection = new PlaneProjection();
+
+            NavToPeopleOfWeek(sender, new RoutedEventArgs());
+        }
+
+        private void PeopleOfWeekLargeImage_MouseLeave(Object sender, MouseEventArgs e)
+        {
+            (sender as UIElement).Projection = new PlaneProjection();
+        }
+
+        private void PeopleOfWeekLargeImage_MouseEnter(Object sender, MouseEventArgs e)
+        {
+            var img = sender as Image;
+            var pnt = e.GetPosition(img);
+
+            //...Tap on the left side
+            if (pnt.X < img.RenderSize.Width / 2)
+            {
+                //...Tap on the left-top side
+                if (pnt.Y < img.RenderSize.Height / 2)
+                {
+                    (img.Resources["TapTopLeft"] as Storyboard).Begin();
+                }
+                //...Tap on the left-bottom side
+                else
+                {
+                    (img.Resources["TapBottomLeft"] as Storyboard).Begin();
+                }
+            }
+            //...Tap on the right side
+            else
+            {
+                //...Tap on the right-top side
+                if (pnt.Y < img.RenderSize.Height / 2)
+                {
+                    (img.Resources["TapTopRight"] as Storyboard).Begin();
+                }
+                //...Tap on the right-bottom side
+                else
+                {
+                    (img.Resources["TapBottomRight"] as Storyboard).Begin();
+                }
+            }
+        }
+
         #region [Activity]
 
         private void ReloadActivities()
@@ -2799,9 +2886,18 @@ namespace WeTongji
                         an = db.AroundTable.ToArray();
                     }
 
+
                     if (an != null && an.Count() > 0)
                     {
-                        anSrc = an.OrderBy((news) => news.CreatedAt).Last();
+                        try
+                        {
+                            anSrc = (from AroundExt news in an
+                                     where !String.IsNullOrEmpty(news.TitleImage) && !news.TitleImage.EndsWith("missing.png")
+                                     orderby news.CreatedAt descending
+                                     select news).First();
+                        }
+                        catch { }
+
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             AroundNewsSource = anSrc;

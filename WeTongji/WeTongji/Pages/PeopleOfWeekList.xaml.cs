@@ -94,7 +94,7 @@ namespace WeTongji
 
         private void DownloadUnStoredAvatars()
         {
-            var people = ListBox_Core.ItemsSource as PersonExt[];
+            var people = PeopleSource;
             if (people != null)
             {
                 int count = people.Count();
@@ -358,7 +358,20 @@ namespace WeTongji
 
         private void Refresh_Button_Clicked(Object sender, EventArgs e)
         {
-            RefreshPeopleOfWeek();
+            if (PeopleSource == null || PeopleSource.Count == 0)
+            {
+                RefreshPeopleOfWeek();
+            }
+            else
+            {
+                foreach (var p in PeopleSource)
+                {
+                    p.SendPropertyChanged("AvatarImageBrush");
+                }
+
+                DownloadUnStoredAvatars();
+                RefreshPeopleOfWeek();
+            }
         }
     }
 }

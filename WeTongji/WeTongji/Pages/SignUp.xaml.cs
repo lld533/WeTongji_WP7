@@ -100,7 +100,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("注册失败，请检查Wifi或网络连接后重试");
+                            WTToast.Instance.Show("网络异常，请稍后再试");
                         });
                     }
                     else

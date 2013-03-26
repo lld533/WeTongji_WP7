@@ -48,7 +48,6 @@ namespace WeTongji
                 LongListSelector_Core.ItemsSource = src;
 
                 var node = Global.Instance.AgendaSource.GetNextCalendarNode();
-                HighlightCurrentNode(node);
             });
         }
 
@@ -111,7 +110,7 @@ namespace WeTongji
 
             Global.Instance.AgendaSourceStateChanged += this.AgendaSourceStateChangedHandler;
 
-            var thread = new Thread(new ThreadStart(TempLoadData)) { IsBackground = true };
+            var thread = new Thread(new ThreadStart(LoadData)) { IsBackground = true };
             thread.Start();
         }
 
@@ -122,7 +121,7 @@ namespace WeTongji
             Global.Instance.AgendaSourceStateChanged -= this.AgendaSourceStateChangedHandler;
         }
 
-        private void TempLoadData()
+        private void LoadData()
         {
             AgendaSourceStateChangedHandler(Global.Instance, EventArgs.Empty);
         }
@@ -185,7 +184,6 @@ namespace WeTongji
 
                                             new PropertyMetadata((obj, arg) =>
                                             {
-
                                                 if (VerticalScrollChanged != null)
 
                                                     VerticalScrollChanged(this, EventArgs.Empty);
@@ -200,6 +198,8 @@ namespace WeTongji
 
                                 LongListSelector_Core.ScrollTo(nodeToScrollTo);
                                 LongListSelector_Core.UpdateLayout();
+
+                                #region [Play donate animation]
 
                                 {
                                     DependencyObject obj = LongListSelector_Core;
@@ -225,17 +225,16 @@ namespace WeTongji
                                                 obj = VisualTreeHelper.GetChild(obj, 0);
                                             }
 
-                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                                            Storyboard sb = null;
-                                            if (nodeToScrollTo.IsNoArrangementNode)
-                                                sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
-                                            else
-                                                sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
+                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj,0) as Panel;
+                                            Storyboard sb = itemLayoutRoot.Resources["Donate"] as Storyboard;
                                             sb.Begin();
                                             break;
                                         }
                                     }
                                 }
+                            
+
+                                #endregion
                             }
                             #endregion
                             #region [LongListSelector has source]
@@ -282,77 +281,8 @@ namespace WeTongji
 
             Action core = () =>
             {
-                Storyboard appear, disappear;
-                appear = disappear = null;
-
-                //...Get current node and begin disappear storyboard.
-                #region [Disappear]
-                {
-                    DependencyObject obj = LongListSelector_Core;
-                    while (!(obj is VirtualizingStackPanel))
-                    {
-                        obj = VisualTreeHelper.GetChild(obj, 0);
-                    }
-
-                    int count = VisualTreeHelper.GetChildrenCount(obj);
-
-                    for (int i = 0; i < count; ++i)
-                    {
-                        var tmp = VisualTreeHelper.GetChild(obj, i);
-
-                        var source = (tmp as Control).DataContext as LongListSelectorItem;
-                        CalendarNode srcItem = source == null ? null : source.Item as CalendarNode;
-                        if (srcItem != null && CurrentNode.CompareTo(srcItem) == 0)
-                        {
-                            obj = tmp;
-
-                            //...Get the layout root of the item
-                            while (!(obj is ContentPresenter))
-                            {
-                                obj = VisualTreeHelper.GetChild(obj, 0);
-                            }
-
-                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                            if (CurrentNode.IsNoArrangementNode)
-                                disappear = itemLayoutRoot.Resources["LostHighlight_NoArrangement"] as Storyboard;
-                            else
-                                disappear = itemLayoutRoot.Resources["LostHighlight"] as Storyboard;
-                            break;
-                        }
-                    }
-
-                }
-                #endregion
-
-                //...Get the next node and try to begin appear storyboard
-                #region [Appear]
-                {
-                    if (disappear != null)
-                    {
-                        EventHandler handler = null;
-                        handler = (obj, arg) =>
-                        {
-                            try
-                            {
-                                CurrentNode = Global.Instance.AgendaSource.GetNextCalendarNode();
-                                AgendaSourceStateChanged(Global.Instance, EventArgs.Empty);
-                                HighlightCurrentNode(CurrentNode, true);
-                                disappear.Completed -= handler;
-                            }
-                            catch { }
-                        };
-
-                        disappear.Completed += handler;
-                        disappear.Begin();
-                    }
-                    else
-                    {
-                        CurrentNode = Global.Instance.AgendaSource.GetNextCalendarNode();
-                        AgendaSourceStateChanged(Global.Instance, EventArgs.Empty);
-                        HighlightCurrentNode(CurrentNode, true);
-                    }
-                }
-                #endregion
+                CurrentNode = Global.Instance.AgendaSource.GetNextCalendarNode();
+                AgendaSourceStateChanged(Global.Instance, EventArgs.Empty);
             };
 
             //...date changed
@@ -445,58 +375,6 @@ namespace WeTongji
                     }
                 }
             }
-
-            if (CurrentNode != null)
-                HighlightCurrentNode(CurrentNode);
-        }
-
-        private void HighlightCurrentNode(CalendarNode targetSource, bool playTransition = false)
-        {
-            DependencyObject obj = LongListSelector_Core;
-            while (!(obj is VirtualizingStackPanel))
-            {
-                obj = VisualTreeHelper.GetChild(obj, 0);
-            }
-
-            int count = VisualTreeHelper.GetChildrenCount(obj);
-
-            for (int i = 0; i < count; ++i)
-            {
-                var tmp = VisualTreeHelper.GetChild(obj, i);
-
-                var source = (tmp as Control).DataContext as LongListSelectorItem;
-                CalendarNode srcItem = source == null ? null : source.Item as CalendarNode;
-                if (srcItem != null && targetSource.CompareTo(srcItem) == 0)
-                {
-                    obj = tmp;
-
-                    //...Get the layout root of the item
-                    while (!(obj is ContentPresenter))
-                    {
-                        obj = VisualTreeHelper.GetChild(obj, 0);
-                    }
-
-                    var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                    Storyboard sb = null;
-                    if (targetSource.IsNoArrangementNode)
-                    {
-                        if (playTransition)
-                            sb = itemLayoutRoot.Resources["GetHighlight_NoArrangement"] as Storyboard;
-                        else
-                            sb = itemLayoutRoot.Resources["RefreshHighlight_NoArrangement"] as Storyboard;
-                    }
-                    else
-                    {
-                        if (playTransition)
-                            sb = itemLayoutRoot.Resources["GetHighlight"] as Storyboard;
-                        else
-                            sb = itemLayoutRoot.Resources["RefreshHighlight"] as Storyboard;
-                    }
-                    sb.Begin();
-                    break;
-                }
-            }
-
         }
     }
 }

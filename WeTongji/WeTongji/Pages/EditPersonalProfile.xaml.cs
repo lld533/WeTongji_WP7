@@ -128,7 +128,10 @@ namespace WeTongji
                         ProgressBarPopup.Instance.Close();
                         (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
 
-                        MessageBox.Show("更新头像失败，请重试", "提示", MessageBoxButton.OK);
+                        if (arg.Error is System.Net.WebException)
+                            WTToast.Instance.Show("网络异常，请稍后再试");
+                        else
+                            MessageBox.Show("更新头像失败，请重试", "提示", MessageBoxButton.OK);
                     });
                 };
 
@@ -198,7 +201,10 @@ namespace WeTongji
                             ProgressBarPopup.Instance.Close();
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
 
-                            MessageBox.Show("保存资料失败，请重试", "提示", MessageBoxButton.OK);
+                            if (e.Error is System.Net.WebException)
+                                WTToast.Instance.Show("网络异常，请稍后再试");
+                            else
+                                MessageBox.Show("保存资料失败，请重试", "提示", MessageBoxButton.OK);
                         });
                     };
 

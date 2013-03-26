@@ -130,7 +130,7 @@ namespace WeTongji
                         {
                             ProgressBarPopup.Instance.Close();
                         }
-                    });                    
+                    });
                 }
             }
         }
@@ -283,15 +283,28 @@ namespace WeTongji
 
             client.ExecuteFailed += (o, e) =>
                 {
-                    Debug.WriteLine("Update [{0}] failed. Error:\n{1}", param.Info.Name, e.Error);
-
-                    //...update ui
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         ProgressBarPopup.Instance.Close();
 
-                        //...Todo @_@ Analyze type of the exception. By default just MsgBox try again.
-                        MessageBox.Show("更新失败，请重试");
+                        if (e.Error is System.Net.WebException)
+                        {
+                            WTToast.Instance.Show("网络异常，请稍后再试");
+                        }
+                        else if (e.Error is WeTongji.Api.WTException)
+                        {
+                            var ex = e.Error as WeTongji.Api.WTException;
+                            if (ex.StatusCode.Id == WeTongji.Api.Util.Status.NoAuth)
+                            {
+                                var result = MessageBox.Show("您是否在其他平台登录？请重新登录后重试。", "提示", MessageBoxButton.OKCancel);
+                                if (result == MessageBoxResult.OK)
+                                {
+                                    this.NavigationService.GoBack();
+                                }
+                            }
+                        }
+                        else
+                            MessageBox.Show("更新失败，请重试");
                     });
                 };
 

@@ -267,6 +267,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WTToast.xaml.cs">
+      <DependentUpon>WTToast.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -366,6 +369,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\ViewOfficialWebsite.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WTToast.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -794,7 +801,6 @@
     <Content Include="Images\Common\location_icon.png" />
     <Content Include="Images\Common\time_icon.png" />
     <Content Include="Pages\BaseMapTile.png" />
-    <Content Include="Pages\missing.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TileBrush\WTCustomControls.csproj">

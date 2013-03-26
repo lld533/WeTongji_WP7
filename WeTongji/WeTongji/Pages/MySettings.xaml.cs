@@ -82,7 +82,14 @@ namespace WeTongji
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
-                    MessageBox.Show("检测新版本失败", "检测新版本", MessageBoxButton.OK);
+                    if (args.Error is System.Net.WebException)
+                    {
+                        WTToast.Instance.Show("网络异常，请稍后再试");
+                    }
+                    else
+                    {
+                        MessageBox.Show("检测新版本失败", "检测新版本", MessageBoxButton.OK);
+                    }
                 });
             };
 
@@ -99,12 +106,11 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            var result = MessageBox.Show(String.Format("最新版本为{0}，是否前往商城下载？", args.Result.Version.Latest), "当前版本不是最新", MessageBoxButton.OKCancel);
+                            var result = MessageBox.Show(String.Format("最新版本为{0}，是否前往应用商店查看更新？", args.Result.Version.Latest), "当前版本不是最新", MessageBoxButton.OKCancel);
                             if (result == MessageBoxResult.OK)
                             {
-                                Microsoft.Phone.Tasks.MarketplaceDetailTask task = new Microsoft.Phone.Tasks.MarketplaceDetailTask();
-                                task.ContentIdentifier = args.Result.Version.Url;
-                                task.ContentType = Microsoft.Phone.Tasks.MarketplaceContentType.Applications;
+                                var task = new Microsoft.Phone.Tasks.WebBrowserTask();
+                                task.Uri = new Uri(args.Result.Version.Url);
                                 task.Show();
                             }
                         });
@@ -177,7 +183,7 @@ namespace WeTongji
             });
         }
 
-        private void ClearImageCacheCore()
+        private void ClearImageCacheCore() 
         {
             this.Dispatcher.BeginInvoke(() =>
             {
