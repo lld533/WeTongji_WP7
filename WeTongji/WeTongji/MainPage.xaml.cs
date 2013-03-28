@@ -68,16 +68,6 @@ namespace WeTongji
 
         #endregion
 
-        #region [Threads]
-
-#if false
-        private Thread PersonThread;
-        private Thread ActivityThread;
-        private Thread CampusInfoThread;
-#endif
-
-        #endregion
-
         #region [Alarm DispatcherTimer]
 
         private DispatcherTimer alarmDispatcherTimer = new DispatcherTimer()
@@ -91,6 +81,50 @@ namespace WeTongji
         public MainPage()
         {
             InitializeComponent();
+
+            this.TextBlock_Today.Text = DateTime.Now.Day.ToString();
+
+            #region [Add localized buttons, and menu items]
+
+            {
+                ApplicationBarIconButton button;
+                ApplicationBarMenuItem mi;
+
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+                {
+                    IsEnabled = false,
+                    Text = StringLibrary.MainPage_AppBarLoginText
+                };
+                button.Click += LogOn_Click;
+                this.ApplicationBar.Buttons.Add(button);
+
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute))
+                {
+                    IsEnabled = false,
+                    Text = StringLibrary.MainPage_AppBarRegisterText
+                };
+                button.Click += NavigateToSignUp;
+                this.ApplicationBar.Buttons.Add(button);
+
+
+                mi = new ApplicationBarMenuItem() { Text = StringLibrary.MainPage_AppBarSettingsText };
+                mi.Click += NavigateToSettings;
+                this.ApplicationBar.MenuItems.Add(mi);
+
+                mi = new ApplicationBarMenuItem() { Text = StringLibrary.MainPage_AppBarAboutText };
+                mi.Click += NavigateToAbout;
+                this.ApplicationBar.MenuItems.Add(mi);
+
+                mi = new ApplicationBarMenuItem() { Text = StringLibrary.MainPage_AppBarFeedbackText };
+                mi.Click += SendFeedback;
+                this.ApplicationBar.MenuItems.Add(mi);
+
+                mi = new ApplicationBarMenuItem() { Text = StringLibrary.MainPage_AppBarShareToFriendsByMail };
+                mi.Click += ShareToFriends;
+                this.ApplicationBar.MenuItems.Add(mi);
+            };
+
+            #endregion
 
             Global.Instance.ActivityScheduleChanged += (obj, arg) =>
                 {
@@ -170,18 +204,10 @@ namespace WeTongji
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
                                             //...MessageBox
-                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"活动即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                            MessageBox.Show(String.Format(StringLibrary.MainPage_ActivityExpiredPromptContentTemplate, DateTime.Now.ToString("HH:mm"),
                                                                                                                                       src.Title,
                                                                                                                                       (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
-                                                           "提示", MessageBoxButton.OK);
-                                        }
-                                        else
-                                        {
-                                            ShellToast toast = new ShellToast();
-                                            toast.NavigationUri = this.NavigationService.CurrentSource;
-                                            toast.Title = "提醒";
-                                            toast.Content = "\"" + src.Title + "\"活动即将开始，请注意安排时间~";
-                                            toast.Show();
+                                                           StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         }
                                     }
                                 }
@@ -200,18 +226,10 @@ namespace WeTongji
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
                                             //...MessageBox
-                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"考试即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                            MessageBox.Show(String.Format(StringLibrary.MainPage_ExamExpiredPromptContentTemplate, DateTime.Now.ToString("HH:mm"),
                                                                                                                                      src.Title,
-                                                                                                                                      (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
-                                                                                                    "提示", MessageBoxButton.OK);
-                                        }
-                                        else
-                                        {
-                                            ShellToast toast = new ShellToast();
-                                            toast.NavigationUri = this.NavigationService.CurrentSource;
-                                            toast.Title = "提醒";
-                                            toast.Content = "\"" + src.Title + "\"考试即将开始，请注意安排时间~";
-                                            toast.Show();
+                                                                                                                                     (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
+                                                            StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         }
                                     }
                                 }
@@ -231,18 +249,10 @@ namespace WeTongji
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
                                             //...MessageBox
-                                            MessageBox.Show(String.Format("现在是{0}，\"{1}\"课程即将在{2}分钟后开始，请注意安排时间~", DateTime.Now.ToString("HH:mm"),
+                                            MessageBox.Show(String.Format(StringLibrary.MainPage_CourseExpiredPromptContentTemplate, DateTime.Now.ToString("HH:mm"),
                                                                                                                                    src.Title,
                                                                                                                                    (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
-                                                        "提示", MessageBoxButton.OK);
-                                        }
-                                        else
-                                        {
-                                            ShellToast toast = new ShellToast();
-                                            toast.NavigationUri = this.NavigationService.CurrentSource;
-                                            toast.Title = "提醒";
-                                            toast.Content = "\"" + src.Title + "\"课程即将开始，请注意安排时间~";
-                                            toast.Show();
+                                                        StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         }
                                     }
                                 }
@@ -261,7 +271,7 @@ namespace WeTongji
 
             if (Global.Instance.Settings.HintOnExit)
             {
-                var result = MessageBox.Show("你确认要退出微同济吗？", "", MessageBoxButton.OKCancel);
+                var result = MessageBox.Show(StringLibrary.Common_ExitAppPromptContent, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
                 if (MessageBoxResult.Cancel == result)
                 {
                     e.Cancel = true;
@@ -277,18 +287,10 @@ namespace WeTongji
             {
                 using (var db = WTShareDataContext.ShareDB)
                 {
-#if true
                     if (!db.DatabaseExists())
                     {
                         db.CreateDatabase();
                     }
-#else
-                    if (db.DatabaseExists())
-                    {
-                        db.DeleteDatabase();
-                    }
-                    db.CreateDatabase();
-#endif
                 }
 
                 if (!isResourceLoaded)
@@ -722,16 +724,6 @@ namespace WeTongji
             this.NavigationService.Navigate(new Uri("/Pages/" + str + ".xaml", UriKind.RelativeOrAbsolute));
         }
 
-        void Open(object sender, RoutedEventArgs e)
-        {
-            (this.Resources["OpenPopup"] as Storyboard).Begin();
-        }
-
-        void Close(object sender, RoutedEventArgs e)
-        {
-            (this.Resources["ClosePopup"] as Storyboard).Begin();
-        }
-
         void NavToPeopleOfWeek(object sender, RoutedEventArgs e)
         {
             var src = PersonSource;
@@ -864,7 +856,6 @@ namespace WeTongji
             }
             catch { }
 
-            this.TextBlock_Today.Text = DateTime.Now.Day.ToString();
             this.Focus();
 
             var no = this.TextBox_Id.Text;
@@ -903,32 +894,6 @@ namespace WeTongji
 
             client.ExecuteCompleted += (obj, arg) =>
                 {
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        Border_SignedOut.Visibility = Visibility.Collapsed;
-                        TextBox_Id.Text = String.Empty;
-                        PasswordBox_Password.Password = String.Empty;
-
-                        if ((this.ApplicationBar as ApplicationBar).Buttons.Count != 1)
-                        {
-                            (this.ApplicationBar as ApplicationBar).Buttons.Clear();
-
-                            ApplicationBarIconButton button;
-                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
-                            button.Click += RefreshButton_Click;
-                            (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
-
-                            var mi = new ApplicationBarMenuItem() { Text = "注销" };
-                            mi.Click += SignOut;
-                            this.ApplicationBar.MenuItems.Add(mi);
-                        }
-                    });
-
-                    using (var db = WTShareDataContext.ShareDB)
-                    {
-                        db.ResetLikeFavoriteSchedule();
-                    }
-
                     Global.Instance.CurrentUserID = arg.Result.User.UID;
                     Global.Instance.UpdateSettings(arg.Result.User.UID, pw, arg.Result.Session);
                     Global.Instance.StartSettingAgendaSource();
@@ -936,6 +901,11 @@ namespace WeTongji
                     UserExt targetUser = null;
 
                     #region [Handle database]
+
+                    using (var db = WTShareDataContext.ShareDB)
+                    {
+                        db.ResetLikeFavoriteSchedule();
+                    }
 
                     using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
                     {
@@ -961,16 +931,6 @@ namespace WeTongji
 
                     #endregion
 
-                    #region [Update UI]
-
-                    this.Dispatcher.BeginInvoke(() =>
-                    {
-                        UserSource = targetUser;
-                        WTToast.Instance.Show("恭喜，登录成功~");
-                    });
-
-                    #endregion
-
                     #region [download courses, favorites and schedule in order]
 
                     Global.Instance.ParticipatingActivitiesIdList.Clear();
@@ -980,12 +940,42 @@ namespace WeTongji
                     DownloadFavorite(arg.Result.Session, arg.Result.User.UID);
 
                     #endregion
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        UserSource = targetUser;
+
+                        Border_SignedOut.Visibility = Visibility.Collapsed;
+                        TextBox_Id.Text = String.Empty;
+                        PasswordBox_Password.Password = String.Empty;
+                        StartComputingCalendarNodes();
+
+                        if (Panorama_Core.SelectedIndex == 0)
+                        {
+                            (this.ApplicationBar as ApplicationBar).Buttons.Clear();
+
+                            ApplicationBarIconButton button;
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
+                            {
+                                Text = StringLibrary.MainPage_AppBarRefreshText
+                            };
+                            button.Click += RefreshButton_Click;
+                            (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                        }
+
+                        var mi = new ApplicationBarMenuItem()
+                        {
+                            Text = StringLibrary.MainPage_AppBarSignOutText
+                        };
+                        mi.Click += SignOut;
+                        this.ApplicationBar.MenuItems.Add(mi);
+
+                        WTToast.Instance.Show(StringLibrary.Toast_SignInSucceededPrompt);
+                    });
                 };
 
             client.ExecuteFailed += (obj, arg) =>
                 {
-                    Debug.WriteLine("Sign in failed. StuNo:{0}, Pw:{1}\nError:{2}", no, pw, arg.Error);
-
                     var err = arg.Error;
 
                     this.Dispatcher.BeginInvoke(() =>
@@ -1002,60 +992,207 @@ namespace WeTongji
                             switch (wte.StatusCode.Id)
                             {
                                 case WeTongji.Api.Util.Status.LoginTimeOut:
-                                    MessageBox.Show("登录超时,请重试");
+                                    MessageBox.Show(StringLibrary.MainPage_LoginTimeOutPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     return;
                                 case WeTongji.Api.Util.Status.NoAccount:
                                     {
-                                        MessageBox.Show("账号不存在,请重试");
+                                        MessageBox.Show(StringLibrary.MainPage_NoAccountPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     return;
                                 case WeTongji.Api.Util.Status.NotActivatedAccount:
                                     {
-                                        MessageBox.Show("账号未激活,请重试");
+                                        MessageBox.Show(StringLibrary.MainPage_NotActivatedAccountPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     return;
                                 case WeTongji.Api.Util.Status.NotRegistered:
                                     {
-                                        MessageBox.Show("用户没有注册,请重试");
+                                        MessageBox.Show(StringLibrary.MainPage_NotRegisteredPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     return;
                                 case WeTongji.Api.Util.Status.InvalidPassword:
                                     {
-                                        MessageBox.Show("密码不符合要求,请重新输入");
+                                        MessageBox.Show(StringLibrary.MainPage_InvalidPasswordPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         PasswordBox_Password.Focus();
                                         PasswordBox_Password.SelectAll();
                                     }
                                     return;
                                 case WeTongji.Api.Util.Status.AccountPasswordDismatch:
                                     {
-                                        MessageBox.Show("密码错误,请重新输入");
+                                        MessageBox.Show(StringLibrary.MainPage_AccountPasswordDismatchPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         PasswordBox_Password.Focus();
                                         PasswordBox_Password.SelectAll();
                                     }
                                     return;
                             }
 
-                            MessageBox.Show("登录失败，请重试");
+                            MessageBox.Show(StringLibrary.MainPage_CommonLoginFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         }
                         else if (err is System.Net.WebException)
                         {
-                            MessageBox.Show("登录失败，请检查Wifi或网络连接后重试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             try
                             {
                                 Button_Login.IsEnabled = true;
                             }
                             catch { }
                         }
+                        else
+                        {
+                            MessageBox.Show(StringLibrary.MainPage_CommonLoginFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
+                        }
                     });
                 };
 
             client.Execute(req);
+        }
+
+        private void AutoLogin()
+        {
+            if (String.IsNullOrEmpty(Global.Instance.Settings.UID))
+            {
+                //...Return if no user has logged in ever before or the settings file is missing.
+                return;
+            }
+
+            var req = new UserLogOnRequest<UserLogOnResponse>();
+            var client = new WTDefaultClient<UserLogOnResponse>();
+
+            #region [Assign request parameters]
+
+            //...Get student NO from local database
+            if (!WTUserDataContext.UserDataContextExists(Global.Instance.Settings.UID))
+            {
+                //...Return if local database cannot be found.
+                return;
+            }
+
+            using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
+            {
+                var userInfo = db.UserInfo.SingleOrDefault();
+
+                //...Return if user info is missing.
+                if (userInfo == null)
+                    return;
+
+                req.NO = userInfo.NO;
+            }
+
+            req.Password = Global.Instance.Settings.CryptPassword.GetOriginalPassword();
+
+            #endregion
+
+            #region [Add execute completed handlers]
+
+            client.ExecuteCompleted += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        if (String.IsNullOrEmpty(Global.Instance.CurrentUserID)
+                            && String.IsNullOrEmpty(TextBox_Id.Text)
+                            && String.IsNullOrEmpty(PasswordBox_Password.Password))
+                        {
+                            var thread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(OnAutoLoginCompleted));
+                            thread.Start(arg);
+                        }
+                    });
+                };
+
+            #endregion
+
+            client.Execute(req);
+        }
+
+        private void OnAutoLoginCompleted(Object param)
+        {
+            var arg = param as WTExecuteCompletedEventArgs<UserLogOnResponse>;
+
+            if (arg == null)
+                return;
+
+            Global.Instance.CurrentUserID = arg.Result.User.UID;
+            Global.Instance.CurrentUserID = arg.Result.User.UID;
+            Global.Instance.UpdateSession(arg.Result.Session);
+
+            UserExt targetUser = null;
+
+            #region [Handle database]
+
+            using (var db = WTShareDataContext.ShareDB)
+            {
+                db.ResetLikeFavoriteSchedule();
+            }
+
+            using (var db = new WeTongji.DataBase.WTUserDataContext(arg.Result.User.UID))
+            {
+                var userInfo = db.UserInfo.SingleOrDefault();
+
+                //...Create an instance if the user never signs in.
+                if (userInfo == null)
+                {
+                    targetUser = new UserExt();
+                    targetUser.SetObject(arg.Result.User);
+
+                    db.UserInfo.InsertOnSubmit(targetUser);
+                }
+                //...Update user's info
+                else
+                {
+                    userInfo.SetObject(arg.Result.User);
+                    targetUser = userInfo;
+                }
+
+                db.SubmitChanges();
+            }
+
+            #endregion
+
+            #region [download courses, favorites and schedule in order]
+
+            Global.Instance.ParticipatingActivitiesIdList.Clear();
+
+            DownloadCourses(arg.Result.Session, arg.Result.User.UID);
+
+            DownloadFavorite(arg.Result.Session, arg.Result.User.UID);
+
+            #endregion
+
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                UserSource = targetUser;
+
+                StartComputingCalendarNodes();
+
+                Border_SignedOut.Visibility = Visibility.Collapsed;
+                TextBox_Id.Text = String.Empty;
+                PasswordBox_Password.Password = String.Empty;
+                WTToast.Instance.Show(String.Format(StringLibrary.Toast_AutoLoginSucceededPromptTemplate, arg.Result.User.DisplayName));
+
+                if (Panorama_Core.SelectedIndex == 0)
+                {
+                    (this.ApplicationBar as ApplicationBar).Buttons.Clear();
+
+                    ApplicationBarIconButton button;
+                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
+                    {
+                        Text = StringLibrary.MainPage_AppBarRefreshText
+                    };
+                    button.Click += RefreshButton_Click;
+                    (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
+                }
+
+                var mi = new ApplicationBarMenuItem()
+                {
+                    Text = StringLibrary.MainPage_AppBarSignOutText
+                };
+                mi.Click += SignOut;
+                this.ApplicationBar.MenuItems.Add(mi);
+            });
         }
 
         #region [Refresh related functions]
@@ -1850,12 +1987,19 @@ namespace WeTongji
                 (this.ApplicationBar as ApplicationBar).Buttons.Clear();
 
                 ApplicationBarIconButton button;
-                button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+                {
+                    Text = StringLibrary.MainPage_AppBarLoginText,
+                    IsEnabled = false
+                };
                 UpdateLoginButton(null, null);
                 button.Click += LogOn_Click;
                 (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
 
-                button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
+                button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute))
+                {
+                    Text = StringLibrary.MainPage_AppBarRegisterText
+                };
                 button.Click += NavigateToSignUp;
                 (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
             }
@@ -1866,7 +2010,10 @@ namespace WeTongji
                     (this.ApplicationBar as ApplicationBar).Buttons.Clear();
 
                     ApplicationBarIconButton button;
-                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+                    button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
+                    {
+                        Text = StringLibrary.MainPage_AppBarRefreshText
+                    };
                     button.Click += RefreshButton_Click;
                     (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
                 }
@@ -1896,16 +2043,25 @@ namespace WeTongji
 
                 ApplicationBarMenuItem mi;
 
-                mi = new ApplicationBarMenuItem() { Text = "最近活动" };
+                mi = new ApplicationBarMenuItem()
+                {
+                    Text = StringLibrary.MainPage_AppBarRecentEvents
+                };
                 mi.Click += SortActivitiesCompareToNow;
                 this.ApplicationBar.MenuItems.Insert(0, mi);
 
-                mi = new ApplicationBarMenuItem() { Text = "最火活动" };
+                mi = new ApplicationBarMenuItem()
+                {
+                    Text = StringLibrary.MainPage_AppBarHotEvents
+                };
                 mi.Click += SortActivitiesByScheduleNumber;
                 this.ApplicationBar.MenuItems.Insert(0, mi);
 
 
-                mi = new ApplicationBarMenuItem() { Text = "最新活动" };
+                mi = new ApplicationBarMenuItem()
+                {
+                    Text = StringLibrary.MainPage_AppBarLatestEvents
+                };
                 mi.Click += SortActivitiesByCreationTime;
                 this.ApplicationBar.MenuItems.Insert(0, mi);
 
@@ -1963,8 +2119,6 @@ namespace WeTongji
 
             #endregion
 
-
-
             #endregion
         }
 
@@ -1973,8 +2127,8 @@ namespace WeTongji
             var task = new Microsoft.Phone.Tasks.EmailComposeTask();
             var version = AppVersion.Current;
 
-            task.Body = String.Format("我正在{0} {1}上使用微同济Windows Phone v{2}，", Microsoft.Phone.Info.DeviceStatus.DeviceManufacturer, Microsoft.Phone.Info.DeviceStatus.DeviceName, version);
-            task.Subject = String.Format("[用户反馈]微同济Windows Phone v{0}", version);
+            task.Body = String.Format(StringLibrary.MainPage_UserFeedBackEmailBodyTemplate, Microsoft.Phone.Info.DeviceStatus.DeviceManufacturer, Microsoft.Phone.Info.DeviceStatus.DeviceName, version);
+            task.Subject = String.Format(StringLibrary.MainPage_UserFeedBackEmailSubjectTemplate, version);
             task.To = "we@tongji.edu.cn";
             task.Show();
         }
@@ -1982,50 +2136,14 @@ namespace WeTongji
         private void ShareToFriends(Object sender, EventArgs e)
         {
             var task = new Microsoft.Phone.Tasks.EmailComposeTask();
-            var version = AppVersion.Current;
 
-            task.Body = String.Format("我正在使用微同济-同济大学专属校园移动应用，帮助管理我的大学日程，推送校内校外的大小活动，不再错过任何一个精彩的活动，快点和我一起去下载(we.tongji.edu.cn)");
-            task.Subject = String.Format("推荐使用WeTongji(Windows Phone版)", version);
+            task.Body = String.Format(StringLibrary.MainPage_ShareToFriendsEmailBody);
+            task.Subject = String.Format(StringLibrary.MainPage_ShareToFriendsEmailSubject);
             task.Show();
         }
 
         private void RefreshButton_Click(Object sender, EventArgs e)
         {
-#if DEBUG
-            var cur = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage");
-            var peak = (long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationPeakMemoryUsage");
-            String strCur, strPeak;
-
-
-            if (cur > 1 << 20)
-            {
-                strCur = String.Format("{0} MB", ((float)cur / (float)(1 << 20)).ToString("0.00"));
-            }
-            else if (cur > 1 << 10)
-            {
-                strCur = String.Format("{0} KB", ((float)cur / (float)(1 << 10)).ToString("0.00"));
-            }
-            else
-            {
-                strCur = String.Format("{0} B", cur);
-            }
-
-            if (peak > 1 << 20)
-            {
-                strPeak = String.Format("{0} MB", ((float)peak / (float)(1 << 20)).ToString("0.00"));
-            }
-            else if (peak > 1 << 10)
-            {
-                strPeak = String.Format("{0} KB", ((float)peak / (float)(1 << 10)).ToString("0.00"));
-            }
-            else
-            {
-                strPeak = String.Format("{0} B", peak);
-            }
-
-            MessageBox.Show(String.Format("Cur Mem: {0}, Peak Mem: {1}", strCur, strPeak));
-#else
-
             if (Panorama_Core.SelectedIndex == 0)
             {
                 var src = UserSource;
@@ -2087,13 +2205,11 @@ namespace WeTongji
                 //...Get latest
                 GetLatestPerson();
             }
-
-#endif
         }
 
         private void SignOut(Object sender, EventArgs e)
         {
-            var result = MessageBox.Show("确定想要注销账号？", "账号注销", MessageBoxButton.OKCancel);
+            var result = MessageBox.Show(StringLibrary.MainPage_ConfirmSignOutPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
             if (MessageBoxResult.OK == result)
             {
                 var req = new UserLogOffRequest<WTResponse>();
@@ -2113,12 +2229,19 @@ namespace WeTongji
                         {
                             this.ApplicationBar.Buttons.Clear();
                             ApplicationBarIconButton button;
-                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute)) { Text = "登录", IsEnabled = false };
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+                            {
+                                Text = StringLibrary.MainPage_AppBarLoginText,
+                                IsEnabled = false
+                            };
                             UpdateLoginButton(null, null);
                             button.Click += LogOn_Click;
                             (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
 
-                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute)) { Text = "注册" };
+                            button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute))
+                            {
+                                Text = StringLibrary.MainPage_AppBarRegisterText
+                            };
                             button.Click += NavigateToSignUp;
                             (this.ApplicationBar as ApplicationBar).Buttons.Add(button);
                         }
@@ -2153,11 +2276,17 @@ namespace WeTongji
 
             ApplicationBarIconButton button;
 
-            button = new ApplicationBarIconButton(new Uri("/icons/appbar.person.list.rest.png", UriKind.RelativeOrAbsolute)) { Text = "查看历史" };
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.person.list.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.MainPage_AppBarViewAllPeopleOfWeek
+            };
             button.Click += NavToPeopleOfWeekList;
             this.ApplicationBar.Buttons.Add(button);
 
-            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) { Text = "刷新" };
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.MainPage_AppBarRefreshText
+            };
             button.Click += RefreshButton_Click;
             this.ApplicationBar.Buttons.Add(button);
         }
@@ -2299,41 +2428,36 @@ namespace WeTongji
             var img = sender as Image;
             var pnt = e.GetPosition(img);
 
-            //...Tap on the left side
-            if (pnt.X < img.RenderSize.Width / 2)
+            //...Tap left
+            if (pnt.X < img.RenderSize.Width * 0.4f)
             {
-                //...Tap on the left-top side
-                if (pnt.Y < img.RenderSize.Height / 2)
-                {
-                    (img.Resources["TapTopLeft"] as Storyboard).Begin();
-                }
-                //...Tap on the left-bottom side
-                else
-                {
-                    (img.Resources["TapBottomLeft"] as Storyboard).Begin();
-                }
+                (img.Resources["TapLeft"] as Storyboard).Begin();
             }
-            //...Tap on the right side
+            //...Tap right
+            else if (pnt.X > img.RenderSize.Width * 0.6f)
+            {
+                (img.Resources["TapRight"] as Storyboard).Begin();
+            }
+            //...Tap top
+            else if (pnt.Y < img.RenderSize.Height * 0.4f)
+            {
+                (img.Resources["TapTop"] as Storyboard).Begin();
+            }
+            //...Tap bottom
+            else if (pnt.Y > img.RenderSize.Height * 0.6f)
+            {
+                (img.Resources["TapBottom"] as Storyboard).Begin();
+            }
+            //...Tap center
             else
             {
-                //...Tap on the right-top side
-                if (pnt.Y < img.RenderSize.Height / 2)
-                {
-                    (img.Resources["TapTopRight"] as Storyboard).Begin();
-                }
-                //...Tap on the right-bottom side
-                else
-                {
-                    (img.Resources["TapBottomRight"] as Storyboard).Begin();
-                }
+                (img.Resources["TapCenter"] as Storyboard).Begin();
             }
         }
 
         private void PeopleOfWeekLargeImage_MouseLeftButtonUp(Object sender, MouseButtonEventArgs e)
         {
             (sender as UIElement).Projection = new PlaneProjection();
-
-            NavToPeopleOfWeek(sender, new RoutedEventArgs());
         }
 
         private void PeopleOfWeekLargeImage_MouseLeave(Object sender, MouseEventArgs e)
@@ -2346,34 +2470,69 @@ namespace WeTongji
             var img = sender as Image;
             var pnt = e.GetPosition(img);
 
-            //...Tap on the left side
-            if (pnt.X < img.RenderSize.Width / 2)
+            //...Tap left
+            if (pnt.X < img.RenderSize.Width * 0.25f)
             {
-                //...Tap on the left-top side
-                if (pnt.Y < img.RenderSize.Height / 2)
-                {
-                    (img.Resources["TapTopLeft"] as Storyboard).Begin();
-                }
-                //...Tap on the left-bottom side
-                else
-                {
-                    (img.Resources["TapBottomLeft"] as Storyboard).Begin();
-                }
+                (img.Resources["TapLeft"] as Storyboard).Begin();
             }
-            //...Tap on the right side
+            //...Tap right
+            else if (pnt.X > img.RenderSize.Width * 0.75f)
+            {
+                (img.Resources["TapRight"] as Storyboard).Begin();
+            }
+            //...Tap top
+            else if (pnt.Y < img.RenderSize.Height * 0.25f)
+            {
+                (img.Resources["TapTop"] as Storyboard).Begin();
+            }
+            //...Tap bottom
+            else if (pnt.Y > img.RenderSize.Height * 0.75f)
+            {
+                (img.Resources["TapBottom"] as Storyboard).Begin();
+            }
+            //...Tap center
             else
             {
-                //...Tap on the right-top side
-                if (pnt.Y < img.RenderSize.Height / 2)
-                {
-                    (img.Resources["TapTopRight"] as Storyboard).Begin();
-                }
-                //...Tap on the right-bottom side
-                else
-                {
-                    (img.Resources["TapBottomRight"] as Storyboard).Begin();
-                }
+                (img.Resources["TapCenter"] as Storyboard).Begin();
             }
+        }
+
+        private void OnPeopleOfWeekLargeImageTap(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            NavToPeopleOfWeek(sender, new RoutedEventArgs());
+        }
+
+        /// <summary>
+        /// Start playing LoadingCalendarNodeAnimation
+        /// </summary>
+        /// <remarks>
+        /// This function is thread-safe.
+        /// </remarks>
+        private void StartComputingCalendarNodes()
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                Grid_LoadingCalendarNode.Visibility = Visibility.Visible;
+                var sb = (this.Resources["LoadingCalendarNodeAnimation"] as Storyboard);
+                sb.Seek(TimeSpan.FromMilliseconds(0));
+                sb.Begin();
+            });
+        }
+
+        /// <summary>
+        /// Stop playing LoadingCalendarNodeAnimation
+        /// </summary>
+        /// <remarks>
+        /// This function is thread-safe.
+        /// </remarks>
+        private void StopComputingCalendarNodes()
+        {
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                Grid_LoadingCalendarNode.Visibility = Visibility.Collapsed;
+                var sb = (this.Resources["LoadingCalendarNodeAnimation"] as Storyboard);
+                sb.Stop();
+            });
         }
 
         #region [Activity]
@@ -2435,7 +2594,7 @@ namespace WeTongji
         {
             var btn = sender as Button;
             btn.IsHitTestVisible = false;
-            btn.Content = "正在加载更多活动...";
+            btn.Content = StringLibrary.MainPage_LoadingMoreEvents;
 
             var thread = new Thread(new ThreadStart(LoadAnotherExpiredActivities))
             {
@@ -2762,6 +2921,12 @@ namespace WeTongji
             ClubNewsExt cnSrc = null;
 
             Debug.WriteLine("Load data from db started.");
+
+            #region [Auto Log in]
+
+            AutoLogin();
+
+            #endregion
 
             #region [Activity]
             using (var db = WTShareDataContext.ShareDB)
@@ -3532,6 +3697,7 @@ namespace WeTongji
             tt_client.ExecuteFailed += (s, args) =>
             {
                 Debug.WriteLine("Fail to get user's course.\nError:{0}", args.Error);
+                DownloadSchedule(session, uid);
             };
 
             tt_client.ExecuteCompleted += (s, args) =>
@@ -3619,7 +3785,7 @@ namespace WeTongji
 
             schedule_client.ExecuteFailed += (s, args) =>
             {
-                Debug.WriteLine("Fail to get user's schedule.\n Error{0}", args.Error);
+                ComputeCalendar();
             };
 
             schedule_client.ExecuteCompleted += (s, args) =>
@@ -3698,6 +3864,7 @@ namespace WeTongji
             this.Dispatcher.BeginInvoke(() =>
             {
                 AlarmClockSource = targetNode;
+                StopComputingCalendarNodes();
             });
 
         }

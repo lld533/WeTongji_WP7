@@ -159,6 +159,11 @@ namespace WeTongji.Business
             SaveSettings();
         }
 
+        public void UpdateSession(String session)
+        {
+            this.Session = session;
+        }
+
         public void CleanSettings()
         {
             Settings.UID = String.Empty;

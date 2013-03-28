@@ -15,6 +15,7 @@
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="800"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False">
+
     <phone:PhoneApplicationPage.Resources>
         <Converter:TextLengthToVisibilityConverter x:Key="TextLengthToVisibilityConverter"/>
         <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -306,7 +307,7 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        
+
         <Storyboard x:Key="TurnUpFavoriteNumber">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="TextBlock_FavoriteNumber">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
@@ -320,6 +321,16 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="360"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="LoadingCalendarNodeAnimation" RepeatBehavior="Forever">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBlock.Text)" Storyboard.TargetName="TextBlock_LoadingCalendarNodeEllipsis">
+                <DiscreteObjectKeyFrame KeyTime="0" Value=""/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1" Value="."/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:2" Value=".."/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="..."/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:4" Value="..."/>
+            </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
     </phone:PhoneApplicationPage.Resources>
@@ -336,32 +347,38 @@
             <Grid>
                 <!--Signed Out-->
                 <Border x:Name="Border_SignedOut" >
-                    <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                    <controls:PanoramaItem Header="{Binding Path=LocalizedResources.MainPage_Feed, Source={StaticResource LocalizedStrings}}" 
+                                           Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                         <ScrollViewer x:Name="ScrollViewer_SignOutRoot"  VerticalScrollBarVisibility="Disabled">
                             <StackPanel>
-                                <TextBlock Text="学号" Foreground="White" Opacity="0.75" FontSize="20" Margin="0,-6,0,0"/>
+                                <TextBlock Text="{Binding Path=LocalizedResources.MainPage_StudentNO, Source={StaticResource LocalizedStrings}}" 
+                                           Foreground="White" Opacity="0.75" FontSize="20" Margin="0,-6,0,0"/>
                                 <Grid Margin="0,7,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                                     <TextBox x:Name="TextBox_Id"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Number" 
                                          TextChanged="UpdateLoginButton"
                                          GotFocus="SignInControl_GotFocus"
                                          LostFocus="SignInControl_LostFocus"/>
-                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入学号" IsHitTestVisible="False"
-                                       Visibility="{Binding Text,ElementName=TextBox_Id, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  IsHitTestVisible="False" 
+                                               Text="{Binding Path=LocalizedResources.MainPage_EnterStudentNOPrompt, Source={StaticResource LocalizedStrings}}"
+                                               Visibility="{Binding Text,ElementName=TextBox_Id, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                                 </Grid>
 
-                                <TextBlock Margin="0,30,0,0" Text="密码" Foreground="White" Opacity="0.75" FontSize="20"/>
+                                <TextBlock Margin="0,30,0,0" Foreground="White" Opacity="0.75" FontSize="20"
+                                           Text="{Binding Path=LocalizedResources.MainPage_Password, Source={StaticResource LocalizedStrings}}"/>
                                 <Grid Margin="0,7,0,0" HorizontalAlignment="Left" Width="320"  Height="48">
                                     <PasswordBox x:Name="PasswordBox_Password"  BorderThickness="0" Style="{StaticResource BasicPasswordBoxStyle}" 
                                              PasswordChanged="PasswordBox_Password_PasswordChanged" 
                                              GotFocus="SignInControl_GotFocus"
                                              LostFocus="SignInControl_LostFocus"/>
-                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25"  Text="请输入密码" IsHitTestVisible="False"
-                                       Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FF666666" FontSize="25" IsHitTestVisible="False"
+                                               Visibility="{Binding Password,ElementName=PasswordBox_Password, Converter={StaticResource TextLengthToVisibilityConverter}}"
+                                               Text="{Binding Path=LocalizedResources.MainPage_EnterPasswordPrompt, Source={StaticResource LocalizedStrings}}"/>
                                 </Grid>
 
                                 <Button BorderThickness="0" HorizontalAlignment="Left"  Style="{StaticResource HyperLinkButtonStyle}" Margin="0,29,0,300" Padding="0" FontSize="20"
-                                Click="NavToForgotPassword">
-                                    <TextBlock HorizontalAlignment="Left" Text="忘记密码？" VerticalAlignment="Top" TextDecorations="Underline"/>
+                                        Click="NavToForgotPassword">
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" TextDecorations="Underline"
+                                               Text="{Binding Path=LocalizedResources.MainPage_ForgotPasswordLink, Source={StaticResource LocalizedStrings}}"/>
                                 </Button>
                             </StackPanel>
                         </ScrollViewer>
@@ -371,7 +388,8 @@
                 <!--Signed in-->
                 <Border x:Name="Border_SignedIn" Visibility="{Binding Visibility, ElementName=Border_SignedOut, Converter={StaticResource TurnOverVisibilityConverter}}"
 			            VerticalAlignment="Top">
-                    <controls:PanoramaItem Header="动态" Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                    <controls:PanoramaItem Header="{Binding Path=LocalizedResources.MainPage_Feed, Source={StaticResource LocalizedStrings}}" 
+                                           Foreground="{StaticResource UserThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
 
                         <ScrollViewer VerticalScrollBarVisibility="Hidden">
                             <StackPanel>
@@ -392,7 +410,7 @@
 										            Width="141" Height="35">
                                                 <!--Name-->
                                                 <TextBlock Text="{Binding DisplayName}" FontSize="22" TextTrimming="WordEllipsis" Margin="20,-2,20,0"
-											HorizontalAlignment="Center" VerticalAlignment="Center"/>
+											               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
 
                                             <!--Avatar-->
@@ -423,7 +441,8 @@
                                                 </TextBlock>
                                             </Grid>
 
-                                            <TextBlock Text="我的收藏" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"/>
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="11,0,0,8" FontSize="20"
+                                                       Text="{Binding Path=LocalizedResources.MainPage_MyFavorite, Source={StaticResource LocalizedStrings}}" />
                                         </Grid>
                                     </Button>
                                 </StackPanel>
@@ -464,35 +483,49 @@
                                             </Path>
                                             <Ellipse HorizontalAlignment="Center" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="3" VerticalAlignment="Center" Width="2" Height="2" Margin="-1,-2,0,0"/>
                                         </Grid>
-                                        <TextBlock Text="提醒" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"/>
+                                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,5" FontSize="20"
+                                                   Text="{Binding Path=LocalizedResources.MainPage_Alarms, Source={StaticResource LocalizedStrings}}"/>
 
                                         <!--Core Item-->
-                                        <Grid VerticalAlignment="Top" Margin="0,20,17,0"
-                                              Visibility="{Binding Visibility, ElementName=TextBlock_NoArrangement, Converter={StaticResource TurnOverVisibilityConverter}}">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
+                                        <Grid x:Name="Grid_LoadingCalendarNode"  HorizontalAlignment="Right" Margin="0,11,17,0">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.382*"/>
-                                                <ColumnDefinition Width="0.618*"/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="18"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <!--Time-->
-                                            <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
-                                            <!--Title-->
-                                            <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
-										            TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100" TextAlignment="Right"
-										            Text="{Binding Title}"/>
+                                            <TextBlock Grid.Column="0" FontSize="28"
+                                                       Text="{Binding Path=LocalizedResources.MainPage_LoadingAlarms, Source={StaticResource LocalizedStrings}}"/>
+                                            <TextBlock x:Name="TextBlock_LoadingCalendarNodeEllipsis" Grid.Column="1" Text="..."  FontSize="28" Margin="0,4,0,0"/>
                                         </Grid>
 
-                                        <!--No Arrangement case-->
-                                        <TextBlock x:Name="TextBlock_NoArrangement" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Visible"
-									        HorizontalAlignment="Right" VerticalAlignment="Top">
-									        <Run Text="今天"/>
-									        <LineBreak/>
-									        <Run Text="没有安排"/>
-                                        </TextBlock>
+                                        <Grid Visibility="{Binding Visibility, ElementName=Grid_LoadingCalendarNode, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                            <Grid VerticalAlignment="Top" Margin="0,20,17,0"
+                                                  Visibility="{Binding Visibility, ElementName=TextBlock_NoArrangement, Converter={StaticResource TurnOverVisibilityConverter}}">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.382*"/>
+                                                    <ColumnDefinition Width="0.618*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--Time-->
+                                                <TextBlock Grid.Column="1" Text="{Binding DisplayBeginTime}" FontSize="32" Margin="0,-12,-2,0" HorizontalAlignment="Right"/>
+                                                <!--Title-->
+                                                <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Margin="0,-4,0,0" HorizontalAlignment="Right"
+										            TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="100" TextAlignment="Right"
+										            Text="{Binding Title}"/>
+                                            </Grid>
+
+                                            <!--No Arrangement case-->
+                                            <TextBlock x:Name="TextBlock_NoArrangement" Margin="0,12,17,0" FontSize="28" FlowDirection="RightToLeft" Visibility="Visible"
+									                   HorizontalAlignment="Right" VerticalAlignment="Top">
+									            <Run Text="{Binding Path=LocalizedResources.MainPage_NoArrangementTodayFirstLine, Source={StaticResource LocalizedStrings}}"/>
+									            <LineBreak/>
+									            <Run Text="{Binding Path=LocalizedResources.MainPage_NoArrangementTodaySecondLine, Source={StaticResource LocalizedStrings}}"/>
+                                            </TextBlock>
+                                        </Grid>
                                     </Grid>
                                 </Button>
 
@@ -518,7 +551,8 @@
                                                 <TextBlock x:Name="TextBlock_Today" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4,1,0"/>
                                             </Grid>
 
-                                            <TextBlock Text="我的日程" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"/>
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="9,0,0,8" FontSize="20"
+                                                       Text="{Binding Path=LocalizedResources.MainPage_MyAgenda, Source={StaticResource LocalizedStrings}}"/>
                                         </Grid>
                                     </Button>
 
@@ -534,7 +568,7 @@
 推荐活动
                 -->
             <Border x:Name="Border_Activities">
-                <controls:PanoramaItem Header="推荐活动" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                <controls:PanoramaItem Header="{Binding Path=LocalizedResources.MainPage_Activities, Source={StaticResource LocalizedStrings}}" Foreground="{StaticResource ActivityThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
                     <Grid>
                         <ListBox x:Name="ListBox_Activity" Visibility="Collapsed" Style="{StaticResource ActivityListBoxStyle}"
                                  MouseMove="ListBox_Activity_MouseMove"
@@ -571,13 +605,14 @@
                                                 <!--Number of Participants-->
                                                 <TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
 								                    <Run Text="{Binding Schedule}"/>
-								                    <Run Text="参与"/>
+								                    <Run Text="{Binding Path=LocalizedResources.MainPage_Participants, Source={StaticResource LocalizedStrings}}"/>
                                                 </TextBlock>
 
                                             </Grid>
                                         </StackPanel>
                                         <Button Visibility="{Binding Visibility, ElementName=StackPanel_Core, Converter={StaticResource TurnOverVisibilityConverter}}"
-                                                Content="加载更多活动" FontSize="22"  BorderThickness="0" Margin="0,-30,0,10"
+                                                Content="{Binding Path=LocalizedResources.MainPage_LoadMoreActivities, Source={StaticResource LocalizedStrings}}" 
+                                                FontSize="22"  BorderThickness="0" Margin="0,-30,0,10"
                                                 Click="Button_LoadMoreActivities_Click"/>
                                     </Grid>
                                 </DataTemplate>
@@ -585,7 +620,8 @@
                         </ListBox>
 
                         <TextBlock x:Name="TextBlock_NoActivity"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22" Margin="0,-5,0,0"
-                                   Text="暂无&quot;推荐活动&quot;信息" Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                                   Text="{Binding Path=LocalizedResources.MainPage_NoActivitiesPrompt, Source={StaticResource LocalizedStrings}}"
+                                   Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
                 </controls:PanoramaItem>
             </Border>
@@ -594,7 +630,8 @@
 校园资讯
                 -->
             <Border>
-                <controls:PanoramaItem Header="校园资讯" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                <controls:PanoramaItem Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}"
+                                       Header="{Binding Path=LocalizedResources.MainPage_CampusInfo, Source={StaticResource LocalizedStrings}}" >
                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                         <StackPanel>
 
@@ -613,8 +650,8 @@
                                         </toolkit:GestureService.GestureListener>
                                     </Image>
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="校务通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
-                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0" Foreground="{StaticResource PhoneForegroundBrush}"
+                                                   Text="{Binding Path=LocalizedResources.MainPage_OfficialNotes, Source={StaticResource LocalizedStrings}}" />
                                     </Border>
 
                                 </Grid>
@@ -633,8 +670,8 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="团体通知" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
-                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0" Foreground="{StaticResource PhoneForegroundBrush}"
+                                                   Text="{Binding Path=LocalizedResources.MainPage_ClubNews, Source={StaticResource LocalizedStrings}}"/>
                                     </Border>
 
                                 </Grid>
@@ -642,7 +679,7 @@
                                 <Grid x:Name="Grid_TongjiNews" Canvas.ZIndex="2" Margin="0,165,0,0" Height="165">
 
                                     <Rectangle Fill="Gray"/>
-                                    
+
                                     <Image x:Name="Image_TongjiNews" VerticalAlignment="Top"  Source="{Binding FirstImageBrush}" Stretch="UniformToFill">
                                         <Image.RenderTransform>
                                             <CompositeTransform/>
@@ -653,8 +690,8 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="同济动态" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
-                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0" Foreground="{StaticResource PhoneForegroundBrush}"
+                                                   Text="{Binding Path=LocalizedResources.MainPage_TongjiNews, Source={StaticResource LocalizedStrings}}"/>
                                     </Border>
 
                                 </Grid>
@@ -662,7 +699,7 @@
                                 <Grid x:Name="Grid_AroundNews" Canvas.ZIndex="3" Height="240" VerticalAlignment="Top"  Margin="0,495,0,0">
 
                                     <Rectangle Fill="Gray"/>
-                                    
+
                                     <Image x:Name="Image_AroundNews" VerticalAlignment="Bottom" Source="{Binding TitleImageBrush}" Stretch="UniformToFill">
                                         <Image.RenderTransform>
                                             <CompositeTransform/>
@@ -673,8 +710,8 @@
                                     </Image>
 
                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,10,0" Width="130" Height="40" Background="#7F000000" IsHitTestVisible="True">
-                                        <TextBlock Text="周边推荐" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"
-                                                   Foreground="{StaticResource PhoneForegroundBrush}"/>
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0" Foreground="{StaticResource PhoneForegroundBrush}"
+                                                   Text="{Binding Path=LocalizedResources.MainPage_AroundNews, Source={StaticResource LocalizedStrings}}"/>
                                     </Border>
 
                                 </Grid>
@@ -697,7 +734,8 @@
 每周人物
                 -->
             <Border x:Name="Border_PeopleOfWeek">
-                <controls:PanoramaItem x:Name="PanoramaItem_PeopleOfWeek"  Header="每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}">
+                <controls:PanoramaItem x:Name="PanoramaItem_PeopleOfWeek" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Style="{StaticResource WT_PanoramaItemStyle}"
+                                       Header="{Binding Path=LocalizedResources.MainPage_PeopleOfWeek, Source={StaticResource LocalizedStrings}}" >
                     <Grid>
                         <ScrollViewer x:Name="ScrollViewer_PeopleOfWeek" Visibility="Collapsed" VerticalScrollBarVisibility="Hidden">
                             <StackPanel>
@@ -711,9 +749,9 @@
 
                                     <!--Avatar-->
                                     <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
-                                       Source="/Images/default_avatar_org.png"/>
+                                           Source="/Images/default_avatar_org.png"/>
                                     <Image VerticalAlignment="Top" Width="45" Height="45" Stretch="UniformToFill"
-                                       Source="{Binding AvatarImageBrush}"/>
+                                           Source="{Binding AvatarImageBrush}"/>
 
                                     <StackPanel Grid.Column="1" Margin="12,0,0,0">
                                         <!--Name-->
@@ -730,34 +768,48 @@
 									   MouseLeftButtonUp="PeopleOfWeekLargeImage_MouseLeftButtonUp"
 									   MouseLeave="PeopleOfWeekLargeImage_MouseLeave"
 									   MouseEnter="PeopleOfWeekLargeImage_MouseEnter">
-									<Image.Projection>
-										<PlaneProjection/>
-									</Image.Projection>
-									
+                                    <Image.Projection>
+                                        <PlaneProjection/>
+                                    </Image.Projection>
+                                    <Image.RenderTransform>
+                                        <CompositeTransform/>
+                                    </Image.RenderTransform>
+
+                                    <toolkit:GestureService.GestureListener>
+                                        <toolkit:GestureListener Tap="OnPeopleOfWeekLargeImageTap"/>
+                                    </toolkit:GestureService.GestureListener>
+
                                     <Image.Resources>
-                                        <Storyboard x:Key="TapTopRight">
+                                        <Storyboard x:Name="TapBottom">
+                                            <DoubleAnimation Duration="0" To="25" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1.08" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+                                        <Storyboard x:Name="TapTop">
+                                            <DoubleAnimation Duration="0" To="-25" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <PointAnimation Duration="0" To="0,1" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1.08" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+                                        <Storyboard x:Name="TapRight">
+                                            <DoubleAnimation Duration="0" To="-23" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1.08" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        </Storyboard>
+                                        <Storyboard x:Name="TapLeft">
+                                            <DoubleAnimation Duration="0" To="23" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
                                             <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <PointAnimation Duration="0" To="1,0" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="1.08" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
                                         </Storyboard>
-
-                                        <Storyboard x:Key="TapTopLeft">
-                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                        </Storyboard>
-
-                                        <Storyboard x:Key="TapBottomRight">
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="-10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                        </Storyboard>
-
-                                        <Storyboard x:Key="TapBottomLeft">
-                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="10" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.CenterOfRotationY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                        <Storyboard x:Name="TapCenter">
+                                            <DoubleAnimation Duration="0" To="0.97" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <PointAnimation Duration="0" To="0.5,0.5" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
+                                            <DoubleAnimation Duration="0" To="0.97" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" Storyboard.TargetName="PeopleOfWeekLargeImage" d:IsOptimized="True"/>
                                         </Storyboard>
                                     </Image.Resources>
                                 </Image>
@@ -781,18 +833,19 @@
                                 </Grid>
 
 
-                                <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Content="查看详情" Margin="0,12,0,0"
-							        Click="NavToPeopleOfWeek"/>
+                                <Button Style="{StaticResource NoBorderButtonStyle}" FontSize="20"  HorizontalAlignment="Left" Margin="0,12,0,0"
+                                        Content="{Binding Path=LocalizedResources.MainPage_ViewPeopleOfWeekDetail, Source={StaticResource LocalizedStrings}}"
+							            Click="NavToPeopleOfWeek"/>
 
-								<Border Height="20"/>
+                                <Border Height="20"/>
 
                             </StackPanel>
                         </ScrollViewer>
 
 
-                        <TextBlock Foreground="#FF999999" VerticalAlignment="Top" HorizontalAlignment="Left" Text="暂无&quot;每周人物&quot;信息" Margin="0,-5,0,0"
-									   Visibility="{Binding Visibility, ElementName=ScrollViewer_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"
-                                       />
+                        <TextBlock Foreground="#FF999999" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,-5,0,0"
+								   Visibility="{Binding Visibility, ElementName=ScrollViewer_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"
+                                   Text="{Binding Path=LocalizedResources.MainPage_NoPeopleOfWeekPrompt, Source={StaticResource LocalizedStrings}}"/>
                     </Grid>
                 </controls:PanoramaItem>
             </Border>
@@ -814,18 +867,6 @@
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar>
-            <shell:ApplicationBar.Buttons>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.check.rest.png" Text="登录" IsEnabled="False" Click="LogOn_Click"/>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.register.rest.png" Text="注册" Click="NavigateToSignUp"/>
-            </shell:ApplicationBar.Buttons>
-
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="设置" Click="NavigateToSettings"/>
-                <shell:ApplicationBarMenuItem Text="关于" Click="NavigateToAbout"/>
-                <shell:ApplicationBarMenuItem Text="用户反馈" Click="SendFeedback"/>
-                <shell:ApplicationBarMenuItem Text="邮件分享给好友" Click="ShareToFriends"/>
-            </shell:ApplicationBar.MenuItems>
-
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 </phone:PhoneApplicationPage>

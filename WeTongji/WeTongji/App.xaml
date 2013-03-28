@@ -9,9 +9,12 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
 			 xmlns:controlsPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls" 
+             xmlns:utility="clr-namespace:WeTongji.Utility"
 			 mc:Ignorable="d">
     <!--Application Resources-->
     <Application.Resources>
+        
+        <utility:LocalizedStrings x:Key="LocalizedStrings"/>
 	
         <SolidColorBrush x:Key="ActivityAgendaTitleBrush" Color="#FFF6D04C"/>
         <SolidColorBrush x:Key="RequiredCourseAgendaTitleBrush" Color="#FF67AAF6"/>
