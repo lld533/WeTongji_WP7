@@ -214,6 +214,15 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        public static string CalendarNode_Today {
+            get {
+                return ResourceManager.GetString("CalendarNode_Today", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string CampusInfo_AppBarRefreshText {
@@ -475,6 +484,15 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to just now.
+        /// </summary>
+        public static string Common_JustNow {
+            get {
+                return ResourceManager.GetString("Common_JustNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading pic....
         /// </summary>
         public static string Common_LoadingPicture {
@@ -516,6 +534,33 @@ namespace WeTongji {
         public static string Common_SignInOnOtherPlatformPrompt {
             get {
                 return ResourceManager.GetString("Common_SignInOnOtherPlatformPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} min ago.
+        /// </summary>
+        public static string Common_WithinOneHourTemplate {
+            get {
+                return ResourceManager.GetString("Common_WithinOneHourTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours ago.
+        /// </summary>
+        public static string Common_WithinSixHoursTemplate {
+            get {
+                return ResourceManager.GetString("Common_WithinSixHoursTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 hour ago.
+        /// </summary>
+        public static string Common_WithinTwoHours {
+            get {
+                return ResourceManager.GetString("Common_WithinTwoHours", resourceCulture);
             }
         }
         

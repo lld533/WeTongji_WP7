@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using WeTongji.DataBase;
 using WeTongji.Utility;
 using ImageTools;
+using System.Globalization;
 
 namespace WeTongji.Api.Domain
 {
@@ -98,7 +99,12 @@ namespace WeTongji.Api.Domain
         {
             get
             {
-                return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.GetChineseDate(), End);
+                //...Todo @_@ Localizable
+
+                if(CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.GetChineseDate(), End);
+                else
+                    return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.DayOfWeek.ToString(), End);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
@@ -108,12 +109,66 @@ namespace WeTongji.Api.Domain
         {
             get
             {
+                //...Todo @_@ Localizable
                 if (BeginTime.Date == DateTime.Now.Date)
                 {
-                    return "今日";
+                    return StringLibrary.CalendarNode_Today;
                 }
 
-                return BeginTime.ToString("M月d日");
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                {
+                    return BeginTime.ToString("M月d日");
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+
+                    switch (BeginTime.Month)
+                    {
+                        case 1:
+                            sb.Append("January");
+                            break;
+                        case 2:
+                            sb.Append("February");
+                            break;
+                        case 3:
+                            sb.Append("March");
+                            break;
+                        case 4:
+                            sb.Append("April");
+                            break;
+                        case 5:
+                            sb.Append("May");
+                            break;
+                        case 6:
+                            sb.Append("June");
+                            break;
+                        case 7:
+                            sb.Append("July");
+                            break;
+                        case 8:
+                            sb.Append("August");
+                            break;
+                        case 9:
+                            sb.Append("September");
+                            break;
+                        case 10:
+                            sb.Append("October");
+                            break;
+                        case 11:
+                            sb.Append("November");
+                            break;
+                        case 12:
+                            sb.Append("December");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    sb.AppendFormat(" {0}", BeginTime.Day);
+
+                    return sb.ToString();
+                }
             }
         }
 
@@ -132,7 +187,7 @@ namespace WeTongji.Api.Domain
 
         public SolidColorBrush NodeBrush
         {
-            get 
+            get
             {
                 switch (NodeType)
                 {

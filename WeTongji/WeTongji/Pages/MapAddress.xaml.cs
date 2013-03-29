@@ -24,6 +24,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using System.ComponentModel;
 using System.Windows.Input;
+using System.Globalization;
 
 
 namespace WeTongji
@@ -210,7 +211,18 @@ namespace WeTongji
             {
                 #region [Update Current Address]
                 {
-                    GoogleMapsReverseQueryRequest req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude);
+                    GoogleMapsReverseQueryRequest req = null;
+
+                    //...Todo @_@ Localizable
+                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    {
+                        req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude, true, "zh-CN");
+                    }
+                    else
+                    {
+                        req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude, true, "en-US");
+                    }
+
                     GoogleMapsQueryClient client = new GoogleMapsQueryClient();
 
                     client.ExecuteStarted += (o, args) =>
@@ -537,7 +549,17 @@ namespace WeTongji
             {
                 #region [GeoCode query location by using GoogleMapsSDK]
 
-                GoogleMapsQueryRequest gRequest = new GoogleMapsQueryRequest(queryString, CurrentLocation, true);
+                GoogleMapsQueryRequest gRequest;
+
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                {
+                    gRequest = new GoogleMapsQueryRequest(queryString, CurrentLocation, true, "zh-CN");
+                }
+                else
+                {
+                    gRequest = new GoogleMapsQueryRequest(queryString, CurrentLocation, true, "en-US");
+                }
                 GoogleMapsQueryClient gClient = new GoogleMapsQueryClient();
 
                 gClient.ExecuteStarted += (obj, args) =>
@@ -685,7 +707,18 @@ namespace WeTongji
             {
                 #region [Update Current Address]
                 {
-                    GoogleMapsReverseQueryRequest req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude);
+                    GoogleMapsReverseQueryRequest req = null;
+
+                    //...Todo @_@ Localizable
+                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    {
+                        req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude, true, "zh-CN");
+                    }
+                    else
+                    {
+                        req = new GoogleMapsReverseQueryRequest(CurrentLocation.Latitude, CurrentLocation.Longitude, true, "en-US");
+                    }
+
                     GoogleMapsQueryClient client = new GoogleMapsQueryClient();
 
                     client.ExecuteStarted += (obj, args) =>

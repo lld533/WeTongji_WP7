@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Linq.Mapping;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
@@ -168,31 +169,42 @@ namespace WeTongji.Api.Domain
         {
             get
             {
-                var sb = new StringBuilder(Begin.ToString("yyyy/MM/dd(周"));
-                switch (Begin.DayOfWeek)
+                //...Todo @_@ Localizable
+
+                StringBuilder sb = new StringBuilder(Begin.ToString("yyyy/MM/dd("));
+
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
                 {
-                    case System.DayOfWeek.Sunday:
-                        sb.Append("日");
-                        break;
-                    case System.DayOfWeek.Monday:
-                        sb.Append("一");
-                        break;
-                    case System.DayOfWeek.Tuesday:
-                        sb.Append("二");
-                        break;
-                    case System.DayOfWeek.Wednesday:
-                        sb.Append("三");
-                        break;
-                    case System.DayOfWeek.Thursday:
-                        sb.Append("四");
-                        break;
-                    case System.DayOfWeek.Friday:
-                        sb.Append("五");
-                        break;
-                    case System.DayOfWeek.Saturday:
-                        sb.Append("六");
-                        break;
+                    switch (Begin.DayOfWeek)
+                    {
+                        case System.DayOfWeek.Sunday:
+                            sb.Append("周日");
+                            break;
+                        case System.DayOfWeek.Monday:
+                            sb.Append("周一");
+                            break;
+                        case System.DayOfWeek.Tuesday:
+                            sb.Append("周二");
+                            break;
+                        case System.DayOfWeek.Wednesday:
+                            sb.Append("周三");
+                            break;
+                        case System.DayOfWeek.Thursday:
+                            sb.Append("周四");
+                            break;
+                        case System.DayOfWeek.Friday:
+                            sb.Append("周五");
+                            break;
+                        case System.DayOfWeek.Saturday:
+                            sb.Append("周六");
+                            break;
+                    }
                 }
+                else
+                {
+                    sb.Append(Begin.DayOfWeek.ToString());
+                }
+                
 
                 sb.AppendFormat(") {0}~{1}", Begin.ToString("HH:mm"), End.ToString("HH:mm"));
 

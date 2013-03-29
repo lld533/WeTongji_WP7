@@ -297,20 +297,26 @@ namespace WeTongji.Api.Domain
         {
             get
             {
+                //...Todo @_@ Localizable
+
                 if (DateTime.Now < CreatedAt)
                 {
-                    return String.Format("刚刚更新");
+                    return String.Format(StringLibrary.Common_JustNow);
                 }
 
                 var span = DateTime.Now - CreatedAt;
 
                 if (span < TimeSpan.FromHours(1))
                 {
-                    return String.Format("{0}分钟前", (int)span.TotalMinutes);
+                    return String.Format(StringLibrary.Common_WithinOneHourTemplate, (int)span.TotalMinutes);
+                }
+                else if (span < TimeSpan.FromHours(2))
+                {
+                    return String.Format(StringLibrary.Common_WithinTwoHours, (int)span.TotalHours);
                 }
                 else if (span < TimeSpan.FromHours(6))
                 {
-                    return String.Format("{0}小时前", (int)span.TotalHours);
+                    return String.Format(StringLibrary.Common_WithinSixHoursTemplate, (int)span.TotalHours);
                 }
                 else if (CreatedAt.Date == DateTime.Now.Date)
                 {

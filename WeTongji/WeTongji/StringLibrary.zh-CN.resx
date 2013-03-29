@@ -924,4 +924,19 @@
   <data name="SignUpSuccess_Prompt" xml:space="preserve">
     <value>我们已经发送了一封帐户激活邮件到您的同济邮箱，请查收并进行激活。</value>
   </data>
+  <data name="CalendarNode_Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Common_WithinTwoHours" xml:space="preserve">
+    <value>1小时前</value>
+  </data>
+  <data name="Common_JustNow" xml:space="preserve">
+    <value>刚刚更新</value>
+  </data>
+  <data name="Common_WithinOneHourTemplate" xml:space="preserve">
+    <value>{0}分钟前</value>
+  </data>
+  <data name="Common_WithinSixHoursTemplate" xml:space="preserve">
+    <value>{0}小时前</value>
+  </data>
 </root>
