@@ -20,12 +20,19 @@ namespace WeTongji
 {
     public partial class SignUp : PhoneApplicationPage
     {
-
         #region [Constructor]
 
         public SignUp()
         {
             InitializeComponent();
+
+            var btn = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.SignUp_AppBarOkText,
+                IsEnabled = false
+            };
+            btn.Click += Button_Done_Click;
+            this.ApplicationBar.Buttons.Add(btn);
         }
 
         #endregion
@@ -56,9 +63,7 @@ namespace WeTongji
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
-                    MessageBox.Show("请登录", "注册成功", MessageBoxButton.OK);
-                    this.NavigationService.RemoveBackEntry();
-                    this.NavigationService.GoBack();
+                    this.NavigationService.Navigate(new Uri("/Pages/SignUpSuccess.xaml", UriKind.RelativeOrAbsolute));
                 });
             };
 
@@ -72,25 +77,25 @@ namespace WeTongji
                             switch (err.StatusCode.Id)
                             {
                                 case Api.Util.Status.AlreadyRegistered:
-                                    MessageBox.Show("账号已经注册,请登录");
+                                    MessageBox.Show(StringLibrary.SignUp_AlreadyRegisteredPrompt, StringLibrary.Common_Prompt,MessageBoxButton.OK);
                                     this.NavigationService.RemoveBackEntry();
                                     this.NavigationService.GoBack();
                                     return;
                                 case Api.Util.Status.NoAccount:
-                                    MessageBox.Show("您输入的账号不存在，请检查后重试");
+                                    MessageBox.Show(StringLibrary.SignUp_NoAccountPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     return;
                                 case Api.Util.Status.IdNameDismatch:
-                                    MessageBox.Show("学号与姓名不符，请检查后重试");
+                                    MessageBox.Show(StringLibrary.SignUp_IdNameDismatchPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     TextBox_Id.Focus();
                                     TextBox_Id.SelectAll();
                                     return;
                                 case Api.Util.Status.InvalidParameter:
-                                    MessageBox.Show("注册信息有误，请检查后重试");
+                                    MessageBox.Show(StringLibrary.SignUp_BadSignUpInfo, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     TextBox_Id.Focus();
                                     TextBox_Id.SelectAll();
                                     return;
                                 default:
-                                    MessageBox.Show("注册失败，请重试");
+                                    MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     return;
                             }
                         });
@@ -100,14 +105,14 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         });
                     }
                     else
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("注册失败，请重试");
+                            MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         });
                     }
                 };

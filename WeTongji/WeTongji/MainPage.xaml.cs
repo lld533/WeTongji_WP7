@@ -2165,24 +2165,16 @@ namespace WeTongji
             {
                 //...Reload Image
                 {
-                    var src = OfficialNoteSource;
-                    if (src != null)
-                        src.SendPropertyChanged("FirstImageBrush");
+                    OfficialNoteSource = OfficialNoteSource;
                 }
                 {
-                    var src = ClubNewsSource;
-                    if (src != null)
-                        src.SendPropertyChanged("FirstImageBrush");
+                    ClubNewsSource = ClubNewsSource;
                 }
                 {
-                    var src = TongjiNewsSource;
-                    if (src != null)
-                        src.SendPropertyChanged("FirstImageBrush");
+                    TongjiNewsSource = TongjiNewsSource;
                 }
                 {
-                    var src = AroundNewsSource;
-                    if (src != null)
-                        src.SendPropertyChanged("TitleImageBrush");
+                    AroundNewsSource = AroundNewsSource;
                 }
 
                 //...Get latest
@@ -2193,13 +2185,7 @@ namespace WeTongji
             }
             else if (Panorama_Core.SelectedIndex == 3)
             {
-                //...Reload Image
-                var src = PersonSource;
-                if (src != null)
-                {
-                    src.SendPropertyChanged("AvatarImageBrush");
-                    src.SendPropertyChanged("FirstImageBrush");
-                }
+                PersonSource = PersonSource;
 
                 //...Get latest
                 GetLatestPerson();
@@ -3595,7 +3581,8 @@ namespace WeTongji
                 if (ActivityListSource != null && ActivityListSource.Count > 0 && !ActivityListSource.Last().IsValid)
                     hasMore = true;
 
-                UpdateAcitivityList(unstoredActivities, false, hasMore);
+                if (unstoredActivities.Count > 0)
+                    UpdateAcitivityList(unstoredActivities, false, hasMore);
             });
 
             #endregion

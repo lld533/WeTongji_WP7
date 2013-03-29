@@ -174,17 +174,21 @@
         </Grid.RowDefinitions>
 
         <!--Page Tilte-->
-        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="个人资料" VerticalAlignment="Top" FontSize="54" Margin="0,0,0,45"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="54" Margin="0,0,0,45"
+                   Text="{Binding Path=LocalizedResources.PersonalProfile_PageTitle, Source={StaticResource LocalizedStrings}}"/>
 
         <Grid Grid.Row="1">
 
+            <!--Load failed-->
             <TextBlock x:Name="TextBlock_LoadFailed"  Visibility="Collapsed"  Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
-                       Text="加载个人资料失败"/>
+                       Text="{Binding Path=LocalizedResources.PersonalProfile_LoadFailed, Source={StaticResource LocalizedStrings}}"/>
 
             <Grid Visibility="{Binding Visibility, ElementName=TextBlock_LoadFailed, Converter={StaticResource TurnOverVisibilityConverter}}">
+                
+                <!--Loading-->
                 <TextBlock Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
                        Visibility="{Binding Visibility, ElementName=ScrollViewer_Core, Converter={StaticResource TurnOverVisibilityConverter}}"
-                       Text="正在加载个人资料，请稍后"/>
+                       Text="{Binding Path=LocalizedResources.PersonalProfile_Loading, Source={StaticResource LocalizedStrings}}"/>
 
                 <ScrollViewer x:Name="ScrollViewer_Core"  Grid.Row="1" VerticalScrollBarVisibility="Hidden" Visibility="Collapsed">
                     <StackPanel>
@@ -259,12 +263,17 @@
 
                         </Grid>
 
+                        <!--Student NO-->
                         <StackPanel Margin="0,37,0,0">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="学号" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0"
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_StudentNO, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding NO}" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
                         </StackPanel>
+                        
+                        <!--Major-->
                         <StackPanel Margin="0,34,0,0">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="专业" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0"
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_Major, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding Major}" VerticalAlignment="Top" Margin="0,4,0,-3" Foreground="#FF999999"/>
                         </StackPanel>
 
@@ -272,28 +281,32 @@
                         <!--Phone, Has value-->
                         <StackPanel x:Name="Phone_HasValue" Margin="0,34,0,0"
                                     Visibility="{Binding Visibility, ElementName=Phone_NoValue, Converter={StaticResource TurnOverVisibilityConverter}}">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="手机" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0" 
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_Tel, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding Phone}" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
                         </StackPanel>
 
                         <!--QQ, Has value-->
                         <StackPanel x:Name="QQ_HasValue" Margin="0,34,0,0"
                                     Visibility="{Binding Visibility, ElementName=QQ_NoValue, Converter={StaticResource TurnOverVisibilityConverter}}">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="QQ" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0" 
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_QQ, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding QQ}" VerticalAlignment="Top" Margin="0,4,0,-6" Foreground="#FF999999"/>
                         </StackPanel>
 
                         <!--Email, HasValue-->
                         <StackPanel x:Name="Email_HasValue" Margin="0,34,0,0"
                                     Visibility="{Binding Visibility, ElementName=Email_NoValue, Converter={StaticResource TurnOverVisibilityConverter}}">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="电子邮箱" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0"
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_Email, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding Email}" VerticalAlignment="Top" Margin="0,4,0,-3" Foreground="#FF999999"/>
                         </StackPanel>
 
                         <!--SinaWeibo, Has value-->
                         <StackPanel x:Name="SinaWeibo_HasValue" Margin="0,34,0,0"
                                     Visibility="{Binding Visibility, ElementName=SinaWeibo_NoValue, Converter={StaticResource TurnOverVisibilityConverter}}">
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" Text="新浪微博" VerticalAlignment="Top" Margin="0,-5,0,0"/>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="21" VerticalAlignment="Top" Margin="0,-5,0,0"
+                                       Text="{Binding Path=LocalizedResources.PersonalProfile_SinaWeibo, Source={StaticResource LocalizedStrings}}"/>
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" FontSize="23" Text="{Binding SinaWeibo}" VerticalAlignment="Top" Margin="0,4,0,-3" Foreground="#FF999999"/>
                         </StackPanel>
 
@@ -302,8 +315,9 @@
                         <!--Phone, No value-->
                         <StackPanel x:Name="Phone_NoValue" Margin="0,14,0,0"
                                     Visibility="{Binding Phone, Converter={StaticResource TextLengthToVisibilityConverter}}">
-                            <Button Content="添加手机" Style="{StaticResource AddItemButtonStyle}"
-                                        Click="ClickToTurnOverTextBoxVisibility"/>
+                            <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateTel, Source={StaticResource LocalizedStrings}}" 
+                                    Style="{StaticResource AddItemButtonStyle}"
+                                    Click="ClickToTurnOverTextBoxVisibility"/>
                             <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
@@ -311,8 +325,9 @@
                         <!--QQ, No value-->
                         <StackPanel x:Name="QQ_NoValue" Margin="0,14,0,0"
                                     Visibility="{Binding QQ, Converter={StaticResource TextLengthToVisibilityConverter}}">
-                            <Button Content="添加QQ" Style="{StaticResource AddItemButtonStyle}"
-                                        Click="ClickToTurnOverTextBoxVisibility"/>
+                            <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateQQ, Source={StaticResource LocalizedStrings}}"  
+                                    Style="{StaticResource AddItemButtonStyle}"
+                                    Click="ClickToTurnOverTextBoxVisibility"/>
                             <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
@@ -320,8 +335,9 @@
                         <!--Email, NoValue-->
                         <StackPanel x:Name="Email_NoValue" Margin="0,14,0,0"
                                     Visibility="{Binding Email, Converter={StaticResource TextLengthToVisibilityConverter}}">
-                            <Button Content="添加电子邮件" Style="{StaticResource AddItemButtonStyle}"
-                                        Click="ClickToTurnOverTextBoxVisibility"/>
+                            <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateEmail, Source={StaticResource LocalizedStrings}}" 
+                                    Style="{StaticResource AddItemButtonStyle}"
+                                    Click="ClickToTurnOverTextBoxVisibility"/>
                             <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="EmailUserName"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
@@ -329,8 +345,9 @@
                         <!--SinaWeibo, No value-->
                         <StackPanel x:Name="SinaWeibo_NoValue" Margin="0,14,0,0"
                                     Visibility="{Binding SinaWeibo, Converter={StaticResource TextLengthToVisibilityConverter}}">
-                            <Button Content="添加新浪微博" Style="{StaticResource AddItemButtonStyle}"
-                                        Click="ClickToTurnOverTextBoxVisibility"/>
+                            <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateSinaWeibo, Source={StaticResource LocalizedStrings}}" 
+                                    Style="{StaticResource AddItemButtonStyle}"
+                                    Click="ClickToTurnOverTextBoxVisibility"/>
                             <TextBox Style="{StaticResource AddItemTextBoxStyle}"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
@@ -348,14 +365,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBar.Buttons>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.edit.rest.png" Text="编辑" Click="EditPersonalProfile"/>
-            </shell:ApplicationBar.Buttons>
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="修改密码" Click="NavToUpdatePassword"/>
-            </shell:ApplicationBar.MenuItems>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

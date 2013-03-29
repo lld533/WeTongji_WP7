@@ -330,6 +330,15 @@
     <value>时间</value>
     <comment>考试时间</comment>
   </data>
+  <data name="ImageViewer_AppBarSaveText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ImageViewer_SaveFailed" xml:space="preserve">
+    <value>保存图片失败</value>
+  </data>
+  <data name="ImageViewer_SaveSucceeded" xml:space="preserve">
+    <value>恭喜，图片保存成功！</value>
+  </data>
   <data name="MainPage_AccountPasswordDismatchPrompt" xml:space="preserve">
     <value>密码错误,请重新输入</value>
   </data>
@@ -499,6 +508,126 @@
   <data name="MainPage_ViewPeopleOfWeekDetail" xml:space="preserve">
     <value>查看详情</value>
   </data>
+  <data name="MyFavorite_CampusInfo" xml:space="preserve">
+    <value>校园资讯</value>
+    <comment>Pivot "校园资讯"的标题</comment>
+  </data>
+  <data name="MyFavorite_EventParticipants" xml:space="preserve">
+    <value>参与</value>
+    <comment>推荐活动的参与人数，例如 2参与</comment>
+  </data>
+  <data name="MyFavorite_Events" xml:space="preserve">
+    <value>推荐活动</value>
+    <comment>Pivot "推荐活动"的标题</comment>
+  </data>
+  <data name="MyFavorite_NoCampusInfoPrompt" xml:space="preserve">
+    <value>暂未收藏”校园资讯“</value>
+  </data>
+  <data name="MyFavorite_NoEventsPrompt" xml:space="preserve">
+    <value>暂未收藏“推荐活动”</value>
+  </data>
+  <data name="MyFavorite_NoPeopleOfWeekPrompt" xml:space="preserve">
+    <value>暂未收藏”每周人物“</value>
+  </data>
+  <data name="MyFavorite_PageTitle" xml:space="preserve">
+    <value>我的收藏</value>
+  </data>
+  <data name="MyFavorite_PeopleOfWeek" xml:space="preserve">
+    <value>每周人物</value>
+    <comment>Pivot "每周人物"的标题</comment>
+  </data>
+  <data name="MyFavorite_PeopleOfWeekVolPrefix" xml:space="preserve">
+    <value>第</value>
+    <comment>例如，”第6期“中，显示在数字6的前的文字</comment>
+  </data>
+  <data name="MyFavorite_PeopleOfWeekVolSuffix" xml:space="preserve">
+    <value>期</value>
+    <comment>例如，”第6期“中，显示在数字6的后的文字</comment>
+  </data>
+  <data name="NearBy_Introduction" xml:space="preserve">
+    <value>简介</value>
+  </data>
+  <data name="NearBy_LoadingData" xml:space="preserve">
+    <value>正在加载，请稍后...</value>
+  </data>
+  <data name="NearBy_Location" xml:space="preserve">
+    <value>地址：</value>
+    <comment>翻译时请保留冒号</comment>
+  </data>
+  <data name="NearBy_RelatedImages" xml:space="preserve">
+    <value>图片</value>
+    <comment>周边推荐相关的图片列表的标题提示文字</comment>
+  </data>
+  <data name="NearBy_Tel" xml:space="preserve">
+    <value>电话：</value>
+    <comment>翻译时请保留冒号</comment>
+  </data>
+  <data name="NearBy_TicketSymbol" xml:space="preserve">
+    <value>票</value>
+    <comment>票务信息的提示符号，翻译时请尽量使用1个字符</comment>
+  </data>
+  <data name="PeopleOfWeek_Images" xml:space="preserve">
+    <value>生活图片</value>
+    <comment>Pivot “生活图片”的标题</comment>
+  </data>
+  <data name="PeopleOfWeek_Introduction" xml:space="preserve">
+    <value>人物介绍</value>
+    <comment>Pivot “人物介绍”的标题</comment>
+  </data>
+  <data name="PeopleOfWeek_PageTitle" xml:space="preserve">
+    <value>每周人物</value>
+    <comment>每周人物页面标题</comment>
+  </data>
+  <data name="PeopleOfWeek_Story" xml:space="preserve">
+    <value>经历故事</value>
+    <comment>Pivot “经历故事”的标题</comment>
+  </data>
+  <data name="PersonalProfile_AppBarEditText" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="PersonalProfile_AppBarUpdatePasswordText" xml:space="preserve">
+    <value>修改密码</value>
+  </data>
+  <data name="PersonalProfile_CreateEmail" xml:space="preserve">
+    <value>添加电子邮件</value>
+  </data>
+  <data name="PersonalProfile_CreateQQ" xml:space="preserve">
+    <value>添加QQ</value>
+  </data>
+  <data name="PersonalProfile_CreateSinaWeibo" xml:space="preserve">
+    <value>添加新浪微博</value>
+  </data>
+  <data name="PersonalProfile_CreateTel" xml:space="preserve">
+    <value>添加手机</value>
+  </data>
+  <data name="PersonalProfile_Email" xml:space="preserve">
+    <value>电子邮箱</value>
+  </data>
+  <data name="PersonalProfile_LoadFailed" xml:space="preserve">
+    <value>加载个人资料失败</value>
+  </data>
+  <data name="PersonalProfile_Loading" xml:space="preserve">
+    <value>正在加载个人资料，请稍后...</value>
+  </data>
+  <data name="PersonalProfile_Major" xml:space="preserve">
+    <value>专业</value>
+  </data>
+  <data name="PersonalProfile_PageTitle" xml:space="preserve">
+    <value>个人资料</value>
+    <comment>个人资料页面的标题</comment>
+  </data>
+  <data name="PersonalProfile_QQ" xml:space="preserve">
+    <value>QQ</value>
+  </data>
+  <data name="PersonalProfile_SinaWeibo" xml:space="preserve">
+    <value>新浪微博</value>
+  </data>
+  <data name="PersonalProfile_StudentNO" xml:space="preserve">
+    <value>学号</value>
+  </data>
+  <data name="PersonalProfile_Tel" xml:space="preserve">
+    <value>手机</value>
+  </data>
   <data name="Toast_AutoLoginSucceededPromptTemplate" xml:space="preserve">
     <value>{0}，欢迎再次使用微同济~</value>
     <comment>例如，李刚，欢迎再次使用微同济~</comment>
@@ -514,5 +643,285 @@
   </data>
   <data name="ViewOfficialWebsite_PageTitle" xml:space="preserve">
     <value>微同济官方主页</value>
+  </data>
+  <data name="PeopleOfWeekList_AppBarRefreshText" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="PeopleOfWeekList_Loading" xml:space="preserve">
+    <value>正在加载所有每周人物，请稍后...</value>
+  </data>
+  <data name="PeopleOfWeekList_PageTitle" xml:space="preserve">
+    <value>所有每周人物</value>
+  </data>
+  <data name="PeopleOfWeekList_VolPrefix" xml:space="preserve">
+    <value>第</value>
+    <comment>例如，”第6期“中，显示在数字6的前的文字</comment>
+  </data>
+  <data name="PeopleOfWeekList_VolSuffix" xml:space="preserve">
+    <value>期</value>
+    <comment>例如，”第6期“中，显示在数字6的后的文字</comment>
+  </data>
+  <data name="MyAgenda_Loading" xml:space="preserve">
+    <value>正在加载日程，请稍后...</value>
+  </data>
+  <data name="MyAgenda_NoArrangementToday" xml:space="preserve">
+    <value>今天没有安排了，好好休息吧~</value>
+  </data>
+  <data name="EditPersonalProfile_AppBarSaveText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="EditPersonalProfile_Avatar" xml:space="preserve">
+    <value>头像</value>
+  </data>
+  <data name="EditPersonalProfile_DiscardAndReturnPrompt" xml:space="preserve">
+    <value>资料已修改，是否放弃修改并返回？</value>
+  </data>
+  <data name="EditPersonalProfile_Email" xml:space="preserve">
+    <value>电子邮箱</value>
+  </data>
+  <data name="EditPersonalProfile_EnterEmail" xml:space="preserve">
+    <value>请输入电子邮箱</value>
+  </data>
+  <data name="EditPersonalProfile_EnterQQ" xml:space="preserve">
+    <value>请输入QQ</value>
+  </data>
+  <data name="EditPersonalProfile_EnterSinaWeibo" xml:space="preserve">
+    <value>请输入新浪微博</value>
+  </data>
+  <data name="EditPersonalProfile_EnterTel" xml:space="preserve">
+    <value>请输入手机</value>
+  </data>
+  <data name="EditPersonalProfile_PageTitle" xml:space="preserve">
+    <value>编辑个人资料</value>
+  </data>
+  <data name="EditPersonalProfile_QQ" xml:space="preserve">
+    <value>QQ</value>
+  </data>
+  <data name="EditPersonalProfile_SavePersonalProfileFailedPrompt" xml:space="preserve">
+    <value>保存资料失败，请重试</value>
+  </data>
+  <data name="EditPersonalProfile_SinaWeibo" xml:space="preserve">
+    <value>新浪微博</value>
+  </data>
+  <data name="EditPersonalProfile_Tel" xml:space="preserve">
+    <value>手机</value>
+  </data>
+  <data name="EditPersonalProfile_UpdateAvatarFailedPrompt" xml:space="preserve">
+    <value>更新头像失败，请重试</value>
+  </data>
+  <data name="ForgotPassword_AppBarSendText" xml:space="preserve">
+    <value>发送</value>
+  </data>
+  <data name="ForgotPassword_EnterName" xml:space="preserve">
+    <value>请输入姓名</value>
+  </data>
+  <data name="ForgotPassword_EnterStudentNO" xml:space="preserve">
+    <value>请输入学号</value>
+  </data>
+  <data name="ForgotPassword_IdNameDismatchPrompt" xml:space="preserve">
+    <value>姓名与学号不符，请检查后重试。</value>
+  </data>
+  <data name="ForgotPassword_Name" xml:space="preserve">
+    <value>姓名</value>
+  </data>
+  <data name="ForgotPassword_NoAccountPrompt" xml:space="preserve">
+    <value>用户不存在，请检查后重试。</value>
+  </data>
+  <data name="ForgotPassword_NotActivatedAccountPrompt" xml:space="preserve">
+    <value>该用户未激活，请检查后重试。</value>
+  </data>
+  <data name="ForgotPassword_NotRegisteredPrompt" xml:space="preserve">
+    <value>该用户未注册，请检查后重试。</value>
+  </data>
+  <data name="ForgotPassword_PageTitle" xml:space="preserve">
+    <value>忘记密码</value>
+  </data>
+  <data name="ForgotPassword_Prompt" xml:space="preserve">
+    <value>我们将在核对信息之后发送一封密码重置邮件至您的同济邮箱。</value>
+  </data>
+  <data name="ForgotPassword_StudentNO" xml:space="preserve">
+    <value>学号</value>
+  </data>
+  <data name="ForgotPassword_SucceededCaption" xml:space="preserve">
+    <value>重置密码成功</value>
+  </data>
+  <data name="ForgotPassword_SucceededText" xml:space="preserve">
+    <value>前往您的同济邮箱查看邮件，并且点击充值密码链接。</value>
+  </data>
+  <data name="MyAgenda_AppBarTodayText" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="MySettings_AutoRefresh" xml:space="preserve">
+    <value>自动刷新</value>
+  </data>
+  <data name="MySettings_AutoRefreshAction" xml:space="preserve">
+    <value>界面中自动刷新内容</value>
+  </data>
+  <data name="MySettings_CheckNewVersion" xml:space="preserve">
+    <value>检测新版本</value>
+  </data>
+  <data name="MySettings_CheckNewVersionFailedPrompt" xml:space="preserve">
+    <value>检测新版本失败</value>
+  </data>
+  <data name="MySettings_ClearImageCache" xml:space="preserve">
+    <value>清除图片缓存</value>
+  </data>
+  <data name="MySettings_ClearImageCacheConfirmation" xml:space="preserve">
+    <value>确认清空图片缓存？</value>
+  </data>
+  <data name="MySettings_ComputingImageCache" xml:space="preserve">
+    <value>正在计算...</value>
+  </data>
+  <data name="MySettings_CurrentVersion" xml:space="preserve">
+    <value>当前版本：</value>
+    <comment>翻译时请保留最后的冒号</comment>
+  </data>
+  <data name="MySettings_ImageCacheSizeDisplayTemplate" xml:space="preserve">
+    <value>共  {0}</value>
+    <comment>例如，共 20MB</comment>
+  </data>
+  <data name="MySettings_LeaveAppConfirmation" xml:space="preserve">
+    <value>退出确认</value>
+  </data>
+  <data name="MySettings_LeaveAppConfirmationAction" xml:space="preserve">
+    <value>退出应用是否弹出对话框</value>
+  </data>
+  <data name="MySettings_NewVersionExistsPrompt" xml:space="preserve">
+    <value>最新版本为{0}，是否前往应用商店查看更新？</value>
+    <comment>例如，最新版本为1.0.2，是否前往应用商店查看更新？</comment>
+  </data>
+  <data name="MySettings_NoNewVersionPrompt" xml:space="preserve">
+    <value>当前版本已经是最新的，感谢您对微同济团队的支持！</value>
+  </data>
+  <data name="MySettings_PageTitle" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SignUp_Agreement" xml:space="preserve">
+    <value>微同济用户协议</value>
+  </data>
+  <data name="SignUp_AgreementPrefix" xml:space="preserve">
+    <value>《</value>
+    <comment>《微同济用户协议》中的《</comment>
+  </data>
+  <data name="SignUp_AgreementSuffix" xml:space="preserve">
+    <value>》</value>
+    <comment>《微同济用户协议》中的》</comment>
+  </data>
+  <data name="SignUp_AlreadyRegisteredPrompt" xml:space="preserve">
+    <value>账号已经注册,请登录</value>
+  </data>
+  <data name="SignUp_AppBarOkText" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="SignUp_BadSignUpInfo" xml:space="preserve">
+    <value>注册信息有误，请检查后重试</value>
+  </data>
+  <data name="SignUp_ConfirmPassword" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="SignUp_EnterName" xml:space="preserve">
+    <value>请输入姓名</value>
+  </data>
+  <data name="SignUp_EnterPassword" xml:space="preserve">
+    <value>请输入密码</value>
+  </data>
+  <data name="SignUp_EnterPasswordAgain" xml:space="preserve">
+    <value>请确认密码</value>
+  </data>
+  <data name="SignUp_EnterStudentNO" xml:space="preserve">
+    <value>请输入学号</value>
+  </data>
+  <data name="SignUp_IAgreeTo" xml:space="preserve">
+    <value>我已阅读并同意</value>
+  </data>
+  <data name="SignUp_IdNameDismatchPrompt" xml:space="preserve">
+    <value>学号与姓名不符，请检查后重试</value>
+  </data>
+  <data name="SignUp_Name" xml:space="preserve">
+    <value>姓名</value>
+  </data>
+  <data name="SignUp_NoAccountPrompt" xml:space="preserve">
+    <value>您输入的账号不存在，请检查后重试</value>
+  </data>
+  <data name="SignUp_PageTitle" xml:space="preserve">
+    <value>注册</value>
+  </data>
+  <data name="SignUp_Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="SignUp_SecondStep" xml:space="preserve">
+    <value>2 填写信息</value>
+  </data>
+  <data name="SignUp_StudentNO" xml:space="preserve">
+    <value>学号</value>
+  </data>
+  <data name="SignUp_SucceededCaption" xml:space="preserve">
+    <value>注册成功</value>
+  </data>
+  <data name="SignUp_SucceededText" xml:space="preserve">
+    <value>请登录</value>
+  </data>
+  <data name="TongjiMail_BackgroundInfo" xml:space="preserve">
+    <value>每个同济学子都有自己的专属的同济邮箱，微同济将发送账户激活邮件至您的同济邮箱。</value>
+  </data>
+  <data name="TongjiMail_FirstStep" xml:space="preserve">
+    <value>1 开通同济大学电子邮箱</value>
+  </data>
+  <data name="TongjiMail_NextStep" xml:space="preserve">
+    <value>已经开通同济邮箱，下一步</value>
+  </data>
+  <data name="TongjiMail_PageTitle" xml:space="preserve">
+    <value>注册</value>
+  </data>
+  <data name="TongjiMail_Register" xml:space="preserve">
+    <value>带我去注册</value>
+  </data>
+  <data name="UpdatePassword_AppBarSendText" xml:space="preserve">
+    <value>发送</value>
+  </data>
+  <data name="UpdatePassword_ConfirmNewPassword" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="UpdatePassword_ConfirmNewPasswordErrorPrompt" xml:space="preserve">
+    <value>您输入的两次密码不相同，请重试</value>
+  </data>
+  <data name="UpdatePassword_EnterNewPassword" xml:space="preserve">
+    <value>请输入新密码</value>
+  </data>
+  <data name="UpdatePassword_EnterNewPasswordAgain" xml:space="preserve">
+    <value>请再次输入新密码</value>
+  </data>
+  <data name="UpdatePassword_EnterOldPassword" xml:space="preserve">
+    <value>请输入旧密码</value>
+  </data>
+  <data name="UpdatePassword_NewPassword" xml:space="preserve">
+    <value>新密码</value>
+  </data>
+  <data name="UpdatePassword_OldPassword" xml:space="preserve">
+    <value>旧密码</value>
+  </data>
+  <data name="UpdatePassword_OldPasswordErrorPrompt" xml:space="preserve">
+    <value>旧密码输入错误，请检查后重试</value>
+  </data>
+  <data name="UpdatePassword_PageTitle" xml:space="preserve">
+    <value>修改密码</value>
+  </data>
+  <data name="UpdatePassword_SucceededCaption" xml:space="preserve">
+    <value>修改成功</value>
+  </data>
+  <data name="UpdatePassword_SucceededText" xml:space="preserve">
+    <value>恭喜，已经成功修改密码~</value>
+  </data>
+  <data name="SignUpSuccess_AppBarFinishSigningUpText" xml:space="preserve">
+    <value>完成注册</value>
+  </data>
+  <data name="SignUpSuccess_BrowseTongjiMail" xml:space="preserve">
+    <value>前往同济邮箱</value>
+  </data>
+  <data name="SignUpSuccess_PageTitle" xml:space="preserve">
+    <value>恭喜注册成功</value>
+  </data>
+  <data name="SignUpSuccess_Prompt" xml:space="preserve">
+    <value>我们已经发送了一封帐户激活邮件到您的同济邮箱，请查收并进行激活。</value>
   </data>
 </root>

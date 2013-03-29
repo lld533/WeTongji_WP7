@@ -73,16 +73,21 @@
         <Converter:StringIsIntToVisibilityConverter x:Key="StringIsIntToVisibilityConverter"/>
     </phone:PhoneApplicationPage.Resources>
 
-
     <Grid>
         <Border x:Name="Border_WidthMeter" Margin="18,0" IsHitTestVisible="False"/>
 
-        <controls:Pivot Title="我的收藏" Style="{StaticResource WTPivotStyle}">
-            <controls:PivotItem Header="推荐活动" x:Name="PivotItem_Activity" Style="{StaticResource WTPivotItemStyle}" d:IsHidden="True">
+        <controls:Pivot Title="{Binding Path=LocalizedResources.MyFavorite_PageTitle, Source={StaticResource LocalizedStrings}}" 
+                        Style="{StaticResource WTPivotStyle}">
+            
+<!--推荐活动-->
+            <controls:PivotItem x:Name="PivotItem_Activity" 
+                                Header="{Binding Path=LocalizedResources.MyFavorite_Events, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}" d:IsHidden="True">
                 <Grid>
+                    <!--No activities-->
                     <TextBlock x:Name="TextBlock_NoActivities" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
-                           Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"
-                           Text="暂未收藏&quot;推荐活动&quot;"/>
+                               Visibility="{Binding Visibility, ElementName=ListBox_Activity, Converter={StaticResource TurnOverVisibilityConverter}}"
+                                Text="{Binding Path=LocalizedResources.MyFavorite_NoEventsPrompt, Source={StaticResource LocalizedStrings}}"/>
 
                     <ListBox x:Name="ListBox_Activity" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Collapsed"
 						SelectionChanged="ListBox_Activity_SelectionChanged">
@@ -98,7 +103,7 @@
                                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                                             <Image Source="/Images/Common/time_icon.png" Stretch="None"/>
                                             <TextBlock FontSize="22" Foreground="White" TextTrimming="WordEllipsis" Margin="10,0,0,0"
-                                           Text="{Binding DisplayTime}"/>
+                                                       Text="{Binding DisplayTime}"/>
                                         </StackPanel>
 
                                         <Grid Margin="0,6,10,0" >
@@ -117,7 +122,7 @@
                                             <!--Number of Participants-->
                                             <TextBlock Grid.Column="3" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="22" Foreground="White">
 								                    <Run Text="{Binding Schedule}"/>
-								                    <Run Text="参与"/>
+								                    <Run Text="{Binding Path=LocalizedResources.MyFavorite_EventParticipants, Source={StaticResource LocalizedStrings}}"/>
                                             </TextBlock>
 
                                         </Grid>
@@ -128,16 +133,21 @@
                     </ListBox>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="校园资讯" x:Name="PivotItem_CampusInfo" Style="{StaticResource WTPivotItemStyle}">
+
+<!--校园资讯-->
+            <controls:PivotItem x:Name="PivotItem_CampusInfo" 
+                                Header="{Binding Path=LocalizedResources.MyFavorite_CampusInfo, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}">
                 <Grid>
+                    <!--No campus info-->
                     <TextBlock x:Name="TextBlock_NoCampusInfo" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
-                           Visibility="{Binding Visibility, ElementName=ListBox_CampusInfo, Converter={StaticResource TurnOverVisibilityConverter}}"
-                           Text="暂未收藏&quot;校园资讯&quot;"/>
+                               Visibility="{Binding Visibility, ElementName=ListBox_CampusInfo, Converter={StaticResource TurnOverVisibilityConverter}}"
+                               Text="{Binding Path=LocalizedResources.MyFavorite_NoCampusInfoPrompt, Source={StaticResource LocalizedStrings}}"/>
 
                     <ListBox x:Name="ListBox_CampusInfo" ScrollViewer.VerticalScrollBarVisibility="Hidden"
-						ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
-						SelectionChanged="Listbox_CampusInfo_SelectionChanged"
-                         Visibility="Collapsed">
+						     ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
+						     SelectionChanged="Listbox_CampusInfo_SelectionChanged"
+                             Visibility="Collapsed">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Name="ItemHolder" VerticalAlignment="Top" Height="160" Background="#FFE8E8E8"
@@ -211,11 +221,16 @@
                     </ListBox>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="每周人物" x:Name="PivotItem_PeopleOfWeek" Style="{StaticResource WTPivotItemStyle}">
+
+<!--每周人物-->
+            <controls:PivotItem x:Name="PivotItem_PeopleOfWeek"
+                                Header="{Binding Path=LocalizedResources.MyFavorite_PeopleOfWeek, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}">
                 <Grid>
+                    <!--No people of week-->
                     <TextBlock x:Name="TextBlock_NoPeopleOfWeek" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999" FontSize="22"
-                           Visibility="{Binding Visibility, ElementName=ListBox_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}}"
-                           Text="暂未收藏&quot;每周人物&quot;"/>
+                               Visibility="{Binding Visibility, ElementName=ListBox_PeopleOfWeek, Converter={StaticResource TurnOverVisibilityConverter}}"
+                               Text="{Binding Path=LocalizedResources.MyFavorite_NoPeopleOfWeekPrompt, Source={StaticResource LocalizedStrings}}"/>
 
                     <ListBox x:Name="ListBox_PeopleOfWeek" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Collapsed"
 						SelectionChanged="ListBox_PeopleOfWeek_SelectionChanged">
@@ -225,9 +240,9 @@
                                     <!--Title-->
                                     <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
                                                Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
-                                        <Run Text="第"/>
+                                        <Run Text="{Binding Path=LocalizedResources.MyFavorite_PeopleOfWeekVolPrefix, Source={StaticResource LocalizedStrings}}"/>
                                         <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
-                                        <Run Text="期"/>
+                                        <Run Text="{Binding Path=LocalizedResources.MyFavorite_PeopleOfWeekVolSuffix, Source={StaticResource LocalizedStrings}}"/>
                                     </TextBlock>
                                     <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
                                                Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"

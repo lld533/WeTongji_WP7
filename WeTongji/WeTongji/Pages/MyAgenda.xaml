@@ -99,7 +99,8 @@
             </TextBlock.RenderTransform>
         </TextBlock>
 
-        <TextBlock x:Name="TextBlock_Loading"  Grid.Row="1" FontSize="22" Foreground="#FF999999" Text="正在加载，请稍后..." Visibility="Collapsed"
+        <TextBlock x:Name="TextBlock_Loading"  Grid.Row="1" FontSize="22" Foreground="#FF999999" Visibility="Collapsed" 
+                   Text="{Binding Path=LocalizedResources.MyAgenda_Loading, Source={StaticResource LocalizedStrings}}"
                    HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
         <toolkit:LongListSelector x:Name="LongListSelector_Core" Grid.Row="1"
@@ -136,7 +137,8 @@
 
                         <Grid x:Name="Grid_NoArrangement"
                               Visibility="{Binding IsNoArrangementNode, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock Text="今天没有安排了，好好休息吧~" FontSize="22" VerticalAlignment="Center" Margin="2,0,0,0"/>
+                            <TextBlock Text="{Binding Path=LocalizedResources.MyAgenda_NoArrangementToday, Source={StaticResource LocalizedStrings}}"
+                                       FontSize="22" VerticalAlignment="Center" Margin="2,0,0,0"/>
                         </Grid>
 
                         <StackPanel Visibility="{Binding Visibility, ElementName=Grid_NoArrangement, Converter={StaticResource TurnOverVisibilityConverter}}">

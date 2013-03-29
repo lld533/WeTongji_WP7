@@ -11,6 +11,9 @@ namespace WeTongji.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName != "zh")
+                return value;
+
             int i;
 
             if (!int.TryParse(value.ToString(), out i))

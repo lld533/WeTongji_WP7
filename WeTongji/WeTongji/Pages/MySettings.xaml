@@ -94,10 +94,14 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock TextWrapping="Wrap" Text="设置" FontSize="21" Margin="0,16,0,37"/>
+        <!--Page title-->
+        <TextBlock TextWrapping="Wrap" FontSize="21" Margin="0,16,0,37"
+                   Text="{Binding Path=LocalizedResources.MySettings_PageTitle, Source={StaticResource LocalizedStrings}}" />
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled">
             <StackPanel>
+                
+                <!--Leaving app confirmation-->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -105,9 +109,10 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel>
-                        <TextBlock Text="退出确认" FontSize="24"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.MySettings_LeaveAppConfirmation, Source={StaticResource LocalizedStrings}}" 
+                                   FontSize="24"/>
                         <TextBlock Margin="0,6,0,0" FontSize="21" Foreground="#FF999999" TextWrapping="Wrap"
-								Text="退出应用是否弹出对话框"/>
+								   Text="{Binding Path=LocalizedResources.MySettings_LeaveAppConfirmationAction, Source={StaticResource LocalizedStrings}}"/>
                     </StackPanel>
 
                     <toolkit:ToggleSwitch x:Name="ToggleSwitch_HintOnExit" Grid.Column="1" Style="{StaticResource MyToggleSwitchStyle}"
@@ -120,30 +125,36 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!--Auto refresh-->
                     <StackPanel>
-                        <TextBlock Text="自动刷新" FontSize="24"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.MySettings_AutoRefresh, Source={StaticResource LocalizedStrings}}" 
+                                   FontSize="24"/>
                         <TextBlock Margin="0,6,0,0" FontSize="21" Foreground="#FF999999" TextWrapping="Wrap"
-								Text="界面中自动刷新内容"/>
+								Text="{Binding Path=LocalizedResources.MySettings_AutoRefreshAction, Source={StaticResource LocalizedStrings}}"/>
                     </StackPanel>
 
                     <toolkit:ToggleSwitch x:Name="ToggleSwitch_AutoRefresh"  Grid.Column="1" Style="{StaticResource MyToggleSwitchStyle}"
                                           Checked="ToggleSwitch_AutoRefresh_Checked" Unchecked="ToggleSwitch_AutoRefresh_UnChecked"/>
                 </Grid>
 
+                <!--Clear image cache-->
                 <Button Margin="0,-16,0,0" Style="{StaticResource SettingsButtonStyle}" MouseEnter="SettingsButtonMouseEnter" MouseLeave="SettingsButtonMouseLeave"
                         Click="ClearImageCache">
                     <StackPanel>
-                        <TextBlock Text="清除图片缓存" FontSize="24"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.MySettings_ClearImageCache, Source={StaticResource LocalizedStrings}}" 
+                                   FontSize="24"/>
                         <TextBlock x:Name="TextBlock_ImageCache"  Margin="0,6,0,0" FontSize="21" Foreground="#FF999999" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Button>
 
+                <!--Check new version-->
                 <Button Margin="0,39,0,0" Style="{StaticResource SettingsButtonStyle}" MouseEnter="SettingsButtonMouseEnter" MouseLeave="SettingsButtonMouseLeave"
                         Click="CheckVersion">
                     <StackPanel>
-                        <TextBlock Text="检测新版本" FontSize="24"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.MySettings_CheckNewVersion, Source={StaticResource LocalizedStrings}}"
+                                   FontSize="24"/>
                         <TextBlock Margin="0,6,0,0" FontSize="21" Foreground="#FF999999" TextWrapping="Wrap">
-					        <Run Text="当前版本： "/>
+					        <Run Text="{Binding Path=LocalizedResources.MySettings_CurrentVersion, Source={StaticResource LocalizedStrings}}"/>
 					        <Run x:Name="Run_Version"/>
                         </TextBlock>
                     </StackPanel>

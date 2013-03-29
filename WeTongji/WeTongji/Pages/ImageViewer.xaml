@@ -62,11 +62,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBar.Buttons>
-                <shell:ApplicationBarIconButton IconUri="/icons/appbar.save.rest.png" Text="保存" Click="SaveImage_Button_Click"/>
-            </shell:ApplicationBar.Buttons>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

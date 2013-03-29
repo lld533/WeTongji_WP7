@@ -82,7 +82,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Text="WeTongji" VerticalAlignment="Bottom" FontWeight="Bold"  FontSize="22"/>
-        <TextBlock Text="注册" VerticalAlignment="Bottom" FontSize="60" Grid.Row="1" Margin="0,0,0,-7"/>
+        <!--Page title-->
+        <TextBlock Text="{Binding Path=LocalizedResources.TongjiMail_PageTitle, Source={StaticResource LocalizedStrings}}" 
+                   VerticalAlignment="Bottom" FontSize="60" Grid.Row="1" Margin="0,0,0,-7"/>
 
         <!--
 Navigation Bar
@@ -91,7 +93,10 @@ Navigation Bar
             <StackPanel Orientation="Horizontal">
                 <Path Data="M0,0 L11,0 L11,34 L0,34 L11,17 z" Height="34" Fill="{StaticResource EnabledHeadFontColor}" UseLayoutRounding="False" Width="11"/>
                 <Grid Background="{StaticResource EnabledHeadFontColor}" Height="34">
-                    <TextBlock Foreground="{StaticResource DisabledHeadFontColor}" VerticalAlignment="Center" Text="1 开通同济大学电子邮箱" FontSize="20" Margin="16,-2,16,0"/>
+                    
+                    <!--First step-->
+                    <TextBlock Foreground="{StaticResource DisabledHeadFontColor}" VerticalAlignment="Center" FontSize="20" Margin="16,-2,16,0" 
+                               Text="{Binding Path=LocalizedResources.TongjiMail_FirstStep, Source={StaticResource LocalizedStrings}}"/>
                 </Grid>
                 <Path Data="M0,0 L11,17 L0,34 z" Height="34" Fill="{StaticResource EnabledHeadFontColor}" UseLayoutRounding="False" Width="11"/>
             </StackPanel>
@@ -108,14 +113,19 @@ Navigation Bar
 Text & Buttons
         -->
         <StackPanel Grid.Row="5">
-            <TextBlock Text="每个同济学子都有自己的专属的同济邮箱，微同济将发送账户激活邮件至您的同济邮箱。"
+            <!--Background info-->
+            <TextBlock Text="{Binding Path=LocalizedResources.TongjiMail_BackgroundInfo, Source={StaticResource LocalizedStrings}}"
                        TextWrapping="Wrap"
                        Foreground="{StaticResource DisabledHeadFontColor}"/>
-            <Button Content="已经开通同济邮箱，下一步"
+            
+            <!--Next step-->
+            <Button Content="{Binding Path=LocalizedResources.TongjiMail_NextStep, Source={StaticResource LocalizedStrings}}"
                     Margin="0,42,0,0"
                     Click="Button_Registered_Click" Style="{StaticResource TongjiMailButtonStyle}"/>
+            
+            <!--Register Tongji mail-->
             <Button Style="{StaticResource TongjiMailButtonStyle}"
-                    Content="带我去注册"
+                    Content="{Binding Path=LocalizedResources.TongjiMail_Register, Source={StaticResource LocalizedStrings}}"
                     Margin="0,23,0,0"
                     Click="Button_SignUpTongjiMail_Click"/>
             

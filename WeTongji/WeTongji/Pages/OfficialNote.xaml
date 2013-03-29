@@ -197,7 +197,7 @@
                         <Ellipse Width="40" Height="40" Fill="#FFC231CF"/>
                         <Path Data="M18.4165,16.5002 C17.3522,14.1531 15.5654,12.8343 12.7805,12.9362 C9.4432,13.1664 7.42039,15.5308 7.81201,19.4698 C8.52983,23.1567 12.5318,27.6265 18.0625,31.252 C23.9037,27.8001 28.6939,22.6331 28.9168,18.8958 C29.0552,15.2347 27.1655,13.4121 24.1249,13.0615 C21.4678,12.9172 19.7035,14.3005 18.4165,16.5002 z" Fill="White" HorizontalAlignment="Center" Height="18.32" Stretch="Fill" StrokeThickness="0" UseLayoutRounding="False" VerticalAlignment="Center" Width="21.165" Margin="9.398,13,9.437,10.84"/>
                     </Grid>
-                    <TextBlock x:Name="TextBlock_Like_Illustrated"  Grid.Column="2" Text="{Binding Like}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                    <TextBlock x:Name="TextBlock_Like_Illustrated" Grid.Column="2" Text="{Binding Like}" FontSize="22" Margin="0,0,0,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                         <TextBlock.RenderTransform>
                             <CompositeTransform/>
                         </TextBlock.RenderTransform>
@@ -226,10 +226,14 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}" Margin="0,0,0,24">
-                            <TextBlock Text="正在加载图片..." FontSize="22" Foreground="#FF999999"
+                            <!--Loading picture-->
+                            <TextBlock Text="{Binding Path=LocalizedResources.Common_LoadingPicture, Source={StaticResource LocalizedStrings}}" 
+                                       FontSize="22" Foreground="#FF999999"
                                        Visibility="{Binding Visibility, ElementName=Button_ReloadImage, Converter={StaticResource TurnOverVisibilityConverter}}"/>
 
-                            <Button x:Name="Button_ReloadImage" BorderThickness="0" Content="(图片加载失败，请点击重试)" FontSize="22" HorizontalAlignment="Left"
+                            <!--Load picture failed-->
+                            <Button x:Name="Button_ReloadImage" BorderThickness="0"  FontSize="22" HorizontalAlignment="Left"
+                                    Content="{Binding Path=LocalizedResources.Common_LoadPictureFailedPrompt, Source={StaticResource LocalizedStrings}}"
                                     Foreground="#FF999999"
                                     Style="{StaticResource NoBorderButtonStyle}"
                                     Visibility="Collapsed"
@@ -248,10 +252,7 @@
     </ScrollViewer>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.Like.rest.png" Text="喜欢" IsEnabled="False"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏" IsEnabled="False"/>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

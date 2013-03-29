@@ -26,6 +26,13 @@ namespace WeTongji
         public PeopleOfWeekList()
         {
             InitializeComponent();
+
+            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) 
+            {
+                Text = StringLibrary.PeopleOfWeekList_AppBarRefreshText
+            };
+            button.Click += Refresh_Button_Clicked;
+            this.ApplicationBar.Buttons.Add(button);
         }
 
         private ObservableCollection<PersonExt> PeopleSource

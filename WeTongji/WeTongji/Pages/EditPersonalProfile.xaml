@@ -27,13 +27,15 @@
         </Grid.RowDefinitions>
 
         <!--Page title-->
-        <TextBlock Grid.Row="1"  Text="编辑个人资料" FontSize="56" Margin="0,-13,0,-7"/>
+        <TextBlock Grid.Row="1"  FontSize="56" Margin="0,-13,0,-7"
+                   Text="{Binding Path=LocalizedResources.EditPersonalProfile_PageTitle, Source={StaticResource LocalizedStrings}}"/>
 
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="头像" FontSize="22"  Margin="0,0,0,11"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.EditPersonalProfile_Avatar, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="22" Margin="0,0,0,11"/>
                     <Grid HorizontalAlignment="Left">
                         <Rectangle Width="100" Height="100" Fill="Gray" Margin="-11,0,0,0"
                                    Tap="UpdateAvatar"/>
@@ -52,53 +54,61 @@
 
                 <!--Phone-->
                 <StackPanel Margin="0,27,0,0">
-                    <TextBlock Text="手机" FontSize="22" Margin="0,-7,0,-3"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.EditPersonalProfile_Tel, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_Phone"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"
                                  Text="{Binding Phone}"
                                  GotFocus="TextBoxGotFocus"
                                  TextChanged="TextBoxTextChanged"/>
-                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入手机" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
-										Visibility="{Binding Text,ElementName=TextBox_Phone, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22"  IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Text="{Binding Path=LocalizedResources.EditPersonalProfile_EnterTel, Source={StaticResource LocalizedStrings}}"
+								   Visibility="{Binding Text,ElementName=TextBox_Phone, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
                 </StackPanel>
 
                 <!--QQ-->
                 <StackPanel Margin="0,27,0,0">
-                    <TextBlock Text="QQ" FontSize="22" Margin="0,-7,0,-3"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.EditPersonalProfile_QQ, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_QQ"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="Digits"
                                  Text="{Binding QQ}"
                                  GotFocus="TextBoxGotFocus"
                                  TextChanged="TextBoxTextChanged"/>
-                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入QQ" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
-										Visibility="{Binding Text,ElementName=TextBox_QQ, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center" 
+                                   Text="{Binding Path=LocalizedResources.EditPersonalProfile_EnterQQ, Source={StaticResource LocalizedStrings}}"
+								   Visibility="{Binding Text,ElementName=TextBox_QQ, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
                 </StackPanel>
 
                 <!--Email-->
                 <StackPanel Margin="0,27,0,0">
-                    <TextBlock Text="电子邮箱" FontSize="22" Margin="0,-7,0,-3"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.EditPersonalProfile_Email, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_Email"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}" InputScope="EmailUserName"
                                  Text="{Binding Email}"
                                  GotFocus="TextBoxGotFocus"
                                  TextChanged="TextBoxTextChanged"/>
-                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入电子邮箱" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
-										Visibility="{Binding Text,ElementName=TextBox_Email, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center" 
+                                   Text="{Binding Path=LocalizedResources.EditPersonalProfile_EnterEmail, Source={StaticResource LocalizedStrings}}"
+								   Visibility="{Binding Text,ElementName=TextBox_Email, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
                 </StackPanel>
 
                 <!--Sina Micro Blog-->
                 <StackPanel Margin="0,27">
-                    <TextBlock Text="新浪微博" FontSize="22" Margin="0,-7,0,-3"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.EditPersonalProfile_SinaWeibo, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="22" Margin="0,-7,0,-3"/>
                     <Grid Margin="0,15,0,0" Width="320" HorizontalAlignment="Left"  Height="48">
                         <TextBox x:Name="TextBox_SinaMicroBlog"  BorderThickness="0" Style="{StaticResource BasicTextBoxStyle}"
                                  Text="{Binding SinaWeibo}"
                                  GotFocus="TextBoxGotFocus"
                                  TextChanged="TextBoxTextChanged"/>
-                        <TextBlock Foreground="#FF666666" FontSize="22" Text="请输入新浪微博" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center"
-										Visibility="{Binding Text,ElementName=TextBox_SinaMicroBlog, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
+                        <TextBlock Foreground="#FF666666" FontSize="22" IsHitTestVisible="False" Margin="10,0,0,0" VerticalAlignment="Center" 
+                                   Text="{Binding Path=LocalizedResources.EditPersonalProfile_EnterSinaWeibo, Source={StaticResource LocalizedStrings}}"
+								   Visibility="{Binding Text,ElementName=TextBox_SinaMicroBlog, Converter={StaticResource TextLengthToVisibilityConverter}}"/>
                     </Grid>
                 </StackPanel>
 
@@ -108,10 +118,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.save.rest.png" Text="保存"
-                                            Click="SaveButtonClicked"/>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

@@ -19,6 +19,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Input;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Globalization;
 
 namespace WeTongji
 {
@@ -88,13 +89,20 @@ namespace WeTongji
             //...Create AppButton_Today if it has not been created yet.
             if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
             {
-                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton(
-                    new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                        UriKind.RelativeOrAbsolute))
+                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton()
                 {
-                    Text = "今日",
+                    Text = StringLibrary.MyAgenda_AppBarTodayText,
                     IsEnabled = false
                 };
+
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    appBtn.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                            UriKind.RelativeOrAbsolute);
+                else
+                    appBtn.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute);
+
                 appBtn.Click += AppButton_Today_Clicked;
                 this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
                 this.ApplicationBar.Buttons.Add(appBtn);
@@ -103,8 +111,15 @@ namespace WeTongji
             else
             {
                 var btn = this.ApplicationBar.Buttons[0] as Microsoft.Phone.Shell.ApplicationBarIconButton;
-                btn.IconUri = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    btn.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                            UriKind.RelativeOrAbsolute);
+                else
+                    btn.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
                         UriKind.RelativeOrAbsolute);
+
                 btn.IsEnabled = false;
             }
 
@@ -225,14 +240,14 @@ namespace WeTongji
                                                 obj = VisualTreeHelper.GetChild(obj, 0);
                                             }
 
-                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj,0) as Panel;
+                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
                                             Storyboard sb = itemLayoutRoot.Resources["Donate"] as Storyboard;
                                             sb.Begin();
                                             break;
                                         }
                                     }
                                 }
-                            
+
 
                                 #endregion
                             }
@@ -288,8 +303,13 @@ namespace WeTongji
             //...date changed
             if (CurrentNode.IsNoArrangementNode && DateTime.Now.Date > CurrentNode.BeginTime.Date)
             {
-                (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
-                    = new Uri(String.Format("/icons/days/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
+                        = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
+                else
+                    (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
+                        = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
 
                 core();
             }

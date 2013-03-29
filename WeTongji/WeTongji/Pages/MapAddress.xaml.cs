@@ -40,6 +40,7 @@ namespace WeTongji
         private Boolean isCurrentLocationQueryExecuted = false;
         private String queryString = String.Empty;
         private DispatcherTimer reverseQueryDispatcherTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(20) };
+        private Boolean initialized = false;
 
         #endregion
 
@@ -89,6 +90,8 @@ namespace WeTongji
             #region [Loaded]
             this.Loaded += (o, e) =>
                         {
+                            initialized = true;
+
                             {
                                 var popup = VisualTreeHelper.GetChild(TargetBillboardPushpin, 0) as Popup;
                                 popup.Opened += (obj, args) =>
@@ -498,13 +501,16 @@ namespace WeTongji
         {
             this.Dispatcher.BeginInvoke(() =>
             {
-                if ((Boolean)e.NewValue)
+                if (initialized)
                 {
-                    SetBestView();
-                }
-                else
-                {
-                    MessageBox.Show("请关闭飞行模式，并检查网络连接后重试。", "暂时无法查询地图", MessageBoxButton.OK);
+                    if ((Boolean)e.NewValue)
+                    {
+                        SetBestView();
+                    }
+                    else
+                    {
+                        WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
+                    }
                 }
             });
         }
@@ -755,7 +761,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             var bbi = TargetBillboardPushpin.DataContext as BillBoardItem;
-                            bbi.Distance = "? KM";
+                            bbi.Distance = "? km";
                             bbi.IsSyncing = false;
                         });
                     };

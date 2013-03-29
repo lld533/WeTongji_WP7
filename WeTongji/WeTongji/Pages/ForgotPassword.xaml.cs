@@ -18,6 +18,15 @@ namespace WeTongji
         public ForgotPassword()
         {
             InitializeComponent();
+
+            var btn = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.ForgotPassword_AppBarSendText,
+                IsEnabled = false
+            };
+            btn.Click += Button_Send_Click;
+            this.ApplicationBar.Buttons.Add(btn);
+
         }
 
         private void UpdateSendButton(Object sender, TextChangedEventArgs e)
@@ -49,7 +58,7 @@ namespace WeTongji
                 {
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        var result = MessageBox.Show("前往您的同济邮箱查看邮件，并且点击充值密码链接。", "重置密码成功", MessageBoxButton.OKCancel);
+                        var result = MessageBox.Show(StringLibrary.ForgotPassword_SucceededText, StringLibrary.ForgotPassword_SucceededCaption, MessageBoxButton.OKCancel);
                         if (result == MessageBoxResult.OK)
                         {
                             var task = new Microsoft.Phone.Tasks.WebBrowserTask();
@@ -65,7 +74,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             this.NavigationService.GoBack();
                         });
                     }
@@ -78,34 +87,33 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAccount:
                                     {
-                                        MessageBox.Show("用户不存在，请检查后重试。", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.ForgotPassword_NoAccountPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     break;
                                 case Api.Util.Status.NotActivatedAccount:
                                     {
-                                        MessageBox.Show("该用户未激活，请检查后重试。", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.ForgotPassword_NotActivatedAccountPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     break;
                                 case Api.Util.Status.NotRegistered:
                                     {
-                                        MessageBox.Show("该用户未注册，请检查后重试。", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.ForgotPassword_NotRegisteredPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Id.Focus();
                                         TextBox_Id.SelectAll();
                                     }
                                     break;
                                 case Api.Util.Status.IdNameDismatch:
                                     {
-                                        MessageBox.Show("姓名与学号不符，请检查后重试。", "提示", MessageBoxButton.OK);
-                                        TextBox_Name.Focus();
+                                        MessageBox.Show(StringLibrary.ForgotPassword_IdNameDismatchPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         TextBox_Name.SelectAll();
                                     }
                                     break;
                                 default:
-                                    MessageBox.Show("重置密码失败，请重试。", "提示", MessageBoxButton.OK);
+                                    MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     break;
                             }
                         });
@@ -114,7 +122,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("重置密码失败，请重试。", "提示", MessageBoxButton.OK);
+                            MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         });
                     }
                 };

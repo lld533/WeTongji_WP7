@@ -61,6 +61,20 @@ namespace WeTongji
         {
             InitializeComponent();
 
+            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.edit.rest.png", UriKind.RelativeOrAbsolute))
+                {
+                    Text = StringLibrary.PersonalProfile_AppBarEditText
+                };
+            button.Click += EditPersonalProfile;
+            this.ApplicationBar.Buttons.Add(button);
+
+            var mi = new ApplicationBarMenuItem()
+            {
+                Text = StringLibrary.PersonalProfile_AppBarUpdatePasswordText
+            };
+            mi.Click += NavToUpdatePassword;
+            this.ApplicationBar.MenuItems.Add(mi);
+
             this.Loaded += (o, e) =>
                 {
                     Thread thread = new Thread(new ThreadStart(LoadPersonalProfile))
@@ -234,8 +248,6 @@ namespace WeTongji
             if (txtbx == null || user == null)
                 return;
 
-            //this.Top_PlaceHolder.Visibility = Visibility.Collapsed;
-            //this.Bottom_PlaceHolder.Visibility = Visibility.Collapsed;
 
             //...Get property info by data binding by VisualTree
             var parent = VisualTreeHelper.GetParent(txtbx) as StackPanel;
@@ -289,14 +301,14 @@ namespace WeTongji
 
                         if (e.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (e.Error is WeTongji.Api.WTException)
                         {
                             var ex = e.Error as WeTongji.Api.WTException;
                             if (ex.StatusCode.Id == WeTongji.Api.Util.Status.NoAuth)
                             {
-                                var result = MessageBox.Show("您是否在其他平台登录？请重新登录后重试。", "提示", MessageBoxButton.OKCancel);
+                                var result = MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
                                 if (result == MessageBoxResult.OK)
                                 {
                                     this.NavigationService.GoBack();
@@ -304,7 +316,7 @@ namespace WeTongji
                             }
                         }
                         else
-                            MessageBox.Show("更新失败，请重试");
+                            MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     });
                 };
 

@@ -18,16 +18,6 @@ namespace WeTongji
             InitializeComponent();
         }
 
-        #region [Overridden]
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            ThemeManager.ToDarkTheme();
-        }
-
-        #endregion
-
         void Button_Registered_Click(Object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new Uri("/Pages/SignUp.xaml", UriKind.RelativeOrAbsolute));

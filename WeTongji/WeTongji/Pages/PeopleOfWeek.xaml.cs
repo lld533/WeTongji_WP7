@@ -29,6 +29,21 @@ namespace WeTongji
         public PeopleOfWeek()
         {
             InitializeComponent();
+
+            ApplicationBarIconButton button = null;
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.like.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.Common_AppBarLikeText,
+                IsEnabled = false
+            };
+            this.ApplicationBar.Buttons.Add(button);
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.favs.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.Common_AppBarFavoriteText,
+                IsEnabled = false
+            };
+            this.ApplicationBar.Buttons.Add(button);
         }
         
         #region [Overridden]
@@ -175,7 +190,7 @@ namespace WeTongji
                 var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                 btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
-                btn.Text = "取消喜欢";
+                btn.Text = StringLibrary.Common_AppBarUnlikeText;
                 btn.IsEnabled = true;
                 btn.Click -= Button_Like_Clicked;
                 btn.Click += Button_Unlike_Clicked;
@@ -194,7 +209,7 @@ namespace WeTongji
                 var btn = ApplicationBar.Buttons[1] as ApplicationBarIconButton;
 
                 btn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
-                btn.Text = "取消收藏";
+                btn.Text = StringLibrary.Common_AppBarUnfavoriteText;
                 btn.IsEnabled = true;
                 btn.Click -= Button_Favorite_Clicked;
                 btn.Click += Button_Unfavorite_Clicked;
@@ -209,7 +224,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
             }
             else
             {
@@ -239,7 +254,7 @@ namespace WeTongji
                         var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                         btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
-                        btn.Text = "取消喜欢";
+                        btn.Text = StringLibrary.Common_AppBarUnlikeText;
                         btn.IsEnabled = true;
                         btn.Click -= Button_Like_Clicked;
                         btn.Click += Button_Unlike_Clicked;
@@ -255,7 +270,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
                 };
 
@@ -272,7 +287,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         });
                     }
                     else if (arg.Error is WTException)
@@ -285,7 +300,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -294,7 +309,7 @@ namespace WeTongji
                     }
                     else
                     {
-                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                        MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     }
                 };
 
@@ -307,7 +322,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
             }
             else
             {
@@ -338,7 +353,7 @@ namespace WeTongji
                         var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                         btn.IconUri = new Uri("/icons/appbar.like.rest.png", UriKind.RelativeOrAbsolute);
-                        btn.Text = "喜欢";
+                        btn.Text = StringLibrary.Common_AppBarLikeText;
                         btn.IsEnabled = true;
                         btn.Click += Button_Like_Clicked;
                         btn.Click -= Button_Unlike_Clicked;
@@ -354,7 +369,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
                 };
 
@@ -370,7 +385,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
                         });
                     }
@@ -384,7 +399,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -393,7 +408,7 @@ namespace WeTongji
                     }
                     else
                     {
-                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                        MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     }
                 };
 
@@ -406,7 +421,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -450,7 +465,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "取消收藏";
+                        favBtn.Text = StringLibrary.Common_AppBarUnfavoriteText;
                         favBtn.Click -= Button_Favorite_Clicked;
                         favBtn.Click += Button_Unfavorite_Clicked;
                         favBtn.IsEnabled = true;
@@ -466,7 +481,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -480,7 +495,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -488,7 +503,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -507,7 +522,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt,StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -551,7 +566,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.favs.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "收藏";
+                        favBtn.Text = StringLibrary.Common_AppBarFavoriteText;
                         favBtn.Click += Button_Favorite_Clicked;
                         favBtn.Click -= Button_Unfavorite_Clicked;
                         favBtn.IsEnabled = true;
@@ -567,7 +582,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -581,7 +596,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -589,7 +604,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -607,228 +622,6 @@ namespace WeTongji
         #endregion
 
         #region [Refresh related functions]
-
-        ///// <summary>
-        ///// Get the latest data of current news from the server and refresh Like number on UI
-        ///// </summary>
-        ///// <param name="isLikeButtonClicked">
-        ///// True if the function is called by clicking the Like button. 
-        ///// False if the function is called by clicking the Unlike button.
-        ///// </param>
-        ///// <remarks>
-        ///// If failed, "Like" +1 when Like button clicked while "Like" -1 when Unlike button clicked.
-        ///// </remarks>
-        //private void RefreshCurrentNewsOnLikeButtonClicked(int id, Boolean isLikeButtonClicked)
-        //{
-        //    var req = new Person<SchoolNewsGetResponse>();
-        //    var client = new WTDefaultClient<SchoolNewsGetResponse>();
-
-        //    req.Id = id;
-
-        //    client.ExecuteCompleted += (obj, arg) =>
-        //    {
-        //        using (var db = WTShareDataContext.ShareDB)
-        //        {
-        //            var news = db.SchoolNewsTable.Where((n) => n.Id == req.Id).SingleOrDefault();
-
-        //            if (news != null)
-        //            {
-        //                news.Like = arg.Result.SchoolNews.Like;
-        //            }
-
-        //            db.SubmitChanges();
-        //        }
-
-        //        if (isLikeButtonClicked)
-        //        {
-        //            this.Dispatcher.BeginInvoke(() =>
-        //            {
-        //                var sn = this.DataContext as SchoolNewsExt;
-
-        //                if (sn.Like != arg.Result.SchoolNews.Like)
-        //                {
-        //                    int previousLikeValue = sn.Like;
-        //                    sn.Like = arg.Result.SchoolNews.Like;
-        //                    sn.SendPropertyChanged("Like");
-
-        //                    //...Play animation
-        //                    if (previousLikeValue < arg.Result.SchoolNews.Like)
-        //                        (this.Resources["IncreaseLikeNumberAnimation"] as Storyboard).Begin();
-        //                }
-        //            });
-        //        }
-        //        else
-        //        {
-        //            this.Dispatcher.BeginInvoke(() =>
-        //            {
-        //                var sn = this.DataContext as SchoolNewsExt;
-        //                int previousLikeValue = sn.Like;
-        //                sn.Like = arg.Result.SchoolNews.Like;
-
-        //                sn.SendPropertyChanged("Like");
-
-        //                //...Play animation
-        //                if (previousLikeValue > arg.Result.SchoolNews.Like)
-        //                    (this.Resources["DecreaseLikeNumberAnimation"] as Storyboard).Begin();
-        //            });
-        //        }
-        //    };
-        //    client.ExecuteFailed += (obj, arg) =>
-        //    {
-        //        this.Dispatcher.BeginInvoke(() =>
-        //        {
-        //            var sn = this.DataContext as SchoolNewsExt;
-
-        //            if (isLikeButtonClicked)
-        //            {
-        //                ++sn.Like;
-        //                sn.SendPropertyChanged("Like");
-
-        //                //...Play animation
-        //                (this.Resources["IncreaseLikeNumberAnimation"] as Storyboard).Begin();
-        //            }
-        //            else
-        //            {
-        //                sn.Like = Math.Max(0, sn.Like - 1);
-        //                sn.SendPropertyChanged("Like");
-
-        //                (this.Resources["DecreaseLikeNumberAnimation"] as Storyboard).Begin();
-        //            }
-        //        });
-        //    };
-
-        //    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
-        //}
-
-        ///// <summary>
-        ///// Get the latest Favorite number of current news from the server when user click fav/unfav button
-        ///// </summary>
-        ///// <remarks>
-        ///// If failed, "Favorite" +1 when Like button clicked while "Favorite" -1 when UnFavorite button clicked.
-        ///// </remarks>
-        //private void RefreshCurrentNewsOnFavoriteButtonClicked(int id, Boolean isFavoriteButtonClicked)
-        //{
-        //    var req = new SchoolNewsGetRequest<SchoolNewsGetResponse>();
-        //    var client = new WTDefaultClient<SchoolNewsGetResponse>();
-
-        //    req.Id = id;
-
-        //    client.ExecuteCompleted += (obj, arg) =>
-        //    {
-        //        using (var db = WTShareDataContext.ShareDB)
-        //        {
-        //            var news = db.SchoolNewsTable.Where((n) => n.Id == req.Id).SingleOrDefault();
-
-        //            if (news != null)
-        //            {
-        //                news.Favorite = arg.Result.SchoolNews.Favorite;
-        //            }
-
-        //            db.SubmitChanges();
-        //        }
-
-        //        this.Dispatcher.BeginInvoke(() =>
-        //        {
-        //            var sn = this.DataContext as SchoolNewsExt;
-
-        //            int previousValue = sn.Favorite;
-        //            sn.Favorite = arg.Result.SchoolNews.Favorite;
-        //            sn.SendPropertyChanged("Favorite");
-
-        //            if (isFavoriteButtonClicked)
-        //            {
-        //                if (previousValue < sn.Favorite)
-        //                {
-        //                    (this.Resources["IncreaseFavoriteNumberAnimation"] as Storyboard).Begin();
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (previousValue > sn.Favorite)
-        //                {
-        //                    (this.Resources["DecreaseFavoriteNumberAnimation"] as Storyboard).Begin();
-        //                }
-        //            }
-        //        });
-        //    };
-
-        //    client.ExecuteFailed += (obj, arg) =>
-        //    {
-        //        //...Refresh UI and do nothing with database
-        //        this.Dispatcher.BeginInvoke(() =>
-        //        {
-        //            var sn = this.DataContext as SchoolNewsExt;
-
-        //            if (isFavoriteButtonClicked)
-        //            {
-        //                sn.Favorite++;
-        //                sn.SendPropertyChanged("Favorite");
-        //                (this.Resources["IncreaseFavoriteNumberAnimation"] as Storyboard).Begin();
-        //            }
-        //            else
-        //            {
-        //                sn.Favorite = Math.Max(0, sn.Favorite - 1);
-        //                sn.SendPropertyChanged("Favorite");
-        //                (this.Resources["DecreaseFavoriteNumberAnimation"] as Storyboard).Begin();
-        //            }
-        //        });
-        //    };
-
-        //    client.Execute(req, Global.Instance.Session, Global.Instance.Settings.UID);
-        //}
-
-        ///// <summary>
-        ///// Refresh "Read" component of current piece of Tongji News.
-        ///// </summary>
-        ///// <remarks>
-        ///// This function should be executed in UI thread.
-        ///// </remarks>
-        //private void RefreshCurrentNewsOnRead(int id)
-        //{
-        //    var req = new SchoolNewsGetRequest<SchoolNewsGetResponse>();
-        //    var client = new WTDefaultClient<SchoolNewsGetResponse>();
-
-        //    req.Id = id;
-
-        //    client.ExecuteCompleted += (obj, arg) =>
-        //    {
-        //        SchoolNewsExt itemInDB = null;
-        //        using (var db = WTShareDataContext.ShareDB)
-        //        {
-        //            itemInDB = db.SchoolNewsTable.Where((n) => n.Id == req.Id).SingleOrDefault();
-
-        //            if (itemInDB != null)
-        //            {
-        //                itemInDB.Read = arg.Result.SchoolNews.Read;
-        //                itemInDB.Favorite = arg.Result.SchoolNews.Favorite;
-        //                itemInDB.Like = arg.Result.SchoolNews.Like;
-        //                //...Do nothing with CanLike or CanFavorite
-        //            }
-        //            else
-        //                return;
-
-        //            db.SubmitChanges();
-        //        }
-
-        //        this.Dispatcher.BeginInvoke(() =>
-        //        {
-        //            var sn = this.DataContext as SchoolNewsExt;
-
-        //            if (sn.Favorite != itemInDB.Favorite)
-        //            {
-        //                sn.Favorite = itemInDB.Favorite;
-        //                sn.SendPropertyChanged("Favorite");
-        //            }
-        //            if (sn.Like != itemInDB.Like)
-        //            {
-        //                sn.Like = itemInDB.Like;
-        //                sn.SendPropertyChanged("Like");
-        //            }
-        //        });
-        //    };
-
-        //    client.Execute(req);
-        //}
 
         /// <summary>
         /// Send Read request to server.

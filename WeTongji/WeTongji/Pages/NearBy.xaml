@@ -119,7 +119,8 @@
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
-        <TextBlock x:Name="TextBlock_Loading"  Text="正在加载，请稍后..." FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
+        <TextBlock x:Name="TextBlock_Loading" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"  
+                   Text="{Binding Path=LocalizedResources.NearBy_LoadingData, Source={StaticResource LocalizedStrings}}"/>
         <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       Visibility="{Binding Visibility, ElementName=TextBlock_Loading, Converter={StaticResource TurnOverVisibilityConverter}}">
             <StackPanel x:Name="StackPanel_Root" Margin="20,0,20,30">
@@ -160,10 +161,10 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="地址:"
+                    <TextBlock Text="{Binding Path=LocalizedResources.NearBy_Location, Source={StaticResource LocalizedStrings}}"
                            Visibility="{Binding Location, Converter={StaticResource ReversedTextLengthToVisibilityConverter}}"/>
-                    <TextBlock Grid.Row="1" Text="电话:" 
-                           Visibility="{Binding Contact, Converter={StaticResource ReversedTextLengthToVisibilityConverter}}"/>
+                    <TextBlock Grid.Row="1" Visibility="{Binding Contact, Converter={StaticResource ReversedTextLengthToVisibilityConverter}}"
+                               Text="{Binding Path=LocalizedResources.NearBy_Tel, Source={StaticResource LocalizedStrings}}"/>
 
                     <Button Grid.Column="2" HorizontalAlignment="Left" Margin="-15,-3,0,0" Click="ViewMapAddress" Style="{StaticResource NoBorderButton}">
                         <TextBlock x:Name="TextBlock_Location"  Text="{Binding Location}" TextWrapping="Wrap"
@@ -188,7 +189,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Height="40" Background="#FFF16C00" VerticalAlignment="Top">
-                        <TextBlock Text="票" Margin="10,6,0,0"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.NearBy_TicketSymbol, Source={StaticResource LocalizedStrings}}" 
+                                   Margin="10,6,0,0"/>
                     </Border>
 
                     <Border Grid.Column="2" Background="#FFD08B53">
@@ -233,27 +235,34 @@
 
 
                 <!--Context-->
-                <TextBlock Text="简介" Margin="0,23,0,0" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+                <TextBlock Text="{Binding Path=LocalizedResources.NearBy_Introduction, Source={StaticResource LocalizedStrings}}" 
+                           Margin="0,23,0,0" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
                 <StackPanel x:Name="StackPanel_Description" Margin="0,11,0,0"/>
 
+                <!--Related images-->
                 <StackPanel Margin="0,23,0,0"
                          Visibility="{Binding IsIllustrated, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
-                    <TextBlock Text="图片" FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
+                    <TextBlock Text="{Binding Path=LocalizedResources.NearBy_RelatedImages, Source={StaticResource LocalizedStrings}}" 
+                               FontSize="24" Foreground="{StaticResource NewsThemeBrush}"/>
 
-                    <!--Related images-->
                     <ListBox x:Name="ListBox_Pic" Margin="0,15,0,0"
                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Width="{Binding ActualWidth, ElementName=StackPanel_Root}" Margin="0,0,0,24">
-                                    <TextBlock Text="正在加载图片..." FontSize="22" Foreground="#FF999999"
-                                       Visibility="{Binding Visibility, ElementName=Button_ReloadImage, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                                    
+                                    <!--Loading picture-->
+                                    <TextBlock Text="{Binding Path=LocalizedResources.Common_LoadingPicture, Source={StaticResource LocalizedStrings}}" 
+                                               FontSize="22" Foreground="#FF999999" 
+                                               Visibility="{Binding Visibility, ElementName=Button_ReloadImage, Converter={StaticResource TurnOverVisibilityConverter}}"/>
 
-                                    <Button x:Name="Button_ReloadImage" BorderThickness="0" Content="(图片加载失败，请点击重试)" FontSize="22" HorizontalAlignment="Left"
-                                    Foreground="#FF999999"
-                                    Style="{StaticResource NoBorderButtonStyle}"
-                                    Visibility="Collapsed"
-                                    Click="Button_ReloadImage_Click"/>
+                                    <!--Load picture failed-->
+                                    <Button x:Name="Button_ReloadImage" BorderThickness="0"  FontSize="22" HorizontalAlignment="Left"
+                                            Content="{Binding Path=LocalizedResources.Common_LoadPictureFailedPrompt, Source={StaticResource LocalizedStrings}}"
+                                            Foreground="#FF999999"
+                                            Style="{StaticResource NoBorderButtonStyle}"
+                                            Visibility="Collapsed"
+                                            Click="Button_ReloadImage_Click"/>
 
                                     <Image Source="{Binding ImageBrush}" HorizontalAlignment="Left" Stretch="UniformToFill">
                                         <toolkit:GestureService.GestureListener>
@@ -271,10 +280,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.Like.rest.png" Text="喜欢" IsEnabled="False"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏" IsEnabled="False"/>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

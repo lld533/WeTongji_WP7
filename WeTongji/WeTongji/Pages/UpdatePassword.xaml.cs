@@ -19,6 +19,14 @@ namespace WeTongji
         public UpdatePassword()
         {
             InitializeComponent();
+
+            var btn = new ApplicationBarIconButton(new Uri("/icons/appbar.check.rest.png", UriKind.RelativeOrAbsolute))
+                        {
+                            IsEnabled = false,
+                            Text = StringLibrary.UpdatePassword_AppBarSendText
+                        };
+            btn.Click += Button_Send_Click;
+            this.ApplicationBar.Buttons.Add(btn);
         }
 
         private void UpdateSendButton(Object sender, RoutedEventArgs e)
@@ -42,7 +50,7 @@ namespace WeTongji
 
             if (PasswordBox_New.Password != PasswordBox_Repeat.Password)
             {
-                MessageBox.Show("您输入的两次密码不相同，请重试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.UpdatePassword_ConfirmNewPasswordErrorPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 PasswordBox_Repeat.Focus();
                 PasswordBox_Repeat.SelectAll();
                 return;
@@ -60,7 +68,7 @@ namespace WeTongji
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         Global.Instance.UpdateSettings(Global.Instance.Settings.UID, req.NewPassword, arg.Result.Session);
-                        var result = MessageBox.Show("恭喜，已经成功修改密码~", "修改成功", MessageBoxButton.OK);
+                        var result = MessageBox.Show(StringLibrary.UpdatePassword_SucceededText, StringLibrary.UpdatePassword_SucceededCaption, MessageBoxButton.OK);
                         this.NavigationService.GoBack();
                     });
                 };
@@ -71,7 +79,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             this.NavigationService.GoBack();
                         });
                     }
@@ -84,20 +92,20 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.InvalidPassword:
                                     {
-                                        MessageBox.Show("旧密码输入错误，请检查后重试。", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.UpdatePassword_OldPasswordErrorPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         PasswordBox_Old.Focus();
                                         PasswordBox_Old.SelectAll();
                                     }
                                     break;
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是不是在其他客户端中登录？请重新登录。", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         this.NavigationService.RemoveBackEntry();
                                         this.NavigationService.GoBack();
                                     }
                                     break;
                                 default:
-                                    MessageBox.Show("修改密码失败，请重试。", "提示", MessageBoxButton.OK);
+                                    MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     break;
                             }
                         });
@@ -106,7 +114,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("修改密码失败，请重试。", "提示", MessageBoxButton.OK);
+                            MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         });
                     }
                 };

@@ -61,7 +61,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 微同济用户协议.
+        ///   Looks up a localized string similar to User Agreements.
         /// </summary>
         public static string About_AgreementLink {
             get {
@@ -70,7 +70,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 关于.
+        ///   Looks up a localized string similar to About.
         /// </summary>
         public static string About_PageTitle {
             get {
@@ -79,7 +79,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows Phone 版本.
+        ///   Looks up a localized string similar to Windows Phone.
         /// </summary>
         public static string About_PlatformName {
             get {
@@ -88,7 +88,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 给WeTongji评分.
+        ///   Looks up a localized string similar to Rate us.
         /// </summary>
         public static string About_Rate {
             get {
@@ -97,7 +97,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 访问WeTongji官方网站.
+        ///   Looks up a localized string similar to Official website.
         /// </summary>
         public static string About_ViewWebsite {
             get {
@@ -106,7 +106,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 收藏.
+        ///   Looks up a localized string similar to Favorite.
         /// </summary>
         public static string Activity_AppBarFavoriteText {
             get {
@@ -115,7 +115,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 喜欢.
+        ///   Looks up a localized string similar to Like.
         /// </summary>
         public static string Activity_AppBarLikeText {
             get {
@@ -124,7 +124,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 参与.
+        ///   Looks up a localized string similar to Join.
         /// </summary>
         public static string Activity_AppBarParticipateText {
             get {
@@ -133,7 +133,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 取消收藏.
+        ///   Looks up a localized string similar to Unfavorite.
         /// </summary>
         public static string Activity_AppBarUnfavoriteText {
             get {
@@ -142,7 +142,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 取消喜欢.
+        ///   Looks up a localized string similar to Unlike.
         /// </summary>
         public static string Activity_AppBarUnlikeText {
             get {
@@ -151,7 +151,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 取消参与.
+        ///   Looks up a localized string similar to Quit.
         /// </summary>
         public static string Activity_AppBarUnparticipateText {
             get {
@@ -160,7 +160,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 活动详情.
+        ///   Looks up a localized string similar to Details.
         /// </summary>
         public static string Activity_EventDetails {
             get {
@@ -169,7 +169,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 活动配图.
+        ///   Looks up a localized string similar to Photos.
         /// </summary>
         public static string Activity_EventIllustration {
             get {
@@ -178,7 +178,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 活动介绍.
+        ///   Looks up a localized string similar to Intro.
         /// </summary>
         public static string Activity_EventIntroduction {
             get {
@@ -187,7 +187,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无图片信息.
+        ///   Looks up a localized string similar to No pictures..
         /// </summary>
         public static string Activity_NoIllustrationPrompt {
             get {
@@ -196,7 +196,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 发布方.
+        ///   Looks up a localized string similar to Publisher.
         /// </summary>
         public static string Activity_Source {
             get {
@@ -205,7 +205,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用户协议.
+        ///   Looks up a localized string similar to User Agreements.
         /// </summary>
         public static string Agreement_PageTitle {
             get {
@@ -214,7 +214,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 刷新.
+        ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string CampusInfo_AppBarRefreshText {
             get {
@@ -223,7 +223,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 周边推荐.
+        ///   Looks up a localized string similar to Recommends.
         /// </summary>
         public static string CampusInfo_AroundNews {
             get {
@@ -232,7 +232,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 票.
+        ///   Looks up a localized string similar to Ticket.
         /// </summary>
         public static string CampusInfo_AroundNewsWithTicketPrompt {
             get {
@@ -241,7 +241,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 团体通知.
+        ///   Looks up a localized string similar to Group Notices.
         /// </summary>
         public static string CampusInfo_ClubNews {
             get {
@@ -250,7 +250,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“周边推荐”.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingAroundNews {
             get {
@@ -259,7 +259,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“团体通知”.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingClubNews {
             get {
@@ -268,7 +268,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“周边推荐”，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingMoreAroundNews {
             get {
@@ -277,7 +277,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“团体通知”，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingMoreClubNews {
             get {
@@ -286,7 +286,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“校务通知”，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingMoreOfficialNotes {
             get {
@@ -295,7 +295,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“同济动态”，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingMoreTongjiNews {
             get {
@@ -304,7 +304,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“校务通知”.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingOfficialNotes {
             get {
@@ -313,7 +313,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载“同济动态”.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CampusInfo_LoadingTongjiNews {
             get {
@@ -322,7 +322,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载更多“周边推荐”.
+        ///   Looks up a localized string similar to More....
         /// </summary>
         public static string CampusInfo_LoadMoreAroundNews {
             get {
@@ -331,7 +331,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载更多“团体通知”.
+        ///   Looks up a localized string similar to More....
         /// </summary>
         public static string CampusInfo_LoadMoreClubNews {
             get {
@@ -340,7 +340,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载更多“校务通知”.
+        ///   Looks up a localized string similar to More....
         /// </summary>
         public static string CampusInfo_LoadMoreOfficialNotes {
             get {
@@ -349,7 +349,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载更多“同济动态”.
+        ///   Looks up a localized string similar to More....
         /// </summary>
         public static string CampusInfo_LoadMoreTongjiNews {
             get {
@@ -358,7 +358,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“周边推荐”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CampusInfo_NoAroundNewsPrompt {
             get {
@@ -367,7 +367,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“团体通知”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CampusInfo_NoClubNewsPrompt {
             get {
@@ -376,7 +376,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“团体通知”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CampusInfo_NoOfficialNotesPrompt {
             get {
@@ -385,7 +385,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“同济动态”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CampusInfo_NoTongjiNewsPrompt {
             get {
@@ -394,7 +394,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 校务通知.
+        ///   Looks up a localized string similar to Official Note.
         /// </summary>
         public static string CampusInfo_OfficialNotes {
             get {
@@ -403,7 +403,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 校园资讯.
+        ///   Looks up a localized string similar to Campus News.
         /// </summary>
         public static string CampusInfo_PageTitle {
             get {
@@ -412,7 +412,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 同济动态.
+        ///   Looks up a localized string similar to Tongji News.
         /// </summary>
         public static string CampusInfo_TongjiNews {
             get {
@@ -421,7 +421,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 收藏.
+        ///   Looks up a localized string similar to Favorite.
         /// </summary>
         public static string Common_AppBarFavoriteText {
             get {
@@ -430,7 +430,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 喜欢.
+        ///   Looks up a localized string similar to Like.
         /// </summary>
         public static string Common_AppBarLikeText {
             get {
@@ -439,7 +439,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 取消收藏.
+        ///   Looks up a localized string similar to Unfavorite.
         /// </summary>
         public static string Common_AppBarUnfavoriteText {
             get {
@@ -448,7 +448,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 取消喜欢.
+        ///   Looks up a localized string similar to Unlike.
         /// </summary>
         public static string Common_AppBarUnlikeText {
             get {
@@ -457,7 +457,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 你确认要退出微同济吗？.
+        ///   Looks up a localized string similar to Confirm to exit WeTonji?.
         /// </summary>
         public static string Common_ExitAppPromptContent {
             get {
@@ -466,7 +466,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 操作失败，请重试.
+        ///   Looks up a localized string similar to Operation failed, please retry..
         /// </summary>
         public static string Common_FailurePrompt {
             get {
@@ -475,7 +475,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载图片....
+        ///   Looks up a localized string similar to Loading pic....
         /// </summary>
         public static string Common_LoadingPicture {
             get {
@@ -484,7 +484,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to （图片加载失败，请点击重试）.
+        ///   Looks up a localized string similar to (Loading pic failed. Click to retry.).
         /// </summary>
         public static string Common_LoadPictureFailedPrompt {
             get {
@@ -493,7 +493,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请登录后再试.
+        ///   Looks up a localized string similar to Please sign in first..
         /// </summary>
         public static string Common_LogInFirstPrompt {
             get {
@@ -502,7 +502,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 提示.
+        ///   Looks up a localized string similar to Notes.
         /// </summary>
         public static string Common_Prompt {
             get {
@@ -511,7 +511,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 您是否在其他客户端中登录过？请重新登录.
+        ///   Looks up a localized string similar to Sign in on other devices? Please sign in again..
         /// </summary>
         public static string Common_SignInOnOtherPlatformPrompt {
             get {
@@ -520,7 +520,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 课程详情.
+        ///   Looks up a localized string similar to Course detail.
         /// </summary>
         public static string CourseDetail_CourseHeader {
             get {
@@ -529,7 +529,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 课号.
+        ///   Looks up a localized string similar to Course ID.
         /// </summary>
         public static string CourseDetail_CourseNO {
             get {
@@ -538,7 +538,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 考试安排.
+        ///   Looks up a localized string similar to Exam.
         /// </summary>
         public static string CourseDetail_ExamHeader {
             get {
@@ -547,7 +547,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学时.
+        ///   Looks up a localized string similar to Class hour.
         /// </summary>
         public static string CourseDetail_Hours {
             get {
@@ -556,7 +556,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载课程详情.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CourseDetail_LoadingCourseDetail {
             get {
@@ -565,7 +565,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载考试安排.
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string CourseDetail_LoadingExam {
             get {
@@ -574,7 +574,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 地点.
+        ///   Looks up a localized string similar to Location.
         /// </summary>
         public static string CourseDetail_Location {
             get {
@@ -583,7 +583,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无课程详情.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CourseDetail_NoCoursePrompt {
             get {
@@ -592,7 +592,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无考试安排.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string CourseDetail_NoExamPrompt {
             get {
@@ -601,7 +601,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学分.
+        ///   Looks up a localized string similar to Credits.
         /// </summary>
         public static string CourseDetail_Points {
             get {
@@ -610,7 +610,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 老师.
+        ///   Looks up a localized string similar to Professor.
         /// </summary>
         public static string CourseDetail_Teacher {
             get {
@@ -619,7 +619,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 时间.
+        ///   Looks up a localized string similar to Time.
         /// </summary>
         public static string CourseDetail_Time {
             get {
@@ -628,7 +628,277 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 密码错误,请重新输入.
+        ///   Looks up a localized string similar to 保存.
+        /// </summary>
+        public static string EditPersonalProfile_AppBarSaveText {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_AppBarSaveText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 头像.
+        /// </summary>
+        public static string EditPersonalProfile_Avatar {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_Avatar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 资料已修改，是否放弃修改并返回？.
+        /// </summary>
+        public static string EditPersonalProfile_DiscardAndReturnPrompt {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_DiscardAndReturnPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 电子邮箱.
+        /// </summary>
+        public static string EditPersonalProfile_Email {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入电子邮箱.
+        /// </summary>
+        public static string EditPersonalProfile_EnterEmail {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_EnterEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入QQ.
+        /// </summary>
+        public static string EditPersonalProfile_EnterQQ {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_EnterQQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入新浪微博.
+        /// </summary>
+        public static string EditPersonalProfile_EnterSinaWeibo {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_EnterSinaWeibo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入手机.
+        /// </summary>
+        public static string EditPersonalProfile_EnterTel {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_EnterTel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 编辑个人资料.
+        /// </summary>
+        public static string EditPersonalProfile_PageTitle {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QQ.
+        /// </summary>
+        public static string EditPersonalProfile_QQ {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_QQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 保存资料失败，请重试.
+        /// </summary>
+        public static string EditPersonalProfile_SavePersonalProfileFailedPrompt {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_SavePersonalProfileFailedPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 新浪微博.
+        /// </summary>
+        public static string EditPersonalProfile_SinaWeibo {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_SinaWeibo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 手机.
+        /// </summary>
+        public static string EditPersonalProfile_Tel {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_Tel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新头像失败，请重试.
+        /// </summary>
+        public static string EditPersonalProfile_UpdateAvatarFailedPrompt {
+            get {
+                return ResourceManager.GetString("EditPersonalProfile_UpdateAvatarFailedPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 发送.
+        /// </summary>
+        public static string ForgotPassword_AppBarSendText {
+            get {
+                return ResourceManager.GetString("ForgotPassword_AppBarSendText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入姓名.
+        /// </summary>
+        public static string ForgotPassword_EnterName {
+            get {
+                return ResourceManager.GetString("ForgotPassword_EnterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入学号.
+        /// </summary>
+        public static string ForgotPassword_EnterStudentNO {
+            get {
+                return ResourceManager.GetString("ForgotPassword_EnterStudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 姓名与学号不符，请检查后重试。.
+        /// </summary>
+        public static string ForgotPassword_IdNameDismatchPrompt {
+            get {
+                return ResourceManager.GetString("ForgotPassword_IdNameDismatchPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 姓名.
+        /// </summary>
+        public static string ForgotPassword_Name {
+            get {
+                return ResourceManager.GetString("ForgotPassword_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 用户不存在，请检查后重试。.
+        /// </summary>
+        public static string ForgotPassword_NoAccountPrompt {
+            get {
+                return ResourceManager.GetString("ForgotPassword_NoAccountPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 该用户未激活，请检查后重试。.
+        /// </summary>
+        public static string ForgotPassword_NotActivatedAccountPrompt {
+            get {
+                return ResourceManager.GetString("ForgotPassword_NotActivatedAccountPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 该用户未注册，请检查后重试。.
+        /// </summary>
+        public static string ForgotPassword_NotRegisteredPrompt {
+            get {
+                return ResourceManager.GetString("ForgotPassword_NotRegisteredPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 忘记密码.
+        /// </summary>
+        public static string ForgotPassword_PageTitle {
+            get {
+                return ResourceManager.GetString("ForgotPassword_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 我们将在核对信息之后发送一封密码重置邮件至您的同济邮箱。.
+        /// </summary>
+        public static string ForgotPassword_Prompt {
+            get {
+                return ResourceManager.GetString("ForgotPassword_Prompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 学号.
+        /// </summary>
+        public static string ForgotPassword_StudentNO {
+            get {
+                return ResourceManager.GetString("ForgotPassword_StudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 重置密码成功.
+        /// </summary>
+        public static string ForgotPassword_SucceededCaption {
+            get {
+                return ResourceManager.GetString("ForgotPassword_SucceededCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 前往您的同济邮箱查看邮件，并且点击充值密码链接。.
+        /// </summary>
+        public static string ForgotPassword_SucceededText {
+            get {
+                return ResourceManager.GetString("ForgotPassword_SucceededText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ImageViewer_AppBarSaveText {
+            get {
+                return ResourceManager.GetString("ImageViewer_AppBarSaveText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving failed..
+        /// </summary>
+        public static string ImageViewer_SaveFailed {
+            get {
+                return ResourceManager.GetString("ImageViewer_SaveFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save picture successfully..
+        /// </summary>
+        public static string ImageViewer_SaveSucceeded {
+            get {
+                return ResourceManager.GetString("ImageViewer_SaveSucceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect password, please try again..
         /// </summary>
         public static string MainPage_AccountPasswordDismatchPrompt {
             get {
@@ -637,7 +907,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 推荐活动.
+        ///   Looks up a localized string similar to Activities.
         /// </summary>
         public static string MainPage_Activities {
             get {
@@ -646,7 +916,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 现在是{0}，\&quot;{1}\&quot;活动即将在{2}分钟后开始，请注意安排时间~.
+        ///   Looks up a localized string similar to It is {0} now, \&quot;{1}\&quot; will start in {2} minutes..
         /// </summary>
         public static string MainPage_ActivityExpiredPromptContentTemplate {
             get {
@@ -655,7 +925,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 提醒.
+        ///   Looks up a localized string similar to Reminder.
         /// </summary>
         public static string MainPage_Alarms {
             get {
@@ -664,7 +934,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 关于.
+        ///   Looks up a localized string similar to About.
         /// </summary>
         public static string MainPage_AppBarAboutText {
             get {
@@ -673,7 +943,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用户反馈.
+        ///   Looks up a localized string similar to Feedback.
         /// </summary>
         public static string MainPage_AppBarFeedbackText {
             get {
@@ -682,7 +952,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最火活动.
+        ///   Looks up a localized string similar to The Hottest.
         /// </summary>
         public static string MainPage_AppBarHotEvents {
             get {
@@ -691,7 +961,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最新活动.
+        ///   Looks up a localized string similar to The Latest.
         /// </summary>
         public static string MainPage_AppBarLatestEvents {
             get {
@@ -700,7 +970,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 登录.
+        ///   Looks up a localized string similar to Sign in.
         /// </summary>
         public static string MainPage_AppBarLoginText {
             get {
@@ -709,7 +979,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最近活动.
+        ///   Looks up a localized string similar to The Most Recent.
         /// </summary>
         public static string MainPage_AppBarRecentEvents {
             get {
@@ -718,7 +988,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 刷新.
+        ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string MainPage_AppBarRefreshText {
             get {
@@ -727,7 +997,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注册.
+        ///   Looks up a localized string similar to Sign up.
         /// </summary>
         public static string MainPage_AppBarRegisterText {
             get {
@@ -736,7 +1006,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 设置.
+        ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string MainPage_AppBarSettingsText {
             get {
@@ -745,7 +1015,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 邮件分享给好友.
+        ///   Looks up a localized string similar to Share by email.
         /// </summary>
         public static string MainPage_AppBarShareToFriendsByMail {
             get {
@@ -754,7 +1024,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注销.
+        ///   Looks up a localized string similar to Sign out.
         /// </summary>
         public static string MainPage_AppBarSignOutText {
             get {
@@ -763,7 +1033,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 查看历史.
+        ///   Looks up a localized string similar to History.
         /// </summary>
         public static string MainPage_AppBarViewAllPeopleOfWeek {
             get {
@@ -772,7 +1042,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 周边推荐.
+        ///   Looks up a localized string similar to Recommends.
         /// </summary>
         public static string MainPage_AroundNews {
             get {
@@ -781,7 +1051,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 校园资讯.
+        ///   Looks up a localized string similar to Campus News.
         /// </summary>
         public static string MainPage_CampusInfo {
             get {
@@ -790,7 +1060,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 团体通知.
+        ///   Looks up a localized string similar to Group Notices.
         /// </summary>
         public static string MainPage_ClubNews {
             get {
@@ -799,7 +1069,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 登录失败，请重试.
+        ///   Looks up a localized string similar to Sign-in failed, please retry..
         /// </summary>
         public static string MainPage_CommonLoginFailedPrompt {
             get {
@@ -808,7 +1078,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 确定想要注销账号？.
+        ///   Looks up a localized string similar to Confirm to sign out?.
         /// </summary>
         public static string MainPage_ConfirmSignOutPrompt {
             get {
@@ -817,7 +1087,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 现在是{0}，\&quot;{1}\&quot;课程即将在{2}分钟后开始，请注意安排时间~.
+        ///   Looks up a localized string similar to It is {0} now, \&quot;{1}\&quot;will start in {2} minutes..
         /// </summary>
         public static string MainPage_CourseExpiredPromptContentTemplate {
             get {
@@ -826,7 +1096,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入密码.
+        ///   Looks up a localized string similar to Enter your password.
         /// </summary>
         public static string MainPage_EnterPasswordPrompt {
             get {
@@ -835,7 +1105,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入学号.
+        ///   Looks up a localized string similar to Enter your ID.
         /// </summary>
         public static string MainPage_EnterStudentNOPrompt {
             get {
@@ -844,7 +1114,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 现在是{0}，\&quot;{1}\&quot;考试即将在{2}分钟后开始，请注意安排时间~.
+        ///   Looks up a localized string similar to It is {0} now, the exam of \&quot;{1}\&quot; will start in {2} minutes..
         /// </summary>
         public static string MainPage_ExamExpiredPromptContentTemplate {
             get {
@@ -853,7 +1123,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 动态.
+        ///   Looks up a localized string similar to Feeds.
         /// </summary>
         public static string MainPage_Feed {
             get {
@@ -862,7 +1132,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 忘记密码？.
+        ///   Looks up a localized string similar to Forget password?.
         /// </summary>
         public static string MainPage_ForgotPasswordLink {
             get {
@@ -871,7 +1141,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 密码不符合要求,请重新输入.
+        ///   Looks up a localized string similar to Password is invalid, please retry..
         /// </summary>
         public static string MainPage_InvalidPasswordPrompt {
             get {
@@ -880,7 +1150,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载中.
+        ///   Looks up a localized string similar to Loading.
         /// </summary>
         public static string MainPage_LoadingAlarms {
             get {
@@ -889,7 +1159,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载更多活动....
+        ///   Looks up a localized string similar to Loading more....
         /// </summary>
         public static string MainPage_LoadingMoreEvents {
             get {
@@ -898,7 +1168,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 加载更多活动.
+        ///   Looks up a localized string similar to Loading more....
         /// </summary>
         public static string MainPage_LoadMoreActivities {
             get {
@@ -907,7 +1177,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 登录超时,请重试.
+        ///   Looks up a localized string similar to Request timeout, please retry..
         /// </summary>
         public static string MainPage_LoginTimeOutPrompt {
             get {
@@ -916,7 +1186,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我的日程.
+        ///   Looks up a localized string similar to My agenda.
         /// </summary>
         public static string MainPage_MyAgenda {
             get {
@@ -925,7 +1195,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我的收藏.
+        ///   Looks up a localized string similar to My favorites.
         /// </summary>
         public static string MainPage_MyFavorite {
             get {
@@ -934,7 +1204,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 账号不存在,请重试.
+        ///   Looks up a localized string similar to Student ID is invalid, please retry..
         /// </summary>
         public static string MainPage_NoAccountPrompt {
             get {
@@ -943,7 +1213,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“推荐活动”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string MainPage_NoActivitiesPrompt {
             get {
@@ -952,7 +1222,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 今天.
+        ///   Looks up a localized string similar to Today.
         /// </summary>
         public static string MainPage_NoArrangementTodayFirstLine {
             get {
@@ -961,7 +1231,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 没有安排.
+        ///   Looks up a localized string similar to No arrangement.
         /// </summary>
         public static string MainPage_NoArrangementTodaySecondLine {
             get {
@@ -970,7 +1240,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 暂无“每周人物”信息.
+        ///   Looks up a localized string similar to No detail info.
         /// </summary>
         public static string MainPage_NoPeopleOfWeekPrompt {
             get {
@@ -979,7 +1249,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 账号未激活,请重试.
+        ///   Looks up a localized string similar to Acount has not been activated..
         /// </summary>
         public static string MainPage_NotActivatedAccountPrompt {
             get {
@@ -988,7 +1258,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用户没有注册,请重试.
+        ///   Looks up a localized string similar to Please sign up for your account..
         /// </summary>
         public static string MainPage_NotRegisteredPrompt {
             get {
@@ -997,7 +1267,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 校务通知.
+        ///   Looks up a localized string similar to Official Note.
         /// </summary>
         public static string MainPage_OfficialNotes {
             get {
@@ -1006,7 +1276,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 参与.
+        ///   Looks up a localized string similar to join.
         /// </summary>
         public static string MainPage_Participants {
             get {
@@ -1015,7 +1285,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 密码.
+        ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string MainPage_Password {
             get {
@@ -1024,7 +1294,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 每周人物.
+        ///   Looks up a localized string similar to Weekly Person.
         /// </summary>
         public static string MainPage_PeopleOfWeek {
             get {
@@ -1033,7 +1303,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我正在使用微同济-同济大学专属校园移动应用，帮助管理我的大学日程，推送校内校外的大小活动，不再错过任何一个精彩的活动，快点和我一起去下载(http://we.tongji.edu.cn).
+        ///   Looks up a localized string similar to I&apos;m using WeTongji - the campus mobile application for Tongji, with the help of which every student could manage his agenda, aware of every school news. Never miss any single activity on campus any more. Go to download(http://we.tongji.edu.cn).
         /// </summary>
         public static string MainPage_ShareToFriendsEmailBody {
             get {
@@ -1042,7 +1312,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 推荐使用WeTongji(Windows Phone版).
+        ///   Looks up a localized string similar to Recommendation of WeTongji(Windows Phone).
         /// </summary>
         public static string MainPage_ShareToFriendsEmailSubject {
             get {
@@ -1051,7 +1321,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学号.
+        ///   Looks up a localized string similar to Student ID.
         /// </summary>
         public static string MainPage_StudentNO {
             get {
@@ -1060,7 +1330,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 同济动态.
+        ///   Looks up a localized string similar to Tongji News.
         /// </summary>
         public static string MainPage_TongjiNews {
             get {
@@ -1069,7 +1339,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我正在{0} {1}上使用微同济Windows Phone v{2}，.
+        ///   Looks up a localized string similar to I&apos;m using WeTongji(Windows Phone v{2}) on {0} {1}..
         /// </summary>
         public static string MainPage_UserFeedBackEmailBodyTemplate {
             get {
@@ -1078,7 +1348,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [用户反馈]微同济Windows Phone v{0}.
+        ///   Looks up a localized string similar to [Feedback]WeTongji(Windows Phone v{0}).
         /// </summary>
         public static string MainPage_UserFeedBackEmailSubjectTemplate {
             get {
@@ -1087,7 +1357,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 查看详情.
+        ///   Looks up a localized string similar to See more.
         /// </summary>
         public static string MainPage_ViewPeopleOfWeekDetail {
             get {
@@ -1096,7 +1366,745 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}，欢迎再次使用微同济~.
+        ///   Looks up a localized string similar to 今日.
+        /// </summary>
+        public static string MyAgenda_AppBarTodayText {
+            get {
+                return ResourceManager.GetString("MyAgenda_AppBarTodayText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载日程，请稍后....
+        /// </summary>
+        public static string MyAgenda_Loading {
+            get {
+                return ResourceManager.GetString("MyAgenda_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 今天没有安排了，好好休息吧~.
+        /// </summary>
+        public static string MyAgenda_NoArrangementToday {
+            get {
+                return ResourceManager.GetString("MyAgenda_NoArrangementToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Campus News.
+        /// </summary>
+        public static string MyFavorite_CampusInfo {
+            get {
+                return ResourceManager.GetString("MyFavorite_CampusInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join.
+        /// </summary>
+        public static string MyFavorite_EventParticipants {
+            get {
+                return ResourceManager.GetString("MyFavorite_EventParticipants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Activities.
+        /// </summary>
+        public static string MyFavorite_Events {
+            get {
+                return ResourceManager.GetString("MyFavorite_Events", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No content..
+        /// </summary>
+        public static string MyFavorite_NoCampusInfoPrompt {
+            get {
+                return ResourceManager.GetString("MyFavorite_NoCampusInfoPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No content..
+        /// </summary>
+        public static string MyFavorite_NoEventsPrompt {
+            get {
+                return ResourceManager.GetString("MyFavorite_NoEventsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No content..
+        /// </summary>
+        public static string MyFavorite_NoPeopleOfWeekPrompt {
+            get {
+                return ResourceManager.GetString("MyFavorite_NoPeopleOfWeekPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My favorites.
+        /// </summary>
+        public static string MyFavorite_PageTitle {
+            get {
+                return ResourceManager.GetString("MyFavorite_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weekly person.
+        /// </summary>
+        public static string MyFavorite_PeopleOfWeek {
+            get {
+                return ResourceManager.GetString("MyFavorite_PeopleOfWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vol. .
+        /// </summary>
+        public static string MyFavorite_PeopleOfWeekVolPrefix {
+            get {
+                return ResourceManager.GetString("MyFavorite_PeopleOfWeekVolPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MyFavorite_PeopleOfWeekVolSuffix {
+            get {
+                return ResourceManager.GetString("MyFavorite_PeopleOfWeekVolSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动刷新.
+        /// </summary>
+        public static string MySettings_AutoRefresh {
+            get {
+                return ResourceManager.GetString("MySettings_AutoRefresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 界面中自动刷新内容.
+        /// </summary>
+        public static string MySettings_AutoRefreshAction {
+            get {
+                return ResourceManager.GetString("MySettings_AutoRefreshAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 检测新版本.
+        /// </summary>
+        public static string MySettings_CheckNewVersion {
+            get {
+                return ResourceManager.GetString("MySettings_CheckNewVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 检测新版本失败.
+        /// </summary>
+        public static string MySettings_CheckNewVersionFailedPrompt {
+            get {
+                return ResourceManager.GetString("MySettings_CheckNewVersionFailedPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 清除图片缓存.
+        /// </summary>
+        public static string MySettings_ClearImageCache {
+            get {
+                return ResourceManager.GetString("MySettings_ClearImageCache", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确认清空图片缓存？.
+        /// </summary>
+        public static string MySettings_ClearImageCacheConfirmation {
+            get {
+                return ResourceManager.GetString("MySettings_ClearImageCacheConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在计算....
+        /// </summary>
+        public static string MySettings_ComputingImageCache {
+            get {
+                return ResourceManager.GetString("MySettings_ComputingImageCache", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 当前版本：.
+        /// </summary>
+        public static string MySettings_CurrentVersion {
+            get {
+                return ResourceManager.GetString("MySettings_CurrentVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 共  {0}.
+        /// </summary>
+        public static string MySettings_ImageCacheSizeDisplayTemplate {
+            get {
+                return ResourceManager.GetString("MySettings_ImageCacheSizeDisplayTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 退出确认.
+        /// </summary>
+        public static string MySettings_LeaveAppConfirmation {
+            get {
+                return ResourceManager.GetString("MySettings_LeaveAppConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 退出应用是否弹出对话框.
+        /// </summary>
+        public static string MySettings_LeaveAppConfirmationAction {
+            get {
+                return ResourceManager.GetString("MySettings_LeaveAppConfirmationAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 最新版本为{0}，是否前往应用商店查看更新？.
+        /// </summary>
+        public static string MySettings_NewVersionExistsPrompt {
+            get {
+                return ResourceManager.GetString("MySettings_NewVersionExistsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 当前版本已经是最新的，感谢您对微同济团队的支持！.
+        /// </summary>
+        public static string MySettings_NoNewVersionPrompt {
+            get {
+                return ResourceManager.GetString("MySettings_NoNewVersionPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 设置.
+        /// </summary>
+        public static string MySettings_PageTitle {
+            get {
+                return ResourceManager.GetString("MySettings_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduction:.
+        /// </summary>
+        public static string NearBy_Introduction {
+            get {
+                return ResourceManager.GetString("NearBy_Introduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        public static string NearBy_LoadingData {
+            get {
+                return ResourceManager.GetString("NearBy_LoadingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Address:.
+        /// </summary>
+        public static string NearBy_Location {
+            get {
+                return ResourceManager.GetString("NearBy_Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pictures.
+        /// </summary>
+        public static string NearBy_RelatedImages {
+            get {
+                return ResourceManager.GetString("NearBy_RelatedImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tel:.
+        /// </summary>
+        public static string NearBy_Tel {
+            get {
+                return ResourceManager.GetString("NearBy_Tel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to T.
+        /// </summary>
+        public static string NearBy_TicketSymbol {
+            get {
+                return ResourceManager.GetString("NearBy_TicketSymbol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Photos.
+        /// </summary>
+        public static string PeopleOfWeek_Images {
+            get {
+                return ResourceManager.GetString("PeopleOfWeek_Images", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduction.
+        /// </summary>
+        public static string PeopleOfWeek_Introduction {
+            get {
+                return ResourceManager.GetString("PeopleOfWeek_Introduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Weekly Person.
+        /// </summary>
+        public static string PeopleOfWeek_PageTitle {
+            get {
+                return ResourceManager.GetString("PeopleOfWeek_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Story.
+        /// </summary>
+        public static string PeopleOfWeek_Story {
+            get {
+                return ResourceManager.GetString("PeopleOfWeek_Story", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 刷新.
+        /// </summary>
+        public static string PeopleOfWeekList_AppBarRefreshText {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_AppBarRefreshText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载所有每周人物，请稍后....
+        /// </summary>
+        public static string PeopleOfWeekList_Loading {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 所有每周人物.
+        /// </summary>
+        public static string PeopleOfWeekList_PageTitle {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 第.
+        /// </summary>
+        public static string PeopleOfWeekList_VolPrefix {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_VolPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 期.
+        /// </summary>
+        public static string PeopleOfWeekList_VolSuffix {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_VolSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string PersonalProfile_AppBarEditText {
+            get {
+                return ResourceManager.GetString("PersonalProfile_AppBarEditText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change password.
+        /// </summary>
+        public static string PersonalProfile_AppBarUpdatePasswordText {
+            get {
+                return ResourceManager.GetString("PersonalProfile_AppBarUpdatePasswordText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add email.
+        /// </summary>
+        public static string PersonalProfile_CreateEmail {
+            get {
+                return ResourceManager.GetString("PersonalProfile_CreateEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add QQ.
+        /// </summary>
+        public static string PersonalProfile_CreateQQ {
+            get {
+                return ResourceManager.GetString("PersonalProfile_CreateQQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add sina weibo.
+        /// </summary>
+        public static string PersonalProfile_CreateSinaWeibo {
+            get {
+                return ResourceManager.GetString("PersonalProfile_CreateSinaWeibo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add phone.
+        /// </summary>
+        public static string PersonalProfile_CreateTel {
+            get {
+                return ResourceManager.GetString("PersonalProfile_CreateTel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        public static string PersonalProfile_Email {
+            get {
+                return ResourceManager.GetString("PersonalProfile_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading failed..
+        /// </summary>
+        public static string PersonalProfile_LoadFailed {
+            get {
+                return ResourceManager.GetString("PersonalProfile_LoadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        public static string PersonalProfile_Loading {
+            get {
+                return ResourceManager.GetString("PersonalProfile_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Major.
+        /// </summary>
+        public static string PersonalProfile_Major {
+            get {
+                return ResourceManager.GetString("PersonalProfile_Major", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        public static string PersonalProfile_PageTitle {
+            get {
+                return ResourceManager.GetString("PersonalProfile_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to QQ.
+        /// </summary>
+        public static string PersonalProfile_QQ {
+            get {
+                return ResourceManager.GetString("PersonalProfile_QQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sina weibo.
+        /// </summary>
+        public static string PersonalProfile_SinaWeibo {
+            get {
+                return ResourceManager.GetString("PersonalProfile_SinaWeibo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Student ID.
+        /// </summary>
+        public static string PersonalProfile_StudentNO {
+            get {
+                return ResourceManager.GetString("PersonalProfile_StudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phone.
+        /// </summary>
+        public static string PersonalProfile_Tel {
+            get {
+                return ResourceManager.GetString("PersonalProfile_Tel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 微同济用户协议.
+        /// </summary>
+        public static string SignUp_Agreement {
+            get {
+                return ResourceManager.GetString("SignUp_Agreement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 《.
+        /// </summary>
+        public static string SignUp_AgreementPrefix {
+            get {
+                return ResourceManager.GetString("SignUp_AgreementPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 》.
+        /// </summary>
+        public static string SignUp_AgreementSuffix {
+            get {
+                return ResourceManager.GetString("SignUp_AgreementSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 账号已经注册,请登录.
+        /// </summary>
+        public static string SignUp_AlreadyRegisteredPrompt {
+            get {
+                return ResourceManager.GetString("SignUp_AlreadyRegisteredPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确定.
+        /// </summary>
+        public static string SignUp_AppBarOkText {
+            get {
+                return ResourceManager.GetString("SignUp_AppBarOkText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 注册信息有误，请检查后重试.
+        /// </summary>
+        public static string SignUp_BadSignUpInfo {
+            get {
+                return ResourceManager.GetString("SignUp_BadSignUpInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确认密码.
+        /// </summary>
+        public static string SignUp_ConfirmPassword {
+            get {
+                return ResourceManager.GetString("SignUp_ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入姓名.
+        /// </summary>
+        public static string SignUp_EnterName {
+            get {
+                return ResourceManager.GetString("SignUp_EnterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入密码.
+        /// </summary>
+        public static string SignUp_EnterPassword {
+            get {
+                return ResourceManager.GetString("SignUp_EnterPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请确认密码.
+        /// </summary>
+        public static string SignUp_EnterPasswordAgain {
+            get {
+                return ResourceManager.GetString("SignUp_EnterPasswordAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入学号.
+        /// </summary>
+        public static string SignUp_EnterStudentNO {
+            get {
+                return ResourceManager.GetString("SignUp_EnterStudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 我已阅读并同意.
+        /// </summary>
+        public static string SignUp_IAgreeTo {
+            get {
+                return ResourceManager.GetString("SignUp_IAgreeTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 学号与姓名不符，请检查后重试.
+        /// </summary>
+        public static string SignUp_IdNameDismatchPrompt {
+            get {
+                return ResourceManager.GetString("SignUp_IdNameDismatchPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 姓名.
+        /// </summary>
+        public static string SignUp_Name {
+            get {
+                return ResourceManager.GetString("SignUp_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 您输入的账号不存在，请检查后重试.
+        /// </summary>
+        public static string SignUp_NoAccountPrompt {
+            get {
+                return ResourceManager.GetString("SignUp_NoAccountPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 注册.
+        /// </summary>
+        public static string SignUp_PageTitle {
+            get {
+                return ResourceManager.GetString("SignUp_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 密码.
+        /// </summary>
+        public static string SignUp_Password {
+            get {
+                return ResourceManager.GetString("SignUp_Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 填写信息.
+        /// </summary>
+        public static string SignUp_SecondStep {
+            get {
+                return ResourceManager.GetString("SignUp_SecondStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 学号.
+        /// </summary>
+        public static string SignUp_StudentNO {
+            get {
+                return ResourceManager.GetString("SignUp_StudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 注册成功.
+        /// </summary>
+        public static string SignUp_SucceededCaption {
+            get {
+                return ResourceManager.GetString("SignUp_SucceededCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请登录.
+        /// </summary>
+        public static string SignUp_SucceededText {
+            get {
+                return ResourceManager.GetString("SignUp_SucceededText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 完成注册.
+        /// </summary>
+        public static string SignUpSuccess_AppBarFinishSigningUpText {
+            get {
+                return ResourceManager.GetString("SignUpSuccess_AppBarFinishSigningUpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 前往同济邮箱.
+        /// </summary>
+        public static string SignUpSuccess_BrowseTongjiMail {
+            get {
+                return ResourceManager.GetString("SignUpSuccess_BrowseTongjiMail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 恭喜注册成功.
+        /// </summary>
+        public static string SignUpSuccess_PageTitle {
+            get {
+                return ResourceManager.GetString("SignUpSuccess_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 我们已经发送了一封帐户激活邮件到您的同济邮箱，请查收并进行激活。.
+        /// </summary>
+        public static string SignUpSuccess_Prompt {
+            get {
+                return ResourceManager.GetString("SignUpSuccess_Prompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}，Welcome back to WeTongji~.
         /// </summary>
         public static string Toast_AutoLoginSucceededPromptTemplate {
             get {
@@ -1105,7 +2113,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 网络异常，请稍后再试.
+        ///   Looks up a localized string similar to Network error, please retry..
         /// </summary>
         public static string Toast_NetworkErrorPrompt {
             get {
@@ -1114,7 +2122,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 恭喜，登录成功~.
+        ///   Looks up a localized string similar to Sign in successfully..
         /// </summary>
         public static string Toast_SignInSucceededPrompt {
             get {
@@ -1123,7 +2131,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 操作成功.
+        ///   Looks up a localized string similar to Successful operation..
         /// </summary>
         public static string Toast_Success {
             get {
@@ -1132,7 +2140,160 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 微同济官方主页.
+        ///   Looks up a localized string similar to 每个同济学子都有自己的专属的同济邮箱，微同济将发送账户激活邮件至您的同济邮箱。.
+        /// </summary>
+        public static string TongjiMail_BackgroundInfo {
+            get {
+                return ResourceManager.GetString("TongjiMail_BackgroundInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 开通同济大学电子邮箱.
+        /// </summary>
+        public static string TongjiMail_FirstStep {
+            get {
+                return ResourceManager.GetString("TongjiMail_FirstStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 已经开通同济邮箱，下一步.
+        /// </summary>
+        public static string TongjiMail_NextStep {
+            get {
+                return ResourceManager.GetString("TongjiMail_NextStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 注册.
+        /// </summary>
+        public static string TongjiMail_PageTitle {
+            get {
+                return ResourceManager.GetString("TongjiMail_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 带我去注册.
+        /// </summary>
+        public static string TongjiMail_Register {
+            get {
+                return ResourceManager.GetString("TongjiMail_Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 发送.
+        /// </summary>
+        public static string UpdatePassword_AppBarSendText {
+            get {
+                return ResourceManager.GetString("UpdatePassword_AppBarSendText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确认密码.
+        /// </summary>
+        public static string UpdatePassword_ConfirmNewPassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword_ConfirmNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 您输入的两次密码不相同，请重试.
+        /// </summary>
+        public static string UpdatePassword_ConfirmNewPasswordErrorPrompt {
+            get {
+                return ResourceManager.GetString("UpdatePassword_ConfirmNewPasswordErrorPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入新密码.
+        /// </summary>
+        public static string UpdatePassword_EnterNewPassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword_EnterNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请再次输入新密码.
+        /// </summary>
+        public static string UpdatePassword_EnterNewPasswordAgain {
+            get {
+                return ResourceManager.GetString("UpdatePassword_EnterNewPasswordAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请输入旧密码.
+        /// </summary>
+        public static string UpdatePassword_EnterOldPassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword_EnterOldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 新密码.
+        /// </summary>
+        public static string UpdatePassword_NewPassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 旧密码.
+        /// </summary>
+        public static string UpdatePassword_OldPassword {
+            get {
+                return ResourceManager.GetString("UpdatePassword_OldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 旧密码输入错误，请检查后重试.
+        /// </summary>
+        public static string UpdatePassword_OldPasswordErrorPrompt {
+            get {
+                return ResourceManager.GetString("UpdatePassword_OldPasswordErrorPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 修改密码.
+        /// </summary>
+        public static string UpdatePassword_PageTitle {
+            get {
+                return ResourceManager.GetString("UpdatePassword_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 修改成功.
+        /// </summary>
+        public static string UpdatePassword_SucceededCaption {
+            get {
+                return ResourceManager.GetString("UpdatePassword_SucceededCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 恭喜，已经成功修改密码~.
+        /// </summary>
+        public static string UpdatePassword_SucceededText {
+            get {
+                return ResourceManager.GetString("UpdatePassword_SucceededText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Official website.
         /// </summary>
         public static string ViewOfficialWebsite_PageTitle {
             get {

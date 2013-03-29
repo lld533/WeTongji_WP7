@@ -54,6 +54,13 @@ namespace WeTongji
         public ImageViewer()
         {
             InitializeComponent();
+
+            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.save.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.ImageViewer_AppBarSaveText
+            };
+            button.Click += SaveImage_Button_Click;
+            this.ApplicationBar.Buttons.Add(button);
         }
         #endregion
 
@@ -123,12 +130,12 @@ namespace WeTongji
                     stream.Seek(0, SeekOrigin.Begin);
                     ml.SavePicture(CoreImageName, stream);
 
-                    MessageBox.Show("恭喜，图片保存成功！", "提示", MessageBoxButton.OK);
+                    MessageBox.Show(StringLibrary.ImageViewer_SaveSucceeded, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 }
             }
             catch
             {
-                MessageBox.Show("保存图片失败", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.ImageViewer_SaveFailed, StringLibrary.Common_Prompt, MessageBoxButton.OK);
             }
         }
 

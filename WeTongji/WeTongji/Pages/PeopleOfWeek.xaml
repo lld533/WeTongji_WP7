@@ -69,11 +69,14 @@
                     ItemContainerStyle="{StaticResource WTPivotItemStyle}">
         <controls:Pivot.Title>
             <TextBlock>
-                <Run Text="每周人物-"/>
+                <Run Text="{Binding Path=LocalizedResources.PeopleOfWeek_PageTitle, Source={StaticResource LocalizedStrings}}"/>
+                <Run Text="-"/>
                 <Run Text="{Binding Name}"/>
             </TextBlock>
         </controls:Pivot.Title>
-        <controls:PivotItem Header="人物介绍">
+
+<!--人物介绍-->
+        <controls:PivotItem Header="{Binding Path=LocalizedResources.PeopleOfWeek_Introduction, Source={StaticResource LocalizedStrings}}">
             <ScrollViewer VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <Grid>
@@ -131,7 +134,9 @@
                 </StackPanel>
             </ScrollViewer>
         </controls:PivotItem>
-        <controls:PivotItem Header="经历故事">
+        
+<!--经历故事-->
+        <controls:PivotItem Header="{Binding Path=LocalizedResources.PeopleOfWeek_Story, Source={StaticResource LocalizedStrings}}">
             <ScrollViewer Margin="0,0,-20,0" VerticalScrollBarVisibility="Hidden">
                 <StackPanel HorizontalAlignment="Left" Margin="0,0,20,0">
 
@@ -153,8 +158,6 @@
 									Text="{Binding Words}"/>
                     </Grid>
 
-                    <!--<TextBlock x:Name="TextBlock_Description" Foreground="White" TextWrapping="Wrap" FontSize="22" Margin="0,21,0,0"/>-->
-                    <!--<RichTextBox x:Name="RichTextBox_Description" Foreground="White" TextWrapping="Wrap" FontSize="22" Margin="0,21,0,0"/>-->
                     <StackPanel x:Name="StackPanel_Description"  Margin="0,21,0,0">
                         
                     </StackPanel>
@@ -162,7 +165,9 @@
             </ScrollViewer>
 
         </controls:PivotItem>
-        <controls:PivotItem Header="生活图片">
+
+<!--生活图片-->
+        <controls:PivotItem Header="{Binding Path=LocalizedResources.PeopleOfWeek_Images, Source={StaticResource LocalizedStrings}}">
             <ListBox x:Name="ListBox_Pic"  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                      SelectionChanged="IgnoreSelectionChanged">
                 <ListBox.ItemTemplate>
@@ -190,10 +195,7 @@
 
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.like.rest.png" Text="喜欢" IsEnabled="False"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏" IsEnabled="False"/>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

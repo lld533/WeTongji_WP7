@@ -84,11 +84,11 @@ namespace WeTongji
                 {
                     if (args.Error is System.Net.WebException)
                     {
-                        WTToast.Instance.Show("网络异常，请稍后再试");
+                        WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                     }
                     else
                     {
-                        MessageBox.Show("检测新版本失败", "检测新版本", MessageBoxButton.OK);
+                        MessageBox.Show(StringLibrary.MySettings_CheckNewVersionFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     }
                 });
             };
@@ -99,14 +99,14 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            MessageBox.Show("当前版本已经是最新的，感谢您对微同济团队的支持！", "检测新版本", MessageBoxButton.OK);
+                            MessageBox.Show(StringLibrary.MySettings_NoNewVersionPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         });
                     }
                     else
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            var result = MessageBox.Show(String.Format("最新版本为{0}，是否前往应用商店查看更新？", args.Result.Version.Latest), "当前版本不是最新", MessageBoxButton.OKCancel);
+                            var result = MessageBox.Show(String.Format(StringLibrary.MySettings_NewVersionExistsPrompt, args.Result.Version.Latest), StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
                             if (result == MessageBoxResult.OK)
                             {
                                 var task = new Microsoft.Phone.Tasks.WebBrowserTask();
@@ -122,7 +122,7 @@ namespace WeTongji
 
         private void ClearImageCache(Object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("确认清空图片缓存？", "提示", MessageBoxButton.OKCancel);
+            var result = MessageBox.Show(StringLibrary.MySettings_ClearImageCacheConfirmation, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
 
             if (result == MessageBoxResult.OK)
             {
@@ -141,7 +141,7 @@ namespace WeTongji
             this.Dispatcher.BeginInvoke(() =>
             {
                 ProgressBarPopup.Instance.Open();
-                TextBlock_ImageCache.Text = "正在计算...";
+                TextBlock_ImageCache.Text = StringLibrary.MySettings_ComputingImageCache;
             });
 
             var store = IsolatedStorageFile.GetUserStoreForApplication();
@@ -168,15 +168,15 @@ namespace WeTongji
             {
                 if (szStore >= (1 << 30))
                 {
-                    TextBlock_ImageCache.Text = String.Format("共  " + WrapCacheSize(szStore, 30) + " GB");
+                    TextBlock_ImageCache.Text = String.Format(StringLibrary.MySettings_ImageCacheSizeDisplayTemplate, WrapCacheSize(szStore, 30) + " GB");
                 }
                 else if (szStore >= (1 << 20))
                 {
-                    TextBlock_ImageCache.Text = String.Format("共  " + WrapCacheSize(szStore, 20) + " MB");
+                    TextBlock_ImageCache.Text = String.Format(StringLibrary.MySettings_ImageCacheSizeDisplayTemplate, WrapCacheSize(szStore, 20) + " MB");
                 }
                 else
                 {
-                    TextBlock_ImageCache.Text = String.Format("共  " + WrapCacheSize(szStore, 10) + " KB");
+                    TextBlock_ImageCache.Text = String.Format(StringLibrary.MySettings_ImageCacheSizeDisplayTemplate, WrapCacheSize(szStore, 10) + " KB");
                 }
 
                 ProgressBarPopup.Instance.Close();

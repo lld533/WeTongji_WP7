@@ -26,13 +26,18 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="所有每周人物" Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,16,0,15" FontSize="22"/>
+        <!--Page title-->
+        <TextBlock Text="{Binding Path=LocalizedResources.PeopleOfWeekList_PageTitle, Source={StaticResource LocalizedStrings}}" 
+                   Foreground="{StaticResource PeopleOfWeekThemeBrush}" Margin="0,16,0,15" FontSize="22"/>
 
         <Grid Grid.Row="1">
             <TextBlock x:Name="TextBlock_NoSource" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="22" Foreground="#FF999999"/>
             <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoSource, Converter={StaticResource TurnOverVisibilityConverter}}">
-                <TextBlock Text="正在加载所有每周人物，请稍后..." FontSize="22" Foreground="#FF999999" HorizontalAlignment="Left" VerticalAlignment="Top"
-                       Visibility="{Binding Visibility, ElementName=ListBox_Core, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                
+                <!--Loading...-->
+                <TextBlock Text="{Binding Path=LocalizedResources.PeopleOfWeekList_Loading, Source={StaticResource LocalizedStrings}}" 
+                           FontSize="22" Foreground="#FF999999" HorizontalAlignment="Left" VerticalAlignment="Top"
+                           Visibility="{Binding Visibility, ElementName=ListBox_Core, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                 <!--List-->
                 <ListBox x:Name="ListBox_Core"  BorderThickness="0" BorderBrush="{x:Null}"
                  SelectionChanged="ListBox_Core_SelectionChanged"
@@ -43,9 +48,9 @@
                                 <!--Title-->
                                 <TextBlock x:Name="TextBlock_BasicTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0"
                                    Visibility="{Binding NO, Converter={StaticResource StringIsIntToVisibilityConverter}}">
-                                        <Run Text="第"/>
+                                        <Run Text="{Binding Path=LocalizedResources.PeopleOfWeekList_VolPrefix, Source={StaticResource LocalizedStrings}}"/>
                                         <Run Text="{Binding NO, Converter={StaticResource NumberToChineseNumberStringConverter}}"/>
-                                        <Run Text="期"/>
+                                        <Run Text="{Binding Path=LocalizedResources.PeopleOfWeekList_VolSuffix, Source={StaticResource LocalizedStrings}}"/>
                                 </TextBlock>
                                 <TextBlock x:Name="TextBlock_SpecialTitle" FontSize="21" Foreground="White" Margin="0,-3,0,0" FontWeight="Bold"
                                    Visibility="{Binding Visibility, ElementName=TextBlock_BasicTitle, Converter={StaticResource TurnOverVisibilityConverter}}"
@@ -81,11 +86,7 @@
     </Grid>
     
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBar.Buttons>
-                <shell:ApplicationBarIconButton Text="刷新" Click="Refresh_Button_Clicked" IconUri="/icons/appbar.refresh.rest.png"/>
-            </shell:ApplicationBar.Buttons>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

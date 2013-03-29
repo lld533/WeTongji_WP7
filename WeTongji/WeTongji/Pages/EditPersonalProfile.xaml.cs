@@ -31,6 +31,13 @@ namespace WeTongji
         {
             InitializeComponent();
 
+            var btn = new ApplicationBarIconButton(new Uri("/icons/appbar.save.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.EditPersonalProfile_AppBarSaveText
+            };
+            btn.Click += SaveButtonClicked;
+            this.ApplicationBar.Buttons.Add(btn);
+
             this.Loaded += (o, e) =>
                 {
                     var thread = new Thread(new ThreadStart(LoadData))
@@ -129,9 +136,9 @@ namespace WeTongji
                         (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
 
                         if (arg.Error is System.Net.WebException)
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         else
-                            MessageBox.Show("更新头像失败，请重试", "提示", MessageBoxButton.OK);
+                            MessageBox.Show(StringLibrary.EditPersonalProfile_UpdateAvatarFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     });
                 };
 
@@ -153,7 +160,7 @@ namespace WeTongji
 
             if (isAvatarChanged || isProfileChanged)
             {
-                var result = MessageBox.Show("资料已修改，是否放弃修改并返回？", "提示", MessageBoxButton.OKCancel);
+                var result = MessageBox.Show(StringLibrary.EditPersonalProfile_DiscardAndReturnPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.Cancel)
                     e.Cancel = true;
             }
@@ -202,9 +209,9 @@ namespace WeTongji
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
 
                             if (e.Error is System.Net.WebException)
-                                WTToast.Instance.Show("网络异常，请稍后再试");
+                                WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             else
-                                MessageBox.Show("保存资料失败，请重试", "提示", MessageBoxButton.OK);
+                                MessageBox.Show(StringLibrary.EditPersonalProfile_SavePersonalProfileFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                         });
                     };
 
