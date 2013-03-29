@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using WeTongji.Api.Request;
 using WeTongji.Api.Response;
+using Microsoft.Phone.Shell;
 
 namespace WeTongji
 {
@@ -191,6 +192,13 @@ namespace WeTongji
         public CampusInfo()
         {
             InitializeComponent();
+
+            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.CampusInfo_AppBarRefreshText
+            };
+            button.Click += Refresh_Button_Clicked;
+            this.ApplicationBar.Buttons.Add(button);
         }
 
         private void SchoolNewsSourceChanged(Object sender, NotifyCollectionChangedEventArgs e)
@@ -1855,7 +1863,7 @@ namespace WeTongji
             var btn = sender as Button;
 
             btn.IsHitTestVisible = false;
-            btn.Content = "正在加载\"同济动态\",请稍后...";
+            btn.Content = StringLibrary.CampusInfo_LoadingMoreTongjiNews;
 
             String uid = Global.Instance.CurrentUserID;
             var req = new SchoolNewsGetListRequest<SchoolNewsGetListResponse>();
@@ -1872,7 +1880,7 @@ namespace WeTongji
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         ProgressBarPopup.Instance.Close();
-                        btn.Content = "加载更多\"同济动态\"";
+                        btn.Content = StringLibrary.CampusInfo_LoadMoreTongjiNews;
                         btn.IsHitTestVisible = true;
                     });
                     return;
@@ -1935,7 +1943,7 @@ namespace WeTongji
                     ProgressBarPopup.Instance.Close();
 
                     tongjiNewsSourceState = SourceState.Done;
-                    btn.Content = "加载更多\"同济动态\"";
+                    btn.Content = StringLibrary.CampusInfo_LoadMoreTongjiNews;
                     btn.IsHitTestVisible = true;
                 });
             };
@@ -1953,7 +1961,7 @@ namespace WeTongji
             var btn = sender as Button;
 
             btn.IsHitTestVisible = false;
-            btn.Content = "正在加载\"周边推荐\",请稍后...";
+            btn.Content = StringLibrary.CampusInfo_LoadingMoreAroundNews;
 
             String uid = Global.Instance.CurrentUserID;
             var req = new AroundsGetRequest<AroundsGetResponse>();
@@ -1970,7 +1978,7 @@ namespace WeTongji
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         ProgressBarPopup.Instance.Close();
-                        btn.Content = "加载更多\"周边推荐\"";
+                        btn.Content = StringLibrary.CampusInfo_LoadMoreAroundNews;
                         btn.IsHitTestVisible = true;
                     });
                     return;
@@ -2033,7 +2041,7 @@ namespace WeTongji
                     ProgressBarPopup.Instance.Close();
 
                     aroundNewsSourceState = SourceState.Done;
-                    btn.Content = "加载更多\"周边推荐\"";
+                    btn.Content = StringLibrary.CampusInfo_LoadMoreAroundNews;
                     btn.IsHitTestVisible = true;
                 });
             };
@@ -2051,7 +2059,7 @@ namespace WeTongji
             var btn = sender as Button;
 
             btn.IsHitTestVisible = false;
-            btn.Content = "正在加载\"校务通知\",请稍后...";
+            btn.Content = StringLibrary.CampusInfo_LoadingMoreOfficialNotes;
 
             String uid = Global.Instance.CurrentUserID;
             var req = new ForStaffsGetRequest<ForStaffsGetResponse>();
@@ -2068,7 +2076,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             ProgressBarPopup.Instance.Close();
-                            btn.Content = "加载更多\"校务通知\"";
+                            btn.Content = StringLibrary.CampusInfo_LoadMoreOfficialNotes;
                             btn.IsHitTestVisible = true;
                         });
                         return;
@@ -2131,7 +2139,7 @@ namespace WeTongji
                         ProgressBarPopup.Instance.Close();
 
                         officialNotesSourceState = SourceState.Done;
-                        btn.Content = "加载更多\"校务通知\"";
+                        btn.Content = StringLibrary.CampusInfo_LoadMoreOfficialNotes;
                         btn.IsHitTestVisible = true;
                     });
                 };
@@ -2149,7 +2157,7 @@ namespace WeTongji
             var btn = sender as Button;
 
             btn.IsHitTestVisible = false;
-            btn.Content = "正在加载\"团体通知\",请稍后...";
+            btn.Content = StringLibrary.CampusInfo_LoadingMoreClubNews;
 
             String uid = Global.Instance.CurrentUserID;
             var req = new ClubNewsGetListRequest<ClubNewsGetListResponse>();
@@ -2166,7 +2174,7 @@ namespace WeTongji
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         ProgressBarPopup.Instance.Close();
-                        btn.Content = "加载更多\"团体通知\"";
+                        btn.Content = StringLibrary.CampusInfo_LoadMoreClubNews;
                         btn.IsHitTestVisible = true;
                     });
                     return;
@@ -2229,7 +2237,7 @@ namespace WeTongji
                     ProgressBarPopup.Instance.Close();
 
                     clubNewsSourceState = SourceState.Done;
-                    btn.Content = "加载更多\"团体通知\"";
+                    btn.Content = StringLibrary.CampusInfo_LoadMoreClubNews;
                     btn.IsHitTestVisible = true;
                 });
             };

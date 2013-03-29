@@ -100,7 +100,6 @@ namespace WeTongji
 
                 button = new ApplicationBarIconButton(new Uri("/icons/appbar.register.rest.png", UriKind.RelativeOrAbsolute))
                 {
-                    IsEnabled = false,
                     Text = StringLibrary.MainPage_AppBarRegisterText
                 };
                 button.Click += NavigateToSignUp;

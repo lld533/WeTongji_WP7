@@ -87,10 +87,14 @@
 
 
     <Grid>
-        <Image Source="关于.png" Stretch="None" Margin="1,-32,-1,0" d:IsLocked="True"/>
         <Grid>
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="关于" VerticalAlignment="Top" Margin="21,15,0,0" FontSize="22"/>
+            <!--Page title-->
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="21,15,0,0" FontSize="22"
+                       Text="{Binding Path=LocalizedResources.About_PageTitle, Source={StaticResource LocalizedStrings}}"/>
+            
+            
             <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="0,114,0,0">
+                <!--Logo-->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" d:IsLocked="True">
                     <Path Data="M26.6803,37.8576 C26.5841,37.8582 26.5841,37.8747 26.5718,38.1203 C26.5718,38.1203 26.7076,99.8824 26.7076,99.8824 C27.459,112.345 35.0329,119.021 44.844,121.199 C48.1613,121.935 52.3797,121.753 56.9394,121.159 C66.3236,118.602 67.7171,114.893 70.6872,110.423 C73.3044,115.279 77.8769,119.71 84.2248,121.239 C87.7212,122.506 94.8055,121.954 98.6099,120.857 C101.918,119.622 113.06,115.864 115.379,103.115 C115.821,100.687 116.105,58.9295 115.806,38.0777 C115.789,37.9249 115.809,37.9195 115.642,37.8838 L105.817,37.8757 C105.711,37.8895 105.753,37.802 105.718,38.0437 C105.559,41.3025 105.903,75.2657 105.408,99.3128 C103.697,107.643 99.8313,109.502 96.2894,111.527 C92.9927,113.072 88.2232,112.718 86.2589,112.116 C80.0975,109.83 76.9444,105.609 76.2587,99.3881 C75.7754,93.5325 75.7962,58.5087 75.8167,38.0484 C75.819,37.9171 75.2055,37.9413 75.0941,37.9249 L66.1694,37.9477 C65.9928,37.9413 65.8989,37.9086 65.8996,38.091 C65.7261,58.5287 65.8547,97.2527 65.145,99.878 C62.8535,108.474 58.5612,110.794 56.7288,111.527 C54.3248,112.488 49.3437,112.96 45.9145,112.09 C41.5468,110.499 38.7766,108.106 36.8781,100.993 C36.0849,97.3175 36.388,58.2239 36.1232,38.0381 C36.101,37.8582 36.1323,37.8254 35.9039,37.8001 z" Stretch="Fill" Stroke="White" UseLayoutRounding="False" Width="111.162" StrokeThickness="5" Fill="White" RenderTransformOrigin="0.5,0.5" Height="100" HorizontalAlignment="Left" Margin="-25,0,0,0"/>
                     <Path Data="M179.236,93.75 L187.919,94.7978 C187.966,99.4791 186.37,103.856 183.792,107.124 C181.452,110.78 178.107,113.793 173.792,116.187 C171.846,117.555 169.437,118.385 166.958,119.124 C165.749,119.624 162.694,120.035 159.66,120.094 C156.503,120.156 155.211,120.083 152.607,119.521 C149.877,118.886 145.526,117.177 142.48,114.75 C137.515,110.705 133.956,106.833 132.374,101.167 C131.415,97.1662 131.474,94.1294 131.75,89.7497 C132.001,86.442 132.73,83.1763 134,79.9583 C135.181,77.0465 136.756,74.4485 138.833,72.2502 C141.773,69.1351 145.157,66.7254 149.07,65.1583 C153.208,63.5004 157.93,62.917 162.655,63.3344 C166.599,63.6962 170.312,64.7734 173.667,66.9591 C176.763,68.6594 179.537,70.974 181.833,74.2088 C183.21,76.0788 184.417,77.9772 185.375,79.917 C173.014,86.8567 150.333,99.8946 150.042,99.8946 C149.646,99.8321 147.333,96.2832 145.25,93.0205 L173.083,77.4167 C172.812,76.4376 169.791,73.0004 165.916,71.9587 C164.175,71.2504 160.554,70.8867 156.792,71.3336 C153.962,71.7678 151.4,72.9261 149.083,74.6669 C146.88,76.2444 145.296,78.09 143.833,80.5419 C142.639,82.6273 141.871,85.3201 141.42,88.9167 C141.178,91.0563 141.205,93.1366 141.461,95.1665 C141.701,97.889 142.859,100.822 145.086,103.999 C147.571,106.997 149.75,108.812 153.75,110.288 C158.139,111.386 162.528,111.72 166.917,110.582 C171.343,109.011 174.187,105.916 175.666,103.187 C176.309,102.124 178.444,97.3541 179.236,93.75 z" Fill="White" Height="71" Stretch="Fill" Stroke="White" StrokeThickness="5" UseLayoutRounding="False" Width="72" HorizontalAlignment="Right" Margin="8,28,-26,0"/>
@@ -115,20 +119,24 @@
                     <Border HorizontalAlignment="Left" Height="23" Margin="567,61,-472,0" VerticalAlignment="Top" Width="5" Background="#FF50C1E2"/>
                 </Grid>
 
+                
                 <StackPanel Margin="0,38,0,0">
                     <TextBlock FontSize="24" Margin="0,17,0,0" HorizontalAlignment="Center">
-                    <Run Text="Windows Phone 版本 " />
+                    <Run Text="{Binding Path=LocalizedResources.About_PlatformName, Source={StaticResource LocalizedStrings}}" />
                     <Run x:Name="Run_Version"/>
                     </TextBlock>
                     <Button x:Name="Button_ViewAgreement"  Margin="0,5,0,0" Style="{StaticResource AgreeementButtonStyle}"
                         Click="Button_ViewAgreement_Click">
-                        <TextBlock Text="微同济用户协议" FontSize="22" TextDecorations="Underline"/>
+                        <TextBlock FontSize="22" TextDecorations="Underline"
+                                   Text="{Binding Path=LocalizedResources.About_AgreementLink, Source={StaticResource LocalizedStrings}}"/>
                     </Button>
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Center" Margin="0,123,0,0">
-                    <Button Content="给WeTongji评分" Style="{StaticResource BlueButtonStyle}"
+                    <Button Style="{StaticResource BlueButtonStyle}"
+                            Content="{Binding Path=LocalizedResources.About_Rate, Source={StaticResource LocalizedStrings}}"
                             Click="Button_Rate_Click"/>
-                    <Button Content="访问WeTongji官方网站" Style="{StaticResource BlueButtonStyle}" Margin="0,24,0,0"
+                    <Button Content="{Binding Path=LocalizedResources.About_ViewWebsite, Source={StaticResource LocalizedStrings}}"
+                            Style="{StaticResource BlueButtonStyle}" Margin="0,24,0,0"
                             Click="Button_ViewOfficialWebsite_Click"/>
                 </StackPanel>
 
@@ -136,7 +144,7 @@
 
 
             <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,13" HorizontalAlignment="Center">
-                <TextBlock Text="同济大学微同济 版权所有" HorizontalAlignment="Center" FontSize="14"/>
+                <TextBlock Text="同济大学微同济Ⓒ版权所有" HorizontalAlignment="Center" FontSize="14"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>

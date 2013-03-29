@@ -72,22 +72,27 @@
         <controls:Pivot x:Name="Pivot_Core"  Style="{StaticResource PivotStyle1}">
             <controls:Pivot.Title>
                 <!--Course Name-->
-                <TextBlock FontSize="22" Margin="24,13,0,4" HorizontalAlignment="Left"
-                           Text="软件工程"/>
+                <TextBlock x:Name="TextBlock_PageTitle" FontSize="22" Margin="24,13,0,4" HorizontalAlignment="Left"
+                           Text="{Binding Name}"/>
             </controls:Pivot.Title>
 
             <!--
 课程详情
             -->
-            <controls:PivotItem x:Name="PivotItem_Course"  Header="课程详情" Margin="0,30,0,0">
+            <controls:PivotItem x:Name="PivotItem_Course" Margin="0,30,0,0" 
+                                Header="{Binding Path=LocalizedResources.CourseDetail_CourseHeader, Source={StaticResource LocalizedStrings}}">
 
                 <Grid>
-                    <TextBlock x:Name="TextBlock_NoCourseHint" Text="暂无课程详情" Foreground="#FF999999" FontSize="22"
+                    <!--No course-->
+                    <TextBlock x:Name="TextBlock_NoCourseHint" Foreground="#FF999999" FontSize="22" Visibility="Collapsed"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"
-                               Visibility="Collapsed"/>
+                               Text="{Binding Path=LocalizedResources.CourseDetail_NoCoursePrompt, Source={StaticResource LocalizedStrings}}" />
+                    
+                    <!--Loading course-->
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoCourseHint, Converter={StaticResource TurnOverVisibilityConverter}}">
-                        <TextBlock x:Name="TextBlock_QueryCourse" Text="正在加载课程详情" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"/>
+                        <TextBlock x:Name="TextBlock_QueryCourse" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0" Foreground="#FF999999" FontSize="22"
+                                   Text="{Binding Path=LocalizedResources.CourseDetail_LoadingCourseDetail, Source={StaticResource LocalizedStrings}}"/>
+                        
                         <ScrollViewer VerticalScrollBarVisibility="Hidden"
                                       Visibility="{Binding Visibility, ElementName=TextBlock_QueryCourse, Converter={StaticResource TurnOverVisibilityConverter}}">
                             <StackPanel Margin="20,0">
@@ -127,28 +132,32 @@
 
                                 <!--Teacher-->
                                 <StackPanel Margin="0,0,0,15">
-                                    <TextBlock Text="老师" FontSize="20"/>
+                                    <TextBlock FontSize="20"
+                                               Text="{Binding Path=LocalizedResources.CourseDetail_Teacher, Source={StaticResource LocalizedStrings}}"/>
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
-									Text="{Binding Teacher}"/>
+									           Text="{Binding Teacher}"/>
                                 </StackPanel>
 
                                 <!--Course Id-->
                                 <StackPanel Margin="0,0,0,15">
-                                    <TextBlock Text="课号" FontSize="20"/>
+                                    <TextBlock FontSize="20"
+                                               Text="{Binding Path=LocalizedResources.CourseDetail_CourseNO, Source={StaticResource LocalizedStrings}}" />
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding NO}"/>
                                 </StackPanel>
 
                                 <!--Course Point-->
                                 <StackPanel Margin="0,0,0,15">
-                                    <TextBlock Text="学分" FontSize="20"/>
+                                    <TextBlock FontSize="20"
+                                               Text="{Binding Path=LocalizedResources.CourseDetail_Points, Source={StaticResource LocalizedStrings}}" />
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding Point}"/>
                                 </StackPanel>
 
                                 <!--Course Hours-->
                                 <StackPanel Margin="0,0,0,15">
-                                    <TextBlock Text="学时" FontSize="20"/>
+                                    <TextBlock FontSize="20"
+                                               Text="{Binding Path=LocalizedResources.CourseDetail_Hours, Source={StaticResource LocalizedStrings}}" />
                                     <TextBlock FontSize="28" Foreground="#FF999999" Margin="0,1,0,0"
 									Text="{Binding Hours}"/>
                                 </StackPanel>
@@ -163,26 +172,31 @@
             <!--
 考试安排
             -->
-            <controls:PivotItem x:Name="PivotItem_Exam"  Header="考试安排" Margin="0,30,0,0">
+            <controls:PivotItem x:Name="PivotItem_Exam" Margin="0,30,0,0"
+                                Header="{Binding Path=LocalizedResources.CourseDetail_ExamHeader, Source={StaticResource LocalizedStrings}}">
                 <Grid>
-                    <TextBlock x:Name="TextBlock_NoExamHint" Text="暂无考试安排" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"
-                               Visibility="Collapsed"/>
+                    <!--No Exam-->
+                    <TextBlock x:Name="TextBlock_NoExamHint" Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0" Visibility="Collapsed"
+                               Text="{Binding Path=LocalizedResources.CourseDetail_NoExamPrompt, Source={StaticResource LocalizedStrings}}"/>
+                    
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoExamHint, Converter={StaticResource TurnOverVisibilityConverter}}">
-                        <TextBlock x:Name="TextBlock_QueryExam" Text="正在加载考试安排" Foreground="#FF999999" FontSize="22"
-                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"/>
+                        <!--Loading Exam-->
+                        <TextBlock x:Name="TextBlock_QueryExam" Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,-3,20,0"
+                                   Text="{Binding Path=LocalizedResources.CourseDetail_LoadingExam, Source={StaticResource LocalizedStrings}}"/>
                         <StackPanel Margin="20,0"
                                     Visibility="{Binding Visibility, ElementName=TextBlock_QueryExam, Converter={StaticResource TurnOverVisibilityConverter}}">
                             <!--Time-->
                             <StackPanel>
-                                <TextBlock Text="时间" FontSize="22"/>
+                                <TextBlock FontSize="22"
+                                           Text="{Binding Path=LocalizedResources.CourseDetail_Time, Source={StaticResource LocalizedStrings}}"/>
                                 <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
-                                   Text="{Binding DisplayBeginTimeAndEndTime}"/>
+                                           Text="{Binding DisplayBeginTimeAndEndTime}"/>
                             </StackPanel>
 
                             <!--Place-->
                             <StackPanel Margin="0,14,0,0">
-                                <TextBlock Text="地点" FontSize="22"/>
+                                <TextBlock FontSize="22"
+                                           Text="{Binding Path=LocalizedResources.CourseDetail_Location, Source={StaticResource LocalizedStrings}}"/>
                                 <TextBlock Foreground="#FF999999" Margin="0,3,0,0" FontSize="28" TextWrapping="Wrap"
                                    Text="{Binding Location}"/>
                             </StackPanel>

@@ -23,7 +23,8 @@
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
             <TextBlock Text="WeTongji" FontSize="20"  Style="{StaticResource PhoneTextNormalStyle}" Margin="11,-2,0,0"/>
-            <TextBlock Text="用户协议" Margin="8,-7,0,0" FontSize="60"  Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Margin="8,-7,0,0" FontSize="60"  Style="{StaticResource PhoneTextTitle1Style}"
+                       Text="{Binding Path=LocalizedResources.Agreement_PageTitle, Source={StaticResource LocalizedStrings}}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->

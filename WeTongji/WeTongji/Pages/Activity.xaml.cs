@@ -30,6 +30,29 @@ namespace WeTongji
         public Activity()
         {
             InitializeComponent();
+
+            ApplicationBarIconButton button = null;
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.Like.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.Activity_AppBarLikeText,
+                IsEnabled = false
+            };
+            this.ApplicationBar.Buttons.Add(button);
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.favs.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.Activity_AppBarFavoriteText,
+                IsEnabled = false
+            };
+            this.ApplicationBar.Buttons.Add(button);
+
+            button = new ApplicationBarIconButton(new Uri("/icons/appbar.participate.rest.png", UriKind.RelativeOrAbsolute))
+            {
+                Text = StringLibrary.Activity_AppBarParticipateText,
+                IsEnabled = false
+            };
+            this.ApplicationBar.Buttons.Add(button);
         }
 
         #region [Overridden]
@@ -235,7 +258,7 @@ namespace WeTongji
                 var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                 btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
-                btn.Text = "取消喜欢";
+                btn.Text = StringLibrary.Activity_AppBarUnlikeText;
                 btn.IsEnabled = true;
                 btn.Click -= Button_Like_Clicked;
                 btn.Click += Button_Unlike_Clicked;
@@ -254,7 +277,7 @@ namespace WeTongji
                 var btn = ApplicationBar.Buttons[1] as ApplicationBarIconButton;
 
                 btn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
-                btn.Text = "取消收藏";
+                btn.Text = StringLibrary.Activity_AppBarUnfavoriteText;
                 btn.IsEnabled = true;
                 btn.Click -= Button_Favorite_Clicked;
                 btn.Click += Button_Unfavorite_Clicked;
@@ -273,7 +296,7 @@ namespace WeTongji
                 var btn = ApplicationBar.Buttons[2] as ApplicationBarIconButton;
 
                 btn.IconUri = new Uri("/icons/appbar.unparticipate.rest.png", UriKind.RelativeOrAbsolute);
-                btn.Text = "取消参与";
+                btn.Text = StringLibrary.Activity_AppBarUnparticipateText;
                 btn.IsEnabled = true;
                 btn.Click -= Button_Schedule_Clicked;
                 btn.Click += Button_UnSchedule_Clicked;
@@ -291,7 +314,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
             }
             else
             {
@@ -322,7 +345,7 @@ namespace WeTongji
                         var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                         btn.IconUri = new Uri("/icons/appbar.unlike.rest.png", UriKind.RelativeOrAbsolute);
-                        btn.Text = "取消喜欢";
+                        btn.Text = StringLibrary.Activity_AppBarUnlikeText;
                         btn.IsEnabled = true;
                         btn.Click -= Button_Like_Clicked;
                         btn.Click += Button_Unlike_Clicked;
@@ -339,7 +362,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
                 };
 
@@ -355,7 +378,7 @@ namespace WeTongji
                     {
                         this.Dispatcher.BeginInvoke(() =>
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
                         });
                     }
@@ -369,7 +392,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -378,7 +401,7 @@ namespace WeTongji
                     }
                     else
                     {
-                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                        MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     }
                 };
 
@@ -392,7 +415,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
             }
             else
             {
@@ -423,7 +446,7 @@ namespace WeTongji
                         var btn = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
 
                         btn.IconUri = new Uri("/icons/appbar.like.rest.png", UriKind.RelativeOrAbsolute);
-                        btn.Text = "喜欢";
+                        btn.Text = StringLibrary.Activity_AppBarLikeText;
                         btn.IsEnabled = true;
                         btn.Click += Button_Like_Clicked;
                         btn.Click -= Button_Unlike_Clicked;
@@ -441,7 +464,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
                 };
 
@@ -458,7 +481,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         });
                     }
                     else if (arg.Error is WTException)
@@ -471,7 +494,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -480,7 +503,7 @@ namespace WeTongji
                     }
                     else
                     {
-                        MessageBox.Show("操作失败，请重试", "提示", MessageBoxButton.OK);
+                        MessageBox.Show(StringLibrary.Common_FailurePrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                     }
                 };
 
@@ -493,7 +516,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -540,7 +563,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.unfavourite.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "取消收藏";
+                        favBtn.Text = StringLibrary.Activity_AppBarUnfavoriteText;
                         favBtn.Click -= Button_Favorite_Clicked;
                         favBtn.Click += Button_Unfavorite_Clicked;
                         favBtn.IsEnabled = true;
@@ -557,7 +580,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -571,7 +594,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -579,7 +602,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -598,7 +621,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -645,7 +668,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.favs.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "收藏";
+                        favBtn.Text = StringLibrary.Activity_AppBarFavoriteText;
                         favBtn.Click += Button_Favorite_Clicked;
                         favBtn.Click -= Button_Unfavorite_Clicked;
                         favBtn.IsEnabled = true;
@@ -661,7 +684,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -675,7 +698,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -683,7 +706,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -702,7 +725,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -749,7 +772,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.unparticipate.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "取消参与";
+                        favBtn.Text = StringLibrary.Activity_AppBarUnparticipateText;
                         favBtn.Click -= Button_Schedule_Clicked;
                         favBtn.Click += Button_UnSchedule_Clicked;
                         favBtn.IsEnabled = true;
@@ -762,7 +785,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -776,7 +799,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -784,7 +807,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.
@@ -803,7 +826,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show("请登录后再试", "提示", MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -852,7 +875,7 @@ namespace WeTongji
                     {
                         var favBtn = this.ApplicationBar.Buttons[2] as ApplicationBarIconButton;
                         favBtn.IconUri = new Uri("/icons/appbar.participate.rest.png", UriKind.RelativeOrAbsolute);
-                        favBtn.Text = "参与";
+                        favBtn.Text = StringLibrary.Activity_AppBarParticipateText;
                         favBtn.Click += Button_Schedule_Clicked;
                         favBtn.Click -= Button_UnSchedule_Clicked;
                         favBtn.IsEnabled = true;
@@ -865,7 +888,7 @@ namespace WeTongji
                         }
 
                         ProgressBarPopup.Instance.Close();
-                        WTToast.Instance.Show("操作成功");
+                        WTToast.Instance.Show(StringLibrary.Toast_Success);
                     });
 
                 };
@@ -879,7 +902,7 @@ namespace WeTongji
 
                         if (arg.Error is System.Net.WebException)
                         {
-                            WTToast.Instance.Show("网络异常，请稍后再试");
+                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
                         }
                         else if (arg.Error is WTException)
                         {
@@ -887,7 +910,7 @@ namespace WeTongji
                             {
                                 case Api.Util.Status.NoAuth:
                                     {
-                                        MessageBox.Show("您是否在其他客户端中登录过？请重新登录", "提示", MessageBoxButton.OK);
+                                        MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                     }
                                     break;
                                 //...Todo @_@ Check other status code.

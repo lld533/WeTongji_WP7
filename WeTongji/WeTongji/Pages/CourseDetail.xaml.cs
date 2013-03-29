@@ -18,6 +18,8 @@ using WeTongji.Business;
 using WeTongji.Api.Domain;
 using System.Threading;
 using WeTongji.Pages;
+using System.Reflection;
+using System.Globalization;
 
 namespace WeTongji
 {
@@ -51,7 +53,7 @@ namespace WeTongji
 
                 var strs = strTrimmed.Split("&".ToArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                if(strs.Count()==1)
+                if (strs.Count() == 1)
                 {
                     Pivot_Core.SelectedIndex = 1;
                 }
@@ -89,30 +91,42 @@ namespace WeTongji
                     if (date == DateTime.MinValue)
                         return String.Empty;
 
-                    var sb = new StringBuilder(date.ToString("yyyy/MM/dd(周"));
-                    switch (date.DayOfWeek)
+                    //...Todo @_@ Localizable
+
+                    var sb = new StringBuilder(date.ToString("yyyy/MM/dd("));
+
+                    //...Chinese
+                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
                     {
-                        case System.DayOfWeek.Sunday:
-                            sb.Append("日");
-                            break;
-                        case System.DayOfWeek.Monday:
-                            sb.Append("一");
-                            break;
-                        case System.DayOfWeek.Tuesday:
-                            sb.Append("二");
-                            break;
-                        case System.DayOfWeek.Wednesday:
-                            sb.Append("三");
-                            break;
-                        case System.DayOfWeek.Thursday:
-                            sb.Append("四");
-                            break;
-                        case System.DayOfWeek.Friday:
-                            sb.Append("五");
-                            break;
-                        case System.DayOfWeek.Saturday:
-                            sb.Append("六");
-                            break;
+                        switch (date.DayOfWeek)
+                        {
+                            case System.DayOfWeek.Sunday:
+                                sb.Append("周日");
+                                break;
+                            case System.DayOfWeek.Monday:
+                                sb.Append("周一");
+                                break;
+                            case System.DayOfWeek.Tuesday:
+                                sb.Append("周二");
+                                break;
+                            case System.DayOfWeek.Wednesday:
+                                sb.Append("周三");
+                                break;
+                            case System.DayOfWeek.Thursday:
+                                sb.Append("周四");
+                                break;
+                            case System.DayOfWeek.Friday:
+                                sb.Append("周五");
+                                break;
+                            case System.DayOfWeek.Saturday:
+                                sb.Append("周六");
+                                break;
+                        }
+                    }
+                    //...Default en-us
+                    else
+                    {
+                        sb.Append(date.DayOfWeek.ToString());
                     }
 
                     sb.AppendFormat(") {0}~{1}", date.GetCourseStartTime(base.SectionStart).ToString("HH:mm"), date.GetCourseEndTime(base.SectionEnd).ToString("HH:mm"));
@@ -147,10 +161,10 @@ namespace WeTongji
 
                 this.Dispatcher.BeginInvoke(() =>
                 {
-                   
                     if (examExt != null)
                     {
                         PivotItem_Exam.DataContext = examExt;
+                        TextBlock_PageTitle.DataContext = examExt;
                         TextBlock_QueryExam.Visibility = Visibility.Collapsed;
                     }
                     else
@@ -184,7 +198,7 @@ namespace WeTongji
                         if (semester != null)
                         {
                             var nodes = courses.First().GetCalendarNodes(semester);
-                            this.Dispatcher.BeginInvoke(() => 
+                            this.Dispatcher.BeginInvoke(() =>
                             {
                                 this.PivotItem_Course.DataContext = new CourseNode(courses.First(), DateTime.MinValue);
                                 TextBlock_QueryCourse.Visibility = Visibility.Collapsed;
@@ -225,6 +239,7 @@ namespace WeTongji
                     {
                         PivotItem_Course.DataContext = new CourseNode(courseExt, date);
                         TextBlock_QueryCourse.Visibility = Visibility.Collapsed;
+                        TextBlock_PageTitle.DataContext = courseExt;
                     }
                     else
                     {
@@ -244,7 +259,7 @@ namespace WeTongji
                         examInfo = db.Exams.Where((exam) => exam.SemesterGuid == courseExt.SemesterGuid && exam.NO == courseExt.NO && exam.Teacher == courseExt.Teacher).FirstOrDefault();
                     }
 
-                    this.Dispatcher.BeginInvoke(() => 
+                    this.Dispatcher.BeginInvoke(() =>
                     {
                         if (examInfo != null)
                         {

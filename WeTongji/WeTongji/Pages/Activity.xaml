@@ -83,7 +83,8 @@
         <controls:Pivot Title="{Binding Title}" Style="{StaticResource WTPivotStyle}" Foreground="{StaticResource ActivityThemeBrush}"
                         TitleTemplate="{StaticResource WTPivotTitleTemplate}">
             <!--Pivot item one-->
-            <controls:PivotItem Header="活动介绍" Style="{StaticResource WTPivotItemStyle}">
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.Activity_EventIntroduction, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}">
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
                     <StackPanel>
 
@@ -152,7 +153,8 @@
                             </TextBlock>
                         </Grid>
 
-                        <TextBlock Text="发布方" FontSize="24" Margin="0,30,0,0"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.Activity_Source, Source={StaticResource LocalizedStrings}}" 
+                                   FontSize="24" Margin="0,30,0,0"/>
 
                         <!--Author-->
                         <Grid Margin="0,16,0,0">
@@ -173,22 +175,23 @@
             </controls:PivotItem>
 
             <!--Pivot item two-->
-            <controls:PivotItem Header="活动详情" Style="{StaticResource WTPivotItemStyle}">
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.Activity_EventDetails, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}">
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <!--<TextBlock TextWrapping="Wrap" FontSize="24"
-                               Text="{Binding Description}"/>-->
                     <StackPanel x:Name="StackPanel_Description"/>
                 </ScrollViewer>
             </controls:PivotItem>
 
-            <controls:PivotItem Header="活动配图" Style="{StaticResource WTPivotItemStyle}">
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.Activity_EventIllustration, Source={StaticResource LocalizedStrings}}" 
+                                Style="{StaticResource WTPivotItemStyle}">
                 <Grid>
                     <Image x:Name="Illustration" Visibility="Collapsed" Stretch="Uniform" VerticalAlignment="Top"  Source="{Binding ActivityImageBrush}">
                         <toolkit:GestureService.GestureListener>
                             <toolkit:GestureListener Tap="ViewActivityImage"/>
                         </toolkit:GestureService.GestureListener>
                     </Image>
-                    <TextBlock x:Name="NoIllustrationHint" Text="暂无图片信息" FontSize="22" Foreground="#FF999999"
+                    <TextBlock x:Name="NoIllustrationHint" FontSize="22" Foreground="#FF999999" 
+                               Text="{Binding Path=LocalizedResources.Activity_NoIllustrationPrompt, Source={StaticResource LocalizedStrings}}"
                                Visibility="{Binding Visibility, ElementName=Illustration, Converter={StaticResource TurnOverVisibilityConverter}, Mode=TwoWay}"/>
                 </Grid>
             </controls:PivotItem>
@@ -196,11 +199,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.Like.rest.png" Text="喜欢" IsEnabled="False"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.rest.png" Text="收藏" IsEnabled="False"/>
-            <shell:ApplicationBarIconButton IconUri="/icons/appbar.participate.rest.png" Text="参与" IsEnabled="False"/>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

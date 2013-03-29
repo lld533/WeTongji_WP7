@@ -78,9 +78,10 @@
         <Border Margin="18,0" x:Name="Border_ItemWidthReference" IsHitTestVisible="False"/>
 
         <controls:Pivot x:Name="Pivot_Core" Foreground="{StaticResource NewsThemeBrush}" Style="{StaticResource WTPivotStyle}" ItemContainerStyle="{StaticResource WTPivotItemStyle}"
-                         Title="校园资讯"
+                        Title="{Binding Path=LocalizedResources.CampusInfo_PageTitle, Source={StaticResource LocalizedStrings}}"
                         SelectionChanged="Pivot_Core_SelectionChanged">
-            <controls:PivotItem Header="同济动态">
+<!--同济动态-->
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.CampusInfo_TongjiNews, Source={StaticResource LocalizedStrings}}">
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoTongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_TongjiNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
@@ -162,7 +163,8 @@
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;同济动态&quot;" FontSize="22" 
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" FontSize="22"  
+                                                Content="{Binding Path=LocalizedResources.CampusInfo_LoadMoreTongjiNews, Source={StaticResource LocalizedStrings}}"
                                                 Visibility="{Binding IsInvalidSchoolNews, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Click="Button_LoadMoreTongjiNews_Click"/>
                                     </Grid>
@@ -170,17 +172,21 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <TextBlock Text="正在加载&quot;同济动态&quot;" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Visibility="{Binding Visibility, ElementName=ListBox_TongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.CampusInfo_LoadingTongjiNews, Source={StaticResource LocalizedStrings}}" 
+                                   Foreground="#FF999999" FontSize="22"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Visibility="{Binding Visibility, ElementName=ListBox_TongjiNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
-                    <TextBlock x:Name="TextBlock_NoTongjiNews"  Text="暂无&quot;同济动态&quot;信息" Foreground="#FF999999" FontSize="22"
+                    <TextBlock x:Name="TextBlock_NoTongjiNews" Foreground="#FF999999" FontSize="22"  
+                               Text="{Binding Path=LocalizedResources.CampusInfo_NoTongjiNewsPrompt, Source={StaticResource LocalizedStrings}}"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                Visibility="Collapsed"/>
                 </Grid>
 
             </controls:PivotItem>
-            <controls:PivotItem Header="周边推荐">
+            
+<!--周边推荐-->
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.CampusInfo_AroundNews, Source={StaticResource LocalizedStrings}}">
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoAroundNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_NearBy" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
@@ -203,7 +209,8 @@
 
                                             <Grid Grid.Column="1" HorizontalAlignment="Right" Height="64" VerticalAlignment="Top" Width="111" Visibility="{Binding HasTicket, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Path Data="M0,0 L62,0 L111,29 L111,64 z" Fill="#FFF07817" Opacity="0.9"/>
-                                                <TextBlock Text="票" RenderTransformOrigin="0.5,0.5">
+                                                <TextBlock Text="{Binding Path=LocalizedResources.CampusInfo_AroundNewsWithTicketPrompt, Source={StaticResource LocalizedStrings}}" 
+                                                           RenderTransformOrigin="0.5,0.5">
                                                     <TextBlock.RenderTransform>
                                                         <CompositeTransform Rotation="30" TranslateX="40" TranslateY="26"/>
                                                     </TextBlock.RenderTransform>
@@ -218,7 +225,8 @@
                                            Text="{Binding Summary}"/>
                                             </Grid>
                                         </Grid>
-                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;周边推荐&quot;" FontSize="22"
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" FontSize="22" 
+                                                Content="{Binding Path=LocalizedResources.CampusInfo_LoadMoreAroundNews, Source={StaticResource LocalizedStrings}}"
                                                 Visibility="{Binding IsInvalidAround, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Click="Button_LoadMoreAroundNews_Click"/>
                                     </Grid>
@@ -226,16 +234,18 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <TextBlock Text="正在加载&quot;周边推荐&quot;" Foreground="#FF999999" FontSize="22"
+                        <TextBlock Text="{Binding Path=LocalizedResources.CampusInfo_LoadingAroundNews, Source={StaticResource LocalizedStrings}}" Foreground="#FF999999" FontSize="22"
                                HorizontalAlignment="Left" VerticalAlignment="Top"
                                Visibility="{Binding Visibility, ElementName=ListBox_NearBy, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
-                    <TextBlock x:Name="TextBlock_NoAroundNews"  Text="暂无&quot;周边推荐&quot;信息" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                    <TextBlock x:Name="TextBlock_NoAroundNews" Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Text="{Binding Path=LocalizedResources.CampusInfo_NoAroundNewsPrompt, Source={StaticResource LocalizedStrings}}" 
                                Visibility="Collapsed"/>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="校务通知">
+            
+<!--校务通知-->
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.CampusInfo_OfficialNotes, Source={StaticResource LocalizedStrings}}">
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoOfficialNote, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_OfficialNotes" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
@@ -319,7 +329,8 @@
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;校务通知&quot;" FontSize="22"
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" FontSize="22" 
+                                                Content="{Binding Path=LocalizedResources.CampusInfo_LoadMoreOfficialNotes, Source={StaticResource LocalizedStrings}}"
                                                 Visibility="{Binding IsInvalidForStaff, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Click="Button_LoadMoreOfficialNotes_Click"/>
                                     </Grid>
@@ -327,17 +338,18 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <TextBlock Text="正在加载&quot;校务通知&quot;" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Visibility="{Binding Visibility, ElementName=ListBox_OfficialNotes, Converter={StaticResource TurnOverVisibilityConverter}}"/>
+                        <TextBlock Text="{Binding Path=LocalizedResources.CampusInfo_LoadingOfficialNotes, Source={StaticResource LocalizedStrings}}" 
+                                   Foreground="#FF999999" FontSize="22"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Visibility="{Binding Visibility, ElementName=ListBox_OfficialNotes, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
-                    <TextBlock x:Name="TextBlock_NoOfficialNote"  Text="暂无&quot;团体通知&quot;信息" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                    <TextBlock x:Name="TextBlock_NoOfficialNote" Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Text="{Binding Path=LocalizedResources.CampusInfo_NoOfficialNotesPrompt, Source={StaticResource LocalizedStrings}}"
                                Visibility="Collapsed"/>
                 </Grid>
 
             </controls:PivotItem>
-            <controls:PivotItem Header="团体通知">
+            <controls:PivotItem Header="{Binding Path=LocalizedResources.CampusInfo_ClubNews, Source={StaticResource LocalizedStrings}}">
                 <Grid>
                     <Grid Visibility="{Binding Visibility, ElementName=TextBlock_NoClubNews, Converter={StaticResource TurnOverVisibilityConverter}}">
                         <ListBox x:Name="ListBox_SocietyNews" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource CapusInfoListBoxItemStyle}"
@@ -392,15 +404,14 @@
 
                                                 <!--Summary-->
                                                 <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
-											TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
+											               TextWrapping="Wrap" TextTrimming="WordEllipsis"
+											               Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
 
                                                 <Grid Grid.Column="3" Margin="0,9,0,17">
                                                     <!--Title-->
                                                     <TextBlock VerticalAlignment="Top" Foreground="Black"
-											                    TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
-											                    Text="{Binding Title}" MaxHeight="80"/>
-
+											                   TextWrapping="Wrap" TextTrimming="WordEllipsis" FontSize="26"
+											                   Text="{Binding Title}" MaxHeight="80"/>
 
                                                     <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom">
                                                         <Grid.ColumnDefinitions>
@@ -419,7 +430,8 @@
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        <Button x:Name="Button_LoadMore" BorderThickness="0" Content="加载更多&quot;团体通知&quot;" FontSize="22"
+                                        <Button x:Name="Button_LoadMore" BorderThickness="0" FontSize="22" 
+                                                Content="{Binding Path=LocalizedResources.CampusInfo_LoadMoreClubNews, Source={StaticResource LocalizedStrings}}"
                                                 Visibility="{Binding IsInvalidClubNews, Converter={StaticResource BoolToVisibilityConverter}}"
                                                 Click="Button_LoadMoreClubNews_Click"/>
                                     </Grid>
@@ -427,12 +439,12 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <TextBlock Text="正在加载&quot;团体通知&quot;" Foreground="#FF999999" FontSize="22"
-                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                        <TextBlock Text="{Binding Path=LocalizedResources.CampusInfo_LoadingClubNews, Source={StaticResource LocalizedStrings}}" 
+                                   Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Visibility="{Binding Visibility, ElementName=ListBox_SocietyNews, Converter={StaticResource TurnOverVisibilityConverter}}"/>
                     </Grid>
-                    <TextBlock x:Name="TextBlock_NoClubNews"  Text="暂无&quot;团体通知&quot;信息" Foreground="#FF999999" FontSize="22"
-                               HorizontalAlignment="Left" VerticalAlignment="Top"
+                    <TextBlock x:Name="TextBlock_NoClubNews" Foreground="#FF999999" FontSize="22" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Text="{Binding Path=LocalizedResources.CampusInfo_NoClubNewsPrompt, Source={StaticResource LocalizedStrings}}"
                                Visibility="Collapsed"/>
                 </Grid>
             </controls:PivotItem>
@@ -441,11 +453,7 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar>
-            <shell:ApplicationBar.Buttons>
-                <shell:ApplicationBarIconButton Text="刷新" Click="Refresh_Button_Clicked" IconUri="/icons/appbar.refresh.rest.png"/>
-            </shell:ApplicationBar.Buttons>
-        </shell:ApplicationBar>
+        <shell:ApplicationBar/>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

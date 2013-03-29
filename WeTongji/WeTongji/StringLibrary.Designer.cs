@@ -61,6 +61,402 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 微同济用户协议.
+        /// </summary>
+        public static string About_AgreementLink {
+            get {
+                return ResourceManager.GetString("About_AgreementLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 关于.
+        /// </summary>
+        public static string About_PageTitle {
+            get {
+                return ResourceManager.GetString("About_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows Phone 版本.
+        /// </summary>
+        public static string About_PlatformName {
+            get {
+                return ResourceManager.GetString("About_PlatformName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 给WeTongji评分.
+        /// </summary>
+        public static string About_Rate {
+            get {
+                return ResourceManager.GetString("About_Rate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 访问WeTongji官方网站.
+        /// </summary>
+        public static string About_ViewWebsite {
+            get {
+                return ResourceManager.GetString("About_ViewWebsite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 收藏.
+        /// </summary>
+        public static string Activity_AppBarFavoriteText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarFavoriteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 喜欢.
+        /// </summary>
+        public static string Activity_AppBarLikeText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarLikeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 参与.
+        /// </summary>
+        public static string Activity_AppBarParticipateText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarParticipateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消收藏.
+        /// </summary>
+        public static string Activity_AppBarUnfavoriteText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarUnfavoriteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消喜欢.
+        /// </summary>
+        public static string Activity_AppBarUnlikeText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarUnlikeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消参与.
+        /// </summary>
+        public static string Activity_AppBarUnparticipateText {
+            get {
+                return ResourceManager.GetString("Activity_AppBarUnparticipateText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 活动详情.
+        /// </summary>
+        public static string Activity_EventDetails {
+            get {
+                return ResourceManager.GetString("Activity_EventDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 活动配图.
+        /// </summary>
+        public static string Activity_EventIllustration {
+            get {
+                return ResourceManager.GetString("Activity_EventIllustration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 活动介绍.
+        /// </summary>
+        public static string Activity_EventIntroduction {
+            get {
+                return ResourceManager.GetString("Activity_EventIntroduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无图片信息.
+        /// </summary>
+        public static string Activity_NoIllustrationPrompt {
+            get {
+                return ResourceManager.GetString("Activity_NoIllustrationPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 发布方.
+        /// </summary>
+        public static string Activity_Source {
+            get {
+                return ResourceManager.GetString("Activity_Source", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 用户协议.
+        /// </summary>
+        public static string Agreement_PageTitle {
+            get {
+                return ResourceManager.GetString("Agreement_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 刷新.
+        /// </summary>
+        public static string CampusInfo_AppBarRefreshText {
+            get {
+                return ResourceManager.GetString("CampusInfo_AppBarRefreshText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 周边推荐.
+        /// </summary>
+        public static string CampusInfo_AroundNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_AroundNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 票.
+        /// </summary>
+        public static string CampusInfo_AroundNewsWithTicketPrompt {
+            get {
+                return ResourceManager.GetString("CampusInfo_AroundNewsWithTicketPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 团体通知.
+        /// </summary>
+        public static string CampusInfo_ClubNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_ClubNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“周边推荐”.
+        /// </summary>
+        public static string CampusInfo_LoadingAroundNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingAroundNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“团体通知”.
+        /// </summary>
+        public static string CampusInfo_LoadingClubNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingClubNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“周边推荐”，请稍后....
+        /// </summary>
+        public static string CampusInfo_LoadingMoreAroundNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingMoreAroundNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“团体通知”，请稍后....
+        /// </summary>
+        public static string CampusInfo_LoadingMoreClubNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingMoreClubNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“校务通知”，请稍后....
+        /// </summary>
+        public static string CampusInfo_LoadingMoreOfficialNotes {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingMoreOfficialNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“同济动态”，请稍后....
+        /// </summary>
+        public static string CampusInfo_LoadingMoreTongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingMoreTongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“校务通知”.
+        /// </summary>
+        public static string CampusInfo_LoadingOfficialNotes {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingOfficialNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载“同济动态”.
+        /// </summary>
+        public static string CampusInfo_LoadingTongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadingTongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载更多“周边推荐”.
+        /// </summary>
+        public static string CampusInfo_LoadMoreAroundNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadMoreAroundNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载更多“团体通知”.
+        /// </summary>
+        public static string CampusInfo_LoadMoreClubNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadMoreClubNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载更多“校务通知”.
+        /// </summary>
+        public static string CampusInfo_LoadMoreOfficialNotes {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadMoreOfficialNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 加载更多“同济动态”.
+        /// </summary>
+        public static string CampusInfo_LoadMoreTongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_LoadMoreTongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无“周边推荐”信息.
+        /// </summary>
+        public static string CampusInfo_NoAroundNewsPrompt {
+            get {
+                return ResourceManager.GetString("CampusInfo_NoAroundNewsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无“团体通知”信息.
+        /// </summary>
+        public static string CampusInfo_NoClubNewsPrompt {
+            get {
+                return ResourceManager.GetString("CampusInfo_NoClubNewsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无“团体通知”信息.
+        /// </summary>
+        public static string CampusInfo_NoOfficialNotesPrompt {
+            get {
+                return ResourceManager.GetString("CampusInfo_NoOfficialNotesPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无“同济动态”信息.
+        /// </summary>
+        public static string CampusInfo_NoTongjiNewsPrompt {
+            get {
+                return ResourceManager.GetString("CampusInfo_NoTongjiNewsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 校务通知.
+        /// </summary>
+        public static string CampusInfo_OfficialNotes {
+            get {
+                return ResourceManager.GetString("CampusInfo_OfficialNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 校园资讯.
+        /// </summary>
+        public static string CampusInfo_PageTitle {
+            get {
+                return ResourceManager.GetString("CampusInfo_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 同济动态.
+        /// </summary>
+        public static string CampusInfo_TongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_TongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 收藏.
+        /// </summary>
+        public static string Common_AppBarFavoriteText {
+            get {
+                return ResourceManager.GetString("Common_AppBarFavoriteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 喜欢.
+        /// </summary>
+        public static string Common_AppBarLikeText {
+            get {
+                return ResourceManager.GetString("Common_AppBarLikeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消收藏.
+        /// </summary>
+        public static string Common_AppBarUnfavoriteText {
+            get {
+                return ResourceManager.GetString("Common_AppBarUnfavoriteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消喜欢.
+        /// </summary>
+        public static string Common_AppBarUnlikeText {
+            get {
+                return ResourceManager.GetString("Common_AppBarUnlikeText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 你确认要退出微同济吗？.
         /// </summary>
         public static string Common_ExitAppPromptContent {
@@ -70,11 +466,164 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 操作失败，请重试.
+        /// </summary>
+        public static string Common_FailurePrompt {
+            get {
+                return ResourceManager.GetString("Common_FailurePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载图片....
+        /// </summary>
+        public static string Common_LoadingPicture {
+            get {
+                return ResourceManager.GetString("Common_LoadingPicture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to （图片加载失败，请点击重试）.
+        /// </summary>
+        public static string Common_LoadPictureFailedPrompt {
+            get {
+                return ResourceManager.GetString("Common_LoadPictureFailedPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 请登录后再试.
+        /// </summary>
+        public static string Common_LogInFirstPrompt {
+            get {
+                return ResourceManager.GetString("Common_LogInFirstPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 提示.
         /// </summary>
         public static string Common_Prompt {
             get {
                 return ResourceManager.GetString("Common_Prompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 您是否在其他客户端中登录过？请重新登录.
+        /// </summary>
+        public static string Common_SignInOnOtherPlatformPrompt {
+            get {
+                return ResourceManager.GetString("Common_SignInOnOtherPlatformPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 课程详情.
+        /// </summary>
+        public static string CourseDetail_CourseHeader {
+            get {
+                return ResourceManager.GetString("CourseDetail_CourseHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 课号.
+        /// </summary>
+        public static string CourseDetail_CourseNO {
+            get {
+                return ResourceManager.GetString("CourseDetail_CourseNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 考试安排.
+        /// </summary>
+        public static string CourseDetail_ExamHeader {
+            get {
+                return ResourceManager.GetString("CourseDetail_ExamHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 学时.
+        /// </summary>
+        public static string CourseDetail_Hours {
+            get {
+                return ResourceManager.GetString("CourseDetail_Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载课程详情.
+        /// </summary>
+        public static string CourseDetail_LoadingCourseDetail {
+            get {
+                return ResourceManager.GetString("CourseDetail_LoadingCourseDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在加载考试安排.
+        /// </summary>
+        public static string CourseDetail_LoadingExam {
+            get {
+                return ResourceManager.GetString("CourseDetail_LoadingExam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 地点.
+        /// </summary>
+        public static string CourseDetail_Location {
+            get {
+                return ResourceManager.GetString("CourseDetail_Location", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无课程详情.
+        /// </summary>
+        public static string CourseDetail_NoCoursePrompt {
+            get {
+                return ResourceManager.GetString("CourseDetail_NoCoursePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 暂无考试安排.
+        /// </summary>
+        public static string CourseDetail_NoExamPrompt {
+            get {
+                return ResourceManager.GetString("CourseDetail_NoExamPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 学分.
+        /// </summary>
+        public static string CourseDetail_Points {
+            get {
+                return ResourceManager.GetString("CourseDetail_Points", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 老师.
+        /// </summary>
+        public static string CourseDetail_Teacher {
+            get {
+                return ResourceManager.GetString("CourseDetail_Teacher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 时间.
+        /// </summary>
+        public static string CourseDetail_Time {
+            get {
+                return ResourceManager.GetString("CourseDetail_Time", resourceCulture);
             }
         }
         
@@ -570,6 +1119,24 @@ namespace WeTongji {
         public static string Toast_SignInSucceededPrompt {
             get {
                 return ResourceManager.GetString("Toast_SignInSucceededPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 操作成功.
+        /// </summary>
+        public static string Toast_Success {
+            get {
+                return ResourceManager.GetString("Toast_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 微同济官方主页.
+        /// </summary>
+        public static string ViewOfficialWebsite_PageTitle {
+            get {
+                return ResourceManager.GetString("ViewOfficialWebsite_PageTitle", resourceCulture);
             }
         }
     }
