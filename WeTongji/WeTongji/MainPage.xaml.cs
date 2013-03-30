@@ -125,6 +125,17 @@ namespace WeTongji
 
             #endregion
 
+            Global.Instance.UserAvatarChanged += (obj, arg) =>
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        if (UserSource != null)
+                        {
+                            UserSource.SendPropertyChanged("AvatarImageBrush");
+                        }
+                    });
+                };
+
             Global.Instance.ActivityScheduleChanged += (obj, arg) =>
                 {
                     this.Dispatcher.BeginInvoke(() =>
@@ -3558,14 +3569,14 @@ namespace WeTongji
 
                 if (itemInDB == null)
                 {
-                    var activityEx = new ActivityExt();
-                    activityEx.SetObject(a);
+                    itemInDB = new ActivityExt();
+                    itemInDB.SetObject(a);
 
                     unstoredActivities.Add(itemInDB);
 
                     using (var db = WTShareDataContext.ShareDB)
                     {
-                        db.Activities.InsertOnSubmit(activityEx);
+                        db.Activities.InsertOnSubmit(itemInDB);
                         db.SubmitChanges();
                     }
                 }

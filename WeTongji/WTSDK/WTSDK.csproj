@@ -41,6 +41,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MyToolkit">
+      <HintPath>..\packages\MyToolkit.1.13.0\lib\sl4-wp71\MyToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Properties\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -78,6 +81,7 @@
     <Compile Include="Api\Api.Request\Around\AroundReadRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnLikeRequest.cs" />
+    <Compile Include="Api\Api.Request\IWTUploadFileRequest.cs" />
     <Compile Include="Api\Api.Request\User\UserProfileRequest.cs" />
     <Compile Include="Api\Api.Request\User\UserUpdateProfileRequest.cs" />
     <Compile Include="Api\Api.Response\User\UserProfileResponse.cs" />
@@ -98,7 +102,7 @@
     <Compile Include="Api\Api.Request\ForStaff\ForStaffUnLikeRequest.cs" />
     <Compile Include="Api\Api.Request\Favorite\FavoriteGetRequest.cs" />
     <Compile Include="Api\Api.Request\IWTRequest.cs" />
-    <Compile Include="Api\Api.Request\IWTUploadRequest.cs" />
+    <Compile Include="Api\Api.Request\WTUploadRequest.cs" />
     <Compile Include="Api\Api.Request\Schedule\ScheduleGetRequest.cs" />
     <Compile Include="Api\Api.Request\SchoolNews\SchoolNewsFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\SchoolNews\SchoolNewsLikeRequest.cs" />

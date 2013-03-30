@@ -86,6 +86,10 @@ namespace WeTongji.Business
 
         public event EventHandler<FavoriteChangedEventArgs> FavoriteChanged;
 
+        public event EventHandler UserAvatarChanged;
+
+        public event EventHandler UserProfileChanged;
+
         #endregion
 
         #region [Constructor]
@@ -224,6 +228,24 @@ namespace WeTongji.Business
         public void RaiseAgendaSourceChanged()
         {
             var handler = AgendaSourceChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
+        public void RaiseUserAvatarChanged()
+        {
+            var handler = UserAvatarChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
+        public void RaiseUserProfileChanged()
+        {
+            var handler = UserProfileChanged;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);

@@ -25,7 +25,6 @@ namespace WeTongji
     {
         private UserExt copy = null;
         private Boolean isAvatarChanged = false;
-        private Boolean isProfileChanged = false;
 
         public EditPersonalProfile()
         {
@@ -88,8 +87,6 @@ namespace WeTongji
             var propertyInfo = typeof(UserExt).GetProperty(bindingExpression.ParentBinding.Path.Path);
 
             propertyInfo.SetValue(user, txtbx.Text, null);
-
-            isProfileChanged = true;
         }
 
         private void SaveButtonClicked(object sender, EventArgs e)
@@ -98,59 +95,124 @@ namespace WeTongji
 
             UserExt current = this.DataContext as UserExt;
 
+            //...if nothing changed, just go back
             if (!isAvatarChanged && current.Phone == copy.Phone && current.Email == copy.Email
                 && current.QQ == copy.QQ && current.SinaWeibo == copy.SinaWeibo)
             {
-                this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
+                this.NavigationService.GoBack();
             }
             else
             {
                 var btn = sender as ApplicationBarIconButton;
                 btn.IsEnabled = false;
+                ProgressBarPopup.Instance.Open();
 
-                var thread = new Thread(new ParameterizedThreadStart(SaveData))
+                #region [Avatar changed]
+                if (isAvatarChanged)
                 {
-                    IsBackground = true,
-                    Name = "SaveData"
-                };
+                    var req = new UserUpdateAvatarRequest<WeTongji.Api.Response.UserGetResponse>();
+                    var client = new WTDefaultClient<WeTongji.Api.Response.UserGetResponse>();
 
-                var newValue = new DataWrapper();
+                    var wb = new WriteableBitmap(this.Image_Avatar.Source as BitmapSource);
 
-                if (isProfileChanged)
-                    newValue.User = current;
+                    MemoryStream stream = new MemoryStream();
+                    wb.SaveJpeg(stream, wb.PixelWidth, wb.PixelHeight, 0, 100);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    req.JpegPhotoStream = stream;
 
-                var req = new UserUpdateAvatarRequest<WTResponse>();
-                var client = new WTDefaultClient<WTResponse>();
-
-                var wb = new WriteableBitmap(this.Image_Avatar.Source as BitmapSource);
-
-                MemoryStream stream = new MemoryStream();
-                wb.SaveJpeg(stream, wb.PixelWidth, wb.PixelHeight, 0, 100);
-                req.JpegPhotoStream = stream;
-
-                client.ExecuteFailed += (obj, arg) =>
-                {
-                    this.Dispatcher.BeginInvoke(() =>
+                    client.ExecuteCompleted += (obj, arg) =>
                     {
-                        ProgressBarPopup.Instance.Close();
-                        (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                        //...Get current user
+                        using (var db = new WTUserDataContext(current.UID))
+                        {
+                            var previousUserInfo = db.UserInfo.SingleOrDefault();
+
+                            if (previousUserInfo != null)
+                            {
+                                previousUserInfo.SetObject(arg.Result.User);
+                            }
+                        }
+
+                        req.JpegPhotoStream.Seek(0, SeekOrigin.Begin);
+                        current.SaveAvatarImage(req.JpegPhotoStream);
+
+                        Global.Instance.RaiseUserAvatarChanged();
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+
+                            if (current.Phone == copy.Phone && current.Email == copy.Email
+                                && current.QQ == copy.QQ && current.SinaWeibo == copy.SinaWeibo)
+                            {
+                                WTToast.Instance.Show(StringLibrary.Toast_Success);
+                                this.NavigationService.GoBack();
+                            }
+                            else
+                            {
+                                var thread = new System.Threading.Thread(new ParameterizedThreadStart(SaveData));
+                                thread.Start(current);
+                            }
+                        });
+                    };
+
+                    client.ExecuteFailed += (obj, arg) =>
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            ProgressBarPopup.Instance.Close();
+                        });
 
                         if (arg.Error is System.Net.WebException)
-                            WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                WTToast.Instance.Show(StringLibrary.Toast_NetworkErrorPrompt);
+                            });
+                        }
+                        else if (arg.Error is WTException)
+                        {
+                            if ((arg.Error as WTException).StatusCode.Id == WeTongji.Api.Util.Status.NoAuth)
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    MessageBox.Show(StringLibrary.Common_SignInOnOtherPlatformPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
+                                });
+                            }
+                            //...Todo @_@ check other status code
+                            else
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    MessageBox.Show(StringLibrary.EditPersonalProfile_UpdateAvatarFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
+                                });
+                            }
+                        }
                         else
-                            MessageBox.Show(StringLibrary.EditPersonalProfile_UpdateAvatarFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
-                    });
-                };
+                        {
+                            this.Dispatcher.BeginInvoke(() =>
+                            {
+                                MessageBox.Show(StringLibrary.EditPersonalProfile_UpdateAvatarFailedPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
+                            });
+                        }
 
-                client.ExecuteCompleted += (obj, arg) =>
+                        //...Update UI
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            btn.IsEnabled = true;
+                        });
+                    };
+
+                    client.Post(req, Global.Instance.Session, Global.Instance.Settings.UID);
+                }
+                #endregion
+                #region [User profile changed]
+                else
                 {
-                    //...Get current user
-                };
-
-                client.Post(req, Global.Instance.Session, Global.Instance.Settings.UID);
-
-                ProgressBarPopup.Instance.Open();
-                thread.Start(newValue);
+                    var thread = new System.Threading.Thread(new ParameterizedThreadStart(SaveData));
+                    thread.Start(current);
+                }
+                #endregion
             }
         }
 
@@ -158,7 +220,10 @@ namespace WeTongji
         {
             base.OnBackKeyPress(e);
 
-            if (isAvatarChanged || isProfileChanged)
+            var current = this.DataContext as UserExt;
+
+            if (current!=null && (isAvatarChanged || current.Phone != copy.Phone || current.Email != copy.Email
+               || current.QQ != copy.QQ || current.SinaWeibo != copy.SinaWeibo))
             {
                 var result = MessageBox.Show(StringLibrary.EditPersonalProfile_DiscardAndReturnPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.Cancel)
@@ -187,7 +252,7 @@ namespace WeTongji
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="param">new user's value, typeof(UserExt)</param>
+        /// <param name="param">the user's profile to save, typeof(UserExt)</param>
         private void SaveData(Object param)
         {
             var data = param as UserExt;
@@ -198,6 +263,11 @@ namespace WeTongji
             {
                 var req = new UserUpdateRequest<WTResponse>();
                 var client = new WTDefaultClient<WTResponse>();
+
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Open();
+                });
 
                 req.User = data.GetObject() as User;
 
@@ -230,12 +300,14 @@ namespace WeTongji
                             db.SubmitChanges();
                         }
 
+                        Global.Instance.RaiseUserProfileChanged();
+
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             ProgressBarPopup.Instance.Close();
                             (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
 
-                            this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
+                            this.NavigationService.GoBack();
                         });
                     };
 
@@ -247,8 +319,8 @@ namespace WeTongji
         private void UpdateAvatar(Object sender, RoutedEventArgs e)
         {
             var task = new Microsoft.Phone.Tasks.PhotoChooserTask();
-            task.PixelHeight = 256;
-            task.PixelWidth = 256;
+            task.PixelHeight = 200;
+            task.PixelWidth = 200;
             task.ShowCamera = true;
 
             task.Completed += (obj, arg) =>

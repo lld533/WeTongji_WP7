@@ -61,6 +61,23 @@ namespace WeTongji
         {
             InitializeComponent();
 
+            Global.Instance.UserAvatarChanged += (obj, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    var UserSource = this.DataContext as UserExt;
+                    if (UserSource != null)
+                    {
+                        UserSource.SendPropertyChanged("AvatarImageBrush");
+                    }
+                });
+            };
+
+            Global.Instance.UserProfileChanged += (obj, arg) =>
+                {
+                    LoadPersonalProfile();
+                };
+
             var button = new ApplicationBarIconButton(new Uri("/icons/appbar.edit.rest.png", UriKind.RelativeOrAbsolute))
                 {
                     Text = StringLibrary.PersonalProfile_AppBarEditText
@@ -74,19 +91,6 @@ namespace WeTongji
             };
             mi.Click += NavToUpdatePassword;
             this.ApplicationBar.MenuItems.Add(mi);
-
-            this.Loaded += (o, e) =>
-                {
-                    Thread thread = new Thread(new ThreadStart(LoadPersonalProfile))
-                    {
-                        IsBackground = true,
-                        Name = "LoadPersonalProfile"
-                    };
-
-                    ProgressBarPopup.Instance.Open();
-                    Debug.WriteLine("Thread [LoadPersonalProfile] started.");
-                    thread.Start();
-                };
         }
 
         #endregion
@@ -97,6 +101,11 @@ namespace WeTongji
 
         private void LoadPersonalProfile()
         {
+            this.Dispatcher.BeginInvoke(() => 
+            {
+                ProgressBarPopup.Instance.Open();
+            });
+
             if (String.IsNullOrEmpty(Global.Instance.Settings.UID) || !WTUserDataContext.UserDataContextExists(Global.Instance.Settings.UID))
             {
                 this.Dispatcher.BeginInvoke(() =>
@@ -192,6 +201,14 @@ namespace WeTongji
             base.OnNavigatedTo(e);
 
             this.ScrollViewer_Core.ScrollToVerticalOffset(0);
+
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                Thread thread = new Thread(new ThreadStart(LoadPersonalProfile));
+
+                ProgressBarPopup.Instance.Open();
+                thread.Start();
+            }
         }
 
         private void EditPersonalProfile(Object sender, EventArgs e)

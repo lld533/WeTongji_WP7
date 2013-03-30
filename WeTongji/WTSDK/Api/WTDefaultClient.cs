@@ -240,11 +240,6 @@ namespace WeTongji.Api
 
             myWebRequest.Method = "POST";
 
-            //if (!String.IsNullOrEmpty(request.GetContentType()))
-            //{
-            //    myWebRequest.ContentType = request.GetContentType();
-            //}
-
             var req_stream = request.GetRequestStream();
 
             try
@@ -340,6 +335,62 @@ namespace WeTongji.Api
             }
 
 
+        }
+
+        public void Post(WTUploadFileRequest<T> request, String session, String uid)
+        {
+            #region [Validate Parameters]
+
+            if (request == null)
+                throw new ArgumentNullException("request");
+            if (String.IsNullOrEmpty(session))
+                throw new ArgumentNullException("session");
+            if (String.IsNullOrEmpty(uid))
+                throw new ArgumentNullException("uid");
+
+            #endregion
+
+            #region [Create Dictionary]
+
+            var dict = new Dictionary<String, String>(request.GetParameters());
+            dict[METHOD] = request.GetApiName();
+            dict[DEVICE] = "WP7";
+            dict[VERSION] = "1.0";
+            dict[SESSION] = session;
+            dict[UID] = uid;
+            dict[HASH] = ComputeHash(dict);
+
+            #endregion
+
+            var webReq = new MyToolkit.Networking.HttpPostRequest(Dictionary2Url(dict));
+
+            webReq.Files.AddRange(request.GetFiles());
+
+            Action<MyToolkit.Networking.HttpResponse> action = (response) =>
+                {
+                    if (response.Successful)
+                    {
+                        var responseEXT = JsonConvert.DeserializeObject<WTResponseEx<T>>(response.Response);
+
+                        if (responseEXT.Status.Id != Status.Success)
+                        {
+                            OnExecuteFailed(request, new WTException(responseEXT.Status));
+                        }
+                        else
+                        {
+                            OnExecuteCompleted(request, responseEXT.Data);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (!response.Canceled)
+                        {
+                            OnExecuteFailed(request, response.Exception);
+                        }
+                    }
+                };
+            MyToolkit.Networking.Http.Post(webReq, action);
         }
 
         #endregion

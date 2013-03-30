@@ -673,7 +673,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 保存.
+        ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string EditPersonalProfile_AppBarSaveText {
             get {
@@ -682,7 +682,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 头像.
+        ///   Looks up a localized string similar to Avatar.
         /// </summary>
         public static string EditPersonalProfile_Avatar {
             get {
@@ -691,7 +691,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 资料已修改，是否放弃修改并返回？.
+        ///   Looks up a localized string similar to Confirm to go back without saving?.
         /// </summary>
         public static string EditPersonalProfile_DiscardAndReturnPrompt {
             get {
@@ -700,7 +700,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 电子邮箱.
+        ///   Looks up a localized string similar to Email.
         /// </summary>
         public static string EditPersonalProfile_Email {
             get {
@@ -709,7 +709,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入电子邮箱.
+        ///   Looks up a localized string similar to Enter your email.
         /// </summary>
         public static string EditPersonalProfile_EnterEmail {
             get {
@@ -718,7 +718,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入QQ.
+        ///   Looks up a localized string similar to Enter your QQ.
         /// </summary>
         public static string EditPersonalProfile_EnterQQ {
             get {
@@ -727,7 +727,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入新浪微博.
+        ///   Looks up a localized string similar to Enter your sina weibo.
         /// </summary>
         public static string EditPersonalProfile_EnterSinaWeibo {
             get {
@@ -736,7 +736,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入手机.
+        ///   Looks up a localized string similar to Enter your phone.
         /// </summary>
         public static string EditPersonalProfile_EnterTel {
             get {
@@ -745,7 +745,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 编辑个人资料.
+        ///   Looks up a localized string similar to Edit profile.
         /// </summary>
         public static string EditPersonalProfile_PageTitle {
             get {
@@ -763,7 +763,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 保存资料失败，请重试.
+        ///   Looks up a localized string similar to Saving profile failed, please retry..
         /// </summary>
         public static string EditPersonalProfile_SavePersonalProfileFailedPrompt {
             get {
@@ -772,7 +772,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 新浪微博.
+        ///   Looks up a localized string similar to Sina weibo.
         /// </summary>
         public static string EditPersonalProfile_SinaWeibo {
             get {
@@ -781,7 +781,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 手机.
+        ///   Looks up a localized string similar to Phone.
         /// </summary>
         public static string EditPersonalProfile_Tel {
             get {
@@ -790,7 +790,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 更新头像失败，请重试.
+        ///   Looks up a localized string similar to Updating avatar failed, please retry..
         /// </summary>
         public static string EditPersonalProfile_UpdateAvatarFailedPrompt {
             get {
@@ -799,7 +799,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 发送.
+        ///   Looks up a localized string similar to Send.
         /// </summary>
         public static string ForgotPassword_AppBarSendText {
             get {
@@ -808,7 +808,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入姓名.
+        ///   Looks up a localized string similar to Enter your name.
         /// </summary>
         public static string ForgotPassword_EnterName {
             get {
@@ -817,7 +817,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入学号.
+        ///   Looks up a localized string similar to Enter student ID.
         /// </summary>
         public static string ForgotPassword_EnterStudentNO {
             get {
@@ -826,7 +826,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 姓名与学号不符，请检查后重试。.
+        ///   Looks up a localized string similar to Your name and student ID do not match..
         /// </summary>
         public static string ForgotPassword_IdNameDismatchPrompt {
             get {
@@ -835,7 +835,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 姓名.
+        ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string ForgotPassword_Name {
             get {
@@ -844,7 +844,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 用户不存在，请检查后重试。.
+        ///   Looks up a localized string similar to Your account does not exist..
         /// </summary>
         public static string ForgotPassword_NoAccountPrompt {
             get {
@@ -853,7 +853,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 该用户未激活，请检查后重试。.
+        ///   Looks up a localized string similar to Your account has not been activated..
         /// </summary>
         public static string ForgotPassword_NotActivatedAccountPrompt {
             get {
@@ -862,7 +862,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 该用户未注册，请检查后重试。.
+        ///   Looks up a localized string similar to Your account has not been registered yet..
         /// </summary>
         public static string ForgotPassword_NotRegisteredPrompt {
             get {
@@ -871,7 +871,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 忘记密码.
+        ///   Looks up a localized string similar to Forget password.
         /// </summary>
         public static string ForgotPassword_PageTitle {
             get {
@@ -880,7 +880,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我们将在核对信息之后发送一封密码重置邮件至您的同济邮箱。.
+        ///   Looks up a localized string similar to We will send a password-reset email to you in a minute..
         /// </summary>
         public static string ForgotPassword_Prompt {
             get {
@@ -889,7 +889,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学号.
+        ///   Looks up a localized string similar to Student ID.
         /// </summary>
         public static string ForgotPassword_StudentNO {
             get {
@@ -898,7 +898,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 重置密码成功.
+        ///   Looks up a localized string similar to Your password has been reset..
         /// </summary>
         public static string ForgotPassword_SucceededCaption {
             get {
@@ -907,7 +907,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 前往您的同济邮箱查看邮件，并且点击充值密码链接。.
+        ///   Looks up a localized string similar to Go and check your reset email..
         /// </summary>
         public static string ForgotPassword_SucceededText {
             get {
@@ -1339,7 +1339,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weekly Person.
+        ///   Looks up a localized string similar to Weekly Star.
         /// </summary>
         public static string MainPage_PeopleOfWeek {
             get {
@@ -1411,7 +1411,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 今日.
+        ///   Looks up a localized string similar to Today.
         /// </summary>
         public static string MyAgenda_AppBarTodayText {
             get {
@@ -1420,7 +1420,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载日程，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string MyAgenda_Loading {
             get {
@@ -1429,7 +1429,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 今天没有安排了，好好休息吧~.
+        ///   Looks up a localized string similar to No arrangements today. Time to rest!.
         /// </summary>
         public static string MyAgenda_NoArrangementToday {
             get {
@@ -1501,7 +1501,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weekly person.
+        ///   Looks up a localized string similar to Weekly Star.
         /// </summary>
         public static string MyFavorite_PeopleOfWeek {
             get {
@@ -1528,7 +1528,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动刷新.
+        ///   Looks up a localized string similar to Auto refresh.
         /// </summary>
         public static string MySettings_AutoRefresh {
             get {
@@ -1537,7 +1537,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 界面中自动刷新内容.
+        ///   Looks up a localized string similar to Auto refresh resources.
         /// </summary>
         public static string MySettings_AutoRefreshAction {
             get {
@@ -1546,7 +1546,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 检测新版本.
+        ///   Looks up a localized string similar to Check update.
         /// </summary>
         public static string MySettings_CheckNewVersion {
             get {
@@ -1555,7 +1555,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 检测新版本失败.
+        ///   Looks up a localized string similar to Check failed, please retry..
         /// </summary>
         public static string MySettings_CheckNewVersionFailedPrompt {
             get {
@@ -1564,7 +1564,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 清除图片缓存.
+        ///   Looks up a localized string similar to Clear cache.
         /// </summary>
         public static string MySettings_ClearImageCache {
             get {
@@ -1573,7 +1573,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 确认清空图片缓存？.
+        ///   Looks up a localized string similar to Confirm to clear cache?.
         /// </summary>
         public static string MySettings_ClearImageCacheConfirmation {
             get {
@@ -1582,7 +1582,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在计算....
+        ///   Looks up a localized string similar to Calculating....
         /// </summary>
         public static string MySettings_ComputingImageCache {
             get {
@@ -1591,7 +1591,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 当前版本：.
+        ///   Looks up a localized string similar to Current version:.
         /// </summary>
         public static string MySettings_CurrentVersion {
             get {
@@ -1600,7 +1600,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 共  {0}.
+        ///   Looks up a localized string similar to Total: {0}.
         /// </summary>
         public static string MySettings_ImageCacheSizeDisplayTemplate {
             get {
@@ -1609,7 +1609,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 退出确认.
+        ///   Looks up a localized string similar to Confirm to exit.
         /// </summary>
         public static string MySettings_LeaveAppConfirmation {
             get {
@@ -1618,7 +1618,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 退出应用是否弹出对话框.
+        ///   Looks up a localized string similar to Ask when press exit.
         /// </summary>
         public static string MySettings_LeaveAppConfirmationAction {
             get {
@@ -1627,7 +1627,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 最新版本为{0}，是否前往应用商店查看更新？.
+        ///   Looks up a localized string similar to The latest version is {0}. Get updated on marketplace?.
         /// </summary>
         public static string MySettings_NewVersionExistsPrompt {
             get {
@@ -1636,7 +1636,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 当前版本已经是最新的，感谢您对微同济团队的支持！.
+        ///   Looks up a localized string similar to The latest version already!.
         /// </summary>
         public static string MySettings_NoNewVersionPrompt {
             get {
@@ -1645,7 +1645,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 设置.
+        ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string MySettings_PageTitle {
             get {
@@ -1726,7 +1726,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Weekly Person.
+        ///   Looks up a localized string similar to Weekly Star.
         /// </summary>
         public static string PeopleOfWeek_PageTitle {
             get {
@@ -1744,7 +1744,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 刷新.
+        ///   Looks up a localized string similar to Refresh.
         /// </summary>
         public static string PeopleOfWeekList_AppBarRefreshText {
             get {
@@ -1753,7 +1753,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 正在加载所有每周人物，请稍后....
+        ///   Looks up a localized string similar to Loading....
         /// </summary>
         public static string PeopleOfWeekList_Loading {
             get {
@@ -1762,7 +1762,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 所有每周人物.
+        ///   Looks up a localized string similar to All weekly stars..
         /// </summary>
         public static string PeopleOfWeekList_PageTitle {
             get {
@@ -1771,7 +1771,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 第.
+        ///   Looks up a localized string similar to Vol..
         /// </summary>
         public static string PeopleOfWeekList_VolPrefix {
             get {
@@ -1780,7 +1780,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 期.
+        ///   Looks up a localized string similar to .
         /// </summary>
         public static string PeopleOfWeekList_VolSuffix {
             get {
@@ -1924,7 +1924,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 微同济用户协议.
+        ///   Looks up a localized string similar to User Agreements.
         /// </summary>
         public static string SignUp_Agreement {
             get {
@@ -1933,7 +1933,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 《.
+        ///   Looks up a localized string similar to &lt;.
         /// </summary>
         public static string SignUp_AgreementPrefix {
             get {
@@ -1942,7 +1942,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 》.
+        ///   Looks up a localized string similar to &gt;.
         /// </summary>
         public static string SignUp_AgreementSuffix {
             get {
@@ -1951,7 +1951,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 账号已经注册,请登录.
+        ///   Looks up a localized string similar to You have already sign-up. Please sign in..
         /// </summary>
         public static string SignUp_AlreadyRegisteredPrompt {
             get {
@@ -1960,7 +1960,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 确定.
+        ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string SignUp_AppBarOkText {
             get {
@@ -1969,7 +1969,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注册信息有误，请检查后重试.
+        ///   Looks up a localized string similar to Some wrong information has been found..
         /// </summary>
         public static string SignUp_BadSignUpInfo {
             get {
@@ -1978,7 +1978,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 确认密码.
+        ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string SignUp_ConfirmPassword {
             get {
@@ -1987,7 +1987,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入姓名.
+        ///   Looks up a localized string similar to Enter your name.
         /// </summary>
         public static string SignUp_EnterName {
             get {
@@ -1996,7 +1996,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入密码.
+        ///   Looks up a localized string similar to Enter password.
         /// </summary>
         public static string SignUp_EnterPassword {
             get {
@@ -2005,7 +2005,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请确认密码.
+        ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string SignUp_EnterPasswordAgain {
             get {
@@ -2014,7 +2014,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入学号.
+        ///   Looks up a localized string similar to Enter student ID.
         /// </summary>
         public static string SignUp_EnterStudentNO {
             get {
@@ -2023,7 +2023,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我已阅读并同意.
+        ///   Looks up a localized string similar to I have read and agree.
         /// </summary>
         public static string SignUp_IAgreeTo {
             get {
@@ -2032,7 +2032,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学号与姓名不符，请检查后重试.
+        ///   Looks up a localized string similar to Your name and student ID do not match..
         /// </summary>
         public static string SignUp_IdNameDismatchPrompt {
             get {
@@ -2041,7 +2041,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 姓名.
+        ///   Looks up a localized string similar to Name.
         /// </summary>
         public static string SignUp_Name {
             get {
@@ -2050,7 +2050,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 您输入的账号不存在，请检查后重试.
+        ///   Looks up a localized string similar to Your account does not exist..
         /// </summary>
         public static string SignUp_NoAccountPrompt {
             get {
@@ -2059,7 +2059,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注册.
+        ///   Looks up a localized string similar to Sign up.
         /// </summary>
         public static string SignUp_PageTitle {
             get {
@@ -2068,7 +2068,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 密码.
+        ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string SignUp_Password {
             get {
@@ -2077,7 +2077,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 2 填写信息.
+        ///   Looks up a localized string similar to 2 Fill-in.
         /// </summary>
         public static string SignUp_SecondStep {
             get {
@@ -2086,7 +2086,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 学号.
+        ///   Looks up a localized string similar to Student ID.
         /// </summary>
         public static string SignUp_StudentNO {
             get {
@@ -2095,7 +2095,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注册成功.
+        ///   Looks up a localized string similar to Sign up successfully..
         /// </summary>
         public static string SignUp_SucceededCaption {
             get {
@@ -2104,7 +2104,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请登录.
+        ///   Looks up a localized string similar to Please sign in..
         /// </summary>
         public static string SignUp_SucceededText {
             get {
@@ -2113,7 +2113,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 完成注册.
+        ///   Looks up a localized string similar to Finish.
         /// </summary>
         public static string SignUpSuccess_AppBarFinishSigningUpText {
             get {
@@ -2122,7 +2122,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 前往同济邮箱.
+        ///   Looks up a localized string similar to Tongji Email.
         /// </summary>
         public static string SignUpSuccess_BrowseTongjiMail {
             get {
@@ -2131,7 +2131,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 恭喜注册成功.
+        ///   Looks up a localized string similar to Sign-up successfully.
         /// </summary>
         public static string SignUpSuccess_PageTitle {
             get {
@@ -2140,7 +2140,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 我们已经发送了一封帐户激活邮件到您的同济邮箱，请查收并进行激活。.
+        ///   Looks up a localized string similar to We have sent an activation email to your Tongji email. Please go and have a check..
         /// </summary>
         public static string SignUpSuccess_Prompt {
             get {
@@ -2185,7 +2185,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 每个同济学子都有自己的专属的同济邮箱，微同济将发送账户激活邮件至您的同济邮箱。.
+        ///   Looks up a localized string similar to WeTongji will send an activation email to the Tongji Email only for Tongji students to provide better service..
         /// </summary>
         public static string TongjiMail_BackgroundInfo {
             get {
@@ -2194,7 +2194,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 开通同济大学电子邮箱.
+        ///   Looks up a localized string similar to 1 Activate your Tongji Email.
         /// </summary>
         public static string TongjiMail_FirstStep {
             get {
@@ -2203,7 +2203,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已经开通同济邮箱，下一步.
+        ///   Looks up a localized string similar to I have activated. Next.
         /// </summary>
         public static string TongjiMail_NextStep {
             get {
@@ -2212,7 +2212,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 注册.
+        ///   Looks up a localized string similar to Sign up.
         /// </summary>
         public static string TongjiMail_PageTitle {
             get {
@@ -2221,7 +2221,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 带我去注册.
+        ///   Looks up a localized string similar to Activate.
         /// </summary>
         public static string TongjiMail_Register {
             get {
@@ -2230,7 +2230,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 发送.
+        ///   Looks up a localized string similar to Send.
         /// </summary>
         public static string UpdatePassword_AppBarSendText {
             get {
@@ -2239,7 +2239,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 确认密码.
+        ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string UpdatePassword_ConfirmNewPassword {
             get {
@@ -2248,7 +2248,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 您输入的两次密码不相同，请重试.
+        ///   Looks up a localized string similar to Passwords do not match..
         /// </summary>
         public static string UpdatePassword_ConfirmNewPasswordErrorPrompt {
             get {
@@ -2257,7 +2257,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入新密码.
+        ///   Looks up a localized string similar to Enter new password.
         /// </summary>
         public static string UpdatePassword_EnterNewPassword {
             get {
@@ -2266,7 +2266,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请再次输入新密码.
+        ///   Looks up a localized string similar to Confirm new password.
         /// </summary>
         public static string UpdatePassword_EnterNewPasswordAgain {
             get {
@@ -2275,7 +2275,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 请输入旧密码.
+        ///   Looks up a localized string similar to Enter old password.
         /// </summary>
         public static string UpdatePassword_EnterOldPassword {
             get {
@@ -2284,7 +2284,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 新密码.
+        ///   Looks up a localized string similar to New password.
         /// </summary>
         public static string UpdatePassword_NewPassword {
             get {
@@ -2293,7 +2293,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 旧密码.
+        ///   Looks up a localized string similar to Old password.
         /// </summary>
         public static string UpdatePassword_OldPassword {
             get {
@@ -2302,7 +2302,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 旧密码输入错误，请检查后重试.
+        ///   Looks up a localized string similar to Your old password is wrong..
         /// </summary>
         public static string UpdatePassword_OldPasswordErrorPrompt {
             get {
@@ -2311,7 +2311,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 修改密码.
+        ///   Looks up a localized string similar to Change password.
         /// </summary>
         public static string UpdatePassword_PageTitle {
             get {
@@ -2320,7 +2320,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 修改成功.
+        ///   Looks up a localized string similar to Change password.
         /// </summary>
         public static string UpdatePassword_SucceededCaption {
             get {
@@ -2329,7 +2329,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 恭喜，已经成功修改密码~.
+        ///   Looks up a localized string similar to Congratulations. You have already changed your password..
         /// </summary>
         public static string UpdatePassword_SucceededText {
             get {

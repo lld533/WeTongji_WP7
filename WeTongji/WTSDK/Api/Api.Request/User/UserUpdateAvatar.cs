@@ -5,7 +5,7 @@ using System.IO;
 
 namespace WeTongji.Api.Request
 {
-    public class UserUpdateAvatarRequest<T> : WTRequest<T>, IWTUploadRequest<T> where T : WeTongji.Api.WTResponse
+    public class UserUpdateAvatarRequest<T> : WTUploadFileRequest<T> where T : WeTongji.Api.Response.UserGetResponse
     {
         #region [Constructor]
 
@@ -49,27 +49,12 @@ namespace WeTongji.Api.Request
             }
         }
 
-        #endregion
-
-        #region [Implementation]
-
-        public System.IO.Stream GetRequestStream()
-        {
-            JpegPhotoStream.Seek(0, SeekOrigin.Begin);
-            var stream = new System.IO.MemoryStream();
-
-            System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
-            sw.Write("Image={");
-            sw.Flush();
-            JpegPhotoStream.CopyTo(stream);
-            sw.Write("}");
-            sw.Flush();
-            return stream;
-        }
-
-        public String GetContentType()
-        {
-            return null;
+        public override IEnumerable<MyToolkit.Networking.HttpPostFile> GetFiles() 
+        { 
+            return new MyToolkit.Networking.HttpPostFile[]
+                {
+                    new MyToolkit.Networking.HttpPostFile("Image", "avatar.jpg", JpegPhotoStream, false)
+                }; 
         }
 
         #endregion

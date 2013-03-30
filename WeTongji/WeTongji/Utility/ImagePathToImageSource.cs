@@ -80,7 +80,7 @@ namespace WeTongji.Utility
                             {
                                 bi.SetSource(stream);
                             }
-                            catch (Exception ex)
+                            catch
                             {
                                 using (var memStream = new MemoryStream())
                                 {
@@ -93,7 +93,7 @@ namespace WeTongji.Utility
                             return bi;
                         }
                     }
-                    catch (System.Exception ex)
+                    catch
                     {
                         store.DeleteFile(fileName);
                         return null;
