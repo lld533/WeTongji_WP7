@@ -63,6 +63,11 @@ namespace WeTongji.Api.Domain
         [Column()]
         public String ImageExtList { get; set; }
 
+        public String DisplaySummary
+        {
+            get { return Summary; }
+        }
+
         #endregion
 
         #region [Implementation]

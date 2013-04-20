@@ -99,12 +99,10 @@ namespace WeTongji.Api.Domain
         {
             get
             {
-                //...Todo @_@ Localizable
-
-                if(CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                    return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.GetChineseDate(), End);
-                else
-                    return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}", Begin, Begin.DayOfWeek.ToString(), End);
+                return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}",
+                    Begin,
+                    StringLibrary.ResourceManager.GetString("DayOfWeekAbbr_" + Begin.DayOfWeek.ToString()),
+                    End);
             }
         }
 

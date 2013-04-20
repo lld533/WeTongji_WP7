@@ -101,7 +101,7 @@ namespace WeTongji
 
         private void LoadPersonalProfile()
         {
-            this.Dispatcher.BeginInvoke(() => 
+            this.Dispatcher.BeginInvoke(() =>
             {
                 ProgressBarPopup.Instance.Open();
             });
@@ -265,6 +265,70 @@ namespace WeTongji
             if (txtbx == null || user == null)
                 return;
 
+            #region [Flurry]
+
+            if (txtbx == TextBox_Phone)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.AddNewPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Phone).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_Email)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.AddNewPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Email).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_QQ)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.AddNewPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.QQ).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_SinaWeibo)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.AddNewPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.SinaWeibo).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+
+            #endregion
 
             //...Get property info by data binding by VisualTree
             var parent = VisualTreeHelper.GetParent(txtbx) as StackPanel;

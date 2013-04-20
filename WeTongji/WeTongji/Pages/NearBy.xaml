@@ -190,12 +190,12 @@
 
                     <Border Height="40" Background="#FFF16C00" VerticalAlignment="Top">
                         <TextBlock Text="{Binding Path=LocalizedResources.NearBy_TicketSymbol, Source={StaticResource LocalizedStrings}}" 
-                                   Margin="10,6,0,0"/>
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-3,0,0"/>
                     </Border>
 
                     <Border Grid.Column="2" Background="#FFD08B53">
                         <TextBlock TextWrapping="Wrap" Margin="15,6,14,6"
-									Text="{Binding TicketService}" VerticalAlignment="Top"/>
+                                   Text="{Binding TicketService}" VerticalAlignment="Top"/>
                     </Border>
 
                 </Grid>

@@ -746,7 +746,7 @@
     <value>重置密码成功</value>
   </data>
   <data name="ForgotPassword_SucceededText" xml:space="preserve">
-    <value>前往您的同济邮箱查看邮件，并且点击充值密码链接。</value>
+    <value>前往您的同济邮箱查看邮件，并且点击重置密码链接。</value>
   </data>
   <data name="MyAgenda_AppBarTodayText" xml:space="preserve">
     <value>今日</value>
@@ -938,5 +938,100 @@
   </data>
   <data name="Common_WithinSixHoursTemplate" xml:space="preserve">
     <value>{0}小时前</value>
+  </data>
+  <data name="MainPage_CancelAutoLogin" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="MainPage_PasswordLengthErrorPromptCaption" xml:space="preserve">
+    <value>密码错误</value>
+  </data>
+  <data name="MainPage_PasswordLengthErrorPromptText" xml:space="preserve">
+    <value>密码不能少于6位</value>
+  </data>
+  <data name="MainPage_StudentNOErrorPromptCaption" xml:space="preserve">
+    <value>学号错误</value>
+  </data>
+  <data name="MainPage_StudentNOErrorPromptText" xml:space="preserve">
+    <value>学号必须由数字组成</value>
+  </data>
+  <data name="DayOfWeekAbbr_Friday" xml:space="preserve">
+    <value>周五</value>
+  </data>
+  <data name="DayOfWeekAbbr_Monday" xml:space="preserve">
+    <value>周一</value>
+  </data>
+  <data name="DayOfWeekAbbr_Saturday" xml:space="preserve">
+    <value>周六</value>
+  </data>
+  <data name="DayOfWeekAbbr_Sunday" xml:space="preserve">
+    <value>周日</value>
+  </data>
+  <data name="DayOfWeekAbbr_Thursday" xml:space="preserve">
+    <value>周四</value>
+  </data>
+  <data name="DayOfWeekAbbr_Tuesday" xml:space="preserve">
+    <value>周二</value>
+  </data>
+  <data name="DayOfWeekAbbr_Wednesday" xml:space="preserve">
+    <value>周三</value>
+  </data>
+  <data name="DayOfWeek_Friday" xml:space="preserve">
+    <value>星期五</value>
+  </data>
+  <data name="DayOfWeek_Monday" xml:space="preserve">
+    <value>星期一</value>
+  </data>
+  <data name="DayOfWeek_Saturday" xml:space="preserve">
+    <value>星期六</value>
+  </data>
+  <data name="DayOfWeek_Sunday" xml:space="preserve">
+    <value>星期日</value>
+  </data>
+  <data name="DayOfWeek_Thursday" xml:space="preserve">
+    <value>星期四</value>
+  </data>
+  <data name="DayOfWeek_Tuesday" xml:space="preserve">
+    <value>星期二</value>
+  </data>
+  <data name="DayOfWeek_Wednesday" xml:space="preserve">
+    <value>星期三</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewGroupNotice" xml:space="preserve">
+    <value>收到1条团体通知</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewOfficialNote" xml:space="preserve">
+    <value>收到1条校务通知</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewRecommend" xml:space="preserve">
+    <value>收到1条周边推荐</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewTongjiNews" xml:space="preserve">
+    <value>收到1条同济动态</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewGroupNotices" xml:space="preserve">
+    <value>收到{0}条团体通知</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewOfficialNotes" xml:space="preserve">
+    <value>收到{0}条校务通知</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewRecommends" xml:space="preserve">
+    <value>收到{0}条周边推荐</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewTongjiNews" xml:space="preserve">
+    <value>收到{0}条同济动态</value>
+  </data>
+  <data name="MainPage_ReceiveANewActivityTemplate" xml:space="preserve">
+    <value>收到1条新活动</value>
+  </data>
+  <data name="MainPage_ReceiveNewActivitiesTemplate" xml:space="preserve">
+    <value>收到{0}条新活动</value>
+    <comment>例如，收到2条新活动</comment>
+  </data>
+  <data name="PeopleOfWeekList_ReceiveANewPersonTemplate" xml:space="preserve">
+    <value>收到1条新的每周人物信息</value>
+  </data>
+  <data name="PeopleOfWeekList_ReceiveNewPersonsTemplate" xml:space="preserve">
+    <value>收到{0}条新的每周人物信息</value>
+    <comment>例如，收到2条新的每周人物信息</comment>
   </data>
 </root>

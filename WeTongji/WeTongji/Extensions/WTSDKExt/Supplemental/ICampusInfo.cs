@@ -12,7 +12,7 @@ namespace WeTongji.Api.Domain
         int Id { get; }
         String Title { get; }
         String Source { get;}
-        String Summary { get; }
+        String DisplaySummary { get; }
         String DisplayCreationTime { get; }
         String CampusInfoImageFileName { get; }
         Boolean IsIllustrated { get; }

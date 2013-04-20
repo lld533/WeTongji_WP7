@@ -86,7 +86,11 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image Stretch="UniformToFill" Source="{Binding FirstImageBrush}"/>
+                        <Image Stretch="UniformToFill" Source="{Binding FirstImageBrush}">
+                            <toolkit:GestureService.GestureListener>
+                                <toolkit:GestureListener Tap="ViewFirstImage"/>
+                            </toolkit:GestureService.GestureListener>
+                        </Image>
 
                         <Grid Grid.Column="2" VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>

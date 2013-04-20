@@ -194,6 +194,7 @@ namespace WeTongji
                         if (!an.ImageExists(i))
                         {
                             var client = new WTDownloadImageClient();
+                            int j = i;
 
                             #region [Add event handlers]
                             client.DownloadImageCompleted += (obj, arg) =>
@@ -202,7 +203,7 @@ namespace WeTongji
                                 {
                                     try
                                     {
-                                        DependencyObject dependencyObj = ListBox_Pic.ItemContainerGenerator.ContainerFromIndex(i);
+                                        DependencyObject dependencyObj = ListBox_Pic.ItemContainerGenerator.ContainerFromIndex(j);
 
                                         while (!(dependencyObj is Grid))
                                         {
@@ -227,7 +228,7 @@ namespace WeTongji
                                 {
                                     try
                                     {
-                                        DependencyObject dependencyObj = ListBox_Pic.ItemContainerGenerator.ContainerFromIndex(i);
+                                        DependencyObject dependencyObj = ListBox_Pic.ItemContainerGenerator.ContainerFromIndex(j);
 
                                         while (!(dependencyObj is Grid))
                                         {
@@ -648,6 +649,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarLikeButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.LikeableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.Recommends)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         var itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
@@ -736,6 +756,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarUnlikeButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.LikeableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.Recommends)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         var itemInDB = db.AroundTable.Where((news) => news.Id == req.Id).SingleOrDefault();
@@ -824,6 +863,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarFavoriteButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.FavorableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.Recommends)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     AroundExt itemInDB = null;
 
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
@@ -919,6 +977,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarUnfavoriteButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.FavorableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.Recommends)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     AroundExt itemInDB = null;
 
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))

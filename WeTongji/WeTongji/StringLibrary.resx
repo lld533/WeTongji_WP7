@@ -267,7 +267,7 @@
     <value>Unlike</value>
   </data>
   <data name="Common_ExitAppPromptContent" xml:space="preserve">
-    <value>Confirm to exit WeTonji?</value>
+    <value>Confirm to exit WeTongji?</value>
   </data>
   <data name="Common_FailurePrompt" xml:space="preserve">
     <value>Operation failed, please retry.</value>
@@ -301,7 +301,7 @@
     <comment>Pivot "考试安排"的标题</comment>
   </data>
   <data name="CourseDetail_Hours" xml:space="preserve">
-    <value>Class hour</value>
+    <value>Class hours</value>
     <comment>课程学时</comment>
   </data>
   <data name="CourseDetail_LoadingCourseDetail" xml:space="preserve">
@@ -437,7 +437,7 @@
     <value>Loading more...</value>
   </data>
   <data name="MainPage_LoadMoreActivities" xml:space="preserve">
-    <value>Loading more...</value>
+    <value>Load more</value>
   </data>
   <data name="MainPage_LoginTimeOutPrompt" xml:space="preserve">
     <value>Request timeout, please retry.</value>
@@ -466,7 +466,7 @@
     <value>No detail info</value>
   </data>
   <data name="MainPage_NotActivatedAccountPrompt" xml:space="preserve">
-    <value>Acount has not been activated.</value>
+    <value>Account has not been activated.</value>
   </data>
   <data name="MainPage_NotRegisteredPrompt" xml:space="preserve">
     <value>Please sign up for your account.</value>
@@ -747,7 +747,6 @@
   </data>
   <data name="ForgotPassword_SucceededText" xml:space="preserve">
     <value>Go and check your reset email.</value>
-    <comment>你的中文打错了</comment>
   </data>
   <data name="MyAgenda_AppBarTodayText" xml:space="preserve">
     <value>Today</value>
@@ -939,5 +938,102 @@
   </data>
   <data name="Common_WithinTwoHours" xml:space="preserve">
     <value>1 hour ago</value>
+  </data>
+  <data name="MainPage_AutoLoginPrompt" xml:space="preserve">
+    <value>Signing in...</value>
+  </data>
+  <data name="MainPage_CancelAutoLogin" xml:space="preserve">
+    <value>cancel</value>
+  </data>
+  <data name="MainPage_PasswordLengthErrorPromptCaption" xml:space="preserve">
+    <value>Wrong password</value>
+  </data>
+  <data name="MainPage_PasswordLengthErrorPromptText" xml:space="preserve">
+    <value>At least 6 characters are required.</value>
+  </data>
+  <data name="MainPage_StudentNOErrorPromptCaption" xml:space="preserve">
+    <value>Wrong student ID</value>
+  </data>
+  <data name="MainPage_StudentNOErrorPromptText" xml:space="preserve">
+    <value>Student ID must consist of all numbers.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Friday" xml:space="preserve">
+    <value>Fri.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Monday" xml:space="preserve">
+    <value>Mon.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Saturday" xml:space="preserve">
+    <value>Sat.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Sunday" xml:space="preserve">
+    <value>Sun.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Thursday" xml:space="preserve">
+    <value>Thur.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Tuesday" xml:space="preserve">
+    <value>Tues.</value>
+  </data>
+  <data name="DayOfWeekAbbr_Wednesday" xml:space="preserve">
+    <value>Wed.</value>
+  </data>
+  <data name="DayOfWeek_Friday" xml:space="preserve">
+    <value>Friday</value>
+  </data>
+  <data name="DayOfWeek_Monday" xml:space="preserve">
+    <value>Monday</value>
+  </data>
+  <data name="DayOfWeek_Saturday" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="DayOfWeek_Sunday" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="DayOfWeek_Thursday" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="DayOfWeek_Tuesday" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="DayOfWeek_Wednesday" xml:space="preserve">
+    <value>Wednesday</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewGroupNotice" xml:space="preserve">
+    <value>1 new group notice</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewOfficialNote" xml:space="preserve">
+    <value>1 new official note</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewRecommend" xml:space="preserve">
+    <value>1 new recommend</value>
+  </data>
+  <data name="CampusInfo_ReceiveANewTongjiNews" xml:space="preserve">
+    <value>1 new Tongji news</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewGroupNotices" xml:space="preserve">
+    <value>{0} new group notices</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewOfficialNotes" xml:space="preserve">
+    <value>{0} new official notes</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewRecommends" xml:space="preserve">
+    <value>{0} new recommends</value>
+  </data>
+  <data name="CampusInfo_ReceiveNewTongjiNews" xml:space="preserve">
+    <value>{0} new Tongji news</value>
+  </data>
+  <data name="MainPage_ReceiveANewActivityTemplate" xml:space="preserve">
+    <value>1 new activity</value>
+  </data>
+  <data name="MainPage_ReceiveNewActivitiesTemplate" xml:space="preserve">
+    <value>{0} new activities</value>
+  </data>
+  <data name="PeopleOfWeekList_ReceiveANewPersonTemplate" xml:space="preserve">
+    <value>1 new weekly star</value>
+  </data>
+  <data name="PeopleOfWeekList_ReceiveNewPersonsTemplate" xml:space="preserve">
+    <value>{0} new weekly stars</value>
+    <comment>例如，收到2位新的每周人物</comment>
   </data>
 </root>

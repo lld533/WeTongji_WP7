@@ -27,7 +27,7 @@ namespace WeTongji
         {
             InitializeComponent();
 
-            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute)) 
+            var button = new ApplicationBarIconButton(new Uri("/icons/appbar.refresh.rest.png", UriKind.RelativeOrAbsolute))
             {
                 Text = StringLibrary.PeopleOfWeekList_AppBarRefreshText
             };
@@ -162,14 +162,21 @@ namespace WeTongji
                         return;
                     }
 
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+
                     int count = arg.Result.People.Count();
-                    PersonExt[] arr = new PersonExt[count];
+                    int newPersons = 0;
 
                     for (int i = 0; i < count; ++i)
+                    {
+                        PersonExt target = null;
                         using (var db = WTShareDataContext.ShareDB)
                         {
                             var item = arg.Result.People[i];
-                            var target = db.People.Where((person) => person.Id == item.Id).SingleOrDefault();
+                            target = db.People.Where((person) => person.Id == item.Id).SingleOrDefault();
 
                             if (target == null)
                             {
@@ -177,24 +184,36 @@ namespace WeTongji
                                 target.SetObject(item);
 
                                 db.People.InsertOnSubmit(target);
+
+                                ++newPersons;
                             }
                             else
                             {
                                 target.SetObject(item);
                             }
 
-                            arr[i] = target;
-
                             db.SubmitChanges();
                         }
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            InsertMorePeople(new PersonExt[] { target });
+                        });
+                    }
 
                     Global.Instance.PersonPageId = arg.Result.NextPager;
 
                     this.Dispatcher.BeginInvoke(() =>
                     {
-                        ProgressBarPopup.Instance.Close();
+                        if (newPersons == 1)
+                        {
+                            WTToast.Instance.Show(StringLibrary.PeopleOfWeekList_ReceiveANewPersonTemplate);
+                        }
+                        else if (newPersons > 1)
+                        {
+                            WTToast.Instance.Show(String.Format(StringLibrary.PeopleOfWeekList_ReceiveNewPersonsTemplate, newPersons));
+                        }
 
-                        InsertMorePeople(arr);
 
                         if (arg.Result.NextPager > 0)
                         {
@@ -304,6 +323,7 @@ namespace WeTongji
 
                 //...flag points out whether we should go on sending request
                 bool flag = true;
+                int newPersons = 0;
 
                 #region [Update database]
 
@@ -321,6 +341,8 @@ namespace WeTongji
                             itemInDB.SetObject(item);
 
                             db.People.InsertOnSubmit(itemInDB);
+
+                            ++newPersons;
                         }
                         //...Already in DB
                         else
@@ -335,10 +357,19 @@ namespace WeTongji
                     }
                 }
 
-                this.Dispatcher.BeginInvoke(() => 
+                this.Dispatcher.BeginInvoke(() =>
                 {
                     ProgressBarPopup.Instance.Close();
                     InsertMorePeople(arr);
+
+                    if (newPersons == 1)
+                    {
+                        WTToast.Instance.Show(StringLibrary.PeopleOfWeekList_ReceiveANewPersonTemplate);
+                    }
+                    else if (newPersons > 1)
+                    {
+                        WTToast.Instance.Show(String.Format(StringLibrary.PeopleOfWeekList_ReceiveNewPersonsTemplate, newPersons));
+                    }
 
                     if (flag && arg.Result.NextPager > 0)
                         RefreshPeopleOfWeek(arg.Result.NextPager);

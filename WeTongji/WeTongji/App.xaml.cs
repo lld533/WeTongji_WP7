@@ -25,9 +25,7 @@ namespace WeTongji
         /// <returns>The root frame of the Phone Application.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
 
-        public static Boolean IsObscured { get; private set; }
-
-        public static Boolean IsLocked { get; private set; }
+        private static readonly String FlurryWP8Key = "D8FDP678R9SM6X7KVJKY";
 
         /// <summary>
         /// Constructor for the Application object.
@@ -70,15 +68,16 @@ namespace WeTongji
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            //IsolatedStorageExplorer.Explorer.Start("localhost");
             Global.Instance.LoadSettings();
+
+            FlurryWP8SDK.Api.StartSession(FlurryWP8Key);
         }
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
-            //IsolatedStorageExplorer.Explorer.RestoreFromTombstone();
+            FlurryWP8SDK.Api.StartSession(FlurryWP8Key);
         }
 
         // Code to execute when the application is deactivated (sent to background)
@@ -133,9 +132,6 @@ namespace WeTongji
             // Handle navigation failures
             RootFrame.NavigationFailed += RootFrame_NavigationFailed;
 
-            RootFrame.Obscured += RootFrame_Obscured;
-            RootFrame.Unobscured += RootFrame_Unobscured;
-
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;
         }
@@ -151,18 +147,6 @@ namespace WeTongji
 
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
-        }
-
-        private void RootFrame_Obscured(Object sender, ObscuredEventArgs e)
-        {
-            IsObscured = true;
-            IsLocked = e.IsLocked;
-        }
-
-        private void RootFrame_Unobscured(Object sender, EventArgs e)
-        {
-            IsObscured = false;
-            IsLocked = false;
         }
 
         #endregion

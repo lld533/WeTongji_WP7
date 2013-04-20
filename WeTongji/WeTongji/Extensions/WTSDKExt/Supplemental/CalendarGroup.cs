@@ -77,7 +77,6 @@ namespace WeTongji.Api.Domain
                 }
             }
 
-
             CalendarNode result = null;
             var yesterday = (DateTime.Now - TimeSpan.FromDays(1)).Date;
             var today = DateTime.Now.Date;
@@ -87,9 +86,10 @@ namespace WeTongji.Api.Domain
 
             if (yesterdayGroup != null)
             {
-                var nodeToRemove = yesterdayGroup.Where((node) => node.IsNoArrangementNode).SingleOrDefault();
-                if (nodeToRemove != null)
-                    yesterdayGroup.Items.Remove(nodeToRemove);
+                if (yesterdayGroup.Items.Count == 1 && yesterdayGroup.Items.Single().IsNoArrangementNode)
+                {
+                    list.Remove(yesterdayGroup);
+                }
             }
 
             if (todayGroup == null)
@@ -111,14 +111,13 @@ namespace WeTongji.Api.Domain
                 {
                     int nodeIdx = todayGroup.Where((node) => node.BeginTime < DateTime.Now).Count();
 
-                    if (nodeIdx == todayGroup.Count())
+                    if (nodeIdx < todayGroup.Count())
                     {
-                        todayGroup.Items.Add(CalendarNode.NoArrangementNode);
-                        result = todayGroup.Items.Last();
+                        result = todayGroup.Items[nodeIdx];
                     }
                     else
                     {
-                        result = todayGroup.Items[nodeIdx];
+                        result = CalendarNode.NoArrangementNode;
                     }
                 }
             }
@@ -136,10 +135,10 @@ namespace WeTongji.Api.Domain
             //...The date of the activity exists in Agenda
             if (g != null)
             {
-                //...Remove no arrangement node if there exists.
-                if (g.Count() > 0 && g.Last().IsNoArrangementNode)
+                //...Remove potential no arrangement node
+                if (g.Key == DateTime.Now.Date && g.Items.Count == 1 && g.Single().IsNoArrangementNode)
                 {
-                    g.Items.RemoveAt(g.Count() - 1);
+                    g.Items.Clear();
                 }
 
                 var targetNode = g.Where((n) => n == node).SingleOrDefault();

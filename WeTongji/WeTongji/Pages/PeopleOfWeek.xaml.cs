@@ -45,7 +45,7 @@ namespace WeTongji
             };
             this.ApplicationBar.Buttons.Add(button);
         }
-        
+
         #region [Overridden]
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -236,6 +236,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarLikeButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.LikeableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.WeeklyStar)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     PersonExt itemInDB = null;
                     using (var db = WTShareDataContext.ShareDB)
                     {
@@ -334,6 +353,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarUnlikeButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.LikeableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.WeeklyStar)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     PersonExt itemInDB = null;
 
                     using (var db = WTShareDataContext.ShareDB)
@@ -433,6 +471,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarFavoriteButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.FavorableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.WeeklyStar)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     PersonExt itemInDB = null;
 
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
@@ -522,7 +579,7 @@ namespace WeTongji
         {
             if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
             {
-                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt,StringLibrary.Common_Prompt, MessageBoxButton.OK);
+                MessageBox.Show(StringLibrary.Common_LogInFirstPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OK);
                 return;
             }
             else
@@ -534,6 +591,25 @@ namespace WeTongji
 
                 client.ExecuteCompleted += (obj, arg) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.ClickAppBarUnfavoriteButton).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.FavorableParameter).ToString(), 
+                                    ((int)(FlurryWP8SDK.Models.ParameterValue.WeeklyStar)).ToString()
+                                    ),
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.Id).ToString(), 
+                                    req.Id.ToString()
+                                    )
+                            })
+                            );
+
+                    #endregion
+
                     PersonExt itemInDB = null;
 
                     if (!String.IsNullOrEmpty(Global.Instance.CurrentUserID))
@@ -561,7 +637,7 @@ namespace WeTongji
                         }
 
                     }
-                    
+
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         var favBtn = this.ApplicationBar.Buttons[1] as ApplicationBarIconButton;
@@ -673,6 +749,19 @@ namespace WeTongji
             ImageViewer.CoreImageName = imgExt.Id;
             ImageViewer.CoreImageSource = img.Source as System.Windows.Media.Imaging.BitmapSource;
             this.NavigationService.Navigate(new Uri("/Pages/ImageViewer.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+        private void ViewFirstImage(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            var img = sender as Image;
+            var person = this.DataContext as PersonExt;
+
+            if (img != null && person != null)
+            {
+                ImageViewer.CoreImageName = person.ImageExtList.Substring(0, person.ImageExtList.IndexOf(':')).Trim('\"');
+                ImageViewer.CoreImageSource = img.Source as System.Windows.Media.Imaging.BitmapSource;
+                this.NavigationService.Navigate(new Uri("/Pages/ImageViewer.xaml", UriKind.RelativeOrAbsolute));
+            }
         }
     }
 }

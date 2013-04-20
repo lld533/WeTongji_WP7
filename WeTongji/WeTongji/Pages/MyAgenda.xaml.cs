@@ -147,6 +147,8 @@ namespace WeTongji
             {
                 try
                 {
+                    FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickAppBarTodayButton).ToString());
+
                     var src = LongListSelector_Core.ItemsSource as List<CalendarGroup<CalendarNode>>;
                     var group = src.Where((g) => g.Key == DateTime.Now.Date).SingleOrDefault();
                     if (group != null)
@@ -178,78 +180,84 @@ namespace WeTongji
                             {
                                 TextBlock_Loading.Visibility = Visibility.Collapsed;
                                 LongListSelector_Core.ItemsSource = global.AgendaSource;
-                                {
-                                    LongListSelector_Core.UpdateLayout();
-
-                                    if (!registerVerticalScrollChanged)
-                                    {
-                                        DependencyObject depObj = LongListSelector_Core;
-
-                                        while (!(depObj is ScrollViewer))
-                                        {
-                                            Debug.WriteLine(depObj.GetType());
-                                            depObj = VisualTreeHelper.GetChild(depObj, 0);
-                                        }
-
-                                        this.SetBinding(DependencyProperty.RegisterAttached("VerticalOffset",
-
-                                            typeof(double),
-
-                                            this.GetType(),
-
-                                            new PropertyMetadata((obj, arg) =>
-                                            {
-                                                if (VerticalScrollChanged != null)
-
-                                                    VerticalScrollChanged(this, EventArgs.Empty);
-
-                                            })),
-
-                                        new Binding("VerticalOffset") { Source = depObj as ScrollViewer });
-
-                                        registerVerticalScrollChanged = true;
-                                    }
-                                }
-
-                                LongListSelector_Core.ScrollTo(nodeToScrollTo);
                                 LongListSelector_Core.UpdateLayout();
 
-                                #region [Play donate animation]
+                                #region [Binding Top item with scrolling offset]
 
+                                if (!registerVerticalScrollChanged)
                                 {
-                                    DependencyObject obj = LongListSelector_Core;
-                                    while (!(obj is VirtualizingStackPanel))
+                                    DependencyObject depObj = LongListSelector_Core;
+
+                                    while (!(depObj is ScrollViewer))
                                     {
-                                        obj = VisualTreeHelper.GetChild(obj, 0);
+                                        Debug.WriteLine(depObj.GetType());
+                                        depObj = VisualTreeHelper.GetChild(depObj, 0);
                                     }
 
-                                    int count = VisualTreeHelper.GetChildrenCount(obj);
+                                    this.SetBinding(DependencyProperty.RegisterAttached("VerticalOffset",
 
-                                    for (int i = 0; i < count; ++i)
-                                    {
-                                        var tmp = VisualTreeHelper.GetChild(obj, i);
+                                        typeof(double),
 
-                                        var source = (tmp as Control).DataContext as LongListSelectorItem;
-                                        if (source.Item == nodeToScrollTo)
+                                        this.GetType(),
+
+                                        new PropertyMetadata((obj, arg) =>
                                         {
-                                            obj = tmp;
+                                            if (VerticalScrollChanged != null)
 
-                                            //...Get the layout root of the item
-                                            while (!(obj is ContentPresenter))
-                                            {
-                                                obj = VisualTreeHelper.GetChild(obj, 0);
-                                            }
+                                                VerticalScrollChanged(this, EventArgs.Empty);
 
-                                            var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
-                                            Storyboard sb = itemLayoutRoot.Resources["Donate"] as Storyboard;
-                                            sb.Begin();
-                                            break;
-                                        }
-                                    }
+                                        })),
+
+                                    new Binding("VerticalOffset") { Source = depObj as ScrollViewer });
+
+                                    registerVerticalScrollChanged = true;
                                 }
 
-
                                 #endregion
+
+                                if (nodeToScrollTo.IsNoArrangementNode)
+                                {
+                                    AppButton_Today_Clicked(this.ApplicationBar.Buttons[0], EventArgs.Empty);
+                                }
+                                else
+                                {
+                                    LongListSelector_Core.ScrollTo(nodeToScrollTo);
+                                    LongListSelector_Core.UpdateLayout();
+
+                                    #region [Play donate animation]
+                                    {
+                                        DependencyObject obj = LongListSelector_Core;
+                                        while (!(obj is VirtualizingStackPanel))
+                                        {
+                                            obj = VisualTreeHelper.GetChild(obj, 0);
+                                        }
+
+                                        int count = VisualTreeHelper.GetChildrenCount(obj);
+
+                                        for (int i = 0; i < count; ++i)
+                                        {
+                                            var tmp = VisualTreeHelper.GetChild(obj, i);
+
+                                            var source = (tmp as Control).DataContext as LongListSelectorItem;
+                                            if (source.Item == nodeToScrollTo)
+                                            {
+                                                obj = tmp;
+
+                                                //...Get the layout root of the item
+                                                while (!(obj is ContentPresenter))
+                                                {
+                                                    obj = VisualTreeHelper.GetChild(obj, 0);
+                                                }
+
+                                                var itemLayoutRoot = VisualTreeHelper.GetChild(obj, 0) as Panel;
+                                                Storyboard sb = itemLayoutRoot.Resources["Donate"] as Storyboard;
+                                                sb.Begin();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    #endregion
+                                }
                             }
                             #endregion
                             #region [LongListSelector has source]

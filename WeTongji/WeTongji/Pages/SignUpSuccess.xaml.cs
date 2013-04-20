@@ -27,6 +27,12 @@ namespace WeTongji
 
         private void NavBackToMainPage(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickToGoBackAtSignUpThirdStep).ToString());
+
+            #endregion
+
             this.NavigationService.RemoveBackEntry();
             this.NavigationService.RemoveBackEntry();
             this.NavigationService.GoBack();
@@ -34,6 +40,12 @@ namespace WeTongji
 
         private void BrowseTongjiMail(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickToBrowseTongjiMailPortAtSignUpThirdStep).ToString());
+
+            #endregion
+
             var task = new Microsoft.Phone.Tasks.WebBrowserTask();
             task.Uri = new Uri("http://mail.tongji.edu.cn");
             task.Show();

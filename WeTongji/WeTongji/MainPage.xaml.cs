@@ -34,6 +34,7 @@ using System.Threading;
 using WeTongji.Utility;
 using System.Windows.Threading;
 using Microsoft.Devices;
+using System.Device.Location;
 
 
 namespace WeTongji
@@ -66,6 +67,9 @@ namespace WeTongji
 
         private Boolean isCurrentCalendarNodeAlarmed = false;
 
+        private GeoCoordinate CurrentLocation = new GeoCoordinate();
+        private GeoCoordinateWatcher GCW = new GeoCoordinateWatcher();
+
         #endregion
 
         #region [Alarm DispatcherTimer]
@@ -83,6 +87,13 @@ namespace WeTongji
             InitializeComponent();
 
             this.TextBlock_Today.Text = DateTime.Now.Day.ToString();
+
+            GCW.PositionChanged += (o, e) =>
+                {
+                    CurrentLocation = e.Position.Location;
+                };
+
+            GCW.Start();
 
             #region [Add localized buttons, and menu items]
 
@@ -182,6 +193,11 @@ namespace WeTongji
 
             alarmDispatcherTimer.Tick += (o, e) =>
                 {
+                    if (DateTime.Now.Day.ToString() != TextBlock_Today.Text)
+                    {
+                        PlayTriggerTodayAnimation();
+                    }
+
                     if (String.IsNullOrEmpty(Global.Instance.CurrentUserID) || AlarmClockSource == null || AlarmClockSource.IsNoArrangementNode)
                         return;
 
@@ -202,14 +218,20 @@ namespace WeTongji
                             //...30 min in advance
                             case CalendarNodeType.kActivity:
                                 {
-                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(30))
+                                    if (!isCurrentCalendarNodeAlarmed)
                                     {
-                                        isCurrentCalendarNodeAlarmed = true;
-                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
-
-
-                                        if (!App.IsObscured)
+                                        //...the phone is locked before alarm should have started and is unlocked after the course starts.
+                                        if (DateTime.Now > src.BeginTime)
                                         {
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Stop();
+                                            AlarmClockSource = Global.Instance.AgendaSource.GetNextCalendarNode();
+                                        }
+                                        //...it should alarm now
+                                        else if (DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(30))
+                                        {
+                                            isCurrentCalendarNodeAlarmed = true;
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
                                             //...Vibrate
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
@@ -218,6 +240,12 @@ namespace WeTongji
                                                                                                                                       src.Title,
                                                                                                                                       (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
                                                            StringLibrary.Common_Prompt, MessageBoxButton.OK);
+
+                                        }
+                                        //...it is too early to alarm
+                                        else
+                                        {
+                                            //...do nothing
                                         }
                                     }
                                 }
@@ -225,13 +253,20 @@ namespace WeTongji
                             //...1 hour in advance
                             case CalendarNodeType.kExam:
                                 {
-                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromHours(1))
+                                    if (!isCurrentCalendarNodeAlarmed)
                                     {
-                                        isCurrentCalendarNodeAlarmed = true;
-                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
-
-                                        if (!App.IsObscured)
+                                        //...the phone is locked before alarm should have started and is unlocked after the course starts.
+                                        if (DateTime.Now > src.BeginTime)
                                         {
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Stop();
+                                            AlarmClockSource = Global.Instance.AgendaSource.GetNextCalendarNode();
+                                        }
+                                        //...it should alarm now
+                                        else if (DateTime.Now > src.BeginTime - TimeSpan.FromHours(1))
+                                        {
+                                            isCurrentCalendarNodeAlarmed = true;
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
                                             //...Vibrate
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
@@ -241,6 +276,11 @@ namespace WeTongji
                                                                                                                                      (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
                                                             StringLibrary.Common_Prompt, MessageBoxButton.OK);
                                         }
+                                        //...it is too early to alarm
+                                        else
+                                        {
+                                            //...do nothing
+                                        }
                                     }
                                 }
                                 break;
@@ -248,13 +288,20 @@ namespace WeTongji
                             case CalendarNodeType.kObligedCourse:
                             case CalendarNodeType.kOptionalCourse:
                                 {
-                                    if (!isCurrentCalendarNodeAlarmed && DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(10))
+                                    if (!isCurrentCalendarNodeAlarmed)
                                     {
-                                        isCurrentCalendarNodeAlarmed = true;
-                                        (this.Resources["AlarmAnimation"] as Storyboard).Begin();
-
-                                        if (!App.IsLocked && !App.IsObscured)
+                                        //...the phone is locked before alarm should have started and is unlocked after the course starts.
+                                        if (DateTime.Now > src.BeginTime)
                                         {
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Stop();
+                                            AlarmClockSource = Global.Instance.AgendaSource.GetNextCalendarNode();
+                                        }
+                                        //...it should alarm now
+                                        else if (DateTime.Now > src.BeginTime - TimeSpan.FromMinutes(10))
+                                        {
+                                            isCurrentCalendarNodeAlarmed = true;
+                                            (this.Resources["AlarmAnimation"] as Storyboard).Begin();
+
                                             //...Vibrate
                                             VibrateController.Default.Start(TimeSpan.FromSeconds(1));
 
@@ -263,6 +310,12 @@ namespace WeTongji
                                                                                                                                    src.Title,
                                                                                                                                    (int)(src.BeginTime - DateTime.Now).TotalMinutes + 1),
                                                         StringLibrary.Common_Prompt, MessageBoxButton.OK);
+
+                                        }
+                                        //...it is too early to alarm
+                                        else
+                                        {
+                                            //...do nothing
                                         }
                                     }
                                 }
@@ -739,16 +792,44 @@ namespace WeTongji
             var src = PersonSource;
 
             if (src != null)
+            {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ViewWeeklyStar).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.TapToViewWeeklyStarParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.SeeMore).ToString())
+                            })
+                    );
+
+                #endregion
+
                 this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+            }
         }
 
         void NavToForgotPassword(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickForgetPassword).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/ForgotPassword.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private void NavigateToSignUp(object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickAppBarSignUpButton).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/TongjiMail.xaml", UriKind.RelativeOrAbsolute));
         }
 
@@ -767,35 +848,99 @@ namespace WeTongji
 
         private void NavToOfficialNotesList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
-            var ctrl = sender as Control;
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.ViewCampusNews).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.CampusNewsParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.OfficialNote).ToString())
+                            })
+                );
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=2", UriKind.RelativeOrAbsolute));
         }
 
         private void NavToClubNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
-            var ctrl = sender as Control;
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.ViewCampusNews).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.CampusNewsParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.GroupNotices).ToString())
+                            })
+                );
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=3", UriKind.RelativeOrAbsolute));
         }
 
         private void NavToTongjiNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
-            var ctrl = sender as Control;
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.ViewCampusNews).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.CampusNewsParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.TongjiNews).ToString())
+                            })
+                );
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=0", UriKind.RelativeOrAbsolute));
         }
 
         private void NavToAroundNewsList(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
-            var ctrl = sender as Control;
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.ViewCampusNews).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.CampusNewsParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Recommends).ToString())
+                            })
+                );
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/CampusInfo.xaml?q=1", UriKind.RelativeOrAbsolute));
         }
 
         private void ViewPersonalProfile(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ViewPersonalProfile).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/PersonalProfile.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private void ViewMyFavorite(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ViewMyFavorites).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/MyFavorite.xaml", UriKind.RelativeOrAbsolute));
         }
 
@@ -808,6 +953,15 @@ namespace WeTongji
         {
             if (AlarmClockSource == null || AlarmClockSource.IsNoArrangementNode)
             {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ClickReminder).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                        new FlurryWP8SDK.Models.Parameter[]{
+                                        new FlurryWP8SDK.Models.Parameter((
+                                            (int)FlurryWP8SDK.Models.ParameterName.ClickReminderParameter).ToString(), 
+                                            ((int)FlurryWP8SDK.Models.ParameterValue.NoArrangement).ToString())})
+                    );
+
                 this.NavigationService.Navigate(new Uri("/Pages/MyAgenda.xaml", UriKind.RelativeOrAbsolute));
             }
             else
@@ -816,14 +970,47 @@ namespace WeTongji
                 switch (src.NodeType)
                 {
                     case CalendarNodeType.kActivity:
-                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/Activity.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        {
+                            FlurryWP8SDK.Api.LogEvent(
+                                ((int)FlurryWP8SDK.Models.EventName.ClickReminder).ToString(),
+                                new List<FlurryWP8SDK.Models.Parameter>(
+                                    new FlurryWP8SDK.Models.Parameter[]{
+                                                    new FlurryWP8SDK.Models.Parameter((
+                                                        (int)FlurryWP8SDK.Models.ParameterName.ClickReminderParameter).ToString(), 
+                                                        ((int)FlurryWP8SDK.Models.ParameterValue.Activity).ToString())})
+                                );
+
+                            this.NavigationService.Navigate(new Uri(String.Format("/Pages/Activity.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        }
                         break;
                     case CalendarNodeType.kExam:
-                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        {
+                            FlurryWP8SDK.Api.LogEvent(
+                                ((int)FlurryWP8SDK.Models.EventName.ClickReminder).ToString(),
+                                new List<FlurryWP8SDK.Models.Parameter>(
+                                    new FlurryWP8SDK.Models.Parameter[]{
+                                                    new FlurryWP8SDK.Models.Parameter((
+                                                        (int)FlurryWP8SDK.Models.ParameterName.ClickReminderParameter).ToString(), 
+                                                        ((int)FlurryWP8SDK.Models.ParameterValue.Exam).ToString())})
+                                );
+
+                            this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+                        }
                         break;
                     case CalendarNodeType.kObligedCourse:
                     case CalendarNodeType.kOptionalCourse:
-                        this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}&d={1}", src.Id, src.BeginTime), UriKind.RelativeOrAbsolute));
+                        {
+                            FlurryWP8SDK.Api.LogEvent(
+                                ((int)FlurryWP8SDK.Models.EventName.ClickReminder).ToString(),
+                                new List<FlurryWP8SDK.Models.Parameter>(
+                                    new FlurryWP8SDK.Models.Parameter[]{
+                                                    new FlurryWP8SDK.Models.Parameter((
+                                                        (int)FlurryWP8SDK.Models.ParameterName.ClickReminderParameter).ToString(), 
+                                                        ((int)FlurryWP8SDK.Models.ParameterValue.Course).ToString())})
+                                );
+
+                            this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}&d={1}", src.Id, src.BeginTime), UriKind.RelativeOrAbsolute));
+                        }
                         break;
                 }
             }
@@ -831,11 +1018,23 @@ namespace WeTongji
 
         private void ViewMyAgenda(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ViewAgenda).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/MyAgenda.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private void NavigateToSettings(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickAppBarSettingsMenuItem).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/MySettings.xaml", UriKind.RelativeOrAbsolute));
         }
 
@@ -846,6 +1045,12 @@ namespace WeTongji
 
         private void NavToPeopleOfWeekList(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickAppBarHistoryButton).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/PeopleOfWeekList.xaml", UriKind.RelativeOrAbsolute));
         }
 
@@ -886,7 +1091,7 @@ namespace WeTongji
             {
                 if (ex is ArgumentOutOfRangeException)
                 {
-                    MessageBox.Show("学号必须由数字组成", "学号错误", MessageBoxButton.OK);
+                    MessageBox.Show(StringLibrary.MainPage_StudentNOErrorPromptText, StringLibrary.MainPage_StudentNOErrorPromptCaption, MessageBoxButton.OK);
 
                     TextBox_Id.Focus();
                     TextBox_Id.SelectAll();
@@ -894,7 +1099,7 @@ namespace WeTongji
                 }
                 else if (ex is ArgumentNullException)
                 {
-                    MessageBox.Show("密码不能少于6位", "密码错误", MessageBoxButton.OK);
+                    MessageBox.Show(StringLibrary.MainPage_PasswordLengthErrorPromptText, StringLibrary.MainPage_PasswordLengthErrorPromptCaption, MessageBoxButton.OK);
 
                     PasswordBox_Password.Focus();
                     PasswordBox_Password.SelectAll();
@@ -941,6 +1146,26 @@ namespace WeTongji
 
                     #endregion
 
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(
+                        ((int)FlurryWP8SDK.Models.EventName.SignIn).ToString(),
+                        new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                                    {
+                                        new FlurryWP8SDK.Models.Parameter(
+                                            ((int)FlurryWP8SDK.Models.ParameterName.SignInParameter).ToString(), 
+                                            ((int)FlurryWP8SDK.Models.ParameterValue.SignIn).ToString())
+                                    })
+                        );
+
+                    FlurryWP8SDK.Api.SetUserId(targetUser.UID);
+                    FlurryWP8SDK.Api.SetAge(Math.Max(0, DateTime.Now.Year - targetUser.Birthday.Year));
+                    FlurryWP8SDK.Api.SetGender(targetUser.IsMale ? FlurryWP8SDK.Models.Gender.Male : FlurryWP8SDK.Models.Gender.Female);
+                    if (!CurrentLocation.IsUnknown)
+                        FlurryWP8SDK.Api.SetLocation(CurrentLocation.Latitude, CurrentLocation.Longitude, Convert.ToSingle(CurrentLocation.HorizontalAccuracy));
+
+                    #endregion
+
                     #region [download courses, favorites and schedule in order]
 
                     Global.Instance.ParticipatingActivitiesIdList.Clear();
@@ -956,6 +1181,7 @@ namespace WeTongji
                         UserSource = targetUser;
 
                         Border_SignedOut.Visibility = Visibility.Collapsed;
+                        PlayTriggerTodayAnimation();
                         TextBox_Id.Text = String.Empty;
                         PasswordBox_Password.Password = String.Empty;
                         StartComputingCalendarNodes();
@@ -1064,12 +1290,24 @@ namespace WeTongji
 
         private void AutoLogin()
         {
-            if (String.IsNullOrEmpty(Global.Instance.Settings.UID))
+            //...Return if no user has logged in ever before or the settings file is missing.
+            this.Dispatcher.BeginInvoke(() =>
             {
-                //...Return if no user has logged in ever before or the settings file is missing.
-                return;
-            }
+                if (String.IsNullOrEmpty(Global.Instance.Settings.UID))
+                {
+                    Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
+                }
+                else if (Grid_AutoLoginPrompt.Visibility == Visibility.Collapsed)
+                { }
+                else
+                {
+                    AutoLoginCore();
+                }
+            });
+        }
 
+        private void AutoLoginCore()
+        {
             var req = new UserLogOnRequest<UserLogOnResponse>();
             var client = new WTDefaultClient<UserLogOnResponse>();
 
@@ -1079,6 +1317,10 @@ namespace WeTongji
             if (!WTUserDataContext.UserDataContextExists(Global.Instance.Settings.UID))
             {
                 //...Return if local database cannot be found.
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
+                });
                 return;
             }
 
@@ -1088,7 +1330,13 @@ namespace WeTongji
 
                 //...Return if user info is missing.
                 if (userInfo == null)
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
+                    });
                     return;
+                }
 
                 req.NO = userInfo.NO;
             }
@@ -1100,21 +1348,34 @@ namespace WeTongji
             #region [Add execute completed handlers]
 
             client.ExecuteCompleted += (obj, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    this.Dispatcher.BeginInvoke(() =>
+                    ProgressBarPopup.Instance.Close();
+
+                    if (Grid_AutoLoginPrompt.Visibility == Visibility.Visible)
                     {
-                        if (String.IsNullOrEmpty(Global.Instance.CurrentUserID)
-                            && String.IsNullOrEmpty(TextBox_Id.Text)
-                            && String.IsNullOrEmpty(PasswordBox_Password.Password))
-                        {
-                            var thread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(OnAutoLoginCompleted));
-                            thread.Start(arg);
-                        }
-                    });
-                };
+                        var thread = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(OnAutoLoginCompleted));
+                        thread.Start(arg);
+                    }
+                });
+            };
+
+            client.ExecuteFailed += (obj, arg) =>
+            {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
+                    ProgressBarPopup.Instance.Close();
+                });
+            };
 
             #endregion
 
+            this.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarPopup.Instance.Open();
+            });
             client.Execute(req);
         }
 
@@ -1162,6 +1423,26 @@ namespace WeTongji
 
             #endregion
 
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.SignIn).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                {
+                    new FlurryWP8SDK.Models.Parameter(
+                        ((int)FlurryWP8SDK.Models.ParameterName.SignInParameter).ToString(), 
+                        ((int)FlurryWP8SDK.Models.ParameterValue.AutoSignIn).ToString())
+                })
+                );
+
+            FlurryWP8SDK.Api.SetUserId(targetUser.UID);
+            FlurryWP8SDK.Api.SetAge(Math.Max(0, DateTime.Now.Year - targetUser.Birthday.Year));
+            FlurryWP8SDK.Api.SetGender(targetUser.IsMale ? FlurryWP8SDK.Models.Gender.Male : FlurryWP8SDK.Models.Gender.Female);
+            if (!CurrentLocation.IsUnknown)
+                FlurryWP8SDK.Api.SetLocation(CurrentLocation.Latitude, CurrentLocation.Longitude, Convert.ToSingle(CurrentLocation.HorizontalAccuracy));
+
+            #endregion
+
             #region [download courses, favorites and schedule in order]
 
             Global.Instance.ParticipatingActivitiesIdList.Clear();
@@ -1178,10 +1459,12 @@ namespace WeTongji
 
                 StartComputingCalendarNodes();
 
+                Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
                 Border_SignedOut.Visibility = Visibility.Collapsed;
                 TextBox_Id.Text = String.Empty;
                 PasswordBox_Password.Password = String.Empty;
                 WTToast.Instance.Show(String.Format(StringLibrary.Toast_AutoLoginSucceededPromptTemplate, arg.Result.User.DisplayName));
+                PlayTriggerTodayAnimation();
 
                 if (Panorama_Core.SelectedIndex == 0)
                 {
@@ -1243,18 +1526,22 @@ namespace WeTongji
                 client.ExecuteCompleted += (o, arg) =>
                 {
                     int count = arg.Result.Activities.Count();
-                    ActivityExt[] responseActivities = new ActivityExt[count];
+                    int newActivities = 0;
 
                     for (int i = 0; i < count; ++i)
                     {
+                        ActivityExt itemInDB = null;
+
                         using (var db = WTShareDataContext.ShareDB)
                         {
                             var item = arg.Result.Activities[i];
-                            var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+                            itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
 
                             //...There is no such item
                             if (itemInDB == null)
                             {
+                                ++newActivities;
+
                                 itemInDB = new ActivityExt();
                                 itemInDB.SetObject(item);
 
@@ -1265,17 +1552,32 @@ namespace WeTongji
                                 itemInDB.SetObject(item);
                             }
 
-                            responseActivities[i] = itemInDB;
                             db.SubmitChanges();
                         }
 
                         unexpirePageId = arg.Result.NextPager;
+
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            var hasMore = false;
+
+                            if (ActivityListSource != null && ActivityListSource.Count > 0 && !ActivityListSource.Last().IsValid)
+                                hasMore = true;
+
+                            UpdateAcitivityList(new ActivityExt[] { itemInDB }, arg.Result.NextPager > 0, hasMore);
+                        });
                     }
 
-                    this.Dispatcher.BeginInvoke(() =>
+                    if (newActivities > 0)
                     {
-                        UpdateAcitivityList(responseActivities, arg.Result.NextPager > 0 ? true : false, false);
-                    });
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            if (newActivities == 1)
+                                WTToast.Instance.Show(StringLibrary.MainPage_ReceiveANewActivityTemplate);
+                            else
+                                WTToast.Instance.Show(String.Format(StringLibrary.MainPage_ReceiveNewActivitiesTemplate, newActivities));
+                        });
+                    }
 
                     if (arg.Result.NextPager > 0)
                     {
@@ -1355,16 +1657,21 @@ namespace WeTongji
                 #region [Execute completed]
                 client.ExecuteCompleted += (o, arg) =>
                 {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        ProgressBarPopup.Instance.Close();
+                    });
+
                     Boolean anyActivityExisting = false;
                     int count = arg.Result.Activities.Count();
-                    ActivityExt[] responseActivities = new ActivityExt[count];
 
                     for (int i = 0; i < count; ++i)
                     {
+                        ActivityExt itemInDB = null;
                         using (var db = WTShareDataContext.ShareDB)
                         {
                             var item = arg.Result.Activities[i];
-                            var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+                            itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
 
                             //...There is no such item
                             if (itemInDB == null)
@@ -1380,41 +1687,40 @@ namespace WeTongji
                                 anyActivityExisting = true;
                             }
 
-                            responseActivities[i] = itemInDB;
                             db.SubmitChanges();
                         }
 
-                        Global.Instance.ActivityPageId = arg.Result.NextPager;
-                    }
-
-
-                    if (arg.Result.NextPager > 0 && anyActivityExisting)
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
+                        if (itemInDB != null)
                         {
-                            if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
+                            if (i < count - 1)
                             {
-                                UpdateAcitivityList(responseActivities, true, true);
+                                this.Dispatcher.BeginInvoke(() =>
+                                    {
+                                        UpdateAcitivityList(new ActivityExt[] { itemInDB }, arg.Result.NextPager != 0, false);
+                                    });
+                            }
+                            else if (arg.Result.NextPager > 0 && anyActivityExisting)
+                            {
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    UpdateAcitivityList(new ActivityExt[] { itemInDB }, true, true);
+
+                                    updateExpireAction();
+                                });
                             }
                             else
-                                ProgressBarPopup.Instance.Close();
-
-                            updateExpireAction();
-                        });
-                    }
-                    else
-                    {
-                        this.Dispatcher.BeginInvoke(() =>
-                        {
-                            if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
                             {
-                                UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
-                            }
+                                this.Dispatcher.BeginInvoke(() =>
+                                {
+                                    UpdateAcitivityList(new ActivityExt[] { itemInDB }, false, arg.Result.NextPager <= 0 ? false : true);
 
-                            Global.Instance.CurrentActivitySourceState = SourceState.Done;
-                            ProgressBarPopup.Instance.Close();
-                        });
+                                    Global.Instance.CurrentActivitySourceState = SourceState.Done;
+                                });
+                            }
+                        }
                     }
+
+                    Global.Instance.ActivityPageId = arg.Result.NextPager;
                 };
                 #endregion
 
@@ -1464,15 +1770,21 @@ namespace WeTongji
             #region [Execute completed]
             client.ExecuteCompleted += (o, arg) =>
             {
+                this.Dispatcher.BeginInvoke(() =>
+                {
+                    ProgressBarPopup.Instance.Close();
+                });
+
                 int count = arg.Result.Activities.Count();
-                ActivityExt[] responseActivities = new ActivityExt[count];
 
                 for (int i = 0; i < count; ++i)
                 {
+                    ActivityExt itemInDB = null;
+
                     using (var db = WTShareDataContext.ShareDB)
                     {
                         var item = arg.Result.Activities[i];
-                        var itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
+                        itemInDB = db.Activities.Where((a) => a.Id == item.Id).FirstOrDefault();
 
                         //...There is no such item
                         if (itemInDB == null)
@@ -1487,21 +1799,27 @@ namespace WeTongji
                             itemInDB.SetObject(item);
                         }
 
-                        responseActivities[i] = itemInDB;
                         db.SubmitChanges();
                     }
 
-                    Global.Instance.ActivityPageId = arg.Result.NextPager;
+                    if (i < count - 1)
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            UpdateAcitivityList(new ActivityExt[] { itemInDB }, false, false);
+                        });
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(() =>
+                        {
+                            UpdateAcitivityList(new ActivityExt[] { itemInDB }, false, arg.Result.NextPager > 0);
+                        });
+                    }
+
                 }
 
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    if (this.NavigationService.CurrentSource.ToString() == "/MainPage.xaml")
-                    {
-                        UpdateAcitivityList(responseActivities, false, arg.Result.NextPager <= 0 ? false : true);
-                    }
-                    ProgressBarPopup.Instance.Close();
-                });
+                Global.Instance.ActivityPageId = arg.Result.NextPager;
             };
             #endregion
 
@@ -1752,10 +2070,7 @@ namespace WeTongji
                 {
                     try
                     {
-                        latest = (from AroundExt n in srcs
-                                  where String.IsNullOrEmpty(n.TitleImage) && !n.TitleImage.EndsWith("missing.png")
-                                  orderby n.CreatedAt descending
-                                  select n).First();
+                        latest = srcs.OrderByDescending((news) => news.CreatedAt).First();
                     }
                     catch { }
                 }
@@ -1953,6 +2268,12 @@ namespace WeTongji
 
         #region [Visual]
 
+        private void Button_CancelAutoLogin_Click(Object sender, RoutedEventArgs e)
+        {
+            Grid_AutoLoginPrompt.Visibility = Visibility.Collapsed;
+            ProgressBarPopup.Instance.Close();
+        }
+
         private void PasswordBox_Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
             UpdateLoginButton(null, null);
@@ -2145,6 +2466,12 @@ namespace WeTongji
 
         private void ShareToFriends(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickAppBarShareByEmailMenuItem).ToString());
+
+            #endregion
+
             var task = new Microsoft.Phone.Tasks.EmailComposeTask();
 
             task.Body = String.Format(StringLibrary.MainPage_ShareToFriendsEmailBody);
@@ -2156,6 +2483,20 @@ namespace WeTongji
         {
             if (Panorama_Core.SelectedIndex == 0)
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ClickAppbarRefreshButton).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ClickAppBarRefreshButtonParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Feeds).ToString())
+                            })
+                    );
+
+                #endregion
+
                 var src = UserSource;
                 if (src != null)
                 {
@@ -2167,13 +2508,48 @@ namespace WeTongji
                     var node = Global.Instance.AgendaSource.GetNextCalendarNode();
                     AlarmClockSource = node;
                 }
+
+                if (DateTime.Now.Day.ToString() != TextBlock_Today.Text)
+                    PlayTriggerTodayAnimation();
+                else
+                {
+                    (this.Resources["StressCurrentDayAnimation"] as Storyboard).Begin();
+                }
             }
             else if (Panorama_Core.SelectedIndex == 1)
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ClickAppbarRefreshButton).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ClickAppBarRefreshButtonParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Activities).ToString())
+                            })
+                    );
+
+                #endregion
+
                 GetAllUnexpiredActivities();
             }
             else if (Panorama_Core.SelectedIndex == 2)
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ClickAppbarRefreshButton).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ClickAppBarRefreshButtonParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.CampusNews).ToString())
+                            })
+                    );
+
+                #endregion
+
                 //...Reload Image
                 {
                     OfficialNoteSource = OfficialNoteSource;
@@ -2196,6 +2572,20 @@ namespace WeTongji
             }
             else if (Panorama_Core.SelectedIndex == 3)
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ClickAppbarRefreshButton).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ClickAppBarRefreshButtonParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.WeeklyStar).ToString())
+                            })
+                    );
+
+                #endregion
+
                 PersonSource = PersonSource;
 
                 //...Get latest
@@ -2215,6 +2605,23 @@ namespace WeTongji
                 {
                     Global.Instance.CurrentUserID = String.Empty;
                     Global.Instance.CleanSettings();
+
+                    #region [Flurry]
+
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickSignOutMenuItem).ToString());
+
+                    #endregion
+
+                    FlurryWP8SDK.Api.SetUserId(String.Empty);
+                    FlurryWP8SDK.Api.SetGender(FlurryWP8SDK.Models.Gender.Unknown);
+                    FlurryWP8SDK.Api.SetAge(0);
+                    if (!CurrentLocation.IsUnknown)
+                        FlurryWP8SDK.Api.SetLocation(CurrentLocation.Latitude, CurrentLocation.Longitude, Convert.ToSingle(CurrentLocation.HorizontalAccuracy));
+
+                    #endregion
+
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         #region [App bar]
@@ -2495,7 +2902,26 @@ namespace WeTongji
 
         private void OnPeopleOfWeekLargeImageTap(Object sender, Microsoft.Phone.Controls.GestureEventArgs e)
         {
-            NavToPeopleOfWeek(sender, new RoutedEventArgs());
+            var src = PersonSource;
+
+            if (src != null)
+            {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.ViewWeeklyStar).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(new FlurryWP8SDK.Models.Parameter[]
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.TapToViewWeeklyStarParameter).ToString(), 
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Picture).ToString())
+                            })
+                    );
+
+                #endregion
+
+                this.NavigationService.Navigate(new Uri(String.Format("/Pages/PeopleOfWeek.xaml?q={0}", src.Id), UriKind.RelativeOrAbsolute));
+            }
         }
 
         /// <summary>
@@ -2508,6 +2934,7 @@ namespace WeTongji
         {
             this.Dispatcher.BeginInvoke(() =>
             {
+                Global.Instance.StartSettingAgendaSource();
                 Grid_LoadingCalendarNode.Visibility = Visibility.Visible;
                 var sb = (this.Resources["LoadingCalendarNodeAnimation"] as Storyboard);
                 sb.Seek(TimeSpan.FromMilliseconds(0));
@@ -2719,6 +3146,12 @@ namespace WeTongji
         /// <param name="e"></param>
         private void SortActivitiesByCreationTime(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickTheLatestMenuItem).ToString());
+
+            #endregion
+
             if (this.activitySortMethod != ActivitySortMethod.kByCreationTime)
             {
                 var thread = new Thread(new ThreadStart(SortActivitiesByCreationTimeCore))
@@ -2777,6 +3210,12 @@ namespace WeTongji
         /// <param name="e"></param>
         private void SortActivitiesByScheduleNumber(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickTheHottestMenuItem).ToString());
+
+            #endregion
+
             if (this.activitySortMethod != ActivitySortMethod.kByScheduleNumber)
             {
                 var thread = new Thread(new ThreadStart(SortActivitiesByScheduleNumberCore))
@@ -2840,6 +3279,12 @@ namespace WeTongji
         /// <param name="e"></param>
         private void SortActivitiesCompareToNow(Object sender, EventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickTheMostRecentMenuItem).ToString());
+
+            #endregion
+
             if (this.activitySortMethod != ActivitySortMethod.kCompareToNow)
             {
                 var thread = new Thread(new ThreadStart(SortActivitiesCompareToNowCore))
@@ -2901,6 +3346,13 @@ namespace WeTongji
         }
 
         #endregion
+
+        private void PlayTriggerTodayAnimation()
+        {
+            TextBlock_Yesterday.Text = (DateTime.Now - TimeSpan.FromDays(1)).Day.ToString();
+            TextBlock_Today.Text = DateTime.Now.Day.ToString();
+            (this.Resources["TriggerCalendar"] as Storyboard).Begin();
+        }
 
         #endregion
 
@@ -3190,7 +3642,6 @@ namespace WeTongji
 
             {
                 sb.Clear();
-                List<ActivityExt> unstoredActivities = new List<ActivityExt>();
 
                 foreach (var a in args.Result.Activities)
                 {
@@ -3206,8 +3657,6 @@ namespace WeTongji
                             itemInShareDB = new ActivityExt();
                             itemInShareDB.SetObject(a);
 
-                            unstoredActivities.Add(itemInShareDB);
-
                             db.Activities.InsertOnSubmit(itemInShareDB);
                         }
                         //...Stored in share DB
@@ -3219,17 +3668,14 @@ namespace WeTongji
                     }
 
                     sb.AppendFormat("{0}_", a.Id);
-                }
 
-                if (unstoredActivities.Count > 0)
-                {
                     this.Dispatcher.BeginInvoke(() =>
                     {
                         Boolean hasMore = false;
                         if (ActivityListSource != null && ActivityListSource.Count > 0 && !ActivityListSource.Last().IsValid)
                             hasMore = true;
 
-                        UpdateAcitivityList(unstoredActivities, false, hasMore);
+                        UpdateAcitivityList(new ActivityExt[] { itemInShareDB }, false, hasMore);
                     });
                 }
 

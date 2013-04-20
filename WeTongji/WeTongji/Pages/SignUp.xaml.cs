@@ -61,6 +61,12 @@ namespace WeTongji
 
             client.ExecuteCompleted += (obj, args) =>
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickDoneToSubmitSignUpInfo).ToString());
+
+                #endregion
+
                 this.Dispatcher.BeginInvoke(() =>
                 {
                     this.NavigationService.Navigate(new Uri("/Pages/SignUpSuccess.xaml", UriKind.RelativeOrAbsolute));

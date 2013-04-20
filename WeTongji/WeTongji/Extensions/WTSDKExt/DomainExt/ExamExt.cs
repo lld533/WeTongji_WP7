@@ -173,38 +173,7 @@ namespace WeTongji.Api.Domain
 
                 StringBuilder sb = new StringBuilder(Begin.ToString("yyyy/MM/dd("));
 
-                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                {
-                    switch (Begin.DayOfWeek)
-                    {
-                        case System.DayOfWeek.Sunday:
-                            sb.Append("周日");
-                            break;
-                        case System.DayOfWeek.Monday:
-                            sb.Append("周一");
-                            break;
-                        case System.DayOfWeek.Tuesday:
-                            sb.Append("周二");
-                            break;
-                        case System.DayOfWeek.Wednesday:
-                            sb.Append("周三");
-                            break;
-                        case System.DayOfWeek.Thursday:
-                            sb.Append("周四");
-                            break;
-                        case System.DayOfWeek.Friday:
-                            sb.Append("周五");
-                            break;
-                        case System.DayOfWeek.Saturday:
-                            sb.Append("周六");
-                            break;
-                    }
-                }
-                else
-                {
-                    sb.Append(Begin.DayOfWeek.ToString());
-                }
-                
+                sb.Append(StringLibrary.ResourceManager.GetString("DayOfWeekAbbr_" + Begin.DayOfWeek.ToString()));
 
                 sb.AppendFormat(") {0}~{1}", Begin.ToString("HH:mm"), End.ToString("HH:mm"));
 

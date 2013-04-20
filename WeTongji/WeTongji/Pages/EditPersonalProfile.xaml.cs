@@ -69,6 +69,71 @@ namespace WeTongji
 
             #endregion
 
+            #region [Flurry]
+
+            if (txtbx == TextBox_Phone)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.EditPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Phone).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_Email)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.EditPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.Email).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_QQ)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.EditPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.QQ).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+            else if (txtbx == TextBox_SinaMicroBlog)
+            {
+                FlurryWP8SDK.Api.LogEvent(
+                    ((int)FlurryWP8SDK.Models.EventName.EditPersonalProfile).ToString(),
+                    new List<FlurryWP8SDK.Models.Parameter>(
+                            new FlurryWP8SDK.Models.Parameter[] 
+                            {
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.PersonalProfileParameter).ToString(),
+                                    ((int)FlurryWP8SDK.Models.ParameterValue.SinaWeibo).ToString()
+                                    )
+                            }
+                        )
+                    );
+            }
+
+            #endregion
+
             if (!String.IsNullOrEmpty(txtbx.Text))
             {
                 txtbx.SelectAll();
@@ -103,6 +168,13 @@ namespace WeTongji
             }
             else
             {
+                #region [Flurry]
+
+                FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.SavePersonalProfile).ToString());
+
+                #endregion
+
+
                 var btn = sender as ApplicationBarIconButton;
                 btn.IsEnabled = false;
                 ProgressBarPopup.Instance.Open();
@@ -222,7 +294,7 @@ namespace WeTongji
 
             var current = this.DataContext as UserExt;
 
-            if (current!=null && (isAvatarChanged || current.Phone != copy.Phone || current.Email != copy.Email
+            if (current != null && (isAvatarChanged || current.Phone != copy.Phone || current.Email != copy.Email
                || current.QQ != copy.QQ || current.SinaWeibo != copy.SinaWeibo))
             {
                 var result = MessageBox.Show(StringLibrary.EditPersonalProfile_DiscardAndReturnPrompt, StringLibrary.Common_Prompt, MessageBoxButton.OKCancel);
@@ -329,6 +401,12 @@ namespace WeTongji
                 {
                     case Microsoft.Phone.Tasks.TaskResult.OK:
                         {
+                            #region [Flurry]
+
+                            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ChangeAvatar).ToString());
+
+                            #endregion
+
                             var img = new BitmapImage();
                             img.SetSource(arg.ChosenPhoto);
                             Image_Avatar.Source = img;
@@ -342,12 +420,6 @@ namespace WeTongji
             };
 
             task.Show();
-        }
-
-        public class DataWrapper
-        {
-            public UserExt User { get; set; }
-            public BitmapSource Avatar { get; set; }
         }
     }
 }

@@ -69,6 +69,20 @@ namespace WeTongji.Api.Domain
         [Column()]
         public String OrganizerAvatarGuid { get; set; }
 
+        public String DisplaySummary
+        {
+            get 
+            {
+                if (String.IsNullOrEmpty(Summary))
+                {
+                    var subStr = this.Context.Substring(0, 20);
+                    return subStr.Split("\r\t".ToCharArray()).FirstOrDefault();
+                }
+                else
+                    return Summary;
+            }
+        }
+
         #endregion
 
         #region [Implementation]

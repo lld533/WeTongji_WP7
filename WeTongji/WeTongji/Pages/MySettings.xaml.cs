@@ -95,6 +95,12 @@ namespace WeTongji
 
             client.ExecuteCompleted += (obj, args) =>
                 {
+                    #region [Flurry]
+
+                    FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.CheckUpdate).ToString());
+
+                    #endregion
+
                     if (args.Result.Version == null)
                     {
                         this.Dispatcher.BeginInvoke(() =>
@@ -214,6 +220,12 @@ namespace WeTongji
                 ProgressBarPopup.Instance.Close();
             });
 
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClearImageCache).ToString());
+
+            #endregion
+
             var thread = new Thread(new ThreadStart(ComputeImageCacheSize))
             {
                 IsBackground = true
@@ -226,24 +238,84 @@ namespace WeTongji
         {
             Global.Instance.Settings.HintOnExit = true;
             Global.Instance.SaveSettings();
+
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.SetConfirmToExit).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(
+                    new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ResultState).ToString(), 
+                                    "1"
+                                    )
+                            })
+                    );
+
+            #endregion
         }
 
         private void ToggleSwitch_HintOnExit_UnChecked(Object sender, RoutedEventArgs e)
         {
             Global.Instance.Settings.HintOnExit = false;
             Global.Instance.SaveSettings();
+
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.SetConfirmToExit).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(
+                    new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ResultState).ToString(), 
+                                    "0"
+                                    )
+                            })
+                    );
+
+            #endregion
         }
 
         private void ToggleSwitch_AutoRefresh_Checked(Object sender, RoutedEventArgs e)
         {
             Global.Instance.Settings.AutoRefresh = true;
             Global.Instance.SaveSettings();
+
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.SetAutoRefresh).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(
+                    new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ResultState).ToString(), 
+                                    "1"
+                                    )
+                            })
+                    );
+
+            #endregion
         }
 
         private void ToggleSwitch_AutoRefresh_UnChecked(Object sender, RoutedEventArgs e)
         {
             Global.Instance.Settings.AutoRefresh = false;
             Global.Instance.SaveSettings();
+
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(
+                ((int)FlurryWP8SDK.Models.EventName.SetAutoRefresh).ToString(),
+                new List<FlurryWP8SDK.Models.Parameter>(
+                    new FlurryWP8SDK.Models.Parameter[]{
+                                new FlurryWP8SDK.Models.Parameter(
+                                    ((int)FlurryWP8SDK.Models.ParameterName.ResultState).ToString(), 
+                                    "0"
+                                    )
+                            })
+                    );
+
+            #endregion
         }
     }
 }

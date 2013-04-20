@@ -84,6 +84,11 @@ namespace WeTongji.Api.Domain
         [Column]
         public String TitleImageGuid { get; set; }
 
+        public String DisplaySummary
+        {
+            get { return Summary; }
+        }
+
         #endregion
 
         #region [Implementation]

@@ -205,7 +205,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Agreements.
+        ///   Looks up a localized string similar to F.
         /// </summary>
         public static string Agreement_PageTitle {
             get {
@@ -421,6 +421,78 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1 new group notice.
+        /// </summary>
+        public static string CampusInfo_ReceiveANewGroupNotice {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveANewGroupNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 new official note.
+        /// </summary>
+        public static string CampusInfo_ReceiveANewOfficialNote {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveANewOfficialNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 new recommend.
+        /// </summary>
+        public static string CampusInfo_ReceiveANewRecommend {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveANewRecommend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 new Tongji news.
+        /// </summary>
+        public static string CampusInfo_ReceiveANewTongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveANewTongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new group notices.
+        /// </summary>
+        public static string CampusInfo_ReceiveNewGroupNotices {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveNewGroupNotices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new official notes.
+        /// </summary>
+        public static string CampusInfo_ReceiveNewOfficialNotes {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveNewOfficialNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new recommends.
+        /// </summary>
+        public static string CampusInfo_ReceiveNewRecommends {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveNewRecommends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new Tongji news.
+        /// </summary>
+        public static string CampusInfo_ReceiveNewTongjiNews {
+            get {
+                return ResourceManager.GetString("CampusInfo_ReceiveNewTongjiNews", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tongji News.
         /// </summary>
         public static string CampusInfo_TongjiNews {
@@ -466,7 +538,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm to exit WeTonji?.
+        ///   Looks up a localized string similar to Confirm to exit WeTongji?.
         /// </summary>
         public static string Common_ExitAppPromptContent {
             get {
@@ -592,7 +664,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Class hour.
+        ///   Looks up a localized string similar to Class hours.
         /// </summary>
         public static string CourseDetail_Hours {
             get {
@@ -669,6 +741,132 @@ namespace WeTongji {
         public static string CourseDetail_Time {
             get {
                 return ResourceManager.GetString("CourseDetail_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Friday.
+        /// </summary>
+        public static string DayOfWeek_Friday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Friday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monday.
+        /// </summary>
+        public static string DayOfWeek_Monday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Monday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saturday.
+        /// </summary>
+        public static string DayOfWeek_Saturday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Saturday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sunday.
+        /// </summary>
+        public static string DayOfWeek_Sunday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Sunday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thursday.
+        /// </summary>
+        public static string DayOfWeek_Thursday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Thursday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuesday.
+        /// </summary>
+        public static string DayOfWeek_Tuesday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Tuesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wednesday.
+        /// </summary>
+        public static string DayOfWeek_Wednesday {
+            get {
+                return ResourceManager.GetString("DayOfWeek_Wednesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fri..
+        /// </summary>
+        public static string DayOfWeekAbbr_Friday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Friday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mon..
+        /// </summary>
+        public static string DayOfWeekAbbr_Monday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Monday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sat..
+        /// </summary>
+        public static string DayOfWeekAbbr_Saturday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Saturday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sun..
+        /// </summary>
+        public static string DayOfWeekAbbr_Sunday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Sunday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thur..
+        /// </summary>
+        public static string DayOfWeekAbbr_Thursday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Thursday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tues..
+        /// </summary>
+        public static string DayOfWeekAbbr_Tuesday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Tuesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wed..
+        /// </summary>
+        public static string DayOfWeekAbbr_Wednesday {
+            get {
+                return ResourceManager.GetString("DayOfWeekAbbr_Wednesday", resourceCulture);
             }
         }
         
@@ -1096,11 +1294,29 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Signing in....
+        /// </summary>
+        public static string MainPage_AutoLoginPrompt {
+            get {
+                return ResourceManager.GetString("MainPage_AutoLoginPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Campus News.
         /// </summary>
         public static string MainPage_CampusInfo {
             get {
                 return ResourceManager.GetString("MainPage_CampusInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to cancel.
+        /// </summary>
+        public static string MainPage_CancelAutoLogin {
+            get {
+                return ResourceManager.GetString("MainPage_CancelAutoLogin", resourceCulture);
             }
         }
         
@@ -1213,7 +1429,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading more....
+        ///   Looks up a localized string similar to Load more.
         /// </summary>
         public static string MainPage_LoadMoreActivities {
             get {
@@ -1294,7 +1510,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acount has not been activated..
+        ///   Looks up a localized string similar to Account has not been activated..
         /// </summary>
         public static string MainPage_NotActivatedAccountPrompt {
             get {
@@ -1339,11 +1555,47 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wrong password.
+        /// </summary>
+        public static string MainPage_PasswordLengthErrorPromptCaption {
+            get {
+                return ResourceManager.GetString("MainPage_PasswordLengthErrorPromptCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least 6 characters are required..
+        /// </summary>
+        public static string MainPage_PasswordLengthErrorPromptText {
+            get {
+                return ResourceManager.GetString("MainPage_PasswordLengthErrorPromptText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Weekly Star.
         /// </summary>
         public static string MainPage_PeopleOfWeek {
             get {
                 return ResourceManager.GetString("MainPage_PeopleOfWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 new activity.
+        /// </summary>
+        public static string MainPage_ReceiveANewActivityTemplate {
+            get {
+                return ResourceManager.GetString("MainPage_ReceiveANewActivityTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new activities.
+        /// </summary>
+        public static string MainPage_ReceiveNewActivitiesTemplate {
+            get {
+                return ResourceManager.GetString("MainPage_ReceiveNewActivitiesTemplate", resourceCulture);
             }
         }
         
@@ -1371,6 +1623,24 @@ namespace WeTongji {
         public static string MainPage_StudentNO {
             get {
                 return ResourceManager.GetString("MainPage_StudentNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong student ID.
+        /// </summary>
+        public static string MainPage_StudentNOErrorPromptCaption {
+            get {
+                return ResourceManager.GetString("MainPage_StudentNOErrorPromptCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Student ID must consist of all numbers..
+        /// </summary>
+        public static string MainPage_StudentNOErrorPromptText {
+            get {
+                return ResourceManager.GetString("MainPage_StudentNOErrorPromptText", resourceCulture);
             }
         }
         
@@ -1767,6 +2037,24 @@ namespace WeTongji {
         public static string PeopleOfWeekList_PageTitle {
             get {
                 return ResourceManager.GetString("PeopleOfWeekList_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 new weekly star.
+        /// </summary>
+        public static string PeopleOfWeekList_ReceiveANewPersonTemplate {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_ReceiveANewPersonTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} new weekly stars.
+        /// </summary>
+        public static string PeopleOfWeekList_ReceiveNewPersonsTemplate {
+            get {
+                return ResourceManager.GetString("PeopleOfWeekList_ReceiveNewPersonsTemplate", resourceCulture);
             }
         }
         

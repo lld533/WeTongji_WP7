@@ -91,44 +91,9 @@ namespace WeTongji
                     if (date == DateTime.MinValue)
                         return String.Empty;
 
-                    //...Todo @_@ Localizable
-
                     var sb = new StringBuilder(date.ToString("yyyy/MM/dd("));
-
-                    //...Chinese
-                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                    {
-                        switch (date.DayOfWeek)
-                        {
-                            case System.DayOfWeek.Sunday:
-                                sb.Append("周日");
-                                break;
-                            case System.DayOfWeek.Monday:
-                                sb.Append("周一");
-                                break;
-                            case System.DayOfWeek.Tuesday:
-                                sb.Append("周二");
-                                break;
-                            case System.DayOfWeek.Wednesday:
-                                sb.Append("周三");
-                                break;
-                            case System.DayOfWeek.Thursday:
-                                sb.Append("周四");
-                                break;
-                            case System.DayOfWeek.Friday:
-                                sb.Append("周五");
-                                break;
-                            case System.DayOfWeek.Saturday:
-                                sb.Append("周六");
-                                break;
-                        }
-                    }
-                    //...Default en-us
-                    else
-                    {
-                        sb.Append(date.DayOfWeek.ToString());
-                    }
-
+                    sb.Append(StringLibrary.ResourceManager.GetString("DayOfWeekAbbr_" + date.DayOfWeek.ToString()));
+                    
                     sb.AppendFormat(") {0}~{1}", date.GetCourseStartTime(base.SectionStart).ToString("HH:mm"), date.GetCourseEndTime(base.SectionEnd).ToString("HH:mm"));
 
 

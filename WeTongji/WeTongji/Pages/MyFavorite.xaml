@@ -193,7 +193,7 @@
 
                                         <TextBlock Grid.Column="1"  HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FF999999"
 											        TextWrapping="Wrap" TextTrimming="WordEllipsis"
-											        Text="{Binding Summary}" MaxHeight="80" Margin="0,9,0,0"/>
+											        Text="{Binding DisplaySummary}" MaxHeight="80" Margin="0,9,0,0"/>
 
                                         <Grid Grid.Column="3" Margin="0,9,0,17">
                                             <TextBlock VerticalAlignment="Top" Foreground="Black"

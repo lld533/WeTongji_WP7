@@ -52,6 +52,9 @@
     <Reference Include="DH.Scrypt">
       <HintPath>..\..\..\..\..\Desktop\DH.Scrypt.dll</HintPath>
     </Reference>
+    <Reference Include="FlurryWP8SDK">
+      <HintPath>..\..\..\..\..\Desktop\FlurryWP8SDK.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZLib.Phone">
       <HintPath>..\packages\ImageTools.0.3.1\lib\sl3-wp\ICSharpCode.SharpZLib.Phone.dll</HintPath>
     </Reference>
@@ -124,6 +127,7 @@
     <Compile Include="Converter\DateToAgendaTopDisplayDateStringConverter.cs" />
     <Compile Include="Converter\FavoriteNumberToVisibilityConverter.cs" />
     <Compile Include="Converter\ReversedTextLengthToVisibilityConverter.cs" />
+    <Compile Include="Extensions\FlurryWP8SDK\EventName.cs" />
     <Compile Include="Extensions\WTSDKExt\Supplemental\CalendarGroup.cs" />
     <Compile Include="Pages\SignUpSuccess.xaml.cs">
       <DependentUpon>SignUpSuccess.xaml</DependentUpon>

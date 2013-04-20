@@ -318,7 +318,7 @@
                             <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateTel, Source={StaticResource LocalizedStrings}}" 
                                     Style="{StaticResource AddItemButtonStyle}"
                                     Click="ClickToTurnOverTextBoxVisibility"/>
-                            <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
+                            <TextBox x:Name="TextBox_Phone" Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
                         
@@ -328,7 +328,7 @@
                             <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateQQ, Source={StaticResource LocalizedStrings}}"  
                                     Style="{StaticResource AddItemButtonStyle}"
                                     Click="ClickToTurnOverTextBoxVisibility"/>
-                            <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
+                            <TextBox x:Name="TextBox_QQ"  Style="{StaticResource AddItemTextBoxStyle}" InputScope="Number"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
 
@@ -338,7 +338,7 @@
                             <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateEmail, Source={StaticResource LocalizedStrings}}" 
                                     Style="{StaticResource AddItemButtonStyle}"
                                     Click="ClickToTurnOverTextBoxVisibility"/>
-                            <TextBox Style="{StaticResource AddItemTextBoxStyle}" InputScope="EmailUserName"
+                            <TextBox x:Name="TextBox_Email" Style="{StaticResource AddItemTextBoxStyle}" InputScope="EmailUserName"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
 
@@ -348,7 +348,7 @@
                             <Button Content="{Binding Path=LocalizedResources.PersonalProfile_CreateSinaWeibo, Source={StaticResource LocalizedStrings}}" 
                                     Style="{StaticResource AddItemButtonStyle}"
                                     Click="ClickToTurnOverTextBoxVisibility"/>
-                            <TextBox Style="{StaticResource AddItemTextBoxStyle}"
+                            <TextBox x:Name="TextBox_SinaWeibo" Style="{StaticResource AddItemTextBoxStyle}"
                                          LostFocus="EditingTextBox_LostFocus"/>
                         </StackPanel>
 

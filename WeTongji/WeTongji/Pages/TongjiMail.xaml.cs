@@ -20,11 +20,23 @@ namespace WeTongji
 
         void Button_Registered_Click(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickSignUpNextStepButton).ToString());
+
+            #endregion
+
             this.NavigationService.Navigate(new Uri("/Pages/SignUp.xaml", UriKind.RelativeOrAbsolute));
         }
 
         void Button_SignUpTongjiMail_Click(Object sender, RoutedEventArgs e)
         {
+            #region [Flurry]
+
+            FlurryWP8SDK.Api.LogEvent(((int)FlurryWP8SDK.Models.EventName.ClickActivateButton).ToString());
+
+            #endregion
+
             var wbt = new WebBrowserTask();
             wbt.Uri = new System.Uri("http://mail.tongji.edu.cn:9900/activate/register.jsp");
             wbt.Show();
