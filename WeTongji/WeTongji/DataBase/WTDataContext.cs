@@ -125,6 +125,8 @@ namespace WeTongji.DataBase
 
         public Table<Semester> Semesters;
 
+        public Table<ItemId> ScheduledActivitiesId;
+
         #endregion
     }
 }

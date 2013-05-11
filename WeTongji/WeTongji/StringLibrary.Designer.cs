@@ -205,7 +205,7 @@ namespace WeTongji {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to F.
+        ///   Looks up a localized string similar to User Agreements.
         /// </summary>
         public static string Agreement_PageTitle {
             get {
@@ -1681,11 +1681,29 @@ namespace WeTongji {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pin.
+        /// </summary>
+        public static string MyAgenda_AppBarPin {
+            get {
+                return ResourceManager.GetString("MyAgenda_AppBarPin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Today.
         /// </summary>
         public static string MyAgenda_AppBarTodayText {
             get {
                 return ResourceManager.GetString("MyAgenda_AppBarTodayText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpin.
+        /// </summary>
+        public static string MyAgenda_AppBarUnpin {
+            get {
+                return ResourceManager.GetString("MyAgenda_AppBarUnpin", resourceCulture);
             }
         }
         

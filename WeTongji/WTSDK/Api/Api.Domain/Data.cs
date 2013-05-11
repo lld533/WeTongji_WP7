@@ -331,4 +331,22 @@ namespace WeTongji.Api.Domain
         public bool CanFavorite { get; set; }
     }
     #endregion
+
+    #region [Friend]
+
+    public class Friend : WTObject
+    {
+
+    }
+
+    #endregion
+
+    #region [FriendInvite]
+
+    public class FriendInvite : WTObject
+    {
+
+    }
+
+    #endregion
 }

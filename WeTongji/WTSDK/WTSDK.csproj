@@ -82,6 +82,7 @@
     <Compile Include="Api\Api.Request\Around\AroundUnFavoriteRequest.cs" />
     <Compile Include="Api\Api.Request\Around\AroundUnLikeRequest.cs" />
     <Compile Include="Api\Api.Request\IWTUploadFileRequest.cs" />
+    <Compile Include="Api\Api.Request\User\UserFindRequest.cs" />
     <Compile Include="Api\Api.Request\User\UserProfileRequest.cs" />
     <Compile Include="Api\Api.Request\User\UserUpdateProfileRequest.cs" />
     <Compile Include="Api\Api.Response\User\UserProfileResponse.cs" />
@@ -157,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Api\Api.Request\Friend\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

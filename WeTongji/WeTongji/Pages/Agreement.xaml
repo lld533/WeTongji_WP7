@@ -32,7 +32,7 @@
             <StackPanel>
                 <TextBlock TextWrapping="Wrap" FontSize="20" Foreground="#FF999999">
                     <TextBlock.Text>
-                        1.本应用使用同济大学电子邮件系统进行实名认证。用户须使用自己的@tongji.edu.cn电子邮件进行WeTongji账户激活操作。尚未注册邮箱的用户须访问mail.tongji.edu.cn先行完成邮箱的注册操作。本应用不对因同济大学电子邮件系统故障曹诚的影响负责。
+                        1.本应用使用同济大学电子邮件系统进行实名认证。用户须使用自己的@tongji.edu.cn电子邮件进行WeTongji账户激活操作。尚未注册邮箱的用户须访问mail.tongji.edu.cn先行完成邮箱的注册操作。本应用不对因同济大学电子邮件系统故障造成的影响负责。
                     </TextBlock.Text>
                 </TextBlock>
                 <TextBlock TextWrapping="Wrap" FontSize="20" Margin="0,20,0,0" Foreground="#FF999999">

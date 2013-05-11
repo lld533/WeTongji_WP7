@@ -137,7 +137,7 @@ namespace WeTongji
 
                 #region [App bar buttons]
 
-                if (!String.IsNullOrEmpty(Global.Instance.Settings.UID))
+                if (!String.IsNullOrEmpty(Global.Instance.Settings.UID) && !String.IsNullOrEmpty(Global.Instance.Session))
                 {
                     using (var db = new WTUserDataContext(Global.Instance.Settings.UID))
                     {
@@ -148,18 +148,31 @@ namespace WeTongji
                             activity.CanFavorite = false;
                         }
                     }
+
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        InitAppBarButtons();
+                    });
                 }
-                else
+                //...Readonly mode[No Like, Favorite, Schedule operation] in case of secondary tile navigation from MyAgenda.xaml
+                else if (!String.IsNullOrEmpty(Global.Instance.Settings.UID) && String.IsNullOrEmpty(Global.Instance.Session))
+                {
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        this.ApplicationBar.IsVisible = false;
+                    });
+                }
+                else if (String.IsNullOrEmpty(Global.Instance.Settings.UID) && String.IsNullOrEmpty(Global.Instance.Session))
                 {
                     activity.CanLike = true;
                     activity.CanFavorite = true;
                     activity.CanSchedule = true;
-                }
 
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    InitAppBarButtons();
-                });
+                    this.Dispatcher.BeginInvoke(() =>
+                    {
+                        InitAppBarButtons();
+                    });
+                }
 
                 #endregion
 
@@ -849,6 +862,16 @@ namespace WeTongji
                             db.SubmitChanges();
                         }
 
+                        using (var db = new WTUserDataContext(Global.Instance.CurrentUserID))
+                        {
+                            var targetActivityId = db.ScheduledActivitiesId.Where(x => x.Id == req.Id).SingleOrDefault();
+                            if (targetActivityId == null)
+                            {
+                                db.ScheduledActivitiesId.InsertOnSubmit(new ItemId() { Id = req.Id });
+                                db.SubmitChanges();
+                            }
+                        }
+
                         //...Update AgendaSource
                         if (itemInDB != null)
                         {
@@ -967,6 +990,16 @@ namespace WeTongji
                             }
 
                             db.SubmitChanges();
+                        }
+
+                        using (var db = new WTUserDataContext(Global.Instance.CurrentUserID))
+                        {
+                            var targetActivityId = db.ScheduledActivitiesId.Where(x => x.Id == req.Id).SingleOrDefault();
+                            if (targetActivityId != null)
+                            {
+                                db.ScheduledActivitiesId.DeleteOnSubmit(targetActivityId);
+                                db.SubmitChanges();
+                            }
                         }
 
                         //...Update AgendaSource

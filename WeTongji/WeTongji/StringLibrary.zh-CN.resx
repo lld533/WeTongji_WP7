@@ -1034,4 +1034,10 @@
     <value>收到{0}条新的每周人物信息</value>
     <comment>例如，收到2条新的每周人物信息</comment>
   </data>
+  <data name="MyAgenda_AppBarPin" xml:space="preserve">
+    <value>固定</value>
+  </data>
+  <data name="MyAgenda_AppBarUnpin" xml:space="preserve">
+    <value>取消固定</value>
+  </data>
 </root>

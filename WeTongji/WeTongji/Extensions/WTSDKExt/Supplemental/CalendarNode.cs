@@ -105,6 +105,23 @@ namespace WeTongji.Api.Domain
             get { return EndTime.ToString("HH:mm"); }
         }
 
+        public String IconicTileDisplayTime
+        {
+            get
+            {
+                if (BeginTime.Date == DateTime.Now.Date)
+                    return BeginTime.ToString("HH:mm") + "~" + EndTime.ToString("HH:mm");
+                else
+                    return String.Format("{0:yyyy}/{0:MM}/{0:dd}({1}) {0:HH}:{0:mm}~{2:HH}:{2:mm}",
+                                            BeginTime,
+                                            StringLibrary.ResourceManager.GetString("DayOfWeekAbbr_" + BeginTime.DayOfWeek.ToString()),
+                                            EndTime);
+            }
+        }
+
+        /// <summary>
+        /// e.g. 8月1日 or August 1
+        /// </summary>
         public String DisplayDateofBeginTime
         {
             get
@@ -172,6 +189,9 @@ namespace WeTongji.Api.Domain
             }
         }
 
+        /// <summary>
+        /// e.g. 08:15
+        /// </summary>
         public String DisplayDayTimeOfBeginTime
         {
             get

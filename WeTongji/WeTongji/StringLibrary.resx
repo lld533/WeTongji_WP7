@@ -1036,4 +1036,10 @@
     <value>{0} new weekly stars</value>
     <comment>例如，收到2位新的每周人物</comment>
   </data>
+  <data name="MyAgenda_AppBarPin" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="MyAgenda_AppBarUnpin" xml:space="preserve">
+    <value>Unpin</value>
+  </data>
 </root>

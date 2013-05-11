@@ -82,6 +82,11 @@ namespace WeTongji.Api.Util
         /// <summary>
         /// Account is not registered.
         /// </summary>
-        NotRegistered = 14
+        NotRegistered = 14,
+
+        /// <summary>
+        /// Not allowed to make friends with the target user.
+        /// </summary>
+        MakeFriendsProhibited = 15
     }
 }

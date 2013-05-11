@@ -86,6 +86,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PhoneThemeManager.1.3.3\lib\sl4-windowsphone71\JeffWilcox.PhoneThemeManager.dll</HintPath>
     </Reference>
+    <Reference Include="Mangopollo, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Mangopollo.1.3\lib\sl4-windowsphone71\Mangopollo.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
@@ -129,6 +133,7 @@
     <Compile Include="Converter\ReversedTextLengthToVisibilityConverter.cs" />
     <Compile Include="Extensions\FlurryWP8SDK\EventName.cs" />
     <Compile Include="Extensions\WTSDKExt\Supplemental\CalendarGroup.cs" />
+    <Compile Include="Extensions\WTSDKExt\Supplemental\ItemId.cs" />
     <Compile Include="Pages\SignUpSuccess.xaml.cs">
       <DependentUpon>SignUpSuccess.xaml</DependentUpon>
     </Compile>
@@ -279,6 +284,7 @@
     <Compile Include="Utility\DescriptionToInlineCollection.cs" />
     <Compile Include="Utility\ImagePathToImageSource.cs" />
     <Compile Include="Utility\LocalizedStrings.cs" />
+    <Compile Include="Utility\PlatformVersionHelper.cs" />
     <Compile Include="Utility\Unicode2String.cs" />
     <Compile Include="Converter\TextLengthToVisibilityConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -425,6 +431,8 @@
     <None Include="icons\days_en\7\Thumbs.db" />
     <None Include="icons\days_en\8\Thumbs.db" />
     <None Include="icons\days_en\9\Thumbs.db" />
+    <None Include="icons\tile\wp8\IconImage\en\Thumbs.db" />
+    <None Include="icons\tile\wp8\SmallIconImage\en\Thumbs.db" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
@@ -434,11 +442,13 @@
   <ItemGroup>
     <Content Include="icons\appbar.participate.rest.png" />
     <Content Include="icons\appbar.person.list.rest.png" />
+    <Content Include="icons\appbar.pin.png" />
     <Content Include="icons\appbar.register.rest.png" />
     <Content Include="icons\appbar.unfavourite.rest.png" />
     <Content Include="icons\appbar.unlike.rest.png" />
     <Content Include="icons\appbar.unparticipate.rest.png" />
     <Content Include="icons\appbar.like.rest.png" />
+    <Content Include="icons\appbar.unpin.png" />
     <Content Include="icons\days_en\10\10_1.png" />
     <Content Include="icons\days_en\10\10_10.png" />
     <Content Include="icons\days_en\10\10_11.png" />
@@ -805,6 +815,54 @@
     <Content Include="icons\days_en\9\9_7.png" />
     <Content Include="icons\days_en\9\9_8.png" />
     <Content Include="icons\days_en\9\9_9.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\1.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\10.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\11.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\12.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\2.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\3.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\4.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\5.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\6.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\7.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\8.png" />
+    <Content Include="icons\tile\wp8\IconImage\en\9.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\1.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\10.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\11.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\12.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\2.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\3.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\4.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\5.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\6.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\7.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\8.png" />
+    <Content Include="icons\tile\wp8\IconImage\zh\9.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\1.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\10.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\11.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\12.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\2.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\3.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\4.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\5.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\6.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\7.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\8.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\en\9.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\1.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\10.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\11.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\12.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\2.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\3.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\4.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\5.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\6.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\7.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\8.png" />
+    <Content Include="icons\tile\wp8\SmallIconImage\zh\9.png" />
     <Content Include="Images\CampusInfoFakeIllustration.png" />
     <Content Include="Images\default_avatar_org.png" />
     <Content Include="Images\default_avatar_profile.png" />

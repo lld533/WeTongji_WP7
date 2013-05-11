@@ -125,6 +125,30 @@ namespace WeTongji.Api.Domain
             return result;
         }
 
+        public static CalendarNode GetNextIconicTileCalendarNode(this List<CalendarGroup<CalendarNode>> list)
+        {
+            if (list == null || list.Count == 0)
+                return null;
+
+            var groups = list.Where(group => group.Key >= DateTime.Now.Date).OrderBy(group => group.Key);
+            var firstGroup = groups.First();
+            var firstNode = firstGroup.Where(node => node.BeginTime > DateTime.Now && !node.IsNoArrangementNode).FirstOrDefault();
+
+            if (firstNode != null)
+            {
+                return firstNode;
+            }
+            else
+            {
+                var restGroups = groups.Skip(1).ToArray();
+
+                if (restGroups == null || restGroups.Count() == 0)
+                    return null;
+                else
+                    return restGroups.First().FirstOrDefault();
+            }
+        }
+
         public static void InsertCalendarNode(this List<CalendarGroup<CalendarNode>> list, CalendarNode node)
         {
             //...Refresh

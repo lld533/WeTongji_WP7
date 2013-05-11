@@ -20,11 +20,35 @@ using System.Windows.Input;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Globalization;
+using WeTongji.Utility;
+using System.IO.IsolatedStorage;
+using System.Windows.Media.Imaging;
+using System.Reflection;
 
 namespace WeTongji
 {
     public partial class MyAgenda : PhoneApplicationPage
     {
+        #region [Fields]
+
+        private DispatcherTimer refresh_dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
+
+        private Boolean registerVerticalScrollChanged = false;
+
+        private event EventHandler VerticalScrollChanged;
+
+        #endregion
+
+        #region [Const]
+
+        private const String SharedShellContentPath = "/Shared/ShellContent/";
+
+        private const String StandardTileBackgroundImageName = SharedShellContentPath + "StandardTileBackgroundImage";
+
+        private const String StandardTileBackgroundImageSearchPattern = StandardTileBackgroundImageName + ".*";
+
+        #endregion
+
         public MyAgenda()
         {
             InitializeComponent();
@@ -38,18 +62,141 @@ namespace WeTongji
             };
         }
 
-        private DispatcherTimer refresh_dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
+        #region [Override Navigation]
 
-        private void AgendaSourceStateChanged(Object sender, EventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(() =>
-            {
-                var src = this.LongListSelector_Core.ItemsSource;
-                LongListSelector_Core.ItemsSource = null;
-                LongListSelector_Core.ItemsSource = src;
+            base.OnNavigatedTo(e);
 
-                var node = Global.Instance.AgendaSource.GetNextCalendarNode();
-            });
+            #region [Handles AppBar Buttons]
+
+            #region [Today]
+
+            //...Create AppButton_Today if it has not been created yet.
+            if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
+            {
+                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton()
+                {
+                    Text = StringLibrary.MyAgenda_AppBarTodayText,
+                    IsEnabled = false
+                };
+
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    appBtn.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                            UriKind.RelativeOrAbsolute);
+                else
+                    appBtn.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute);
+
+                appBtn.Click += AppButton_Today_Clicked;
+                this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
+                this.ApplicationBar.Buttons.Add(appBtn);
+            }
+            //...Refresh the icon AppButton_Today if it has already been created.
+            else
+            {
+                //...Todo @_@ Localizable
+                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
+                    TodayButton.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                            UriKind.RelativeOrAbsolute);
+                else
+                    TodayButton.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
+                        UriKind.RelativeOrAbsolute);
+
+                TodayButton.IsEnabled = false;
+            }
+
+            #endregion
+
+            #region [Pin to start]
+
+            {
+                var btn = new ApplicationBarIconButton();
+                ShellTile TileToFind = ShellTile.ActiveTiles.SingleOrDefault(
+                    x => x.NavigationUri.ToString().Contains("nav=MyAgenda") && x.NavigationUri.ToString().Contains("uid="));
+
+                //...Create a new Pin/Unpin Button and insert it into AppBar
+                if (this.ApplicationBar.Buttons.Count == 1)
+                {
+                    if (TileToFind == null)
+                    {
+                        btn.Text = StringLibrary.MyAgenda_AppBarPin;
+                        btn.IconUri = new Uri("/icons/appbar.pin.png", UriKind.RelativeOrAbsolute);
+                        btn.Click += AppBar_Pin_Clicked;
+                    }
+                    else
+                    {
+                        btn.Text = StringLibrary.MyAgenda_AppBarUnpin;
+                        btn.IconUri = new Uri("/icons/appbar.unpin.png", UriKind.RelativeOrAbsolute);
+                        btn.Click += AppBar_Unpin_Clicked;
+                    }
+
+                    this.ApplicationBar.Buttons.Add(btn);
+                }
+                //...Refresh Pin/Unpin Button state
+                else if (this.ApplicationBar.Buttons.Count == 2)
+                {
+                    PinButton.Click -= AppBar_Unpin_Clicked;
+                    PinButton.Click -= AppBar_Pin_Clicked;
+
+                    if (TileToFind == null)
+                    {
+                        PinButton.Text = StringLibrary.MyAgenda_AppBarPin;
+                        PinButton.IconUri = new Uri("/icons/appbar.pin.png", UriKind.RelativeOrAbsolute);
+                        PinButton.Click += AppBar_Pin_Clicked;
+                    }
+                    else
+                    {
+                        PinButton.Text = StringLibrary.MyAgenda_AppBarUnpin;
+                        PinButton.IconUri = new Uri("/icons/appbar.unpin.png", UriKind.RelativeOrAbsolute);
+
+                        PinButton.Click += AppBar_Unpin_Clicked;
+                    }
+                }
+
+            }
+
+            #endregion
+
+            #endregion
+
+            Global.Instance.AgendaSourceStateChanged += this.AgendaSourceStateChangedHandler;
+
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID) && Global.Instance.CurrentAgendaSourceState == SourceState.NotSet)
+            {
+                Global.Instance.CurrentUserID = this.NavigationContext.QueryString["uid"];
+                Global.Instance.StartSettingAgendaSource();
+
+                var loadLocalAgendaThread = new Thread(new ThreadStart(LoadLocalAgenda));
+                loadLocalAgendaThread.Start();
+            }
+            else
+            {
+                var thread = new Thread(new ThreadStart(LoadData));
+                thread.Start();
+            }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            Global.Instance.AgendaSourceStateChanged -= this.AgendaSourceStateChangedHandler;
+        }
+
+        #endregion
+
+        #region [Properties]
+
+        private ApplicationBarIconButton TodayButton
+        {
+            get { return this.ApplicationBar.Buttons[0] as ApplicationBarIconButton; }
+        }
+
+        private ApplicationBarIconButton PinButton
+        {
+            get { return this.ApplicationBar.Buttons[1] as ApplicationBarIconButton; }
         }
 
         private CalendarNode CurrentNode { get; set; }
@@ -78,67 +225,20 @@ namespace WeTongji
             }
         }
 
-        private event EventHandler VerticalScrollChanged;
+        #endregion
 
-        private Boolean registerVerticalScrollChanged = false;
+        #region [Event handlers]
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void AgendaSourceStateChanged(Object sender, EventArgs e)
         {
-            base.OnNavigatedTo(e);
-
-            //...Create AppButton_Today if it has not been created yet.
-            if (this.ApplicationBar == null || this.ApplicationBar.Buttons.Count == 0)
+            this.Dispatcher.BeginInvoke(() =>
             {
-                var appBtn = new Microsoft.Phone.Shell.ApplicationBarIconButton()
-                {
-                    Text = StringLibrary.MyAgenda_AppBarTodayText,
-                    IsEnabled = false
-                };
+                var src = this.LongListSelector_Core.ItemsSource;
+                LongListSelector_Core.ItemsSource = null;
+                LongListSelector_Core.ItemsSource = src;
 
-                //...Todo @_@ Localizable
-                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                    appBtn.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                            UriKind.RelativeOrAbsolute);
-                else
-                    appBtn.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                        UriKind.RelativeOrAbsolute);
-
-                appBtn.Click += AppButton_Today_Clicked;
-                this.ApplicationBar = new Microsoft.Phone.Shell.ApplicationBar();
-                this.ApplicationBar.Buttons.Add(appBtn);
-            }
-            //...Refresh the icon AppButton_Today if it has already been created.
-            else
-            {
-                var btn = this.ApplicationBar.Buttons[0] as Microsoft.Phone.Shell.ApplicationBarIconButton;
-
-                //...Todo @_@ Localizable
-                if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                    btn.IconUri = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                            UriKind.RelativeOrAbsolute);
-                else
-                    btn.IconUri = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day),
-                        UriKind.RelativeOrAbsolute);
-
-                btn.IsEnabled = false;
-            }
-
-            Global.Instance.AgendaSourceStateChanged += this.AgendaSourceStateChangedHandler;
-
-            var thread = new Thread(new ThreadStart(LoadData)) { IsBackground = true };
-            thread.Start();
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-
-            Global.Instance.AgendaSourceStateChanged -= this.AgendaSourceStateChangedHandler;
-        }
-
-        private void LoadData()
-        {
-            AgendaSourceStateChangedHandler(Global.Instance, EventArgs.Empty);
+                var node = Global.Instance.AgendaSource.GetNextCalendarNode();
+            });
         }
 
         private void AppButton_Today_Clicked(Object sender, EventArgs e)
@@ -270,7 +370,7 @@ namespace WeTongji
                             }
                             #endregion
 
-                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = true;
+                            TodayButton.IsEnabled = true;
                             refresh_dt.Start();
                         });
                     }
@@ -280,7 +380,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             LongListSelector_Core.ItemsSource = null;
-                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+                            TodayButton.IsEnabled = false;
                         });
                     }
                     break;
@@ -289,7 +389,7 @@ namespace WeTongji
                         this.Dispatcher.BeginInvoke(() =>
                         {
                             TextBlock_Loading.Visibility = Visibility.Visible;
-                            (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IsEnabled = false;
+                            TodayButton.IsEnabled = false;
                         });
                     }
                     break;
@@ -313,10 +413,10 @@ namespace WeTongji
             {
                 //...Todo @_@ Localizable
                 if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh")
-                    (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
+                    TodayButton.IconUri
                         = new Uri(String.Format("/icons/days_zh/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
                 else
-                    (this.ApplicationBar.Buttons[0] as ApplicationBarIconButton).IconUri
+                    TodayButton.IconUri
                         = new Uri(String.Format("/icons/days_en/{0}/{0}_{1}.png", DateTime.Now.Month, DateTime.Now.Day), UriKind.RelativeOrAbsolute);
 
                 core();
@@ -352,6 +452,140 @@ namespace WeTongji
                         this.NavigationService.Navigate(new Uri(String.Format("/Pages/CourseDetail.xaml?q={0}", item.Id), UriKind.RelativeOrAbsolute));
                         return;
                 }
+        }
+
+        private void AppBar_Pin_Clicked(Object sender, EventArgs e)
+        {
+            //...Source state has been set
+            if (Global.Instance.CurrentAgendaSourceState != SourceState.Done)
+                return;
+
+
+            // Look to see if the tile already exists and if so, don't try to create again.
+            ShellTile TileToFind = ShellTile.ActiveTiles.SingleOrDefault(
+                    x => x.NavigationUri.ToString().Contains("nav=MyAgenda") && x.NavigationUri.ToString().Contains("uid="));
+
+            // Create the tile if we didn't find it already exists.
+            if (TileToFind == null && !String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                CalendarNode node = Global.Instance.AgendaSource.GetNextIconicTileCalendarNode();
+
+                #region [Iconic tile for WP7.8 or WP8 users]
+                //...Current OS platform supports wide tile
+                if (WeTongji.Utility.PlatformVersionHelper.IsTargetVersion)
+                {
+                    //...Todo @_@ implement the wide tile
+                    String IconicTileIconImagePathPattern = "/icons/tile/wp8/IconImage/{0}/{1}.png";
+                    String IconicTileSmallIconImagePathPattern = "/icons/tile/wp8/IconImage/{0}/{1}.png";
+
+                    var tileData = Mangopollo.Tiles.TilesCreator.CreateIconicTile
+                        (
+                            "WeTongji",
+                            DateTime.Now.Day,
+                            new Color(),
+                            new Uri(String.Format(IconicTileIconImagePathPattern,
+                                                CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh" ? "zh" : "en",
+                                                DateTime.Now.Month),
+                                    UriKind.RelativeOrAbsolute),
+                            new Uri(String.Format(IconicTileSmallIconImagePathPattern,
+                                                CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "zh" ? "zh" : "en",
+                                                DateTime.Now.Month),
+                                    UriKind.RelativeOrAbsolute),
+                            node == null ? String.Empty : node.Title,
+                            node == null ? String.Empty : node.IconicTileDisplayTime,
+                            node == null ? String.Empty : node.Location
+                        );
+
+                    Type type = Type.GetType("Microsoft.Phone.Shell.ShellTile, Microsoft.Phone");
+                    MethodInfo createmethod = type.GetMethod("Create", new[] { typeof(Uri), typeof(ShellTileData), typeof(bool) });
+
+                    createmethod.Invoke(null, new Object[] 
+                    {
+                        new Uri("/Pages/MyAgenda.xaml?nav=MyAgenda&uid=" + Global.Instance.CurrentUserID, UriKind.Relative), 
+                        tileData,
+                        true
+                    });
+
+                }
+                #endregion
+                #region [Standard tile for WP7.5 users]
+                //...Current OS platform does NOT support wide tile
+                else
+                {
+                    Uri backgroundImageUri = new Uri("/icon_173_173.png", UriKind.RelativeOrAbsolute);
+
+                    //...Current user's avatar is used as the background image
+                    using (var db = new WTUserDataContext(Global.Instance.CurrentUserID))
+                    {
+                        var avatar = db.UserInfo.Single().Avatar;
+                        if (!avatar.EndsWith("missing.png"))
+                        {
+                            var store = IsolatedStorageFile.GetUserStoreForApplication();
+                            var files = store.GetFileNames(StandardTileBackgroundImageSearchPattern);
+                            if (files != null)
+                            {
+                                foreach (var existingBackgroundImage in files)
+                                {
+                                    store.DeleteFile(SharedShellContentPath + existingBackgroundImage);
+                                }
+                            }
+
+                            String ext = "." + avatar.GetImageFileExtension();
+
+                            //...Copy current user's avatar to share folder so that the image could be retrieved by system.
+                            if (store.FileExists(db.UserInfo.Single().AvatarGuid + ext))
+                            {
+                                store.CopyFile(db.UserInfo.Single().AvatarGuid + ext, StandardTileBackgroundImageName + ext);
+                                backgroundImageUri = new Uri("isostore:" + StandardTileBackgroundImageName + ext, UriKind.Absolute);
+                            }
+                        }
+                    }
+
+                    //...Create tile data
+                    StandardTileData NewTileData = new StandardTileData()
+                    {
+                        BackgroundImage = backgroundImageUri,
+                        BackTitle = "WeTongji",
+                        BackContent = (node == null) ? String.Empty : node.Title
+                    };
+                    ShellTile.Create(new Uri("/Pages/MyAgenda.xaml?nav=MyAgenda&uid=" + Global.Instance.CurrentUserID, UriKind.Relative), NewTileData);
+                }
+                #endregion
+
+                PinButton.IconUri = new Uri("/icons/appbar.unpin.png", UriKind.RelativeOrAbsolute);
+                PinButton.Text = StringLibrary.MyAgenda_AppBarUnpin;
+            }
+        }
+
+        private void AppBar_Unpin_Clicked(Object sender, EventArgs e)
+        {
+            ShellTile TileToFind = ShellTile.ActiveTiles.SingleOrDefault(
+                    x => x.NavigationUri.ToString().Contains("nav=MyAgenda") && x.NavigationUri.ToString().Contains("uid="));
+
+            if (null != TileToFind)
+            {
+                TileToFind.Delete();
+
+                PinButton.IconUri = new Uri("/icons/appbar.pin.png", UriKind.RelativeOrAbsolute);
+                PinButton.Text = StringLibrary.MyAgenda_AppBarPin;
+
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                var files = store.GetFileNames(StandardTileBackgroundImageSearchPattern);
+                if (files != null)
+                    foreach (var f in files)
+                    {
+                        store.DeleteFile(SharedShellContentPath + f);
+                    }
+            }
+        }
+
+        #endregion
+
+        #region [Private functions]
+
+        private void LoadData()
+        {
+            AgendaSourceStateChangedHandler(Global.Instance, EventArgs.Empty);
         }
 
         private void UpdateTopItem()
@@ -404,5 +638,100 @@ namespace WeTongji
                 }
             }
         }
+
+        /// <summary>
+        /// Load current user's course,exams and activities to construct Global agenda.
+        /// </summary>
+        /// <remarks>
+        /// Pre-condition: !String.IsNullOrEmpty(Global.Instance.CurrentUserID)
+        /// </remarks>
+        private void LoadLocalAgenda()
+        {
+            if (String.IsNullOrEmpty(Global.Instance.CurrentUserID))
+            {
+                return;
+            }
+
+            List<CalendarNode> list = new List<CalendarNode>();
+            CourseExt[] courses = null;
+            ExamExt[] exams = null;
+            Semester[] semesters = null;
+
+            #region [Collect source]
+
+            #region [Collect courses]
+            using (var db = new WTUserDataContext(Global.Instance.CurrentUserID))
+            {
+                courses = db.Courses.ToArray();
+                exams = db.Exams.ToArray();
+                semesters = db.Semesters.ToArray();
+            }
+
+            if (courses != null && semesters != null)
+            {
+                foreach (var c in courses)
+                {
+                    var s = semesters.Where((semester) => semester.Id == c.SemesterGuid).SingleOrDefault();
+                    if (s != null)
+                    {
+                        list.AddRange(c.GetCalendarNodes(s));
+                    }
+                }
+            }
+            #endregion
+
+            #region [Collect exams]
+            if (exams != null)
+            {
+                foreach (var e in exams)
+                {
+                    list.Add(e.GetCalendarNode());
+                }
+            }
+            #endregion
+
+            #region [Collect activities]
+
+            try
+            {
+                ActivityExt[] allActivities = null;
+                ItemId[] activityIds = null;
+
+                using (var db = WTShareDataContext.ShareDB)
+                {
+                    allActivities = db.Activities.ToArray();
+                }
+
+                using (var db = new WTUserDataContext(Global.Instance.CurrentUserID))
+                {
+                    activityIds = db.ScheduledActivitiesId.ToArray();
+                }
+
+                foreach (var id in activityIds)
+                {
+                    var a = allActivities.Where(x => x.Id == id.Id).SingleOrDefault();
+                    if (a != null)
+                    {
+                        list.Add(a.GetCalendarNode());
+                        Global.Instance.ParticipatingActivitiesIdList.Add(id.Id);
+                    }
+                }
+            }
+            catch { }
+
+            #endregion
+
+
+            #endregion
+
+            var result = (from CalendarNode node in list
+                          group node by node.BeginTime.Date into n
+                          orderby n.Key
+                          select new CalendarGroup<CalendarNode>(n.Key, n)).ToList();
+
+            Global.Instance.SetAgendaSource(result);
+        }
+
+        #endregion
     }
 }

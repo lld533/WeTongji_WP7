@@ -4031,6 +4031,20 @@ namespace WeTongji
                     Global.Instance.ParticipatingActivitiesIdList.Add(a.Id);
             }
 
+            using (var db = new WTUserDataContext(uid))
+            {
+                if (db.ScheduledActivitiesId.Count() > 0)
+                {
+                    db.ScheduledActivitiesId.DeleteAllOnSubmit(db.ScheduledActivitiesId);
+                }
+                
+                foreach (var a in arg.Result.Activities)
+                {
+                    db.ScheduledActivitiesId.InsertOnSubmit(new ItemId() { Id = a.Id});
+                }
+                db.SubmitChanges();
+            }
+
             //....Insert new activities in UI
             this.Dispatcher.BeginInvoke(() =>
             {
